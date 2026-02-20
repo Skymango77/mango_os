@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MANGO ULTIMATE OS v4.0</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700;900&family=Pretendard:wght@400;700;900&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --m-orange: #FF6B00; --m-teal: #00F2FF; --m-pink: #FF007A;
+            --m-purple: #A855F7; --m-yellow: #FACC15; --portal-width: 480px;
+        }
+
+        body { background: #000; color: #fff; font-family: 'Pretendard', sans-serif; display: flex; justify-content: center; margin: 0; }
+        .app-container { width: 100%; max-width: var(--portal-width); min-height: 100vh; background: #050505; padding: 20px; display: flex; flex-direction: column; gap: 18px; padding-bottom: 120px; }
+        
+        /* Glassmorphism Card Logic */
+        .moment-node {
+            background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 24px; padding: 18px; display: flex; align-items: center; gap: 14px; transition: 0.3s;
+        }
+        .moment-node:active { transform: scale(0.97); background: rgba(255, 107, 0, 0.08); }
+
+        /* District Identity Header */
+        .district-header {
+            background: linear-gradient(135deg, rgba(255,107,0,0.2) 0%, rgba(0,0,0,0) 100%);
+            border-radius: 30px; padding: 24px; border: 1px solid rgba(255, 107, 0, 0.1);
+        }
+
+        .badge { font-size: 9px; font-weight: 900; padding: 2px 8px; border-radius: 6px; text-transform: uppercase; }
+        .font-orb { font-family: 'Orbitron', sans-serif; }
+        
+        .bottom-nav {
+            position: fixed; bottom: 20px; width: calc(var(--portal-width) - 40px);
+            background: rgba(10, 10, 10, 0.85); backdrop-filter: blur(25px);
+            border-radius: 35px; display: flex; justify-content: space-around;
+            padding: 18px; border: 1px solid rgba(255, 255, 255, 0.1); z-index: 100;
+        }
+        /* [삽입 위치]: <style> 태그 내 기존 .moment-node 스타일 아래 */
+
+.premium-glass {
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.05) 0%, rgba(255, 255, 255, 0.01) 100%);
+    backdrop-filter: blur(25px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 32px;
+    position: relative;
+    overflow: hidden;
+}
+
+.stay-card { border-top: 3px solid var(--m-pink); box-shadow: 0 15px 35px -5px rgba(255, 0, 122, 0.15); }
+.shop-card { border-top: 3px solid var(--m-yellow); box-shadow: 0 15px 35px -5px rgba(250, 204, 21, 0.15); }
+
+.mood-light {
+    position: absolute; width: 150px; height: 150px;
+    filter: blur(50px); z-index: 0; opacity: 0.4;
+}
+    </style>
+</head>
+<body>
+
+    <div class="app-container">
+        <header class="district-header">
+            <div class="flex justify-between items-start mb-4">
+                <div>
+                    <div class="flex items-center gap-2 mb-1">
+                        <span class="w-2 h-2 bg-orange-500 rounded-full animate-pulse"></span>
+                        <span class="text-[10px] font-black text-orange-500 tracking-widest uppercase italic">Haeundae Archive</span>
+                    </div>
+                    <h1 class="text-3xl font-black">해리단길 <span class="text-sm font-normal text-gray-400">#MZ_성지</span></h1>
+                </div>
+                <div class="text-right">
+                    <p class="text-[10px] text-gray-500 font-bold uppercase">Spending index</p>
+                    <p class="text-lg font-orb text-orange-500">88%</p>
+                </div>
+            </div>
+            <p class="text-xs text-gray-400 leading-relaxed">
+                폐철길을 따라 형성된 <span class="text-white font-bold">슬로우 쇼핑 구역</span>입니다. 골목 안쪽 <span class="text-teal-400">편집샵</span>들은 20:00부터 순차 종료되니 서두르세요!
+            </p>
+        </header>
+
+        <section class="space-y-3">
+            <h3 class="font-orb text-[10px] text-gray-500 px-2 tracking-[0.2em]">01_TRANSIT_OPTIMIZER</h3>
+            <div class="moment-node border-l-4 border-blue-500">
+                <div class="w-12 h-12 bg-blue-500/10 rounded-2xl flex items-center justify-center text-blue-500"><i data-lucide="car"></i></div>
+                <div class="flex-1">
+                    <div class="flex justify-between items-center mb-1">
+                        <h4 class="text-sm font-black italic">스마트 택시 셰어 (3/3)</h4>
+                        <span class="badge bg-blue-500/20 text-blue-400">매칭완료</span>
+                    </div>
+                    <p class="text-[11px] text-gray-500">광안리까지 1/3 비용: <span class="text-white font-bold">2.8 Pi</span></p>
+                </div>
+            </div>
+        </section>
+
+        <section class="space-y-3">
+            <h3 class="font-orb text-[10px] text-gray-500 px-2 tracking-[0.2em]">02_VIP_STAY_&_TREND</h3>
+            <div class="grid grid-cols-2 gap-3">
+                <div class="moment-node flex-col items-start p-5 border-t-2 border-pink-500/30">
+                    <div class="p-2 bg-pink-500/10 rounded-lg text-pink-500 mb-3"><i data-lucide="bed" class="w-5 h-5"></i></div>
+                    <h4 class="text-xs font-black">즉시 체크인 숙소</h4>
+                    <p class="text-[10px] text-gray-500 mt-1 italic">신라스테이 (잔여 1)</p>
+                    <span class="text-[10px] font-bold text-pink-400 mt-2">Pi 특가 혜택</span>
+                </div>
+                <div class="moment-node flex-col items-start p-5 border-t-2 border-yellow-500/30">
+                    <div class="p-2 bg-yellow-500/10 rounded-lg text-yellow-500 mb-3"><i data-lucide="sparkles" class="w-5 h-5"></i></div>
+                    <h4 class="text-xs font-black">실시간 핫스팟</h4>
+                    <p class="text-[10px] text-gray-500 mt-1 italic">신세계 팝업스토어</p>
+                    <span class="text-[10px] font-bold text-yellow-400 mt-2">LIVE 2.4k 명</span>
+                </div>
+            </div>
+        </section>
+
+        <section class="space-y-3">
+            <h3 class="font-orb text-[10px] text-gray-500 px-2 tracking-[0.2em]">03_MICRO_COMMERCE</h3>
+            <div class="moment-node bg-green-500/5 border-green-500/20">
+                <div class="w-12 h-12 bg-green-500/10 rounded-2xl flex items-center justify-center text-green-500"><i data-lucide="shopping-bag"></i></div>
+                <div class="flex-1">
+                    <h4 class="text-sm font-black italic">가성비 편의점 / 마트</h4>
+                    <p class="text-[11px] text-gray-500">GS25 해운대점 - <span class="text-green-400 font-bold">도시락 20% 타임세일</span></p>
+                </div>
+                <span class="text-[10px] font-black">120m</span>
+            </div>
+            <div class="moment-node bg-orange-500/5 border-orange-500/20">
+                <div class="w-12 h-12 bg-orange-500/10 rounded-2xl flex items-center justify-center text-orange-500"><i data-lucide="pie-chart"></i></div>
+                <div class="flex-1">
+                    <h4 class="text-sm font-black italic">길거리 간식 (Street Food)</h4>
+                    <p class="text-[11px] text-gray-500">'씨앗호떡' 대기 없음 - 지금이 기회!</p>
+                </div>
+                <span class="text-[10px] font-black text-orange-500">HOT</span>
+            </div>
+        </section>
+
+        <section class="space-y-3">
+            <h3 class="font-orb text-[10px] text-gray-500 px-2 tracking-[0.2em]">04_ADMIN_&_SAFETY</h3>
+            <div class="moment-node border-l-4 border-purple-500">
+                <div class="w-12 h-12 bg-purple-500/10 rounded-2xl flex items-center justify-center text-purple-400"><i data-lucide="landmark"></i></div>
+                <div class="flex-1">
+                    <h4 class="text-sm font-black">관공서 / 경찰 / 환전소</h4>
+                    <p class="text-[11px] text-gray-500">해운대 지구대 & 머니박스 (야간 환전 가능)</p>
+                </div>
+                <i data-lucide="phone-call" class="w-4 h-4 text-purple-400"></i>
+            </div>
+        </section>
+<section class="space-y-3">
+    <h3 class="font-orb text-[10px] text-gray-500 px-2 tracking-[0.2em]">02_VIP_STAY_SERVICE</h3>
+    <div class="premium-glass stay-card p-6">
+        <div class="mood-light bg-pink-600 top-[-50px] right-[-50px]"></div>
+        <div class="relative z-10">
+            <div class="flex justify-between items-start mb-4">
+                <h4 class="text-xl font-black text-white">VIP 스테이</h4>
+                <span class="price-save-badge">Pi 특가</span>
+            </div>
+            <p class="text-xs text-gray-400">그랜드 조선 부산 - 실시간 예약 가능</p>
+        </div>
+    </div>
+</section>
+        <div class="moment-node bg-red-600/10 border-red-600/40">
+            <div class="w-10 h-10 bg-red-600 rounded-xl flex items-center justify-center text-white animate-pulse"><i data-lucide="map-pin"></i></div>
+            <div class="flex-1">
+                <h4 class="text-xs font-black text-red-500 italic underline">개방 화장실 (Emergency)</h4>
+                <p class="text-[10px] text-gray-400 italic">우동 주민센터 1층 (비번없음)</p>
+            </div>
+            <button class="bg-red-600 text-white text-[10px] px-3 py-1 rounded font-black">NAV</button>
+        </div>
+
+        <nav class="bottom-nav">
+            <div class="flex flex-col items-center gap-1 text-orange-500">
+                <i data-lucide="zap" class="w-6 h-6"></i>
+                <span class="text-[9px] font-black uppercase">Moment</span>
+            </div>
+            <div class="flex flex-col items-center gap-1 text-gray-600">
+                <i data-lucide="users" class="w-6 h-6"></i>
+                <span class="text-[9px] font-black uppercase">Match</span>
+            </div>
+            <div class="flex flex-col items-center gap-1 text-gray-600">
+                <i data-lucide="share-2" class="w-6 h-6"></i>
+                <span class="text-[9px] font-black uppercase">Hook</span>
+            </div>
+            <div class="flex flex-col items-center gap-1 text-gray-600">
+                <i data-lucide="user" class="w-6 h-6"></i>
+                <span class="text-[9px] font-black uppercase">My</span>
+            </div>
+        </nav>
+    </div>
+
+    <script> lucide.createIcons(); </script>
+</body>
+</html>

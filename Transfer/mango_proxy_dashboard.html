@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Mango Invoice | Official Quote</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Inter:wght@400;700;900&display=swap');
+        body { -ms-overflow-style: none; scrollbar-width: none; background-color: transparent; font-family: 'Inter', sans-serif; }
+        body::-webkit-scrollbar { display: none; }
+        .center-wrapper { display: flex; justify-content: center; align-items: center; min-height: 100vh; width: 100vw; padding: 20px; }
+        
+        /* 메탈릭 골드 텍스트 & 배경 */
+        .text-metallic-gold {
+            background-image: linear-gradient(to right, #FFD700, #FFA500, #FFD700);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text; color: transparent;
+        }
+        .bg-metallic-gold {
+            background-image: linear-gradient(to right, #FFD700, #FFA500, #FFD700);
+        }
+    </style>
+</head>
+<body class="m-0 p-0 overflow-hidden text-white">
+
+    <div class="fixed inset-0 bg-gradient-to-br from-gray-950 to-gray-900 -z-20"></div>
+    <div class="fixed bottom-0 right-0 w-[300px] h-[300px] bg-yellow-500 opacity-[0.05] blur-[100px] pointer-events-none -z-10"></div>
+
+    <div class="center-wrapper">
+        <div class="w-full max-w-[450px] bg-black/60 backdrop-blur-xl border border-yellow-600/30 rounded-3xl p-6 shadow-2xl relative">
+            
+            <div class="flex justify-between items-start mb-6 pb-4 border-b border-gray-700/50">
+                <div class="flex items-center gap-4">
+                    <div class="w-16 h-16 rounded-full border border-yellow-500/40 shadow-[0_0_15px_rgba(255,204,0,0.2)] flex items-center justify-center relative bg-white/5 backdrop-blur-md">
+
+                        <img src="/assets/img/mango-s.png" 
+                        alt="Mango Metal Logo"
+                        class="w-full h-full object-cover"
+                        onerror="this.style.display='none'; this.nextElementSibling.classList.remove('hidden'); this.nextElementSibling.classList.add('flex');">
+                    <span class="text-2xl hidden absolute inset-0 items-center justify-center">🥭</span>
+                    </div>
+                    <div>
+                        <h1 class="text-metallic-gold text-lg font-black font-orbitron tracking-tighter uppercase">Official Invoice</h1>
+            <p class="text-[10px] text-gray-500 uppercase tracking-[3px]">Mango Premium Service</p>
+        </div>
+    </div>
+    <div class="text-right">
+        <p class="text-[10px] text-gray-500">QUOTE NO.</p>
+        <p class="text-sm font-bold text-white font-orbitron">#INV-2026-082</p>
+    </div>
+</div>
+
+            <div class="bg-gray-800/50 rounded-xl p-4 flex gap-4 mb-6 border border-gray-700/50">
+    
+    <div class="w-16 h-16 bg-gray-700 rounded-lg overflow-hidden border border-gray-600 flex-shrink-0 relative">
+        <img src="https://images.unsplash.com/photo-1552346154-21d32810aba3?q=80&w=200&auto=format&fit=crop" 
+             alt="Limited Item" 
+             class="w-full h-full object-cover"
+             onerror="this.style.display='none'; this.nextElementSibling.classList.remove('hidden'); this.nextElementSibling.classList.add('flex');">
+        
+        <div class="hidden w-full h-full bg-gray-800 items-center justify-center">
+            <span class="text-2xl grayscale opacity-70">👟</span>
+        </div>
+    </div>
+
+    <div>
+        <h3 class="font-bold text-sm text-white">Nike Air Mag (Limited)</h3>
+        <p class="text-xs text-gray-400 mt-1">Option: Size 270 / Wolf Grey</p>
+        <span class="inline-block mt-2 text-[10px] bg-yellow-500/20 text-yellow-500 px-2 py-0.5 rounded border border-yellow-500/30">
+            Only 1 Left
+        </span>
+    </div>
+</div>
+
+            <div class="space-y-3 mb-6 px-2">
+                <div class="flex justify-between text-xs text-gray-400">
+                    <span>Item Price</span>
+                    <span class="text-white">$ 250.00</span>
+                </div>
+                <div class="flex justify-between text-xs text-gray-400">
+                    <span>Local Shipping</span>
+                    <span class="text-white">$ 15.00</span>
+                </div>
+                <div class="flex justify-between text-xs text-gray-400">
+                    <span>Agency Fee (5%)</span>
+                    <span class="text-white">$ 12.50</span>
+                </div>
+                <div class="border-t border-dashed border-gray-600 my-2"></div>
+                
+                <div class="flex justify-between items-end">
+                    <span class="text-sm font-bold text-gray-300">TOTAL AMOUNT</span>
+                    <div class="text-right">
+                        <span class="text-xs text-gray-500 block mb-1">KRW (Approx.)</span>
+                        <span class="text-3xl font-black text-metallic-gold font-orbitron">₩385,400</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-red-500/10 border border-red-500/20 rounded-lg p-2 mb-4 text-center">
+                <p class="text-[10px] text-red-400">⚠️ Quote valid for <span class="font-bold text-red-300">23:59:00</span> due to exchange rates.</p>
+            </div>
+
+            <button onclick="alert('결제 시스템(PG)으로 연결됩니다.')" class="w-full py-4 rounded-2xl font-black text-sm uppercase shadow-[0_0_20px_rgba(255,204,0,0.3)] active:scale-95 transition-all bg-metallic-gold text-black hover:brightness-110">
+                PAY NOW
+            </button>
+
+            <button onclick="location.href='mango_proxy_dashboard.html'" class="w-full mt-3 py-3 text-xs text-gray-500 hover:text-white transition-colors">
+                Cancel Request
+            </button>
+
+        </div>
+    </div>
+</body>
+</html>

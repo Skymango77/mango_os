@@ -1,0 +1,108 @@
+이전으로 돌아가서 1행부터 760행까지 천천히 잘 보고 그다음 761행부터 마지막 행가지 줄게 그것도 잘 봐. 그 다음 다시 생각해서 메인화면을 보이게 한다. 단 로그인 창은 앰의 중간에 적당한 위치를 선택해서 만들고 로그인 버튼을 클릭하여 그안에 들어 가면 로그인 창이 나타나게 한다. 알겠지? 그리고 서비스 상담 창은 따로 분리 하여 광고 창을 클릭하면 상담할수 있게 나타나 서비스를 제공 한다. (병원, 어린이집, 빵집 등 상담 창을 따로 분류하여 제공한다.)
+
+1. 사장님인가요? 5분만에 광고 등록하기그곳  bar 신청 창을 클릭후 연결해서 안속에 데시보드를 (사진과 기록 내용을 적을 수있게해요. )만들어줘 .
+
+1. 수정 할 부분: mango glass/assets/img/education_icon  위치한  것을 포탈 admin_icon과 대체하여 admin이미지와 자리를 바꿈. 새로이 교육 포탈을 만든다.
+2. Admin 앞으로 망고 캐릭터 원형 로고를 클릭하여 운영자들이 이용하는 대시보드로 만들면 된다.
+
+1. 수정 할 부분:mango glass/assets/img/finance_icon 위치한  것을 포탈 hobby_icon과 대체하여 줘
+
+1. 수정 할 부분: mango glass/assets/img/chat_icon  위치한  것을 포탈 social_icon과 대체하여 자리를 잡는다.. 새로이 교육 포탈을 만든다.
+
+<div class="news-ticker">
+        <ul class="news-list">
+            <li>[공지] Pi Network 메인넷 로드맵 2단계 업데이트 완료</li>
+            <li>[뉴스] 전 세계 파이 노드 설치 수 20만 개 돌파</li>
+            <li>[정보] MANGO 에코시스템 신규 포탈 'Education' 오픈</li>
+            <li>[커뮤니티] 파이 해커톤 우수 앱 선정 결과 발표 예정</li>
+            <li>[기술] 파이 브라우저 보안 및 지갑 연결성 강화 패치</li>
+            <li>[공지] Pi Network 메인넷 로드맵 2단계 업데이트 완료</li>
+            <li>[뉴스] 전 세계 파이 노드 설치 수 20만 개 돌파</li>
+            <li>[정보] MANGO 에코시스템 신규 포탈 'Education' 오픈</li>
+            <li>[커뮤니티] 파이 해커톤 우수 앱 선정 결과 발표 예정</li>
+            <li>[기술] 파이 브라우저 보안 및 지갑 연결성 강화 패치</li>
+1수정 할 코드.맨 왼쪽 과일(mango.jpg) 망고 원을 클릭하면 운영자 인증이 아니라 이전 loginModal창을 만들어 줘. 2수정 할 코드부분. 금 가루 내리는 곳 (MANGO의 운영자 인증 암호를 입력하세요): 이 부분은 유지해줘.
+
+
+Universe Access Port
+
+PI WALLET ADDRESS / ID
+ 
+PASSWORD
+ ENTER UNIVERSE
+Quick QR Login
+
+✈️
+차원을 넘는 휴가 여행
+AD PARTNER
+CLOSE [X]
+
+모달이 있는 곳에서 맨 위에 보이는 2가지 잔상(메인화면의 뉴스, 금 가루 내라고 쌓이는 것)이 보이지 않게해줘. 단 메인 화면의 보이는 (메인화면의 뉴스, 금 가루 내라고 쌓이는 것)은 유지 
+
+
+
+<div style="position: fixed; top: 24px; left: 24px; z-index: 99999;">
+    <button onclick="toggleMangoHub()" style="display: flex; align-items: center; gap: 12px;" class="hover:scale-110 transition-transform">
+        <svg width="56" height="56" viewBox="0 0 100 100">
+            <polygon points="50 5, 90 27.5, 90 72.5, 50 95, 10 72.5, 10 27.5" fill="#f97316" />
+            <path d="M30 40 H70 M35 50 H70 M30 60 H70" stroke="white" stroke-width="5" stroke-linecap="round" />
+        </svg>
+<span id="mango-text" style="color: #fff; font-weight: 800; font-size: 15px; position: relative;">사용자 로그인</span>    </button>
+</div>
+
+<div id="integrated-hub-modal" style="display: none; position: fixed; inset: 0; z-index: 100000; background: rgba(0,0,0,0.95); backdrop-filter: blur(40px); align-items: center; justify-content: center; padding: 20px;">
+    <div style="width: 400px; background: #111; border: 1px solid rgba(249,115,22,0.4); border-radius: 40px; padding: 32px; box-shadow: 0 20px 80px rgba(0,0,0,1);">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px;">
+            <h2 style="color: #f97316; font-weight: 900; font-style: italic; margin: 0;">MANGO HUB</h2>
+            <button onclick="toggleMangoHub()" style="color: #444; background: none; border: none; cursor: pointer; font-size: 20px;">✕</button>
+        </div>
+
+        <div id="food-portal-hub-item" 
+     style="background: rgba(249,115,22,0.1); border-radius: 20px; padding: 18px; display: flex; align-items: center; gap: 15px; margin-bottom: 20px; border: 1px solid rgba(249,115,22,0.3); cursor: pointer;"
+     onclick="if(typeof openWindow === 'function') { openWindow('food_portal'); toggleMangoHub(); }">
+    
+    <div style="width: 45px; height: 45px; background: #000; border-radius: 12px; display: flex; align-items: center; justify-content: center; overflow: hidden;">
+        <img src="mango glass/assets/img/food_icon.png" 
+             style="width: 100%; height: 100%; object-fit: contain; opacity: 1 !important; filter: none !important;"
+             onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+        <span style="display: none; font-size: 25px;">🍱</span>
+    </div>
+
+    <div>
+        <div style="color: #fff; font-size: 14px; font-weight: bold;">Premium Food Feed</div>
+        <div style="color: #f97316; font-size: 10px; font-weight: bold;">STATUS: <span style="color: #4ade80;">ACTIVE</span></div>
+    </div>
+</div>
+
+<div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-bottom: 25px;">
+    <div style="background: #000; padding: 12px; border-radius: 15px; text-align: center; border: 1px solid rgba(255,255,255,0.05);">
+        <img src="assets/img/phone.png" onerror="this.outerHTML='📱'" style="width: 22px; height: 22px; opacity: 1 !important; filter: none !important;">
+        <div style="font-size: 8px; color: #666; margin-top: 5px;">Phone</div>
+    </div>
+    <div style="background: #000; padding: 12px; border-radius: 15px; text-align: center; border: 1px solid rgba(255,255,255,0.05);">
+        <img src="assets/img/kirin.png" onerror="this.outerHTML='🍺'" style="width: 22px; height: 22px; opacity: 1 !important; filter: none !important;">
+        <div style="font-size: 8px; color: #666; margin-top: 5px;">Kirin</div>
+    </div>
+    <div style="background: #000; padding: 12px; border-radius: 15px; text-align: center; border: 1px solid rgba(255,255,255,0.05);">
+        <img src="assets/img/hanwoo.png" onerror="this.outerHTML='🥩'" style="width: 22px; height: 22px; opacity: 1 !important; filter: none !important;">
+        <div style="font-size: 8px; color: #666; margin-top: 5px;">Hanwoo</div>
+    </div>
+    <div style="background: rgba(249,115,22,0.1); border: 1px solid #f97316; padding: 12px; border-radius: 15px; text-align: center;">
+        <img src="assets/img/nursery.png" onerror="this.outerHTML='👶'" style="width: 22px; height: 22px; opacity: 1 !important; filter: none !important;">
+        <div style="font-size: 8px; color: #f97316; font-weight: bold; margin-top: 5px;">Nursery</div>
+    </div>
+</div>
+
+<p style="color: rgba(249,115,22,0.6); font-size: 10px; text-align: center; font-style: italic;">Scanning for Biometric Identity...</p>
+<button onclick="toggleMangoHub()" style="width: 100%; background: #f97316; border: none; border-radius: 15px; padding: 18px; color: black; font-weight: 900; margin-top: 20px; cursor: pointer;">ENTER UNIVERSE</button>
+    </div>
+</div>
+
+사장님인가요? 5분 만에 광고 등록하기 "창" 개발 진행,  vscode의 프롬프트 지시와, 코드 줘요.
+
+순서대로 합시다.  
+다음 자연스러운 단계
+
+1️⃣ 국가별 SNS 자동 노출 로직 (한국/중국/일본/동남아)
+2️⃣ API 인터페이스 명세 (기보·투자용)
+3️⃣ IR용 로그인 구조 설명 슬라이드

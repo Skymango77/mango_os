@@ -1,0 +1,146 @@
+import React, { useState, useEffect } from 'react';
+import { 
+  Navigation, 
+  MapPin, 
+  ArrowUp, 
+  Bell, 
+  Settings, 
+  Music, 
+  Star, 
+  Percent, 
+  Info,
+  X
+} from 'lucide-react';
+
+const App = () => {
+  // 상태 관리: 거리, 알림음 설정, 목적지 정보
+  const [distance, setDistance] = useState(12.0);
+  const [activeSound, setActiveSound] = useState('Mango Default');
+  const [isArrived, setIsArrived] = useState(false);
+  const [showHighlight, setShowHighlight] = useState(false);
+  
+  // 관리자 대시보드에서 설정된 알림음 리스트 (예시)
+  const soundList = [
+    { id: 1, name: 'Mango Default', file: 'mango_mango.mp3' },
+    { id: 2, name: 'Soft Ding', file: 'soft_ding.mp3' },
+    { id: 3, name: 'Urban Pulse', file: 'urban.mp3' }
+  ];
+
+  // 운영자가 등록한 시그니처/이벤트 데이터
+  const highlights = [
+    { id: 1, type: 'SIGNATURE', title: '망고 스페셜 빙수', detail: '25,000원', icon: <Star className="text-yellow-400" size={18}/> },
+    { id: 2, type: 'BENEFIT', title: '첫 방문 10% 할인', detail: '프로모션', icon: <Percent className="text-green-400" size={18}/> }
+  ];
+
+  // 시뮬레이션 루프
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setDistance((prev) => {
+        if (prev <= 0.1) {
+          setIsArrived(true);
+          setShowHighlight(true);
+          return 0;
+        }
+        return parseFloat((prev - 0.2).toFixed(1));
+      });
+    }, 300);
+    return () => clearInterval(timer);
+  }, []);
+
+  return (
+    <div className="relative w-full h-screen bg-black text-white font-sans overflow-hidden">
+      {/* Background Simulation */}
+      <div className="absolute inset-0 opacity-30 bg-[url('https://images.unsplash.com/photo-1514933651103-005eec06c04b?auto=format&fit=crop&q=80&w=2000')] bg-cover bg-center"></div>
+
+      {/* AR HUD Layer */}
+      <div className="absolute inset-0 p-10 flex flex-col justify-between pointer-events-none">
+        
+        {/* Top: Header & Sound Status */}
+        <div className="flex justify-between items-start pointer-events-auto">
+          <div className="bg-black/50 backdrop-blur-lg p-4 rounded-2xl border border-white/10">
+            <h1 className="text-xs font-bold text-orange-400 tracking-[0.2em] mb-1">MANGO AR NAVI</h1>
+            <div className="flex items-center gap-2">
+              <MapPin size={14} className="text-white" />
+              <span className="text-sm font-medium">스테이 망고 해운대</span>
+            </div>
+          </div>
+
+          <div className="flex flex-col gap-2 items-end">
+            <div className="bg-white/10 backdrop-blur-md px-3 py-2 rounded-xl flex items-center gap-2 border border-white/5">
+              <Music size={14} className="text-orange-400" />
+              <span className="text-[10px] font-bold uppercase">{activeSound}</span>
+            </div>
+            <div className="text-[10px] opacity-40">System Ver. 2.4</div>
+          </div>
+        </div>
+
+        {/* Center: Distance & Direction */}
+        {!isArrived && (
+          <div className="flex flex-col items-center animate-pulse">
+            <div className="bg-orange-500/90 p-5 rounded-full shadow-[0_0_50px_rgba(249,115,22,0.4)] mb-4">
+              <ArrowUp size={48} />
+            </div>
+            <div className="text-center">
+              <div className="text-6xl font-black italic tracking-tighter">
+                {distance}<span className="text-2xl not-italic opacity-60 ml-1">m</span>
+              </div>
+              <div className="text-[10px] tracking-[0.3em] font-light mt-1 text-orange-200">STRAIGHT AHEAD</div>
+            </div>
+          </div>
+        )}
+
+        {/* Bottom: Signature Menu / Benefit Card (도착 시 노출) */}
+        <div className="w-full flex justify-center mb-10 h-32">
+          {showHighlight && (
+            <div className="flex gap-4 animate-in slide-in-from-bottom-10 duration-700 pointer-events-auto">
+              {highlights.map((item) => (
+                <div key={item.id} className="w-48 bg-gradient-to-br from-black/80 to-slate-900/80 backdrop-blur-2xl border border-orange-500/30 rounded-2xl p-4 shadow-2xl">
+                  <div className="flex justify-between items-start mb-2">
+                    <div className="p-1.5 bg-orange-500/20 rounded-lg">
+                      {item.icon}
+                    </div>
+                    <span className="text-[9px] font-black text-orange-400 tracking-tighter uppercase">{item.type}</span>
+                  </div>
+                  <div className="text-sm font-bold mb-1 line-clamp-1">{item.title}</div>
+                  <div className="text-xs text-slate-400">{item.detail}</div>
+                </div>
+              ))}
+              
+              <button 
+                onClick={() => setShowHighlight(false)}
+                className="self-center p-2 bg-white/10 rounded-full hover:bg-white/20 transition-colors"
+              >
+                <X size={16} />
+              </button>
+            </div>
+          )}
+        </div>
+
+        {/* Bottom Navigation Status */}
+        <div className="flex justify-center">
+          <div className="px-6 py-2 rounded-full bg-black/40 border border-white/5 flex items-center gap-4 text-[11px] font-medium tracking-wide">
+             <div className="flex items-center gap-1.5 text-green-400">
+               <div className="w-1.5 h-1.5 bg-green-400 rounded-full"></div>
+               ONLINE
+             </div>
+             <div className="w-px h-3 bg-white/10"></div>
+             <div className="opacity-60 uppercase">Battery 84%</div>
+             <div className="w-px h-3 bg-white/10"></div>
+             <div className="opacity-60 uppercase">1.2km/h</div>
+          </div>
+        </div>
+
+      </div>
+
+      {/* Settings Overlay Simulation (사용자가 알림음 선택 시) */}
+      <div className="absolute bottom-6 right-6 pointer-events-auto">
+        <button className="p-3 bg-black/60 rounded-full border border-white/10 hover:bg-orange-500/80 transition-all">
+          <Settings size={20} />
+        </button>
+      </div>
+
+    </div>
+  );
+};
+
+export default App;

@@ -1,0 +1,1385 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>여행 상품 검색 및 예약 포털 (고객 의도 반영)</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap');
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #eef2ff; /* Tailwind indigo-50 */
+        }
+        .card-shadow {
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        }
+        /* 공통 뷰 컨테이너 스타일 */
+        .view-container {
+            transition: opacity 0.3s ease-in-out;
+        }
+    </style>
+</head>
+<body class="p-4 md:p-8">
+
+    <div class="max-w-6xl mx-auto">
+        <!-- Header / Logo and Navigation -->
+        <header class="mb-8 p-4 bg-white rounded-xl shadow-lg flex justify-between items-center">
+            <h1 class="text-3xl font-extrabold text-indigo-700 tracking-tight">
+                ✈️ Mango Travel
+            </h1>
+            <!-- Navigation Buttons -->
+            <div class="flex space-x-2">
+                <button id="search-view-btn" onclick="showView('search')" 
+                        class="bg-indigo-600 text-white px-4 py-2 rounded-full text-sm font-medium hover:bg-indigo-700 transition">
+                    상품 검색
+                </button>
+                
+                <!-- NEW: Cart Button -->
+                <button id="cart-view-btn" onclick="showView('cart')" 
+                        class="relative bg-pink-500 text-white px-4 py-2 rounded-full text-sm font-medium hover:bg-pink-600 transition">
+                    🛒 장바구니 (<span id="cart-count">0</span>)
+                </button>
+                
+                <button id="bookings-view-btn" onclick="showView('bookings')" 
+                        class="bg-indigo-100 text-indigo-700 px-4 py-2 rounded-full text-sm font-medium hover:bg-indigo-200 transition">
+                    내 예약 보기
+                </button>
+            </div>
+        </header>
+
+        <!-- Main Content Area -->
+        <main>
+            <!-- 1. Search View -->
+            <div id="search-view" class="view-container">
+                <!-- Search Type Selector (Updated - Customer Intent Focused) -->
+                <div class="flex justify-center mb-6">
+                    <div class="inline-flex rounded-full shadow-lg bg-white p-1 flex-wrap justify-center">
+                        <button id="search-type-package" onclick="setSearchType('package')"
+                                class="px-5 py-2 text-sm font-medium rounded-full transition duration-150 text-gray-700 hover:bg-indigo-50 min-w-[120px]">
+                            🛍️ 패키지 상품
+                        </button>
+                        <button id="search-type-accommodation" onclick="setSearchType('accommodation')"
+                                class="px-5 py-2 text-sm font-medium rounded-full transition duration-150 text-gray-700 hover:bg-indigo-50 min-w-[120px]">
+                            🏨 숙소만 검색
+                        </button>
+                        <button id="search-type-flight" onclick="setSearchType('flight')"
+                                class="px-5 py-2 text-sm font-medium rounded-full transition duration-150 text-gray-700 hover:bg-indigo-50 min-w-[120px]">
+                            ✈️ 항공권만 검색
+                        </button>
+                        <button id="search-type-rental-car" onclick="setSearchType('rental_car')"
+                                class="px-5 py-2 text-sm font-medium rounded-full transition duration-150 text-gray-700 hover:bg-indigo-50 min-w-[120px]">
+                            🚗 렌터카만 검색
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Search Form -->
+                <div class="bg-white p-6 md:p-8 rounded-xl card-shadow mb-8">
+                    <h2 class="text-xl font-semibold text-gray-800 mb-4" id="search-form-title">패키지 상품 검색</h2>
+                    <div class="grid grid-cols-1 md:grid-cols-5 gap-4">
+                        
+                        <!-- 1. 상품별 동적 입력 (Location / Route / Pickup Location) -->
+                        <div class="md:col-span-2">
+                            <!-- Package & Accommodation Inputs (Destination) -->
+                            <div id="accommodation-inputs">
+                                <label for="destination" class="block text-sm font-medium text-gray-700 mb-1">목적지</label>
+                                <select id="destination" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500 bg-gray-50">
+                                    <option value="busan">부산 (Busan)</option>
+                                    <option value="seoul" disabled>서울 (준비 중)</option>
+                                    <option value="jeju">제주 (Jeju)</option>
+                                </select>
+                            </div>
+                            <!-- Flight Inputs (Origin & Destination) -->
+                            <div id="flight-inputs" class="hidden grid grid-cols-2 gap-2">
+                                <div>
+                                    <label for="origin" class="block text-sm font-medium text-gray-700 mb-1">출발지</label>
+                                    <select id="origin" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500 bg-gray-50">
+                                        <option value="gimpo">김포 (GMP)</option>
+                                        <option value="incheon" disabled>인천 (ICN)</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label for="flight-destination" class="block text-sm font-medium text-gray-700 mb-1">도착지</label>
+                                    <select id="flight-destination" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500 bg-gray-50">
+                                        <option value="jeju">제주 (CJU)</option>
+                                        <option value="busan">김해 (PUS)</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <!-- Rental Car Inputs (Pickup Location) -->
+                            <div id="rental-car-inputs" class="hidden">
+                                <label for="pickup-location" class="block text-sm font-medium text-gray-700 mb-1">픽업 장소</label>
+                                <select id="pickup-location" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500 bg-gray-50">
+                                    <option value="busan">부산 김해공항</option>
+                                    <option value="jeju">제주 국제공항</option>
+                                    <option value="seoul" disabled>서울역 (준비 중)</option>
+                                </select>
+                            </div>
+                        </div>
+
+
+                        <!-- 2. 체크인/출발/픽업 날짜 및 시간 -->
+                        <div class="md:col-span-1">
+                            <label for="check-in-date" class="block text-sm font-medium text-gray-700 mb-1" id="date-label-start">출발 날짜</label>
+                            <input type="date" id="check-in-date" onchange="updateCheckoutDate()" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500">
+                            <!-- Rental Car Time Input -->
+                            <input type="time" id="pickup-time" value="10:00" class="hidden w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500 mt-2">
+                        </div>
+                        <!-- 3. 체크아웃/도착/반납 날짜 및 시간 -->
+                        <div class="md:col-span-1">
+                            <label for="check-out-date" class="block text-sm font-medium text-gray-700 mb-1" id="date-label-end">도착 날짜</label>
+                            <input type="date" id="check-out-date" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500">
+                            <!-- Rental Car Time Input -->
+                            <input type="time" id="return-time" value="10:00" class="hidden w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500 mt-2">
+                        </div>
+                        <!-- 4. 검색 버튼 -->
+                        <div class="flex items-end md:col-span-1">
+                            <button onclick="searchProducts()"
+                                    class="w-full bg-indigo-600 text-white px-4 py-3 rounded-lg hover:bg-indigo-700 transition shadow-md font-bold">
+                                🔍 검색하기
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Search Results -->
+                <div class="mt-8">
+                    <h2 class="text-2xl font-bold text-gray-800 mb-4">검색 결과</h2>
+                    
+                    <div id="loading-indicator" class="hidden text-center py-12">
+                        <div class="animate-spin inline-block w-8 h-8 border-4 border-indigo-500 border-t-transparent rounded-full mb-3"></div>
+                        <p class="text-indigo-600 font-medium">상품 재고를 확인하는 중입니다...</p>
+                    </div>
+
+                    <div id="results-container" class="space-y-6">
+                        <div class="bg-yellow-50 border-l-4 border-yellow-500 text-yellow-800 p-4 rounded-lg">
+                            <p class="font-semibold">🛍️ 패키지 검색을 시작하세요!</p>
+                            <p class="text-sm">원하는 상품 유형을 선택하고 날짜를 선택하여 검색해 보세요.</p>
+                        </div>
+                        <!-- Dynamic results will be injected here -->
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 2. Cart View (NEW) -->
+            <div id="cart-view" class="view-container hidden">
+                <h2 class="text-2xl font-bold text-gray-800 mb-4">🛒 장바구니 목록</h2>
+                
+                <div class="bg-white p-6 rounded-xl card-shadow mb-6 flex justify-between items-center flex-wrap gap-4">
+                    <p class="text-xl font-semibold text-gray-700">장바구니 총액: <span id="cart-total-price" class="text-pink-600 font-extrabold">0 KRW</span></p>
+                    <div class="flex space-x-3">
+                        <button onclick="shareCart()" 
+                                class="bg-indigo-500 text-white px-6 py-2 rounded-lg font-bold hover:bg-indigo-600 transition shadow-md disabled:bg-gray-400"
+                                id="share-cart-btn" disabled>
+                            🔗 장바구니 공유하기
+                        </button>
+                        <button onclick="clearCart()" 
+                                class="bg-red-500 text-white px-6 py-2 rounded-lg font-bold hover:bg-red-600 transition shadow-md disabled:bg-gray-400">
+                            🗑️ 비우기
+                        </button>
+                    </div>
+                </div>
+
+                <div id="cart-list" class="space-y-4">
+                    <div class="bg-blue-50 border-l-4 border-blue-400 text-blue-800 p-4 rounded-lg">
+                        <p>장바구니가 비어 있습니다.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 3. Bookings View (Existing) -->
+            <div id="bookings-view" class="view-container hidden">
+                <h2 class="text-2xl font-bold text-gray-800 mb-4">내 예약 목록</h2>
+                <p class="text-sm text-gray-600 mb-6">현재 사용자 ID: <code id="user-id-display" class="font-mono text-xs bg-gray-200 p-1 rounded break-all"></code></p>
+                
+                <div id="bookings-list" class="space-y-4">
+                    <div class="bg-blue-50 border-l-4 border-blue-400 text-blue-800 p-4 rounded-lg">
+                        <p>예약 목록을 불러오는 중입니다...</p>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Custom Message Modal (for alerts) -->
+    <div id="message-modal" class="fixed inset-0 bg-gray-600 bg-opacity-50 hidden items-center justify-center z-50">
+        <div class="bg-white p-6 rounded-xl shadow-2xl max-w-sm w-full">
+            <h3 class="text-lg font-semibold text-gray-900 mb-3" id="modal-title">알림</h3>
+            <p class="text-gray-700 mb-4" id="modal-message">메시지 내용</p>
+            <div class="flex justify-end">
+                <button onclick="document.getElementById('message-modal').classList.add('hidden'); document.getElementById('message-modal').classList.remove('flex');"
+                        class="bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 transition">확인</button>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- JavaScript and Firebase Logic -->
+    <script type="module">
+        // Firebase Imports
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, collection, query, getDocs, addDoc, onSnapshot, setLogLevel } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+        // Global Firebase and State Variables
+        let db;
+        let auth;
+        let userId = null;
+        let unsubscribeBookings = null; // 실시간 리스너 해제 함수
+        const appId = typeof __app_id !== 'undefined' ? __app_id : 'mango-travel-portal';
+        
+        // NEW: Cart State
+        let cart = [];
+        
+        // **고객 의도 반영: 초기 검색 유형을 패키지로 설정**
+        let currentSearchType = 'package'; // 'package', 'accommodation', 'flight', 'rental_car'
+
+        // --- Mock Data ---
+        const MOCK_FLIGHT_PRODUCTS = [
+            { id: 'FL001', airline: 'Mango Air', flightNumber: 'MA101', route: 'GMP → CJU', basePrice: 85000, duration: '1시간 5분' },
+            { id: 'FL002', airline: 'FlyKorea', flightNumber: 'FK305', route: 'GMP → CJU', basePrice: 98000, duration: '1시간 10분' },
+            { id: 'FL003', airline: 'Peach Airlines', flightNumber: 'PA777', route: 'GMP → CJU', basePrice: 75000, duration: '1시간 15분' },
+        ];
+        
+        const MOCK_CAR_PRODUCTS = [
+            { id: 'RC001', model: '아반떼 AD (준중형)', company: 'Happy Rent', dailyPrice: 40000, fuel: '가솔린' },
+            { id: 'RC002', model: 'K5 (중형)', company: 'Quick Car', dailyPrice: 55000, fuel: 'LPG' },
+        ];
+
+        // --- 유틸리티 및 UI 헬퍼 함수 ---
+        
+        function showMessage(title, message) {
+            document.getElementById('modal-title').textContent = title;
+            document.getElementById('modal-message').textContent = message;
+            document.getElementById('message-modal').classList.remove('hidden');
+            document.getElementById('message-modal').classList.add('flex');
+        }
+
+        function toggleLoading(show) {
+            document.getElementById('loading-indicator').classList.toggle('hidden', !show);
+            if (show) {
+                document.getElementById('results-container').innerHTML = ''; 
+            }
+        }
+
+        function parseDate(dateString) {
+            const [year, month, day] = dateString.split('-').map(Number);
+            return new Date(year, month - 1, day);
+        }
+
+        function formatDate(date) {
+            return date.toISOString().split('T')[0];
+        }
+
+        function getDurationInDays(startDateString, endDateString) {
+            const start = parseDate(startDateString);
+            const end = parseDate(endDateString);
+            const diffTime = Math.abs(end.getTime() - start.getTime());
+            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+            return Math.max(1, diffDays); 
+        }
+
+        window.updateCheckoutDate = () => {
+            const checkInInput = document.getElementById('check-in-date');
+            const checkOutInput = document.getElementById('check-out-date');
+            
+            if (checkInInput.value) {
+                const checkInDate = parseDate(checkInInput.value);
+                const nextDay = new Date(checkInDate);
+
+                // 패키지, 숙박은 +1일 (1박)
+                if (currentSearchType === 'accommodation' || currentSearchType === 'package') {
+                    nextDay.setDate(checkInDate.getDate() + 1);
+                } else {
+                    // 항공, 렌터카는 당일 포함 가능
+                    nextDay.setDate(checkInDate.getDate());
+                }
+                
+                const nextDayStr = formatDate(nextDay);
+                checkOutInput.value = nextDayStr;
+                checkOutInput.min = nextDayStr;
+            }
+        };
+
+        function getDateRange(startDateString, endDateString) {
+            const dates = [];
+            let currentDate = parseDate(startDateString);
+            const endDate = parseDate(endDateString);
+
+            while (currentDate < endDate) {
+                const dateStr = formatDate(currentDate);
+                dates.push(dateStr);
+                currentDate.setDate(currentDate.getDate() + 1);
+            }
+            return dates;
+        }
+
+        // --- Cart Management ---
+
+        function updateCartCount() {
+            document.getElementById('cart-count').textContent = cart.length;
+            document.getElementById('share-cart-btn').disabled = cart.length === 0;
+            
+            const total = cart.reduce((sum, item) => sum + item.totalPrice, 0);
+            document.getElementById('cart-total-price').textContent = `${total.toLocaleString('ko-KR')} KRW`;
+        }
+
+        window.addToCart = (productDataJson) => {
+            try {
+                const product = JSON.parse(productDataJson);
+                // 중복 체크 로직 (간단하게 ID와 타입이 같으면 중복으로 간주)
+                const isDuplicate = cart.some(item => 
+                    item.productId === product.productId && item.productType === product.productType
+                );
+
+                if (isDuplicate) {
+                    showMessage("알림", "이미 장바구니에 담긴 상품입니다.");
+                    return;
+                }
+
+                cart.push(product);
+                updateCartCount();
+                showMessage("장바구니", `${product.productName} 상품이 장바구니에 담겼습니다!`);
+            } catch (error) {
+                console.error("Failed to add to cart:", error);
+                showMessage("오류", "장바구니에 상품을 담는 중 오류가 발생했습니다.");
+            }
+        };
+        
+        window.removeFromCart = (index) => {
+            cart.splice(index, 1);
+            updateCartCount();
+            renderCart();
+            showMessage("삭제 완료", "장바구니에서 상품을 삭제했습니다.");
+        };
+
+        window.clearCart = () => {
+            cart = [];
+            updateCartCount();
+            renderCart();
+            showMessage("비우기 완료", "장바구니의 모든 상품을 비웠습니다.");
+        };
+
+        window.renderCart = () => {
+            const container = document.getElementById('cart-list');
+            container.innerHTML = '';
+
+            if (cart.length === 0) {
+                container.innerHTML = `
+                    <div class="bg-blue-50 border-l-4 border-blue-400 text-blue-800 p-4 rounded-lg">
+                        <p>장바구니가 비어 있습니다. 검색 탭에서 상품을 담아보세요.</p>
+                    </div>
+                `;
+                return;
+            }
+
+            cart.forEach((item, index) => {
+                const isFlight = item.productType === 'flight';
+                const isRentalCar = item.productType === 'rental_car';
+                const isPackage = item.productType === 'package';
+                
+                let icon, period, priceColor, details;
+                
+                if (isFlight) {
+                    icon = '✈️';
+                    priceColor = 'text-green-600';
+                    period = `출발일: ${item.checkIn}`;
+                    details = `노선: ${item.metadata?.route} | 소요 시간: ${item.metadata?.duration}`;
+                } else if (isRentalCar) {
+                    icon = '🚗';
+                    priceColor = 'text-orange-600';
+                    period = `픽업: ${item.checkIn} → 반납: ${item.checkOut} (${item.days}일)`;
+                    details = `차량: ${item.metadata?.model} | 업체: ${item.metadata?.company}`;
+                } else if (isPackage) {
+                    icon = '🛍️';
+                    priceColor = 'text-fuchsia-600';
+                    period = `출발: ${item.checkIn} → 도착: ${item.checkOut} (${item.nights}박)`;
+                    details = `항공+숙소 패키지`;
+                } else {
+                    icon = '🏨';
+                    priceColor = 'text-indigo-600';
+                    period = `체크인: ${item.checkIn} → 체크아웃: ${item.checkOut} (${item.nights}박)`;
+                    details = `파트너: ${item.partnerId}`;
+                }
+
+                const itemHtml = `
+                    <div class="bg-white p-5 rounded-xl card-shadow flex justify-between items-center space-x-4">
+                        <div class="flex-grow">
+                            <h3 class="text-lg font-bold text-gray-900">${icon} ${item.productName}</h3>
+                            <p class="text-sm text-gray-600 mt-1">${period}</p>
+                            <p class="text-xs text-gray-400 mt-1">${details}</p>
+                        </div>
+                        <div class="flex-shrink-0 text-right">
+                            <p class="text-xl font-extrabold ${priceColor}">${item.totalPrice.toLocaleString('ko-KR')} KRW</p>
+                            <div class="flex space-x-2 mt-2">
+                                <button onclick='bookProduct("${JSON.stringify(item).replace(/"/g, '&quot;')}", true, ${index})'
+                                        class="bg-orange-500 text-white px-4 py-1 text-sm rounded-lg hover:bg-orange-600 transition">
+                                    예약하기
+                                </button>
+                                <button onclick='removeFromCart(${index})'
+                                        class="bg-gray-200 text-gray-700 px-3 py-1 text-sm rounded-lg hover:bg-gray-300 transition">
+                                    삭제
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                container.innerHTML += itemHtml;
+            });
+            updateCartCount();
+        };
+
+        /**
+         * 장바구니 공유 기능 (Firebase Public Collection 사용)
+         */
+        window.shareCart = async () => {
+            if (cart.length === 0) {
+                showMessage("오류", "장바구니에 상품이 없습니다. 먼저 상품을 담아주세요.");
+                return;
+            }
+            if (!db || !userId) {
+                showMessage("오류", "인증 정보가 부족하여 공유할 수 없습니다.");
+                return;
+            }
+
+            try {
+                document.getElementById('share-cart-btn').textContent = "공유 중...";
+                document.getElementById('share-cart-btn').disabled = true;
+
+                // 1. 공용 컬렉션 경로: /artifacts/{appId}/public/data/shared_carts
+                const sharedCartsRef = collection(db, 'artifacts', appId, 'public', 'data', 'shared_carts');
+                
+                const cartDataToSave = {
+                    ownerId: userId,
+                    createdAt: new Date().toISOString(),
+                    items: cart,
+                    totalPrice: cart.reduce((sum, item) => sum + item.totalPrice, 0)
+                };
+
+                // 2. Firestore에 장바구니 데이터 저장
+                const docRef = await addDoc(sharedCartsRef, cartDataToSave);
+                const shareId = docRef.id;
+
+                // 3. 공유 링크 생성 (현재 환경 URL은 알 수 없으므로 Mock URL 사용)
+                // 실제 서비스에서는 'https://yourportal.com/share?id=' + shareId 형태가 됩니다.
+                const mockBaseUrl = "https://mango.travel/shared-cart-preview";
+                const shareUrl = `${mockBaseUrl}?shareId=${shareId}`;
+
+                // 4. 클립보드에 복사 (document.execCommand('copy') 사용)
+                const tempInput = document.createElement('textarea');
+                tempInput.value = shareUrl;
+                document.body.appendChild(tempInput);
+                tempInput.select();
+                document.execCommand('copy');
+                document.body.removeChild(tempInput);
+                
+                showMessage(
+                    "🔗 장바구니 공유 완료!",
+                    `장바구니 링크가 클립보드에 복사되었습니다. (Share ID: ${shareId})\n\n동행인에게 이 링크를 전달하세요: ${shareUrl}`
+                );
+
+            } catch (error) {
+                console.error("Failed to share cart:", error);
+                showMessage("공유 실패", "장바구니를 공유하는 중 오류가 발생했습니다: " + error.message);
+            } finally {
+                document.getElementById('share-cart-btn').textContent = "🔗 장바구니 공유하기";
+                document.getElementById('share-cart-btn').disabled = cart.length === 0;
+            }
+        };
+
+        // --- UI View Control ---
+
+        /**
+         * 검색 타입 변경 (패키지 <-> 숙박 <-> 항공권 <-> 렌터카)
+         */
+        window.setSearchType = (type) => {
+            currentSearchType = type;
+            const isAccommodation = type === 'accommodation';
+            const isFlight = type === 'flight';
+            const isRentalCar = type === 'rental_car';
+            const isPackage = type === 'package'; // New package type
+
+            document.getElementById('search-form-title').textContent = 
+                isPackage ? '패키지 상품 검색' : 
+                isAccommodation ? '숙소만 검색' : 
+                isFlight ? '항공권만 검색' :
+                '렌터카만 검색'; 
+
+            // Input Visibility
+            const useDestinationSelect = isPackage || isAccommodation;
+            document.getElementById('accommodation-inputs').classList.toggle('hidden', !useDestinationSelect);
+            document.getElementById('flight-inputs').classList.toggle('hidden', !(isFlight));
+            document.getElementById('rental-car-inputs').classList.toggle('hidden', !(isRentalCar));
+
+            // Date Labels & Time Inputs
+            document.getElementById('date-label-start').textContent = (isAccommodation || isPackage) ? '체크인/출발 날짜' : isFlight ? '출발 날짜' : '픽업 날짜';
+            document.getElementById('date-label-end').textContent = (isAccommodation || isPackage) ? '체크아웃/도착 날짜' : isFlight ? '도착 날짜' : '반납 날짜';
+            
+            document.getElementById('pickup-time').classList.toggle('hidden', !isRentalCar);
+            document.getElementById('return-time').classList.toggle('hidden', !isRentalCar);
+
+            // Button Style Update
+            const setBtnStyle = (btnId, isActive) => {
+                const btn = document.getElementById(btnId);
+                btn.classList.toggle('bg-indigo-600', isActive);
+                btn.classList.toggle('text-white', isActive);
+                btn.classList.toggle('text-gray-700', !isActive);
+                btn.classList.toggle('hover:bg-indigo-50', !isActive);
+            };
+
+            setBtnStyle('search-type-package', isPackage);
+            setBtnStyle('search-type-accommodation', isAccommodation);
+            setBtnStyle('search-type-flight', isFlight);
+            setBtnStyle('search-type-rental-car', isRentalCar);
+
+            // Result Reset
+            document.getElementById('results-container').innerHTML = `
+                <div class="bg-yellow-50 border-l-4 border-yellow-500 text-yellow-800 p-4 rounded-lg">
+                    <p class="font-semibold">${document.getElementById('search-form-title').textContent}을(를) 시작하세요!</p>
+                    <p class="text-sm">위 검색창에서 날짜 및 조건을 선택하고 '검색하기' 버튼을 눌러보세요.</p>
+                </div>
+            `;
+            initializeUI(); 
+        };
+
+        window.showView = (viewName) => {
+            const views = {
+                'search': document.getElementById('search-view'),
+                'bookings': document.getElementById('bookings-view'),
+                'cart': document.getElementById('cart-view')
+            };
+            const searchBtn = document.getElementById('search-view-btn');
+            const bookingsBtn = document.getElementById('bookings-view-btn');
+            const cartBtn = document.getElementById('cart-view-btn');
+
+            Object.values(views).forEach(v => v.classList.add('hidden'));
+
+            const setActiveButton = (button, isActive, activeColor, inactiveColor) => {
+                button.classList.toggle(activeColor, isActive);
+                button.classList.toggle('text-white', isActive);
+                button.classList.toggle(inactiveColor, !isActive);
+                button.classList.toggle('text-indigo-700', inactiveColor.includes('indigo'));
+            };
+            
+            // Reset all buttons to inactive state
+            setActiveButton(searchBtn, false, 'bg-indigo-600', 'bg-indigo-100');
+            setActiveButton(bookingsBtn, false, 'bg-indigo-600', 'bg-indigo-100');
+            setActiveButton(cartBtn, false, 'bg-pink-600', 'bg-pink-500'); // Cart uses pink
+
+            if (views[viewName]) {
+                views[viewName].classList.remove('hidden');
+                
+                if (viewName === 'search') {
+                    setActiveButton(searchBtn, true, 'bg-indigo-600', 'bg-indigo-100');
+                } else if (viewName === 'bookings') {
+                    setActiveButton(bookingsBtn, true, 'bg-indigo-600', 'bg-indigo-100');
+                    if (userId && !unsubscribeBookings) { loadMyBookings(); }
+                } else if (viewName === 'cart') { // NEW Cart View Logic
+                    setActiveButton(cartBtn, true, 'bg-pink-600', 'bg-pink-500');
+                    renderCart();
+                }
+            }
+        };
+
+        // --- 예약 목록 로직 (기존 유지) ---
+        
+        function loadMyBookings() {
+            if (!db || !userId) {
+                console.error("Database or User ID not available for loading bookings.");
+                return;
+            }
+            
+            if (unsubscribeBookings) {
+                unsubscribeBookings();
+                unsubscribeBookings = null;
+            }
+
+            const bookingsPath = ['artifacts', appId, 'users', userId, 'bookings'];
+            const bookingsCollectionRef = collection(db, ...bookingsPath);
+            const bookingsListContainer = document.getElementById('bookings-list');
+            
+            unsubscribeBookings = onSnapshot(bookingsCollectionRef, (snapshot) => {
+                const bookings = [];
+                snapshot.forEach(doc => {
+                    bookings.push({ id: doc.id, ...doc.data() });
+                });
+                
+                bookings.sort((a, b) => new Date(b.bookingDate) - new Date(a.bookingDate));
+
+                renderBookingsList(bookings);
+            }, (error) => {
+                console.error("Error listening to bookings:", error);
+                bookingsListContainer.innerHTML = `<div class="bg-red-50 border-l-4 border-red-500 text-red-800 p-4 rounded-lg">예약 목록을 불러오는 중 오류가 발생했습니다: ${error.message}</div>`;
+            });
+        }
+
+        function renderBookingsList(bookings) {
+            const container = document.getElementById('bookings-list');
+            container.innerHTML = ''; 
+
+            if (bookings.length === 0) {
+                container.innerHTML = `
+                    <div class="bg-blue-100 border-l-4 border-blue-500 text-blue-800 p-6 rounded-lg">
+                        <p class="font-semibold">아직 예약 내역이 없습니다.</p>
+                        <p class="text-sm">상품 검색 탭에서 원하는 상품을 예약해 보세요!</p>
+                    </div>
+                `;
+                return;
+            }
+
+            bookings.forEach(booking => {
+                const isFlight = booking.productType === 'flight';
+                const isRentalCar = booking.productType === 'rental_car';
+                const isPackage = booking.productType === 'package';
+
+                const statusClass = booking.status === 'PENDING' ? 'bg-yellow-500' : 'bg-green-500';
+                const statusText = booking.status === 'PENDING' ? '예약 대기' : '예약 확정';
+                const bookingTime = booking.bookingDate ? new Date(booking.bookingDate).toLocaleDateString('ko-KR') : '날짜 없음';
+                
+                let title, details, period, icon, priceColor;
+
+                if (isFlight) {
+                    icon = '✈️';
+                    title = `${booking.metadata?.airline || '항공사 정보 없음'} (${booking.metadata?.flightNumber})`;
+                    details = `노선: ${booking.metadata?.route} | 소요 시간: ${booking.metadata?.duration}`;
+                    period = `출발일: ${booking.checkIn}`;
+                    priceColor = 'text-green-600';
+                } else if (isRentalCar) {
+                    icon = '🚗';
+                    title = booking.productName || '렌터카 정보 없음';
+                    details = `업체: ${booking.metadata?.company || booking.partnerId} | 연료: ${booking.metadata?.fuel}`;
+                    period = `픽업: ${booking.checkIn} ${booking.metadata?.pickupTime} → 반납: ${booking.checkOut} ${booking.metadata?.returnTime} (${booking.days}일)`;
+                    priceColor = 'text-orange-600';
+                } else if (isPackage) {
+                    icon = '🛍️';
+                    title = booking.productName || '패키지 정보 없음';
+                    details = `항공: ${booking.metadata?.flightName} | 숙소: ${booking.metadata?.accommodationName}`;
+                    period = `출발: ${booking.checkIn} → 도착: ${booking.checkOut} (${booking.nights}박)`;
+                    priceColor = 'text-fuchsia-600';
+                } else { // Accommodation
+                    icon = '🏨';
+                    title = booking.productName || '객실 정보 없음';
+                    details = `파트너 ID: ${booking.partnerId}`;
+                    period = `체크인: ${booking.checkIn} → 체크아웃: ${booking.checkOut} (${booking.nights}박)`;
+                    priceColor = 'text-indigo-600';
+                }
+
+                const bookingItem = document.createElement('div');
+                bookingItem.className = 'bg-white p-5 rounded-xl card-shadow flex flex-col md:flex-row justify-between items-start md:items-center space-y-3 md:space-y-0';
+                
+                bookingItem.innerHTML = `
+                    <div>
+                        <h3 class="text-xl font-bold text-gray-900">${icon} ${title}</h3>
+                        <p class="text-sm text-gray-600 mt-1">
+                            <span class="font-semibold">${period}</span>
+                        </p>
+                        <p class="text-xs text-gray-400 mt-1">${details}</p>
+                        <p class="text-xs text-gray-400 mt-1">예약일: ${bookingTime} | 예약 ID: ${booking.id.substring(0, 8)}</p>
+                    </div>
+                    <div class="flex items-center space-x-4">
+                        <span class="px-3 py-1 text-xs font-bold text-white rounded-full ${statusClass}">
+                            ${statusText}
+                        </span>
+                        <p class="text-2xl font-extrabold ${priceColor}">
+                            ${booking.totalPrice.toLocaleString('ko-KR')} KRW
+                        </p>
+                    </div>
+                `;
+                container.appendChild(bookingItem);
+            });
+        }
+        
+        // --- 메인 검색 로직 ---
+
+        window.searchProducts = async () => {
+            if (currentSearchType === 'package') {
+                await searchPackages();
+            } else if (currentSearchType === 'accommodation') {
+                await searchAccommodation();
+            } else if (currentSearchType === 'flight') {
+                await searchFlights();
+            } else if (currentSearchType === 'rental_car') {
+                await searchRentalCars();
+            }
+        }
+        // ... (searchPackages, searchAccommodation, searchFlights, searchRentalCars functions are unchanged) ...
+        // [Immersive content redacted for brevity.]
+
+        async function searchPackages() {
+             if (!db || !userId) {
+                showMessage("오류", "Firebase 연결 또는 사용자 인증이 완료되지 않았습니다.");
+                return;
+            }
+
+            const checkInDate = document.getElementById('check-in-date').value;
+            const checkOutDate = document.getElementById('check-out-date').value;
+            const destination = document.getElementById('destination').value;
+            
+            if (!checkInDate || !checkOutDate) {
+                showMessage("필수 입력", "출발 날짜와 도착 날짜를 모두 선택해 주세요.");
+                return;
+            }
+            
+            const checkIn = parseDate(checkInDate);
+            const checkOut = parseDate(checkOutDate);
+            const today = new Date();
+            today.setHours(0, 0, 0, 0); 
+
+            if (checkIn < today || checkOut < today) {
+                showMessage("날짜 오류", "선택하신 날짜는 오늘 날짜 이후여야 합니다.");
+                return;
+            }
+
+            if (checkIn >= checkOut) {
+                showMessage("날짜 오류", "도착 날짜는 출발 날짜보다 늦어야 합니다.");
+                return;
+            }
+
+            toggleLoading(true);
+            const datesToBook = getDateRange(checkInDate, checkOutDate);
+            const totalNights = datesToBook.length;
+            
+            try {
+                // Mock Flight Data for Package (GMP -> CJU/PUS depending on destination)
+                const routeName = destination === 'jeju' ? 'GMP → CJU' : 'GMP → PUS';
+                const flightResults = MOCK_FLIGHT_PRODUCTS
+                    .filter(f => f.route.includes(routeName.split('→').map(s => s.trim()).join(' → ')))
+                    .map(f => ({
+                        flight: f,
+                        price: f.basePrice + (Math.floor(Math.random() * 20000))
+                    }));
+
+                // Get Room Types (Same as Accommodation search)
+                const roomTypesCollectionRef = collection(db, 'artifacts', appId, 'public', 'data', 'hotel_room_types');
+                const roomTypesSnapshot = await getDocs(roomTypesCollectionRef);
+                const roomTypesMap = {};
+                roomTypesSnapshot.forEach(doc => {
+                    roomTypesMap[doc.id] = { id: doc.id, ...doc.data() };
+                });
+                
+                // Get Hotel Inventory for all nights
+                const inventoryCollectionRef = collection(db, 'artifacts', appId, 'public', 'data', 'hotel_inventory');
+                const inventorySnapshot = await getDocs(inventoryCollectionRef);
+
+                const roomAvailability = {}; 
+                inventorySnapshot.forEach(doc => {
+                    const data = doc.data();
+                    const docDate = data.date;
+                    if (datesToBook.includes(docDate)) {
+                        const key = `${data.roomId}_${data.partnerId}`;
+                        
+                        if (!roomAvailability[key]) {
+                            roomAvailability[key] = {
+                                roomId: data.roomId,
+                                roomType: roomTypesMap[data.roomId] || null, 
+                                minInventory: Infinity, 
+                                totalPrice: 0, 
+                                datesFound: 0, 
+                            };
+                        }
+                        roomAvailability[key].minInventory = Math.min(roomAvailability[key].minInventory, data.inventory);
+                        roomAvailability[key].totalPrice += data.price;
+                        roomAvailability[key].datesFound += 1;
+                    }
+                });
+                
+                // 3. Combine Flights and Available Rooms into Packages
+                const availableRooms = Object.values(roomAvailability)
+                    .filter(item => item.roomType && item.datesFound === totalNights && item.minInventory > 0)
+                    .sort((a, b) => a.totalPrice - b.totalPrice); 
+
+                const finalPackages = [];
+                let packageIndex = 1;
+
+                // Create packages by combining the best flights and rooms
+                for (let i = 0; i < Math.min(flightResults.length, 3); i++) { // Limit flights for simplicity
+                    for (let j = 0; j < Math.min(availableRooms.length, 3); j++) { // Limit rooms
+                        const flight = flightResults[i];
+                        const room = availableRooms[j];
+
+                        const packagePrice = flight.price + room.totalPrice;
+                        
+                        finalPackages.push({
+                            productType: 'package',
+                            id: `PKG${packageIndex++}`,
+                            name: `[${flight.flight.airline}] + ${room.roomType.name}`,
+                            partnerId: 'MangoBundle',
+                            metadata: {
+                                flightName: `${flight.flight.airline} ${flight.flight.flightNumber}`,
+                                accommodationName: room.roomType.name,
+                                flightPrice: flight.price,
+                                accommodationPrice: room.totalPrice,
+                                route: flight.flight.route,
+                                nights: totalNights,
+                                remaining: Math.min(room.minInventory, 5) // Mock remaining count
+                            },
+                            totalPrice: packagePrice,
+                            averagePrice: Math.round(packagePrice / totalNights),
+                            nights: totalNights
+                        });
+                    }
+                }
+
+                // 4. Final render
+                renderResults(finalPackages.sort((a, b) => a.totalPrice - b.totalPrice), checkInDate, checkOutDate, totalNights);
+                
+            } catch (error) {
+                console.error("Package search failed:", error);
+                showMessage("검색 오류", "패키지 상품을 검색하는 중 오류가 발생했습니다: " + error.message);
+            } finally {
+                toggleLoading(false);
+            }
+        }
+
+
+        /**
+         * 숙박 상품 검색 (기존 로직 유지)
+         */
+        async function searchAccommodation() {
+            if (!db || !userId) {
+                showMessage("오류", "Firebase 연결 또는 사용자 인증이 완료되지 않았습니다.");
+                return;
+            }
+
+            const checkInDate = document.getElementById('check-in-date').value;
+            const checkOutDate = document.getElementById('check-out-date').value;
+            
+            if (!checkInDate || !checkOutDate) {
+                showMessage("필수 입력", "체크인 날짜와 체크아웃 날짜를 모두 선택해 주세요.");
+                return;
+            }
+            
+            const checkIn = parseDate(checkInDate);
+            const checkOut = parseDate(checkOutDate);
+            const today = new Date();
+            today.setHours(0, 0, 0, 0); 
+
+            if (checkIn < today || checkOut < today) {
+                showMessage("날짜 오류", "선택하신 날짜는 오늘 날짜 이후여야 합니다.");
+                return;
+            }
+
+            if (checkIn >= checkOut) {
+                showMessage("날짜 오류", "체크아웃 날짜는 체크인 날짜보다 늦어야 합니다.");
+                return;
+            }
+
+            toggleLoading(true);
+            const datesToBook = getDateRange(checkInDate, checkOutDate);
+            const totalNights = datesToBook.length;
+            
+            try {
+                // 1. 모든 객실 타입 기본 정보 로드
+                const roomTypesCollectionRef = collection(db, 'artifacts', appId, 'public', 'data', 'hotel_room_types');
+                const roomTypesSnapshot = await getDocs(roomTypesCollectionRef);
+                const roomTypesMap = {};
+                roomTypesSnapshot.forEach(doc => {
+                    roomTypesMap[doc.id] = { id: doc.id, ...doc.data() };
+                });
+                
+                // 2. 검색 날짜 범위에 해당하는 Inventory 문서 조회
+                const inventoryCollectionRef = collection(db, 'artifacts', appId, 'public', 'data', 'hotel_inventory');
+                const inventorySnapshot = await getDocs(inventoryCollectionRef);
+                
+                // 3. 재고 및 요금 계산 (기존 로직)
+                const roomAvailability = {}; 
+                inventorySnapshot.forEach(doc => {
+                    const data = doc.data();
+                    const docDate = data.date;
+                    if (datesToBook.includes(docDate)) {
+                        const key = `${data.roomId}_${data.partnerId}`;
+                        
+                        if (!roomAvailability[key]) {
+                            roomAvailability[key] = {
+                                roomId: data.roomId,
+                                partnerId: data.partnerId,
+                                roomType: roomTypesMap[data.roomId] || null, 
+                                minInventory: Infinity, 
+                                totalPrice: 0, 
+                                datesFound: 0, 
+                            };
+                        }
+                        roomAvailability[key].minInventory = Math.min(roomAvailability[key].minInventory, data.inventory);
+                        roomAvailability[key].totalPrice += data.price;
+                        roomAvailability[key].datesFound += 1;
+                    }
+                });
+
+                // 4. 최종 결과 필터링 및 포맷팅
+                const finalResults = Object.values(roomAvailability)
+                    .filter(item => item.roomType && item.datesFound === totalNights && item.minInventory > 0)
+                    .map(item => ({
+                        productType: 'accommodation',
+                        id: item.roomId,
+                        name: item.roomType.name,
+                        partnerId: item.partnerId,
+                        metadata: {
+                            beds: item.roomType.beds,
+                            size: item.roomType.size,
+                            maxOccupancy: item.roomType.maxOccupancy,
+                            remaining: item.minInventory,
+                        },
+                        totalPrice: item.totalPrice,
+                        averagePrice: item.totalPrice / totalNights,
+                        nights: totalNights
+                    }))
+                    .sort((a, b) => a.totalPrice - b.totalPrice); 
+
+                renderResults(finalResults, checkInDate, checkOutDate, totalNights);
+                
+            } catch (error) {
+                console.error("Accommodation search failed:", error);
+                showMessage("검색 오류", "숙박 상품을 검색하는 중 오류가 발생했습니다: " + error.message);
+            } finally {
+                toggleLoading(false);
+            }
+        }
+
+        /**
+         * 항공권 상품 검색 (Mock Data 사용 - 기존 유지)
+         */
+        async function searchFlights() {
+             if (!db || !userId) {
+                showMessage("오류", "Firebase 연결 또는 사용자 인증이 완료되지 않았습니다.");
+                return;
+            }
+
+            const checkInDate = document.getElementById('check-in-date').value; // 출발일
+            const origin = document.getElementById('origin').value;
+            const flightDestination = document.getElementById('flight-destination').value;
+            
+            if (!checkInDate || !origin || !flightDestination) {
+                showMessage("필수 입력", "출발지, 도착지, 출발 날짜를 모두 선택해 주세요.");
+                return;
+            }
+            
+            const today = new Date();
+            today.setHours(0, 0, 0, 0); 
+            const checkIn = parseDate(checkInDate);
+
+            if (checkIn < today) {
+                showMessage("날짜 오류", "출발 날짜는 오늘 날짜 이후여야 합니다.");
+                return;
+            }
+
+            toggleLoading(true);
+            
+            try {
+                // Mock 데이터에서 경로와 일치하는 항공권을 찾고 가격을 동적으로 설정
+                const routeName = `${origin.toUpperCase()} → ${flightDestination.toUpperCase()}`;
+                
+                const finalResults = MOCK_FLIGHT_PRODUCTS
+                    .filter(flight => flight.route.includes(routeName.split('→').map(s => s.trim()).join(' → ')))
+                    .map((flight, index) => {
+                        const dynamicPrice = flight.basePrice + (Math.floor(Math.random() * 20000)); // 랜덤 가격 변동 추가
+                        return {
+                            productType: 'flight',
+                            id: flight.id,
+                            name: `${flight.airline} ${flight.flightNumber}`,
+                            partnerId: flight.airline.replace(/\s/g, ''),
+                            metadata: {
+                                flightNumber: flight.flightNumber,
+                                airline: flight.airline,
+                                route: flight.route,
+                                duration: flight.duration,
+                                remaining: 5 + (index % 3) // 임의의 잔여 좌석
+                            },
+                            totalPrice: dynamicPrice,
+                            averagePrice: dynamicPrice, // 1인 기준 요금
+                            nights: null // 항공권은 박수가 없음
+                        };
+                    })
+                    .sort((a, b) => a.totalPrice - b.totalPrice); // 최저가 순으로 정렬
+
+                renderResults(finalResults, checkInDate, null, null);
+                
+            } catch (error) {
+                console.error("Flight search failed:", error);
+                showMessage("검색 오류", "항공권 상품을 검색하는 중 오류가 발생했습니다: " + error.message);
+            } finally {
+                toggleLoading(false);
+            }
+        }
+
+        /**
+         * 렌터카 상품 검색 (Mock Data 사용 - 기존 유지)
+         */
+        async function searchRentalCars() {
+             if (!db || !userId) {
+                showMessage("오류", "Firebase 연결 또는 사용자 인증이 완료되지 않았습니다.");
+                return;
+            }
+
+            const pickupDate = document.getElementById('check-in-date').value;
+            const returnDate = document.getElementById('check-out-date').value;
+            const pickupTime = document.getElementById('pickup-time').value;
+            const returnTime = document.getElementById('return-time').value;
+            const location = document.getElementById('pickup-location').value;
+
+            if (!pickupDate || !returnDate || !pickupTime || !returnTime) {
+                showMessage("필수 입력", "픽업/반납 날짜 및 시간을 모두 선택해 주세요.");
+                return;
+            }
+            
+            const pickup = parseDate(pickupDate);
+            const returnDt = parseDate(returnDate);
+            
+            if (pickup > returnDt) {
+                 showMessage("날짜 오류", "반납 날짜는 픽업 날짜와 같거나 늦어야 합니다.");
+                return;
+            }
+
+            toggleLoading(true);
+            
+            const rentalDays = getDurationInDays(pickupDate, returnDate); // 일 단위 계산
+
+            try {
+                const finalResults = MOCK_CAR_PRODUCTS
+                    .map((car, index) => {
+                        // 일일 가격에 랜덤 변동성 추가
+                        const dailyPrice = car.dailyPrice + (Math.floor(Math.random() * 5000) * index);
+                        const totalPrice = dailyPrice * rentalDays;
+
+                        return {
+                            productType: 'rental_car',
+                            id: car.id,
+                            name: `${car.model}`,
+                            partnerId: car.company.replace(/\s/g, ''),
+                            metadata: {
+                                model: car.model,
+                                company: car.company,
+                                fuel: car.fuel,
+                                location: location,
+                                pickupTime: pickupTime,
+                                returnTime: returnTime,
+                                remaining: 3 + (index % 3) // 임의의 잔여 차량
+                            },
+                            totalPrice: totalPrice,
+                            averagePrice: dailyPrice,
+                            days: rentalDays
+                        };
+                    })
+                    .sort((a, b) => a.totalPrice - b.totalPrice); 
+
+                renderResults(finalResults, pickupDate, returnDate, rentalDays);
+                
+            } catch (error) {
+                console.error("Rental car search failed:", error);
+                showMessage("검색 오류", "렌터카 상품을 검색하는 중 오류가 발생했습니다: " + error.message);
+            } finally {
+                toggleLoading(false);
+            }
+        }
+
+
+        // --- UI 렌더링 함수 (통합) ---
+        function renderResults(results, checkIn, checkOut, duration) { // duration can be nights or days
+            const container = document.getElementById('results-container');
+            container.innerHTML = '';
+            
+            if (results.length === 0) {
+                container.innerHTML = `
+                    <div class="bg-red-50 border-l-4 border-red-500 text-red-800 p-4 rounded-lg">
+                        <p class="font-semibold">검색 결과 없음</p>
+                        <p class="text-sm">선택하신 조건에 맞는 상품을 찾을 수 없습니다. 조건을 변경해 보세요.</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            const productType = results[0]?.productType;
+            const isAccommodation = productType === 'accommodation';
+            const isFlight = productType === 'flight';
+            const isRentalCar = productType === 'rental_car';
+            const isPackage = productType === 'package';
+            
+            // 결과 헤더 텍스트 설정
+            let headerText;
+            let productTypeKo;
+            let headerColor;
+
+            if (isAccommodation) {
+                headerText = `${checkIn} ~ ${checkOut}, 총 ${duration}박`;
+                productTypeKo = '숙소 상품';
+                headerColor = 'text-indigo-700';
+            } else if (isFlight) {
+                headerText = `출발일: ${checkIn}`;
+                productTypeKo = '항공권';
+                headerColor = 'text-green-700';
+            } else if (isRentalCar) {
+                const pickupTime = results[0]?.metadata?.pickupTime || '';
+                const returnTime = results[0]?.metadata?.returnTime || '';
+                headerText = `${checkIn} ${pickupTime} ~ ${checkOut} ${returnTime}, 총 ${duration}일`;
+                productTypeKo = '렌터카 상품';
+                headerColor = 'text-orange-700';
+            } else if (isPackage) {
+                headerText = `${checkIn} ~ ${checkOut}, 총 ${duration}박`;
+                productTypeKo = '패키지 상품';
+                headerColor = 'text-fuchsia-700';
+            }
+
+            const header = `
+                <div class="text-gray-600 mb-4">
+                    <span class="font-bold text-lg ${headerColor}">${results.length}</span>개 ${productTypeKo} 발견됨 (${headerText})
+                </div>
+            `;
+            container.innerHTML = header;
+
+            results.forEach(item => {
+                const metadata = item.metadata;
+                
+                let productDetails = '';
+                let imageText = '';
+                let priceLabel;
+                let priceColor;
+                let ringColor;
+
+                if (isAccommodation) {
+                    priceLabel = `총 ${item.nights}박 요금`;
+                    priceColor = 'text-indigo-600';
+                    ringColor = 'hover:ring-indigo-500';
+                    productDetails = `
+                        <p class="text-sm text-gray-500 mb-2">${metadata.beds || '정보 없음'} | ${metadata.size || '0'}㎡ | 최대 ${metadata.maxOccupancy || '0'}인</p>
+                        <p class="text-sm text-green-600 font-semibold">잔여 객실: ${metadata.remaining}개</p>
+                        <p class="text-xs text-gray-400 mt-1">파트너 ID: ${item.partnerId}</p>
+                    `;
+                    imageText = item.name.replace(/\s/g, '+');
+                } else if (isFlight) {
+                    priceLabel = '1인 편도 요금';
+                    priceColor = 'text-green-600';
+                    ringColor = 'hover:ring-green-500';
+                    productDetails = `
+                        <p class="text-sm text-gray-500 mb-2 font-semibold">${metadata.route}</p>
+                        <p class="text-sm text-gray-700">소요 시간: ${metadata.duration}</p>
+                        <p class="text-sm text-green-600 font-semibold">잔여 좌석: ${metadata.remaining}석</p>
+                        <p class="text-xs text-gray-400 mt-1">운항사: ${metadata.airline}</p>
+                    `;
+                    imageText = metadata.airline.replace(/\s/g, '+');
+                } else if (isRentalCar) {
+                    priceLabel = `총 ${item.days}일 대여 요금`;
+                    priceColor = 'text-orange-600';
+                    ringColor = 'hover:ring-orange-500';
+                     productDetails = `
+                        <p class="text-sm text-gray-700 mb-2 font-semibold">차량 종류: ${metadata.model} (${metadata.fuel})</p>
+                        <p class="text-sm text-gray-500">픽업/반납: ${metadata.location} (${metadata.pickupTime} / ${metadata.returnTime})</p>
+                        <p class="text-sm text-green-600 font-semibold">잔여 차량: ${metadata.remaining}대</p>
+                        <p class="text-xs text-gray-400 mt-1">대여 업체: ${metadata.company}</p>
+                    `;
+                    imageText = metadata.model.replace(/\s/g, '+');
+                } else if (isPackage) {
+                    priceLabel = `총 ${item.nights}박 패키지 요금`;
+                    priceColor = 'text-fuchsia-600';
+                    ringColor = 'hover:ring-fuchsia-500';
+                    productDetails = `
+                        <p class="text-sm text-gray-700 mb-1 font-semibold">✈️ 항공: ${metadata.flightName} (${metadata.route})</p>
+                        <p class="text-sm text-gray-700 mb-2 font-semibold">🏨 숙소: ${metadata.accommodationName}</p>
+                        <p class="text-sm text-gray-500">포함 내역: 항공 + ${item.nights}박 숙소</p>
+                        <p class="text-sm text-green-600 font-semibold">남은 패키지 수: ${metadata.remaining}개</p>
+                        <p class="text-xs text-gray-400 mt-1">패키지 코드: ${item.id}</p>
+                    `;
+                    imageText = 'Package+Deal';
+                }
+
+                // Booking Data for the button
+                const bookingData = JSON.stringify({
+                    productType: item.productType,
+                    productId: item.id,
+                    partnerId: item.partnerId,
+                    checkIn: checkIn,
+                    checkOut: checkOut, 
+                    nights: item.nights || null,
+                    days: item.days || null, // 렌터카용
+                    totalPrice: item.totalPrice,
+                    productName: item.name,
+                    metadata: metadata
+                }).replace(/"/g, '&quot;');
+                
+                const resultCard = document.createElement('div');
+                resultCard.className = `bg-white p-5 rounded-xl card-shadow flex flex-col md:flex-row space-y-4 md:space-y-0 md:space-x-6 hover:ring-2 ${ringColor} transition duration-300`;
+                
+                let priceDetail = '';
+                if (isAccommodation) {
+                    priceDetail = `<p class="text-sm text-gray-400">1박 평균 ${item.averagePrice.toLocaleString('ko-KR')} KRW</p>`;
+                } else if (isRentalCar) {
+                    priceDetail = `<p class="text-sm text-gray-400">1일 평균 ${item.averagePrice.toLocaleString('ko-KR')} KRW</p>`;
+                } else if (isPackage) {
+                     priceDetail = `<p class="text-sm text-gray-400">1인 기준, 총합 ${item.nights}박</p>`;
+                }
+
+                const cardContent = `
+                    <!-- 이미지 플레이스홀더 -->
+                    <div class="flex-shrink-0 w-full md:w-56 h-36 bg-gray-200 rounded-lg overflow-hidden">
+                        <img src="https://placehold.co/600x400/818cf8/ffffff?text=${imageText}" 
+                             alt="${item.name} 이미지" class="w-full h-full object-cover">
+                    </div>
+                    
+                    <!-- 상세 정보 -->
+                    <div class="flex-grow">
+                        <h3 class="text-xl font-bold text-gray-900">${item.name}</h3>
+                        ${productDetails}
+                    </div>
+
+                    <!-- 가격 및 예약 버튼 -->
+                    <div class="flex-shrink-0 flex flex-col items-start md:items-end justify-between">
+                        <div class="text-right">
+                            <p class="text-xs text-gray-500">${priceLabel}</p>
+                            <p class="text-3xl font-extrabold ${priceColor}">${item.totalPrice.toLocaleString('ko-KR')} KRW</p>
+                            ${priceDetail}
+                        </div>
+                        <div class="flex flex-col space-y-2 w-full md:w-auto mt-3">
+                            <button onclick='addToCart("${bookingData}")'
+                                    class="w-full bg-indigo-500 text-white px-6 py-2 rounded-lg font-bold hover:bg-indigo-600 transition shadow-lg">
+                                🛒 장바구니 담기
+                            </button>
+                            <button onclick='bookProduct("${bookingData}")'
+                                    class="w-full bg-orange-500 text-white px-6 py-2 rounded-lg font-bold hover:bg-orange-600 transition shadow-lg">
+                                지금 예약
+                            </button>
+                        </div>
+                    </div>
+                `;
+                resultCard.innerHTML = cardContent;
+                container.appendChild(resultCard);
+            });
+        }
+        
+        /**
+         * 예약 요청 처리 및 Firestore에 저장 (통합)
+         * @param {string} bookingDataJson - 예약 상세 정보 JSON 문자열
+         * @param {boolean} [isFromCart=false] - 장바구니에서 예약했는지 여부
+         * @param {number} [cartIndex] - 장바구니 인덱스 (장바구니에서 예약 시)
+         */
+        window.bookProduct = async (bookingDataJson, isFromCart = false, cartIndex = -1) => {
+            if (!userId) {
+                showMessage("예약 불가", "사용자 인증에 실패하여 예약을 진행할 수 없습니다.");
+                return;
+            }
+            if (!db) {
+                showMessage("오류", "데이터베이스 연결에 문제가 있습니다.");
+                return;
+            }
+
+            try {
+                const bookingDetails = JSON.parse(bookingDataJson);
+                
+                const bookingsCollectionRef = collection(db, 'artifacts', appId, 'users', userId, 'bookings');
+                
+                const newBooking = {
+                    ...bookingDetails,
+                    userId: userId,
+                    bookingDate: formatDate(new Date()),
+                    status: 'PENDING',
+                };
+                
+                // 불필요한 중복 metadata 제거
+                delete newBooking.metadata.remaining;
+                
+                const docRef = await addDoc(bookingsCollectionRef, newBooking);
+
+                const isFlight = bookingDetails.productType === 'flight';
+                const isRentalCar = bookingDetails.productType === 'rental_car';
+                const isPackage = bookingDetails.productType === 'package';
+                
+                let productTypeKo = isPackage ? '패키지' : isAccommodation ? '숙박' : isFlight ? '항공권' : '렌터카';
+                let successMessage;
+
+                if (isFromCart && cartIndex > -1) {
+                    removeFromCart(cartIndex); // 장바구니에서 예약 완료 시 삭제
+                }
+
+                if (isPackage) {
+                    successMessage = `[${bookingDetails.productName}] 패키지 예약이 요청되었습니다. 총 결제 금액: ${bookingDetails.totalPrice.toLocaleString('ko-KR')} KRW`;
+                } else if (isFlight) {
+                    successMessage = `[${bookingDetails.productName}] 항공권 예약이 요청되었습니다. 총 결제 금액: ${bookingDetails.totalPrice.toLocaleString('ko-KR')} KRW`;
+                } else if (isRentalCar) {
+                    successMessage = `[${bookingDetails.productName}] 렌터카 예약이 요청되었습니다. 픽업 기간: ${bookingDetails.days}일. 총 결제 금액: ${bookingDetails.totalPrice.toLocaleString('ko-KR')} KRW`;
+                } else {
+                     successMessage = `[${bookingDetails.productName}] 상품에 대한 ${bookingDetails.nights}박 예약이 요청되었습니다. 총 결제 금액: ${bookingDetails.totalPrice.toLocaleString('ko-KR')} KRW`;
+                }
+
+                showMessage(
+                    `🎉 ${productTypeKo} 예약 요청 성공!`,
+                    successMessage + `\n\n예약 ID: ${docRef.id.substring(0, 8)}...`
+                );
+                
+                showView('bookings');
+
+            } catch (error) {
+                console.error("Booking failed:", error);
+                showMessage("예약 실패", "예약 정보를 저장하는 중 오류가 발생했습니다: " + error.message);
+            }
+        };
+
+
+        // --- Firebase Initialization and Authentication ---
+        async function initFirebase() {
+            try {
+                const firebaseConfig = JSON.parse(typeof __firebase_config !== 'undefined' ? __firebase_config : '{}');
+                const app = initializeApp(firebaseConfig);
+                auth = getAuth(app);
+                db = getFirestore(app);
+                setLogLevel('Debug');
+
+                const initialAuthToken = typeof __initial_auth_token !== 'undefined' ? __initial_auth_token : null;
+                if (initialAuthToken) {
+                    await signInWithCustomToken(auth, initialAuthToken);
+                } else {
+                    await signInAnonymously(auth);
+                }
+
+                onAuthStateChanged(auth, (user) => {
+                    if (user) {
+                        userId = user.uid;
+                        document.getElementById('user-id-display').textContent = userId;
+                        console.log("Customer Portal Auth Success. User ID:", userId);
+                        
+                        showView('search');
+                        setSearchType('package'); 
+                        updateCartCount(); // Initial cart count
+                    } else {
+                        userId = null;
+                        document.getElementById('user-id-display').textContent = '인증되지 않음';
+                        console.warn("User signed out or failed to authenticate anonymously.");
+                        if (unsubscribeBookings) {
+                            unsubscribeBookings();
+                            unsubscribeBookings = null;
+                        }
+                    }
+                });
+                
+                initializeUI();
+
+            } catch (error) {
+                console.error("Firebase initialization or auth failed:", error);
+                showMessage("Firebase 오류", `Firebase 초기화 또는 인증에 실패했습니다: ${error.message}`);
+            }
+        }
+        
+        // --- UI 초기화 및 날짜 설정 ---
+        function initializeUI() {
+            const today = new Date();
+            const tomorrow = new Date(today);
+            tomorrow.setDate(today.getDate() + 1);
+            
+            const formatDate = (date) => date.toISOString().split('T')[0];
+            const tomorrowStr = formatDate(tomorrow);
+            const dayAfterTomorrowStr = formatDate(new Date(today.getTime() + 2 * 24 * 60 * 60 * 1000));
+
+            // 오늘 이전 날짜는 선택 불가하도록 min 속성 설정
+            document.getElementById('check-in-date').min = tomorrowStr;
+            document.getElementById('check-out-date').min = dayAfterTomorrowStr; 
+
+            // 초기 날짜 값 설정 (1박/2일 패키지 기본)
+            document.getElementById('check-in-date').value = tomorrowStr;
+            document.getElementById('check-out-date').value = dayAfterTomorrowStr;
+        }
+
+
+        // --- Initial Setup ---
+        window.onload = initFirebase;
+
+    </script>
+</body>
+</html>

@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mango Admin - Premium Journey</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Pretendard:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Pretendard', sans-serif; }
+        .sidebar-item:hover { background-color: #1e293b; }
+        .active-tab { background-color: #facc15; color: #0f172a; font-weight: 700; }
+        .status-dot { animation: pulse 2s infinite; }
+        @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.4; } 100% { opacity: 1; } }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-900 h-screen flex">
+
+    <!-- Sidebar -->
+    <aside class="w-64 bg-slate-900 text-white flex flex-col">
+        <div class="p-6 flex items-center gap-3">
+            <div class="w-8 h-8 bg-yellow-400 rounded-lg flex items-center justify-center text-slate-900 font-bold">M</div>
+            <h1 class="text-xl font-bold tracking-tight text-yellow-400 italic">Mango</h1>
+        </div>
+        
+        <nav class="flex-1 px-4 space-y-2 mt-4 text-sm">
+            <p class="px-4 text-[10px] uppercase font-bold text-slate-500 mb-2">Management</p>
+            <button onclick="switchTab('dashboard')" id="tab-dashboard" class="sidebar-item active-tab w-full flex items-center gap-3 px-4 py-3 rounded-lg transition text-left">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="7" height="9" x="3" y="3" rx="1"/><rect width="7" height="5" x="14" y="3" rx="1"/><rect width="7" height="9" x="14" y="12" rx="1"/><rect width="7" height="5" x="3" y="16" rx="1"/></svg>
+                프리미엄 여정 대시보드
+            </button>
+            <button onclick="switchTab('assets')" id="tab-assets" class="sidebar-item w-full flex items-center gap-3 px-4 py-3 rounded-lg transition text-left">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" x2="12" y1="3" y2="15"/></svg>
+                미디어 자산 관리
+            </button>
+            
+            <p class="px-4 text-[10px] uppercase font-bold text-slate-500 mt-6 mb-2">Live Control</p>
+            <button onclick="switchTab('sync')" id="tab-sync" class="sidebar-item w-full flex items-center gap-3 px-4 py-3 rounded-lg transition text-left">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v4"/><path d="m16.2 7.8 2.9-2.9"/><path d="M18 12h4"/><path d="m16.2 16.2 2.9 2.9"/><path d="M12 18v4"/><path d="m4.9 19.1 2.9-2.9"/><path d="M2 12h4"/><path d="m4.9 4.9 2.9 2.9"/><circle cx="12" cy="12" r="3"/></svg>
+                클라이언트 즉시 배포
+            </button>
+        </nav>
+        
+        <div class="p-4 border-t border-slate-800">
+            <div class="bg-slate-800/50 rounded-lg p-3">
+                <p class="text-[10px] text-slate-500 uppercase font-bold">Target Path</p>
+                <p class="text-[9px] text-yellow-400/70 font-mono mt-1 break-all">.../data/trips/PremiumJourneyDashboard</p>
+            </div>
+        </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="flex-1 overflow-y-auto flex flex-col">
+        <header class="bg-white border-b border-slate-200 px-8 py-4 flex justify-between items-center sticky top-0 z-10">
+            <div>
+                <h2 id="page-title" class="text-xl font-bold text-slate-800">Premium Journey Dashboard</h2>
+                <p class="text-xs text-slate-400 font-mono">mango/artifacts/${appId}/public/data/trips/...</p>
+            </div>
+            <div class="flex items-center gap-4">
+                <button onclick="saveToCloud()" class="bg-slate-900 text-white px-4 py-2 rounded-lg text-sm font-bold flex items-center gap-2 hover:bg-slate-800 transition">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+                    변경사항 저장 (Deploy)
+                </button>
+                <div class="flex items-center gap-2 bg-slate-100 px-3 py-1.5 rounded-full">
+                    <span class="w-2 h-2 bg-green-500 rounded-full status-dot"></span>
+                    <span class="text-[10px] font-bold text-slate-600">CLOUD CONNECTED</span>
+                </div>
+            </div>
+        </header>
+
+        <!-- Dashboard Content -->
+        <div id="content-dashboard" class="p-8 space-y-8">
+            <!-- Summary Grid -->
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm">
+                    <p class="text-[10px] font-bold text-slate-400 uppercase">여정 상태</p>
+                    <div class="text-xl font-bold mt-1 text-blue-600">진행 중</div>
+                </div>
+                <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm">
+                    <p class="text-[10px] font-bold text-slate-400 uppercase">현재 위치</p>
+                    <div class="text-xl font-bold mt-1 uppercase italic font-serif">Okinawa, JP</div>
+                </div>
+                <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm">
+                    <p class="text-[10px] font-bold text-slate-400 uppercase">연결된 클라이언트</p>
+                    <div class="text-xl font-bold mt-1">4 Devices</div>
+                </div>
+                <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm">
+                    <p class="text-[10px] font-bold text-slate-400 uppercase">최종 동기화</p>
+                    <div class="text-xl font-bold mt-1 text-slate-400 text-sm">2023.10.26 14:24</div>
+                </div>
+            </div>
+
+            <!-- Content Editor Section -->
+            <div class="bg-white rounded-2xl border border-slate-200 overflow-hidden">
+                <div class="px-6 py-4 border-b border-slate-100 flex justify-between items-center">
+                    <h3 class="font-bold flex items-center gap-2">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/><path d="m15 5 4 4"/></svg>
+                        실시간 콘텐츠 구성
+                    </h3>
+                </div>
+                <div class="p-6 grid grid-cols-1 lg:grid-cols-2 gap-10">
+                    <!-- Left: Text Inputs -->
+                    <div class="space-y-6">
+                        <div>
+                            <label class="block text-xs font-bold text-slate-500 uppercase mb-2">Main Greeting Message</label>
+                            <input type="text" class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-yellow-400 outline-none transition" value="환영합니다, 망고 여정의 주인공님!">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-slate-500 uppercase mb-2">Trip Description (AR/UI)</label>
+                            <textarea rows="4" class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-yellow-400 outline-none transition">오키나와의 푸른 바다와 함께하는 특별한 프리미엄 투어입니다. 지금 바로 안내를 따라 이동해 주세요.</textarea>
+                        </div>
+                        <div class="grid grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-xs font-bold text-slate-500 uppercase mb-2">Active Audio asset</label>
+                                <select class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-yellow-400 outline-none transition cursor-pointer">
+                                    <option>환영_안내_A.mp3</option>
+                                    <option>도착_알림_B.mp3</option>
+                                    <option>BGM_Tropical.mp3</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-xs font-bold text-slate-500 uppercase mb-2">Visual Theme</label>
+                                <div class="flex gap-2">
+                                    <button class="w-8 h-8 rounded-full bg-yellow-400 border-2 border-slate-900"></button>
+                                    <button class="w-8 h-8 rounded-full bg-blue-500 border-2 border-white"></button>
+                                    <button class="w-8 h-8 rounded-full bg-emerald-500 border-2 border-white"></button>
+                                    <button class="w-8 h-8 rounded-full bg-slate-900 border-2 border-white"></button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Right: Live Preview Mockup -->
+                    <div class="flex flex-col items-center justify-center bg-slate-50 rounded-xl p-8 border border-slate-100">
+                        <p class="text-[10px] font-bold text-slate-400 uppercase mb-4">Live Preview (Mobile)</p>
+                        <div class="w-64 h-[420px] bg-white rounded-[2.5rem] border-[6px] border-slate-900 shadow-2xl relative overflow-hidden">
+                            <!-- Mobile Screen Content -->
+                            <div class="absolute inset-0 flex flex-col">
+                                <div class="h-1/2 bg-yellow-400 flex items-center justify-center p-6">
+                                    <div class="text-4xl font-black text-slate-900">MANGO</div>
+                                </div>
+                                <div class="p-6 flex-1 space-y-4">
+                                    <div class="h-4 bg-slate-100 rounded-full w-3/4"></div>
+                                    <div class="space-y-2">
+                                        <div class="h-2 bg-slate-50 rounded-full"></div>
+                                        <div class="h-2 bg-slate-50 rounded-full"></div>
+                                        <div class="h-2 bg-slate-50 rounded-full w-1/2"></div>
+                                    </div>
+                                    <div class="pt-6">
+                                        <div class="h-10 bg-slate-900 rounded-xl"></div>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- Notch -->
+                            <div class="absolute top-0 left-1/2 -translate-x-1/2 w-28 h-5 bg-slate-900 rounded-b-2xl"></div>
+                        </div>
+                        <p class="text-[10px] text-slate-400 mt-4 italic">데이터 저장 시 이 레이아웃이 즉시 배포됩니다.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Placeholder for other tabs -->
+        <div id="content-others" class="hidden p-20 text-center text-slate-400">
+            <svg class="mx-auto mb-4" xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20v-6a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2v6"/><rect width="4" height="9" x="18" y="11"/><path d="M18 22h4"/><path d="M2 22h18"/><path d="M10 22h8"/><path d="m8 6 4-4 4 4"/><path d="M12 2v10"/></svg>
+            <p>준비 중인 모듈입니다.</p>
+        </div>
+    </main>
+
+    <!-- Notification Toast -->
+    <div id="toast" class="fixed bottom-8 right-8 bg-slate-900 text-white px-6 py-4 rounded-2xl shadow-2xl flex items-center gap-4 translate-y-24 transition-transform duration-500 pointer-events-none">
+        <div class="w-10 h-10 bg-green-500 rounded-full flex items-center justify-center">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+        </div>
+        <div>
+            <p class="font-bold">배포 완료!</p>
+            <p class="text-xs text-slate-400">PremiumJourneyDashboard 데이터가 갱신되었습니다.</p>
+        </div>
+    </div>
+
+    <script>
+        function switchTab(tab) {
+            const dashboard = document.getElementById('content-dashboard');
+            const others = document.getElementById('content-others');
+            
+            // Buttons
+            document.querySelectorAll('.sidebar-item').forEach(btn => btn.classList.remove('active-tab'));
+            document.getElementById('tab-' + tab).classList.add('active-tab');
+
+            if (tab === 'dashboard') {
+                dashboard.classList.remove('hidden');
+                others.classList.add('hidden');
+            } else {
+                dashboard.classList.add('hidden');
+                others.classList.remove('hidden');
+            }
+        }
+
+        function saveToCloud() {
+            // 여기에 나중에 Firestore setDoc 로직이 들어갑니다.
+            // 경로: collection(db, 'artifacts', appId, 'public', 'data', 'trips').doc('PremiumJourneyDashboard')
+            
+            const toast = document.getElementById('toast');
+            toast.classList.remove('translate-y-24');
+            
+            setTimeout(() => {
+                toast.classList.add('translate-y-24');
+            }, 3000);
+        }
+    </script>
+</body>
+</html>

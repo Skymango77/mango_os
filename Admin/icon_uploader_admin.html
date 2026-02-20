@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>관리자 아이콘 업로드 대시보드</title>
+    <!-- Tailwind CSS CDN 로드 -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f7f9fb;
+            min-height: 100vh;
+        }
+        .file-input-wrapper {
+            position: relative;
+            overflow: hidden;
+            display: inline-block;
+        }
+        .file-input-wrapper input[type=file] {
+            font-size: 100px;
+            position: absolute;
+            left: 0;
+            top: 0;
+            opacity: 0;
+            cursor: pointer;
+        }
+    </style>
+    <!-- Firebase SDK (Firestore, Auth) 로드 -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, doc, setDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+        
+        // Firestore 및 Auth 전역 변수 설정 (접근을 위해 window 객체에 할당)
+        window.firebase = {};
+        
+        // 1. Firebase 초기화
+        const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
+        const firebaseConfig = JSON.parse(typeof __firebase_config !== 'undefined' ? __firebase_config : '{}');
+
+        if (Object.keys(firebaseConfig).length > 0) {
+            const app = initializeApp(firebaseConfig);
+            window.firebase.db = getFirestore(app);
+            window.firebase.auth = getAuth(app);
+            window.firebase.appId = appId;
+        } else {
+            console.error("Firebase config is missing. Cannot initialize Firestore.");
+            document.getElementById('uploadStatus').textContent = "Firebase 설정 오류. 콘솔을 확인하세요.";
+        }
+
+        /**
+         * 2. 인증 처리 및 UI 초기화
+         * Canvas 환경에서는 __initial_auth_token을 사용하고, 아니면 익명 로그인 시도
+         */
+        window.firebase.authReady = false;
+        
+        onAuthStateChanged(window.firebase.auth, async (user) => {
+            if (user) {
+                window.firebase.userId = user.uid;
+                window.firebase.authReady = true;
+                console.log(`Authenticated with UID: ${user.uid}`);
+                document.getElementById('authStatus').textContent = `인증 완료 (UID: ${user.uid})`;
+                
+                // 인증 완료 후 실시간 포털 목록 불러오기 시작
+                setupPortalListListener(); 
+
+            } else {
+                window.firebase.authReady = true; // 인증은 완료되었으나 익명 상태
+                console.log("Not authenticated, attempting anonymous sign-in...");
+                try {
+                    // __initial_auth_token이 없으면 익명 로그인 시도
+                    if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
+                         await signInWithCustomToken(window.firebase.auth, __initial_auth_token);
+                    } else {
+                         await signInAnonymously(window.firebase.auth);
+                    }
+                } catch (error) {
+                    console.error("Anonymous sign-in failed:", error);
+                    document.getElementById('authStatus').textContent = `인증 실패: ${error.message}`;
+                }
+            }
+        });
+
+        // 3. 포털 목록 로딩 (Firestore에서)
+        function setupPortalListListener() {
+            if (!window.firebase.db) return;
+
+            const docPath = `artifacts/${window.firebase.appId}/public/data/portal_config/icons`;
+            const docRef = doc(window.firebase.db, docPath);
+
+            onSnapshot(docRef, (docSnap) => {
+                const portalList = document.getElementById('portalList');
+                portalList.innerHTML = '';
+                
+                if (docSnap.exists() && docSnap.data().portals) {
+                    const portals = docSnap.data().portals;
+                    Object.keys(portals).forEach(portalId => {
+                        const portalData = portals[portalId];
+                        const listItem = document.createElement('li');
+                        listItem.className = 'flex justify-between items-center p-4 bg-gray-50 border-b border-gray-200 rounded-lg mb-2';
+                        listItem.innerHTML = `
+                            <span class="font-semibold text-gray-800">${portalData.name} (${portalId})</span>
+                            <img src="${portalData.iconBase64 || 'https://placehold.co/40x40/dddddd/333333?text=N/A'}" 
+                                 alt="${portalData.name} Icon" 
+                                 class="w-10 h-10 object-contain rounded">
+                        `;
+                        portalList.appendChild(listItem);
+                    });
+                    document.getElementById('uploadStatus').textContent = "포털 설정 데이터를 성공적으로 로드했습니다.";
+                } else {
+                    document.getElementById('uploadStatus').textContent = "기존 포털 설정 데이터가 없습니다. 새 설정을 업로드하세요.";
+                }
+            }, (error) => {
+                console.error("Error fetching portal config:", error);
+                document.getElementById('uploadStatus').textContent = `포털 설정 로딩 실패: ${error.message}`;
+            });
+        }
+
+
+        /**
+         * 4. 이미지 파일을 Base64 문자열로 변환하는 함수
+         */
+        function fileToBase64(file) {
+            return new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.readAsDataURL(file);
+                reader.onload = () => resolve(reader.result);
+                reader.onerror = error => reject(error);
+            });
+        }
+
+        /**
+         * 5. 아이콘 업로드를 처리하는 메인 함수
+         * @param {string} portalId - 업데이트할 포털의 ID (예: 'Food')
+         */
+        window.handleIconUpdate = async function(portalId) {
+            if (!window.firebase.authReady) {
+                document.getElementById('uploadStatus').textContent = '⚠️ Firebase 인증 대기 중입니다. 잠시 후 다시 시도하세요.';
+                return;
+            }
+
+            const fileInput = document.getElementById(`fileInput-${portalId}`);
+            const file = fileInput.files[0];
+
+            if (!file) {
+                document.getElementById('uploadStatus').textContent = '⚠️ 파일을 선택해 주세요.';
+                return;
+            }
+
+            if (file.size > 200 * 1024) { // 200KB 제한
+                document.getElementById('uploadStatus').textContent = '⚠️ 파일 크기는 200KB 이하여야 합니다.';
+                return;
+            }
+            
+            document.getElementById('uploadStatus').textContent = `파일 변환 및 업로드 중...`;
+
+            try {
+                // Base64 변환
+                const base64Data = await fileToBase64(file);
+
+                // Firestore에 데이터 저장 (공용 경로 사용)
+                const docPath = `artifacts/${window.firebase.appId}/public/data/portal_config/icons`;
+                const docRef = doc(window.firebase.db, docPath);
+
+                // 현재 설정을 가져와서 새 아이콘 데이터만 업데이트
+                const newPortalData = {
+                    // 포털 이름은 매뉴얼에 따라 하드코딩된 예시입니다.
+                    name: portalId.charAt(0).toUpperCase() + portalId.slice(1), 
+                    iconBase64: base64Data
+                };
+
+                await setDoc(docRef, {
+                    portals: {
+                        [portalId]: newPortalData
+                    },
+                    lastUpdated: new Date().toISOString()
+                }, { merge: true }); // 기존 데이터 유지하며 덮어쓰기 (merge)
+
+                document.getElementById('uploadStatus').textContent = 
+                    `✅ ${portalId} 포털의 아이콘이 성공적으로 업데이트되었습니다. (Base64 크기: ${Math.round(base64Data.length / 1024)} KB)`;
+                
+            } catch (error) {
+                console.error("Icon update failed:", error);
+                document.getElementById('uploadStatus').textContent = `❌ 아이콘 업데이트 실패: ${error.message}`;
+            }
+        };
+
+        /**
+         * 6. 대시보드 복귀 함수
+         */
+        window.goToDashboard = function() {
+            // 이 경로는 이전 파일로 돌아갑니다.
+            window.location.href = 'index.html';
+        };
+
+    </script>
+</head>
+<body class="p-8">
+    <div class="max-w-4xl mx-auto bg-white p-8 rounded-2xl shadow-2xl">
+        
+        <!-- 헤더 및 대시보드 복귀 버튼 -->
+        <div class="flex justify-between items-center mb-8 border-b pb-4">
+            <h1 class="text-3xl font-extrabold text-blue-800">최고 운영자 관리 콘솔</h1>
+            <button onclick="goToDashboard()" 
+                    class="flex items-center px-4 py-2 bg-gray-100 text-gray-700 
+                           rounded-xl hover:bg-gray-200 transition duration-150 shadow-md">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mr-2">
+                    <path d="m15 18-6-6 6-6"></path>
+                </svg>
+                ← 대시보드
+            </button>
+        </div>
+
+        <!-- 인증 및 상태 표시 -->
+        <div class="mb-6 p-4 rounded-xl bg-yellow-50 text-yellow-800 border border-yellow-200">
+            <p id="authStatus" class="text-sm font-medium">Firebase 인증 진행 중...</p>
+        </div>
+        
+        <!-- 실시간 포털 목록 표시 -->
+        <h2 class="text-2xl font-bold text-gray-700 mb-4">현재 포털 아이콘 설정</h2>
+        <ul id="portalList" class="space-y-3">
+            <li class="p-4 bg-gray-100 rounded-lg text-gray-500">로딩 중...</li>
+        </ul>
+
+        <div class="mt-8 border-t pt-6">
+            <h2 class="text-2xl font-bold text-gray-700 mb-4">아이콘 업데이트 (예시: Food 포털)</h2>
+            <div class="bg-blue-50 p-6 rounded-xl border border-blue-200 shadow-inner">
+                <p class="mb-4 text-sm text-blue-700 font-semibold">
+                    업로드할 포털 ID: <span class="text-lg font-bold">Food</span> (Food 포털의 아이콘을 업데이트합니다.)
+                </p>
+
+                <div class="flex items-center space-x-4">
+                    <!-- 파일 선택 버튼 (커스텀 스타일링을 위해 input 숨김) -->
+                    <div class="file-input-wrapper">
+                        <button class="px-5 py-3 bg-blue-600 text-white font-semibold rounded-xl 
+                                       hover:bg-blue-700 transition duration-150 shadow-md"
+                                type="button">
+                            파일 선택
+                        </button>
+                        <input type="file" 
+                               id="fileInput-Food" 
+                               accept="image/png, image/jpeg, image/svg+xml"
+                               onchange="document.getElementById('fileName-Food').textContent = this.files[0].name">
+                    </div>
+
+                    <!-- 선택된 파일 이름 표시 -->
+                    <span id="fileName-Food" class="text-gray-600 text-sm italic flex-1 truncate">
+                        선택된 파일 없음
+                    </span>
+
+                    <!-- 아이콘 업데이트 버튼 -->
+                    <button onclick="handleIconUpdate('Food')" 
+                            class="px-5 py-3 bg-green-600 text-white font-semibold rounded-xl 
+                                   hover:bg-green-700 transition duration-150 shadow-md">
+                        아이콘 업데이트
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 상태 메시지 -->
+        <div id="uploadStatus" 
+             class="mt-8 p-4 text-center font-medium rounded-xl bg-blue-100 text-blue-700 border border-blue-300">
+            준비 완료. 파일을 선택하고 업데이트하세요.
+        </div>
+        
+        <p class="mt-6 text-xs text-gray-400 text-center">
+            User ID: <span class="font-mono" id="currentUserId">로딩 중...</span> | App ID: <span class="font-mono">${appId}</span>
+        </p>
+    </div>
+
+    <script>
+        // 전역 함수들이 window.firebase가 초기화되기를 기다리는 로직은
+        // 위 type="module" 스크립트에 포함되어 있습니다.
+        
+        // userId 표시를 위한 DOM 조작
+        const userIdDisplay = document.getElementById('currentUserId');
+        const authStatusElement = document.getElementById('authStatus');
+
+        // 인증 상태 변경 리스너를 통해 userId 업데이트
+        if (window.firebase && window.firebase.auth) {
+            window.firebase.auth.onAuthStateChanged(user => {
+                if (user) {
+                    userIdDisplay.textContent = user.uid;
+                } else {
+                    userIdDisplay.textContent = '익명 사용자';
+                }
+            });
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MANGO ULTIMATE OS v4.0</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700;900&family=Pretendard:wght@400;700;900&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --m-orange: #FF6B00; --m-teal: #00F2FF; --m-pink: #FF007A;
+            --m-purple: #A855F7; --m-yellow: #FACC15; --portal-width: 480px;
+        }
+
+        body { background: #000; color: #fff; font-family: 'Pretendard', sans-serif; display: flex; justify-content: center; margin: 0; overflow-x: hidden; }
+        
+        /* OS 마스터 프레임: 모든 윈도우 규격 통일 */
+        .os-master-frame {
+            position: relative;
+            width: var(--portal-width);
+            min-height: 100vh;
+            background: #050505;
+            padding: 20px;
+            padding-bottom: 120px;
+            display: flex;
+            flex-direction: column;
+            gap: 18px;
+            border: 3px solid transparent;
+            background-image: linear-gradient(#050505, #050505), 
+                              linear-gradient(135deg, #FF6B00 0%, #FF007A 50%, #00F2FF 100%);
+            background-origin: border-box;
+            background-clip: content-box, border-box;
+            box-shadow: 0 0 40px rgba(255, 107, 0, 0.1);
+        }
+
+        .premium-glass {
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.05) 0%, rgba(255, 255, 255, 0.01) 100%);
+            backdrop-filter: blur(25px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 32px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .font-orb { font-family: 'Orbitron', sans-serif; }
+
+        /* [애니메이션 모듈] */
+        .liquid-bg {
+            background: linear-gradient(45deg, rgba(0, 242, 255, 0.05), rgba(255, 0, 122, 0.05), rgba(255, 107, 0, 0.05));
+            background-size: 200% 200%;
+            animation: fluid-shift 10s ease infinite;
+        }
+        @keyframes fluid-shift { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
+        
+        .path-animate { stroke-dasharray: 100; stroke-dashoffset: 100; animation: flight-path 3s linear infinite; }
+        @keyframes flight-path { to { stroke-dashoffset: 0; } }
+
+        /* Match: 싱크로율 궤도 */
+        #sync-orbit-display { display: none; height: 120px; position: relative; }
+        .orbit-ring { position: absolute; top:50%; left:50%; transform:translate(-50%, -50%); border: 1px solid rgba(0, 242, 255, 0.2); border-radius: 50%; animation: spin 10s linear infinite; }
+        @keyframes spin { to { transform: translate(-50%, -50%) rotate(360deg); } }
+
+        /* 토스트 알림 */
+        .toast-notification {
+            position: fixed; top: -100px; left: 50%; transform: translateX(-50%);
+            width: 90%; max-width: 400px; background: rgba(0,0,0,0.8);
+            backdrop-filter: blur(10px); border: 1px solid var(--m-yellow);
+            border-radius: 16px; padding: 16px; z-index: 10001; transition: 0.5s;
+        }
+        .toast-notification.show { top: 20px; }
+
+        /* AR HUD 전용 스타일 */
+        #ar-hud { transition: opacity 0.5s; pointer-events: none; }
+    </style>
+</head>
+<body>
+
+    <div class="os-master-frame">
+        <div class="premium-glass p-5 border-b-2 border-teal-500/50">
+            <div class="flex justify-between items-center mb-4">
+                <div class="flex items-center gap-2">
+                    <i data-lucide="activity" class="text-teal-400 w-4 h-4 animate-pulse"></i>
+                    <span class="font-orb text-[10px] font-black tracking-widest uppercase">Live_Hype_Index</span>
+                </div>
+                <div class="flex gap-4">
+                    <div class="text-right">
+                        <p class="text-[8px] text-gray-500 font-bold uppercase">Active</p>
+                        <p class="text-xs font-orb text-teal-400">1,284</p>
+                    </div>
+                    <div class="text-right">
+                        <p class="text-[8px] text-gray-500 font-bold uppercase">Flow</p>
+                        <p id="pi-price" class="text-xs font-orb text-orange-500">42.85 <span class="text-[8px]">Pi</span></p>
+                    </div>
+                </div>
+            </div>
+            <div id="sync-orbit-display" class="bg-black/20 rounded-2xl mb-2 border border-white/5 overflow-hidden">
+                <div class="orbit-ring w-20 h-20"></div>
+                <div class="orbit-ring w-40 h-40" style="animation-duration: 15s"></div>
+                <div class="absolute inset-0 flex items-center justify-center">
+                    <span class="text-[9px] font-black text-teal-400 animate-pulse uppercase">Syncing Travelers...</span>
+                </div>
+            </div>
+        </div>
+
+        <section class="premium-glass p-5 liquid-bg border-t-2 border-blue-500/50">
+            <div class="flex justify-between items-start mb-4">
+                <div>
+                    <p class="text-[9px] text-blue-400 font-black uppercase mb-1">00_SKY_SYNC</p>
+                    <h4 class="text-xl font-black italic">PUS → NRT</h4>
+                    <p id="flight-timer" class="text-lg font-orb text-white mt-1">01:55:00</p>
+                </div>
+                <div class="text-right">
+                    <div class="w-12 h-12 bg-white/5 rounded-full flex items-center justify-center border border-white/10">
+                        <i data-lucide="plane" class="text-white w-5 h-5 -rotate-45"></i>
+                    </div>
+                </div>
+            </div>
+            <svg width="100%" height="30" viewBox="0 0 300 30">
+                <path d="M10,25 Q150,5 290,25" stroke="rgba(255,255,255,0.1)" fill="none"/>
+                <path d="M10,25 Q150,5 290,25" stroke="url(#sky-grad)" stroke-width="2" fill="none" class="path-animate"/>
+                <defs><linearGradient id="sky-grad"><stop offset="0%" stop-color="#00F2FF"/><stop offset="100%" stop-color="#FF007A"/></linearGradient></defs>
+            </svg>
+        </section>
+
+        <section class="premium-glass p-5 border-l-4 border-yellow-500">
+            <div class="flex items-center gap-4">
+                <div class="relative cursor-pointer" onclick="startSummon()">
+                    <div id="car-node" class="w-16 h-16 bg-yellow-500/10 rounded-full flex items-center justify-center border border-yellow-500/30 transition-all duration-1000">
+                        <i data-lucide="car-front" class="text-yellow-500 w-8 h-8"></i>
+                    </div>
+                    <div id="summon-pulse" class="absolute inset-0 border-2 border-yellow-500 rounded-full scale-100 opacity-0 transition-all"></div>
+                </div>
+                <div class="flex-1">
+                    <h4 class="text-sm font-black italic">Model_Mango_Z</h4>
+                    <p class="text-[10px] text-gray-500 font-orb uppercase tracking-tighter">Battery: 78% | Range: 320km</p>
+                    <div class="flex gap-2 mt-2">
+                        <button class="flex-1 py-1.5 bg-yellow-500 text-black text-[10px] font-black rounded-lg">SUMMON</button>
+                        <button class="flex-1 py-1.5 bg-white/5 border border-white/10 text-[10px] font-black rounded-lg">LOCK</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <div class="grid grid-cols-2 gap-3">
+            <div class="premium-glass p-4 border-t-4 border-pink-500">
+                <i data-lucide="bed" class="text-pink-500 w-4 h-4 mb-2"></i>
+                <h5 class="text-xs font-black">Shilla Stay</h5>
+                <p class="text-[10px] text-pink-400 font-orb mt-2">22.8 Pi</p>
+            </div>
+            <div class="premium-glass p-4 border-t-4 border-yellow-500">
+                <i data-lucide="shopping-bag" class="text-yellow-500 w-4 h-4 mb-2"></i>
+                <h5 class="text-xs font-black">Pop-up Store</h5>
+                <p class="text-[10px] text-yellow-400 font-orb mt-2">Active</p>
+            </div>
+        </div>
+
+        <nav class="fixed bottom-6 left-1/2 -translate-x-1/2 w-[90%] max-w-[430px] z-[9999]">
+            <div class="premium-glass bg-black/60 backdrop-blur-3xl border border-white/10 rounded-[32px] p-2 flex justify-around items-center shadow-2xl">
+                <div onclick="toggleAR()" class="flex flex-col items-center p-3 text-orange-500 cursor-pointer active:scale-90 transition-all">
+                    <i data-lucide="zap" class="w-5 h-5"></i>
+                    <span class="text-[8px] font-black uppercase">Moment</span>
+                </div>
+                <div onclick="toggleMatch()" class="flex flex-col items-center p-3 text-gray-500 hover:text-teal-400 cursor-pointer transition-all">
+                    <i data-lucide="users" class="w-5 h-5"></i>
+                    <span class="text-[8px] font-black uppercase">Match</span>
+                </div>
+                <div class="flex flex-col items-center p-3 text-gray-500 hover:text-white cursor-pointer">
+                    <i data-lucide="user" class="w-5 h-5"></i>
+                    <span class="text-[8px] font-black uppercase">Archive</span>
+                </div>
+            </div>
+        </nav>
+    </div>
+
+    <div id="ar-hud" class="fixed inset-0 z-[10000] opacity-0 pointer-events-none bg-teal-900/5">
+        <div class="absolute inset-0 bg-[radial-gradient(circle_at_center,transparent_0%,rgba(0,0,0,0.4)_100%)]"></div>
+        <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-40 h-40 border border-teal-500/20 rounded-full flex items-center justify-center">
+            <div class="w-1 h-1 bg-teal-400 rounded-full animate-ping"></div>
+        </div>
+        <div id="ar-signal" class="absolute left-1/2 bottom-40 -translate-x-1/2 flex flex-col items-center gap-3">
+            <div class="w-10 h-10 border-t-4 border-r-4 border-teal-400 rotate-[-45deg] animate-bounce"></div>
+            <div class="bg-black/80 backdrop-blur-md px-4 py-2 rounded-full border border-teal-500/30">
+                <p class="text-[11px] font-orb font-black text-white">
+                    <span class="text-teal-400">TARGET:</span> '해리단길 우동' <span class="text-gray-400 ml-2">120m</span>
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <div id="mango-toast" class="toast-notification">
+        <div class="flex items-center gap-3">
+            <i data-lucide="bell" class="text-yellow-500 w-5 h-5"></i>
+            <p class="text-xs font-bold text-white"></p>
+        </div>
+    </div>
+
+    <script>
+        lucide.createIcons();
+
+        // 1. 토스트 시스템
+        function showMangoToast(msg) {
+            const toast = document.getElementById('mango-toast');
+            toast.querySelector('p').innerText = msg;
+            toast.classList.add('show');
+            setTimeout(() => toast.classList.remove('show'), 3000);
+        }
+
+        // 2. AR HUD 토글
+        let arActive = false;
+        function toggleAR() {
+            arActive = !arActive;
+            const hud = document.getElementById('ar-hud');
+            hud.style.opacity = arActive ? '1' : '0';
+            showMangoToast(arActive ? "스마트 글라스 AR 모드 활성" : "AR 모드 해제");
+        }
+
+        // 3. Match 엔진 토글
+        let matchActive = false;
+        function toggleMatch() {
+            matchActive = !matchActive;
+            const display = document.getElementById('sync-orbit-display');
+            display.style.display = matchActive ? 'block' : 'none';
+            showMangoToast(matchActive ? "동행 싱크로율 분석 중..." : "매칭 엔진 정지");
+        }
+
+        // 4. 소환 애니메이션
+        function startSummon() {
+            const car = document.getElementById('car-node');
+            const pulse = document.getElementById('summon-pulse');
+            pulse.style.opacity = '1';
+            pulse.classList.add('animate-ping');
+            car.style.transform = "scale(1.2) translateY(-10px)";
+            showMangoToast("차량을 현재 위치로 호출합니다...");
+            setTimeout(() => {
+                pulse.classList.remove('animate-ping');
+                pulse.style.opacity = '0';
+                car.style.transform = "scale(1)";
+                showMangoToast("Model_Mango_Z 도착 완료");
+            }, 3000);
+        }
+
+        // 5. 리얼타임 데이터 업데이트
+        setInterval(() => {
+            // 타이머 감소 로직
+            const timerNode = document.getElementById('flight-timer');
+            let parts = timerNode.innerText.split(':');
+            let s = parseInt(parts[2]) + parseInt(parts[1])*60 + parseInt(parts[0])*3600;
+            s--;
+            let h = Math.floor(s/3600).toString().padStart(2,'0');
+            let m = Math.floor((s%3600)/60).toString().padStart(2,'0');
+            let sec = (s%60).toString().padStart(2,'0');
+            timerNode.innerText = `${h}:${m}:${sec}`;
+
+            // 가격 변동
+            const priceNode = document.getElementById('pi-price');
+            let p = parseFloat(priceNode.innerText);
+            priceNode.innerHTML = `${(p + (Math.random()-0.5)*0.01).toFixed(2)} <span class="text-[8px]">Pi</span>`;
+        }, 1000);
+    </script>
+</body>
+</html>

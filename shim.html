@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <title>Mango Platform Shim</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <!-- Pi Browser / iframe 안정화 -->
+  <meta http-equiv="Content-Security-Policy"
+        content="default-src * 'self' data: blob: 'unsafe-inline' 'unsafe-eval';">
+
+  <style>
+    html, body {
+      margin: 0;
+      padding: 0;
+      width: 100%;
+      height: 100%;
+      background: #000;
+      overflow: hidden;
+    }
+
+    iframe {
+      width: 100%;
+      height: 100%;
+      border: none;
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- Travel App iframe -->
+  <iframe
+    id="travelApp"
+    src="./travel/index.html"
+    allow="clipboard-read; clipboard-write; camera; microphone; geolocation"
+  ></iframe>
+
+  <script>
+    const iframe = document.getElementById("travelApp");
+
+    /* =========================
+       iframe → shim 메시지 수신
+    ========================== */
+    window.addEventListener("message", (event) => {
+      if (!event.data || typeof event.data !== "object") return;
+
+      const { type, payload } = event.data;
+
+      switch (type) {
+        case "PING":
+          iframe.contentWindow.postMessage(
+            { type: "PONG" },
+            "*"
+          );
+          break;
+
+        case "REQUEST_AUTH":
+          // Pi SDK / Wallet 연동 자리
+          console.log("Auth requested", payload);
+          break;
+
+        case "FETCH_PROXY":
+          proxyFetch(payload);
+          break;
+
+        default:
+          console.warn("Unknown message:", type);
+      }
+    });
+
+    /* =========================
+       fetch 프록시 (CORS 우회)
+    ========================== */
+    async function proxyFetch({ url, options }) {
+      try {
+        const res = await fetch(url, options || {});
+        const data = await res.json();
+
+        iframe.contentWindow.postMessage({
+          type: "FETCH_RESULT",
+          payload: data
+        }, "*");
+
+      } catch (err) {
+        iframe.contentWindow.postMessage({
+          type: "FETCH_ERROR",
+          payload: err.message
+        }, "*");
+      }
+    }
+  </script>
+
+</body>
+</html>

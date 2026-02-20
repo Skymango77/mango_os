@@ -1,0 +1,151 @@
+세부 항목(작업 시간 등)을  추가 할점 잇나 생각해봐서 진행하자.
+
+1️⃣ mango/transfer 전체 API 설계도
+🎯 목표
+
+모든 이동·운송·중장비를 하나의 API 구조로 통합
+
+AI가 판단 → API가 실행
+
+📁 API 구조 설계
+/api/transfer
+├─ /analyze            # AI 요청 분석
+├─ /estimate           # 견적 산출
+├─ /dispatch           # 기사/장비 배차
+├─ /contract           # 전자계약
+├─ /payment            # 결제
+├─ /tracking           # 실시간 위치/작업 상태
+└─ /review             # 후기/평가
+🔹 핵심 API 설명
+1) 요청 분석
+
+POST /api/transfer/analyze
+json 코드
+{
+  "userText": "이삿짐 옮기고 크레인도 필요해요",
+  "location": "부산 해운대",
+  "time": "2026-02-10 09:00"
+}
+AI 응답
+json 코드
+{
+  "services": ["포장이사", "크레인"],
+  "risk": ["도로 점용 가능성"],
+  "priority": "HIGH"
+}
+
+2) 견적
+
+POST /api/transfer/estimate
+json 코드
+{
+  "services": ["포장이사", "크레인"],
+  "distance": "12km",
+  "floor": 12,
+  "weight": "3톤"
+}
+3) 배차
+
+POST /api/transfer/dispatch
+json 코드
+{
+  "service": "크레인",
+  "equipment": "25톤",
+  "region": "부산"
+}
+
+2️⃣ AI 프롬프트 → 실제 코드 구조
+📁 프롬프트 관리 구조
+css 코드
+src/
+├─ ai/
+│  ├─ systemPrompt.js
+│  ├─ transferPrompt.js
+│  ├─ heavyEquipmentPrompt.js
+│  └─ estimatePrompt.js
+
+
+🔹 systemPrompt.js
+js 코드
+export const systemPrompt = `
+너는 Mango Transfer의 중앙 AI 매니저다.
+요청을 교통, 물류, 이사, 중장비로 분류하고
+항상 JSON으로 답변하라.
+`;
+
+🔹 heavyEquipmentPrompt.js
+js 코드.
+export const heavyEquipmentPrompt = (input) => `
+다음 요청을 중장비 기준으로 분석하라.
+
+요청: ${input}
+
+출력 항목:
+- 장비 종류
+- 톤수
+- 기사 포함 여부
+- 허가 필요 여부
+- 위험 요소
+`;
+
+🔹 Node.js 호출 예시
+
+js코드 
+const result = await ai.chat({
+  system: systemPrompt,
+  prompt: heavyEquipmentPrompt(userText)
+});
+
+🥭 3️⃣ 기사·업체 계약서 템플릿 (요약본)
+📄 Mango Transfer 파트너 계약 핵심 구조
+제1조 (계약 목적)
+
+본 계약은 Mango 플랫폼을 통한 운송·중장비 서비스 제공을 목적으로 한다.
+
+제2조 (역할)
+
+Mango: 고객 매칭, 결제, AI 운영
+
+파트너: 장비 제공, 기사 배정, 안전 책임
+
+제3조 (수수료)
+
+Mango 수수료: 10~20%
+
+정산 주기: 주 1회 또는 월 2회
+
+제4조 (안전 및 법적 책임)
+
+모든 중장비는 합법 등록 장비여야 한다
+
+사고 시 1차 책임은 파트너에게 있다
+
+제5조 (AI 배차 동의)
+
+파트너는 AI 자동 배차 및 가격 산정에 동의한다.
+
+👉 이 계약은 전자계약 + 클릭 동의로 처리 가능
+(초기엔 PDF, 이후 앱 내 동의)
+
+4️⃣ 투자자를 사로잡는 스토리 구조
+🎤 30초 피치 버전
+
+“지금까지 이사, 용달, 중장비는 전부 전화였습니다.
+Mango는 다릅니다.
+말 한마디면 AI가 견적·배차·계약까지 끝냅니다.
+택시처럼, 하지만 중장비까지.”
+
+💰 투자 포인트
+
+📈 중장비 시장 = 고단가 + 저디지털
+
+🤖 AI 자동 견적 → 인건비 0에 가까움
+
+🌍 국가별 장비 DB만 바꾸면 글로벌 확장
+
+다음으로 바로 갈 수 있는 것
+
+1️⃣ DB 스키마 (기사·장비·지역)
+2️⃣ 견적 계산 알고리즘 공식
+3️⃣ 정부·공공 공사 연계 모델
+4️⃣ 부산 → 전국 → 글로벌 확장 로드맵

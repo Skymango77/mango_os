@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Mango Point Station</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Inter:wght@400;700;900&display=swap');
+        body { -ms-overflow-style: none; scrollbar-width: none; background-color: transparent; font-family: 'Inter', sans-serif; }
+        body::-webkit-scrollbar { display: none; }
+        .center-wrapper { display: flex; justify-content: center; align-items: center; min-height: 100vh; width: 100vw; padding: 20px; }
+        
+        .text-metallic-gold {
+            background-image: linear-gradient(to right, #FFD700, #FFA500, #FFD700);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text; color: transparent;
+        }
+        .bg-metallic-gold {
+            background-image: linear-gradient(to right, #FFD700, #FFA500, #FFD700);
+        }
+        .glass-panel {
+            background: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 215, 0, 0.2);
+        }
+        .amount-btn.selected {
+            background: rgba(255, 215, 0, 0.2);
+            border-color: #FFD700;
+            color: #FFD700;
+        }
+    </style>
+</head>
+<body class="m-0 p-0 overflow-hidden text-white">
+
+    <div class="fixed inset-0 bg-gradient-to-br from-gray-950 to-gray-900 -z-20"></div>
+    
+    <div class="center-wrapper">
+        <div class="w-full max-w-[450px] glass-panel rounded-[2.5rem] p-6 shadow-2xl relative flex flex-col h-[80vh] max-h-[800px]">
+            
+            <!-- Header -->
+            <div class="flex justify-between items-center mb-8">
+                <div>
+                    <h1 class="text-metallic-gold text-2xl font-black font-orbitron tracking-tighter">POINT STATION</h1>
+                    <p class="text-[10px] text-gray-500 uppercase tracking-[3px]">Mango Pay System</p>
+                </div>
+                <div class="text-right">
+                    <p class="text-[10px] text-gray-500">CURRENT BALANCE</p>
+                    <p class="text-xl font-bold text-white font-orbitron" id="display-balance">0 P</p>
+                </div>
+            </div>
+
+            <!-- Amount Selection -->
+            <div class="flex-1 overflow-y-auto no-scrollbar space-y-6">
+                
+                <div>
+                    <label class="text-xs text-gray-400 font-bold mb-3 block uppercase">Select Amount</label>
+                    <div class="grid grid-cols-3 gap-3">
+                        <button onclick="selectAmount(5000)" class="amount-btn py-3 rounded-xl border border-white/10 bg-white/5 text-sm font-bold hover:bg-white/10 transition-all">5,000</button>
+                        <button onclick="selectAmount(10000)" class="amount-btn py-3 rounded-xl border border-white/10 bg-white/5 text-sm font-bold hover:bg-white/10 transition-all">10,000</button>
+                        <button onclick="selectAmount(30000)" class="amount-btn py-3 rounded-xl border border-white/10 bg-white/5 text-sm font-bold hover:bg-white/10 transition-all">30,000</button>
+                        <button onclick="selectAmount(50000)" class="amount-btn py-3 rounded-xl border border-white/10 bg-white/5 text-sm font-bold hover:bg-white/10 transition-all">50,000</button>
+                        <button onclick="selectAmount(100000)" class="amount-btn py-3 rounded-xl border border-white/10 bg-white/5 text-sm font-bold hover:bg-white/10 transition-all">100,000</button>
+                    </div>
+                </div>
+
+                <!-- Custom Amount -->
+                <div>
+                    <label class="text-xs text-gray-400 font-bold mb-3 block uppercase">Custom Amount</label>
+                    <div class="relative">
+                        <input type="number" id="custom-amount" placeholder="Enter amount (Min 1,000)" 
+                               class="w-full bg-black/50 border border-white/10 rounded-xl p-4 text-white outline-none focus:border-yellow-500 transition-all font-orbitron"
+                               oninput="handleCustomInput(this)">
+                        <span class="absolute right-4 top-1/2 -translate-y-1/2 text-gray-500 font-bold">P</span>
+                    </div>
+                    <p id="error-msg" class="text-[10px] text-red-500 mt-2 hidden">⚠️ 최소 충전 금액은 1,000P 입니다.</p>
+                </div>
+
+                <!-- Payment Method -->
+                <div>
+                    <label class="text-xs text-gray-400 font-bold mb-3 block uppercase">Payment Method</label>
+                    <div class="space-y-2">
+                        <button onclick="selectMethod('card')" class="method-btn w-full flex items-center justify-between p-4 rounded-xl border border-white/10 bg-white/5 hover:bg-white/10 transition-all">
+                            <span class="flex items-center gap-3">
+                                <span class="text-xl">💳</span>
+                                <span class="text-sm font-bold">Credit Card</span>
+                            </span>
+                            <div class="w-4 h-4 rounded-full border border-gray-500 check-circle"></div>
+                        </button>
+                        <button onclick="selectMethod('pi')" class="method-btn w-full flex items-center justify-between p-4 rounded-xl border border-white/10 bg-white/5 hover:bg-white/10 transition-all">
+                            <span class="flex items-center gap-3">
+                                <span class="text-xl">π</span>
+                                <span class="text-sm font-bold">Pi Network</span>
+                            </span>
+                            <div class="w-4 h-4 rounded-full border border-gray-500 check-circle"></div>
+                        </button>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- Bottom CTA -->
+            <div class="mt-6 pt-4 border-t border-white/10">
+                <div class="flex justify-between items-center mb-4">
+                    <span class="text-xs text-gray-400">Total Payment</span>
+                    <span class="text-xl font-black text-metallic-gold font-orbitron" id="total-display">0 P</span>
+                </div>
+                <button onclick="processCharge()" id="charge-btn" disabled 
+                        class="w-full py-4 rounded-2xl font-black text-sm uppercase bg-gray-800 text-gray-500 cursor-not-allowed transition-all">
+                    Charge Points
+                </button>
+            </div>
+
+        </div>
+    </div>
+
+    <script>
+        let currentBalance = 0;
+        let selectedAmount = 0;
+        let selectedMethod = null;
+
+        function updateDisplay() {
+            document.getElementById('display-balance').innerText = currentBalance.toLocaleString() + ' P';
+        }
+
+        function selectAmount(amount) {
+            selectedAmount = amount;
+            document.getElementById('custom-amount').value = '';
+            document.getElementById('error-msg').classList.add('hidden');
+            
+            document.querySelectorAll('.amount-btn').forEach(btn => {
+                btn.classList.remove('selected');
+                if(parseInt(btn.innerText.replace(/,/g,'')) === amount) btn.classList.add('selected');
+            });
+            
+            updateTotal();
+        }
+
+        function handleCustomInput(input) {
+            document.querySelectorAll('.amount-btn').forEach(btn => btn.classList.remove('selected'));
+            
+            const val = parseInt(input.value);
+            
+            // 1️⃣ Custom Amount 입력 시 숫자 포맷 안내
+            if (val < 1000) {
+                document.getElementById('error-msg').classList.remove('hidden');
+                selectedAmount = 0;
+            } else {
+                document.getElementById('error-msg').classList.add('hidden');
+                selectedAmount = val;
+            }
+            updateTotal();
+        }
+
+        function selectMethod(method) {
+            selectedMethod = method;
+            
+            document.querySelectorAll('.method-btn').forEach(btn => {
+                btn.classList.remove('border-yellow-500', 'bg-yellow-500/10');
+                btn.querySelector('.check-circle').classList.remove('bg-yellow-500', 'border-transparent');
+            });
+            
+            const targetBtn = event.currentTarget;
+            targetBtn.classList.add('border-yellow-500', 'bg-yellow-500/10');
+            targetBtn.querySelector('.check-circle').classList.add('bg-yellow-500', 'border-transparent');
+            
+            updateTotal();
+        }
+
+        function updateTotal() {
+            const totalDisplay = document.getElementById('total-display');
+            const chargeBtn = document.getElementById('charge-btn');
+            
+            if (selectedAmount > 0) {
+                totalDisplay.innerText = selectedAmount.toLocaleString() + ' P';
+            } else {
+                totalDisplay.innerText = '0 P';
+            }
+
+            if (selectedAmount >= 1000 && selectedMethod) {
+                chargeBtn.disabled = false;
+                chargeBtn.classList.remove('bg-gray-800', 'text-gray-500', 'cursor-not-allowed');
+                chargeBtn.classList.add('bg-metallic-gold', 'text-black', 'shadow-[0_0_20px_rgba(255,204,0,0.3)]', 'active:scale-95');
+            } else {
+                chargeBtn.disabled = true;
+                chargeBtn.classList.add('bg-gray-800', 'text-gray-500', 'cursor-not-allowed');
+                chargeBtn.classList.remove('bg-metallic-gold', 'text-black', 'shadow-[0_0_20px_rgba(255,204,0,0.3)]', 'active:scale-95');
+            }
+        }
+
+        function processCharge() {
+            if (!selectedAmount || !selectedMethod) return;
+
+            const btn = document.getElementById('charge-btn');
+            const originalText = btn.innerText;
+            
+            btn.disabled = true;
+            btn.innerText = 'Processing...';
+
+            setTimeout(() => {
+                // 2️⃣ 현재 잔액 실시간 반영 훅
+                currentBalance += selectedAmount;
+                updateDisplay();
+                
+                alert(`✅ Successfully charged ${selectedAmount.toLocaleString()} P`);
+                
+                // Reset
+                selectedAmount = 0;
+                selectedMethod = null;
+                document.getElementById('custom-amount').value = '';
+                document.querySelectorAll('.amount-btn').forEach(b => b.classList.remove('selected'));
+                document.querySelectorAll('.method-btn').forEach(b => {
+                    b.classList.remove('border-yellow-500', 'bg-yellow-500/10');
+                    b.querySelector('.check-circle').classList.remove('bg-yellow-500', 'border-transparent');
+                });
+                
+                btn.innerText = originalText;
+                updateTotal();
+                
+            }, 1500);
+        }
+
+        // Initialize
+        updateDisplay();
+    </script>
+</body>
+</html>

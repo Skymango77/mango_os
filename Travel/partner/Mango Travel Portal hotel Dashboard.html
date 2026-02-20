@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>파트너 백엔드 대시보드</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap');
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f1f5f9; /* Tailwind slate-100 */
+        }
+        /* Style for active navigation item */
+        .nav-item.active {
+            background-color: #1e40af; /* Tailwind blue-800 */
+            border-left-color: #60a5fa; /* Tailwind blue-400 */
+        }
+    </style>
+</head>
+<body class="flex h-screen overflow-hidden">
+
+    <!-- Sidebar Navigation -->
+    <aside id="sidebar" class="w-64 bg-gray-900 text-white flex flex-col transition-all duration-300">
+        <div class="p-6">
+            <h2 class="text-3xl font-extrabold text-indigo-400">🥭 MANGO</h2>
+            <p class="text-xs text-gray-400 mt-1">파트너 백엔드</p>
+        </div>
+
+        <nav class="flex-grow mt-8">
+            <ul id="main-navigation" class="space-y-2">
+                <!-- Navigation items will be dynamically generated based on partner type -->
+            </ul>
+        </nav>
+
+        <div class="p-4 border-t border-gray-800">
+            <button class="w-full text-left p-2 rounded-lg hover:bg-gray-800 transition text-sm">
+                <svg class="w-4 h-4 inline mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path></svg>
+                로그아웃
+            </button>
+        </div>
+    </aside>
+
+    <!-- Main Content -->
+    <div class="flex-1 flex flex-col overflow-hidden">
+        <!-- Top Bar -->
+        <header class="w-full flex justify-between items-center p-4 bg-white shadow z-10">
+            <h1 class="text-xl font-semibold text-gray-800">대시보드 요약</h1>
+            <div class="flex items-center space-x-4">
+                <span class="text-sm text-gray-600">파트너: <span id="partner-name" class="font-medium text-indigo-600">로딩 중...</span></span>
+                <img class="h-10 w-10 rounded-full object-cover" src="https://placehold.co/40x40/7e32fa/ffffff?text=P" alt="파트너 프로필">
+            </div>
+        </header>
+
+        <!-- Main Dashboard Body -->
+        <main class="flex-1 overflow-x-hidden overflow-y-auto p-6">
+            <div class="mb-6">
+                <h2 class="text-2xl font-bold text-gray-800 mb-2">환영합니다! <span id="welcome-partner">파트너</span>님.</h2>
+                <p class="text-gray-500">핵심 성과 지표(KPI)와 실시간 현황을 확인하세요. (<span id="partner-type-display" class="font-semibold text-indigo-500">유형 확인 중...</span>)</p>
+            </div>
+
+            <!-- KPI Cards Grid (Dynamic Titles) -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8" id="kpi-grid">
+                <!-- KPI Card 1: Primary Metric -->
+                <div class="bg-white p-6 rounded-xl shadow-lg hover:shadow-xl transition duration-300">
+                    <p class="text-sm font-medium text-gray-500 truncate" id="kpi-title-1">총 예약 건수 (금월)</p>
+                    <div class="mt-1 flex items-center justify-between">
+                        <p id="kpi-bookings" class="text-3xl font-extrabold text-gray-900">0</p>
+                        <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-green-100 text-green-800">
+                            +0%
+                        </span>
+                    </div>
+                </div>
+
+                <!-- KPI Card 2: Revenue/Sales Metric -->
+                <div class="bg-white p-6 rounded-xl shadow-lg hover:shadow-xl transition duration-300">
+                    <p class="text-sm font-medium text-gray-500 truncate" id="kpi-title-2">연간 누적 수익 (순액)</p>
+                    <div class="mt-1 flex items-center justify-between">
+                        <p id="kpi-revenue" class="text-3xl font-extrabold text-gray-900">₩ 0</p>
+                        <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-blue-100 text-blue-800">
+                            +0.0%
+                        </span>
+                    </div>
+                </div>
+
+                <!-- KPI Card 3: Utilization/Cancellation Rate -->
+                <div class="bg-white p-6 rounded-xl shadow-lg hover:shadow-xl transition duration-300">
+                    <p class="text-sm font-medium text-gray-500 truncate" id="kpi-title-3">취소율 (30일)</p>
+                    <div class="mt-1 flex items-center justify-between">
+                        <p id="kpi-cancellation-rate" class="text-3xl font-extrabold text-gray-900">0.0%</p>
+                        <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-red-100 text-red-800">
+                            ▲ 0.0%
+                        </span>
+                    </div>
+                </div>
+
+                <!-- KPI Card 4: Partner Rating -->
+                <div class="bg-white p-6 rounded-xl shadow-lg hover:shadow-xl transition duration-300">
+                    <p class="text-sm font-medium text-gray-500 truncate">평균 고객 평점</p>
+                    <div class="mt-1 flex items-center justify-between">
+                        <p id="kpi-rating" class="text-3xl font-extrabold text-yellow-600">0.0 / 5.0</p>
+                        <span class="text-xl">⭐️</span>
+                    </div>
+                </div>
+            </div>
+            <!-- End KPI Cards Grid -->
+
+            <!-- Recent Activity/Charts Area (Placeholder) -->
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <!-- Recent Bookings Table Placeholder -->
+                <div class="lg:col-span-2 bg-white p-6 rounded-xl shadow-lg">
+                    <h3 class="text-lg font-semibold text-gray-800 mb-4" id="recent-activity-title">최근 예약 활동 (실시간)</h3>
+                    <div id="recent-bookings-list" class="space-y-3">
+                        <p class="text-gray-500">로딩 중... (Firestore onSnapshot으로 실시간 데이터 업데이트)</p>
+                        <!-- Dynamic list items will be injected here -->
+                    </div>
+                </div>
+
+                <!-- Notifications/Alerts Placeholder -->
+                <div class="lg:col-span-1 bg-white p-6 rounded-xl shadow-lg">
+                    <h3 class="text-lg font-semibold text-gray-800 mb-4">알림 센터</h3>
+                    <ul class="space-y-3 text-sm">
+                        <li class="p-3 bg-indigo-50 border border-indigo-200 rounded-lg text-indigo-700">
+                            [공지] 12월 정산 보고서가 발행되었습니다.
+                        </li>
+                        <li class="p-3 bg-red-50 border border-red-200 rounded-lg text-red-700">
+                            [중요] 예약 #R10042 건 결제가 실패했습니다.
+                        </li>
+                        <li class="p-3 bg-green-50 border border-green-200 rounded-lg text-green-700">
+                            [신규] 오늘 1건의 예약이 추가되었습니다.
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Custom Modal for Messages (No alert/confirm) -->
+    <div id="message-modal" class="fixed inset-0 bg-gray-600 bg-opacity-50 hidden items-center justify-center z-50">
+        <div class="bg-white p-6 rounded-lg shadow-xl max-w-sm w-full">
+            <h3 class="text-lg font-semibold text-gray-900 mb-3" id="modal-title">알림</h3>
+            <p class="text-gray-700 mb-4" id="modal-message">메시지 내용</p>
+            <div class="flex justify-end">
+                <button onclick="document.getElementById('message-modal').classList.add('hidden')"
+                        class="bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 transition">확인</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- JavaScript and Firebase Logic -->
+    <script type="module">
+        // Firebase Imports
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, doc, onSnapshot, setLogLevel } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+        // Global Firebase and State Variables
+        let db;
+        let auth;
+        let userId = null;
+        let partnerType = 'UNKNOWN'; // 파트너 유형을 저장할 변수 초기화
+        const appId = typeof __app_id !== 'undefined' ? __app_id : 'mango-travel-portal';
+        
+        // --- 파트너 유형별 설정 ---
+        const PARTNER_TYPES = {
+            TRAVEL_AGENT: {
+                name: "여행사",
+                kpi1_title: "총 예약 건수 (금월)",
+                kpi3_title: "취소율 (30일)",
+                inventory_label: "고객 여정 관리",
+                inventory_icon: `<svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.208 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.523 5.792 18 7.5 18s3.332.477 4.5 1.247m0-13C13.168 5.477 14.792 5 16.5 5s3.332.477 4.5 1.253v13C19.832 18.523 18.208 18 16.5 18s-3.332.477-4.5 1.247"></path></svg>`,
+            },
+            AIRLINE: {
+                name: "항공사",
+                kpi1_title: "판매된 좌석 수 (금월)",
+                kpi3_title: "잔여 좌석율",
+                inventory_label: "항공 노선/좌석 관리",
+                inventory_icon: `<svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"></path></svg>`,
+            },
+            HOTEL: {
+                name: "숙박업체",
+                kpi1_title: "판매된 객실 수 (금월)",
+                kpi3_title: "객실 점유율",
+                inventory_label: "객실 및 재고 관리",
+                inventory_icon: `<svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2h2m-2 4h4"></path></svg>`,
+            },
+            RENTAL_CAR: {
+                name: "렌터카",
+                kpi1_title: "차량 대여 건수 (금월)",
+                kpi3_title: "차량 가동률",
+                inventory_label: "차량 및 재고 관리",
+                inventory_icon: `<svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z"></path></svg>`,
+            },
+        };
+
+        // Mock data structure now includes partnerType (HOTEL is used as default mock)
+        const mockDashboardData = {
+            partnerName: "망고 호텔 체인",
+            partnerType: "HOTEL",
+            bookings: 420, // 판매된 객실 수
+            revenue: 120000000,
+            cancellationRate: 85.5, // 객실 점유율
+            rating: 4.6,
+            recentBookings: [
+                { id: 'R10045', type: '객실', amount: 120000, status: 'Confirmed', date: '2025-12-09' },
+                { id: 'R10044', type: '객실', amount: 95000, status: 'Confirmed', date: '2025-12-08' },
+                { id: 'R10043', type: '객실', amount: 210000, status: 'Pending', date: '2025-12-08' },
+            ]
+        };
+
+        // Helper function to format numbers
+        const formatCurrency = (value) => `₩ ${value.toLocaleString('ko-KR')}`;
+        const formatPercentage = (value) => `${value.toFixed(1)}%`;
+        const formatRating = (value) => `${value.toFixed(1)} / 5.0`;
+        const formatDecimal = (value) => `${value.toFixed(1)}`; // For metrics like utilization
+
+        // Helper function to display messages
+        function showMessage(title, message) {
+            document.getElementById('modal-title').textContent = title;
+            document.getElementById('modal-message').textContent = message;
+            document.getElementById('message-modal').classList.remove('hidden');
+            document.getElementById('message-modal').classList.add('flex');
+        }
+
+        // --- UI Update Function ---
+        function updateDashboardUI(data) {
+            const typeConfig = PARTNER_TYPES[data.partnerType] || PARTNER_TYPES.HOTEL; // UNKNOWN 타입이면 HOTEL로 임시 설정
+            
+            // 1. 파트너 정보 업데이트
+            document.getElementById('partner-name').textContent = data.partnerName;
+            document.getElementById('welcome-partner').textContent = data.partnerName;
+            document.getElementById('partner-type-display').textContent = `유형: ${typeConfig.name}`;
+
+            // 2. KPI 카드 타이틀 업데이트
+            document.getElementById('kpi-title-1').textContent = typeConfig.kpi1_title;
+            document.getElementById('kpi-title-3').textContent = typeConfig.kpi3_title;
+            
+            // 3. KPI 값 업데이트
+            document.getElementById('kpi-bookings').textContent = data.bookings.toLocaleString('ko-KR');
+            document.getElementById('kpi-revenue').textContent = formatCurrency(data.revenue);
+            
+            // KPI 3 (취소율/점유율/가동률)은 데이터 유형에 따라 다르게 포맷
+            if (data.partnerType === 'TRAVEL_AGENT' || data.partnerType === 'AIRLINE') {
+                document.getElementById('kpi-cancellation-rate').textContent = formatPercentage(data.cancellationRate);
+            } else {
+                document.getElementById('kpi-cancellation-rate').textContent = formatDecimal(data.cancellationRate) + '%';
+            }
+            
+            document.getElementById('kpi-rating').textContent = formatRating(data.rating);
+
+
+            // 4. 사이드바 네비게이션 동적 생성
+            const navList = document.getElementById('main-navigation');
+            navList.innerHTML = ''; // 기존 메뉴 초기화
+            
+            // A. 대시보드 (공통)
+            navList.innerHTML += `
+                <li>
+                    <a href="#" class="nav-item active flex items-center p-4 pl-6 text-sm font-medium border-l-4 border-l-indigo-400 transition duration-150 ease-in-out">
+                        <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 11-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path></svg>
+                        대시보드 요약
+                    </a>
+                </li>
+            `;
+
+            // B. 재고/상품 관리 (유형별)
+            navList.innerHTML += `
+                <li>
+                    <a href="#" class="nav-item flex items-center p-4 pl-6 text-sm font-medium hover:bg-gray-800 border-l-4 border-l-transparent transition duration-150 ease-in-out">
+                        ${typeConfig.inventory_icon}
+                        ${typeConfig.inventory_label}
+                    </a>
+                </li>
+            `;
+
+            // C. 예약/정산/분석 (공통)
+            navList.innerHTML += `
+                <li>
+                    <a href="#" class="nav-item flex items-center p-4 pl-6 text-sm font-medium hover:bg-gray-800 border-l-4 border-l-transparent transition duration-150 ease-in-out">
+                        <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-4 4V3m-2 4h4m-4 0a4 4 0 00-4-4H7a4 4 0 00-4 4v7a4 4 0 004 4h10a4 4 0 004-4V7a4 4 0 00-4-4h-2m-2 4a2 2 0 11-4 0"></path></svg>
+                        예약 관리
+                    </a>
+                </li>
+                <li>
+                    <a href="#" class="nav-item flex items-center p-4 pl-6 text-sm font-medium hover:bg-gray-800 border-l-4 border-l-transparent transition duration-150 ease-in-out">
+                        <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2c1.657 0 3 .895 3 2s-1.343 2-3 2v2m0-12a9 9 0 110 18 9 9 0 010-18zm0 18c4.97 0 9-4.03 9-9s-4.03-9-9-9-9 4.03-9 9 4.03 9 9 9z"></path></svg>
+                        재무/정산
+                    </a>
+                </li>
+                <li>
+                    <a href="#" class="nav-item flex items-center p-4 pl-6 text-sm font-medium hover:bg-gray-800 border-l-4 border-l-transparent transition duration-150 ease-in-out">
+                        <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 3.055A9.001 9.001 0 1020.945 13H11V3.055z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.488 9H15V3.512A9.025 9.025 0 0120.488 9z"></path></svg>
+                        성과 분석
+                    </a>
+                </li>
+            `;
+
+            // 5. 최근 활동 리스트 업데이트 (기존과 동일)
+            const listEl = document.getElementById('recent-bookings-list');
+            document.getElementById('recent-activity-title').textContent = `최근 ${typeConfig.name} 활동 (실시간)`;
+            listEl.innerHTML = data.recentBookings.map(booking => {
+                let statusClass = booking.status === 'Confirmed' ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800';
+                return `
+                    <div class="flex justify-between items-center p-3 border-b border-gray-100 last:border-b-0">
+                        <div class="text-gray-900 font-medium">#${booking.id} - ${booking.type}</div>
+                        <div class="text-right">
+                            <span class="text-sm font-bold text-indigo-600 mr-2">${formatCurrency(booking.amount)}</span>
+                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${statusClass}">
+                                ${booking.status === 'Confirmed' ? '확정' : '대기'}
+                            </span>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        // --- Firestore Real-time Listener (onSnapshot) ---
+        function setupDashboardListener(currentUserId) {
+            // Document path: /artifacts/{appId}/public/data/partners/{userId}
+            const docRef = doc(db, 'artifacts', appId, 'public', 'data', 'partners', currentUserId);
+
+            // Listen for real-time updates
+            onSnapshot(docRef, (docSnap) => {
+                if (docSnap.exists()) {
+                    const data = docSnap.data();
+                    
+                    // 파트너 유형을 전역 변수에 저장
+                    partnerType = data.partnerType || 'UNKNOWN';
+
+                    console.log("Real-time Partner Dashboard Data:", data);
+                    
+                    // 파트너 유형에 따라 UI를 업데이트
+                    const liveData = { ...mockDashboardData, ...data };
+                    // 모의 데이터의 partnerType을 라이브 데이터로 오버라이드
+                    liveData.partnerType = partnerType; 
+                    
+                    updateDashboardUI(liveData);
+
+                } else {
+                    console.log("No live partner data found. Using mock data (HOTEL).");
+                    partnerType = mockDashboardData.partnerType;
+                    updateDashboardUI(mockDashboardData);
+                }
+            }, (error) => {
+                console.error("Firestore listen error:", error);
+                showMessage("데이터 오류", "대시보드 데이터를 불러오는 중 오류가 발생했습니다: " + error.message);
+            });
+        }
+
+
+        // --- Firebase Initialization and Authentication ---
+        async function initFirebase() {
+            try {
+                const firebaseConfig = JSON.parse(typeof __firebase_config !== 'undefined' ? __firebase_config : '{}');
+                const app = initializeApp(firebaseConfig);
+                auth = getAuth(app);
+                db = getFirestore(app);
+                setLogLevel('Debug'); // Enable debug logging
+
+                // Initial Authentication
+                const initialAuthToken = typeof __initial_auth_token !== 'undefined' ? __initial_auth_token : null;
+                if (initialAuthToken) {
+                    await signInWithCustomToken(auth, initialAuthToken);
+                    console.log("Signed in with custom token.");
+                } else {
+                    await signInAnonymously(auth);
+                    console.log("Signed in anonymously.");
+                }
+
+                // Set up Auth State Listener and initialize app state
+                onAuthStateChanged(auth, (user) => {
+                    if (user) {
+                        userId = user.uid;
+                        console.log("Auth state changed. User ID:", userId);
+                        // Start listening to the dashboard data for the authenticated user
+                        setupDashboardListener(userId); 
+                    } else {
+                        userId = null;
+                        console.error("User logged out or authentication failed.");
+                        showMessage("인증 필요", "사용자 인증에 실패했습니다. 로그인을 확인해 주세요.");
+                        // Display mock data as fallback if auth fails
+                        updateDashboardUI(mockDashboardData); 
+                    }
+                });
+
+            } catch (error) {
+                console.error("Firebase initialization or auth failed:", error);
+                showMessage("Firebase 오류", `Firebase 초기화 또는 인증에 실패했습니다: ${error.message}`);
+            }
+        }
+
+        // --- Initial Setup ---
+        window.onload = () => {
+            // Apply mock data immediately to prevent blank screen while loading
+            updateDashboardUI(mockDashboardData); 
+            initFirebase();
+        };
+
+    </script>
+</body>
+</html>

@@ -1,0 +1,34 @@
+{
+  "property_id": "MANGO-RE-2026-001",
+  "status": "Verified",
+  "verification_score": 98,
+  "category": "Apartment",
+  "details": {
+    "title": "롯데캐슬 라센트 로얄층 급매",
+    "description": "올확장형, 파이 결제 특화 매물, 실거래 검증 완료",
+    "price_krw": 1200000000,
+    "price_pi": 450000,
+    "pi_payment_ratio": 30,
+    "location": {
+      "address": "서울특별시 송파구 가락동 롯데캐슬",
+      "lat": 37.496,
+      "lng": 127.123,
+      "nearest_subway": "가락시장역 (도보 3분)"
+    }
+  },
+  "finance_dex_data": {
+    "is_tokenized": true,
+    "token_symbol": "MGR-LOTTE-001",
+    "lp_pool_address": "pi_pool_realty_001_v2",
+    "total_liquidity_pi": 1500000,
+    "staking_apr": 8.5,
+    "dividend_cycle": "Monthly",
+    "rwa_bridge_status": "Active"
+  },
+  "verification_details": {
+    "last_registry_check": "2026-01-06T11:00:00Z",
+    "gps_verified": true,
+    "ai_image_hash": "a1b2c3d4e5f6g7h8i9j0k1l2m3n4o5p6",
+    "landlord_kyc": "Verified_by_Pi_KYC"
+  }
+}

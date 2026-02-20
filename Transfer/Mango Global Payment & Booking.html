@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mango Transfer Global Experience</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Pretendard:wght@100..900&display=swap');
+        
+        body {
+            font-family: 'Pretendard', sans-serif;
+            background-color: #f8fafc;
+        }
+
+        .payment-card {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            border: 2px solid transparent;
+        }
+
+        .payment-card.active {
+            border-color: #f59e0b;
+            background-color: #fffbeb;
+        }
+
+        .shimmer {
+            background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+            background-size: 200% 100%;
+            animation: shimmer 1.5s infinite;
+        }
+
+        @keyframes shimmer {
+            0% { background-position: 200% 0; }
+            100% { background-position: -200% 0; }
+        }
+
+        .modal-overlay {
+            background-color: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(4px);
+        }
+
+        .trust-badge {
+            background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+        }
+    </style>
+</head>
+<body class="max-w-md mx-auto bg-white min-h-screen shadow-xl overflow-x-hidden">
+
+    <!-- Header -->
+    <header class="sticky top-0 z-50 bg-white border-b px-4 py-4 flex items-center justify-between">
+        <div class="flex items-center gap-2">
+            <div class="w-8 h-8 bg-amber-500 rounded-lg flex items-center justify-center text-white font-bold italic">M</div>
+            <h1 class="font-bold text-lg text-slate-800">Mango Transfer</h1>
+        </div>
+        <div class="flex items-center gap-1 bg-slate-100 px-3 py-1 rounded-full cursor-pointer hover:bg-slate-200 transition" onclick="toggleCountrySelector()">
+            <span id="current-flag" class="text-sm">🇰🇷</span>
+            <span id="current-country-name" class="text-xs font-semibold text-slate-600">한국</span>
+            <i data-lucide="chevron-down" class="w-3 h-3 text-slate-500"></i>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="p-4 pb-32">
+        <!-- Step 1: Destination Info -->
+        <section class="mb-6">
+            <div class="bg-slate-50 rounded-2xl p-4 border border-slate-100">
+                <div class="flex items-start gap-3 mb-4">
+                    <div class="flex flex-col items-center gap-1 mt-1">
+                        <div class="w-2 h-2 rounded-full bg-blue-500"></div>
+                        <div class="w-0.5 h-8 bg-slate-300"></div>
+                        <div class="w-2 h-2 rounded-full bg-amber-500"></div>
+                    </div>
+                    <div class="flex-1">
+                        <div class="mb-3">
+                            <p class="text-[10px] uppercase tracking-wider text-slate-400 font-bold">출발지</p>
+                            <p class="text-sm font-medium text-slate-700" id="pickup-location">인천국제공항 T1</p>
+                        </div>
+                        <div>
+                            <p class="text-[10px] uppercase tracking-wider text-slate-400 font-bold">도착지</p>
+                            <p class="text-sm font-medium text-slate-700" id="dropoff-location">서울 신라호텔</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Step 2: Driver Selection -->
+        <section class="mb-8">
+            <h2 class="text-sm font-bold text-slate-800 mb-4 flex items-center gap-2">
+                <i data-lucide="user-check" class="w-4 h-4 text-amber-500"></i>
+                추천 드라이버
+            </h2>
+            
+            <div class="space-y-3">
+                <!-- Driver Card -->
+                <div class="border rounded-2xl p-4 flex gap-4 items-center bg-white shadow-sm relative overflow-hidden border-amber-200">
+                    <div class="absolute top-0 right-0 trust-badge px-3 py-1 text-[10px] text-white font-bold rounded-bl-xl shadow-sm">
+                        PREMIUM
+                    </div>
+                    <div class="relative">
+                        <div class="w-16 h-16 bg-slate-200 rounded-2xl overflow-hidden">
+                            <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Felix" alt="Driver" class="w-full h-full object-cover">
+                        </div>
+                        <div class="absolute -bottom-2 -right-2 bg-white rounded-full p-1 shadow-md">
+                            <div class="w-5 h-5 bg-green-500 rounded-full flex items-center justify-center text-white">
+                                <i data-lucide="check" class="w-3 h-3"></i>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="flex-1">
+                        <div class="flex items-center gap-1 mb-1">
+                            <h3 class="font-bold text-slate-800">Somsak P.</h3>
+                            <span class="text-xs text-slate-400">• 벤츠 E-Class</span>
+                        </div>
+                        <div class="flex items-center gap-3">
+                            <div class="flex items-center gap-1">
+                                <i data-lucide="star" class="w-3 h-3 fill-amber-400 text-amber-400"></i>
+                                <span class="text-xs font-bold text-slate-700">4.98</span>
+                            </div>
+                            <div class="flex items-center gap-1">
+                                <i data-lucide="shield-check" class="w-3 h-3 text-blue-500"></i>
+                                <span class="text-xs font-semibold text-slate-500">Trust Score: <span class="text-blue-600">98</span></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Step 3: Payment Method -->
+        <section class="mb-8">
+            <h2 class="text-sm font-bold text-slate-800 mb-4 flex items-center justify-between">
+                <span>결제 수단 선택</span>
+                <span class="text-[10px] text-amber-600 font-medium">자동 국가 감지 완료</span>
+            </h2>
+
+            <div class="grid grid-cols-2 gap-3" id="payment-grid">
+                <!-- Payment methods will be injected here -->
+            </div>
+        </section>
+
+        <!-- Price Breakdown -->
+        <section class="border-t pt-4">
+            <div class="flex justify-between items-center mb-2">
+                <span class="text-sm text-slate-500">운행 요금</span>
+                <span class="text-sm font-medium text-slate-700" id="base-price">75,000 ₩</span>
+            </div>
+            <div class="flex justify-between items-center mb-4">
+                <span class="text-sm text-slate-500">글로벌 서비스 수수료</span>
+                <span class="text-sm font-medium text-slate-700" id="fee-price">3,500 ₩</span>
+            </div>
+            <div class="flex justify-between items-end">
+                <span class="text-base font-bold text-slate-800">최종 결제 금액</span>
+                <div class="text-right">
+                    <p class="text-2xl font-black text-amber-500" id="total-price">78,500 ₩</p>
+                    <p class="text-[10px] text-slate-400" id="currency-info">현지 통화 기준 결제 (KRW)</p>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Bottom Action Bar -->
+    <div class="fixed bottom-0 max-w-md w-full bg-white border-t p-4 flex gap-3 z-40">
+        <button class="flex-1 bg-slate-900 text-white font-bold py-4 rounded-2xl hover:bg-slate-800 active:scale-95 transition shadow-lg shadow-slate-200 flex items-center justify-center gap-2" onclick="handlePayment()">
+            <i data-lucide="lock" class="w-4 h-4 text-amber-400"></i>
+            안심 예약 및 결제하기
+        </button>
+    </div>
+
+    <!-- Country Selector Modal -->
+    <div id="country-modal" class="fixed inset-0 z-[60] modal-overlay hidden flex items-end justify-center">
+        <div class="bg-white w-full max-w-md rounded-t-3xl p-6 transition-transform duration-300 transform translate-y-full" id="modal-content">
+            <div class="w-12 h-1 bg-slate-200 rounded-full mx-auto mb-6"></div>
+            <h3 class="font-bold text-lg mb-4">여행 국가를 선택하세요</h3>
+            <div class="grid grid-cols-1 gap-2">
+                <button onclick="changeCountry('KR')" class="flex items-center justify-between p-4 rounded-xl border hover:bg-slate-50">
+                    <div class="flex items-center gap-3">
+                        <span class="text-2xl">🇰🇷</span>
+                        <div class="text-left">
+                            <p class="font-bold text-slate-800">대한민국</p>
+                            <p class="text-xs text-slate-400">South Korea (KRW)</p>
+                        </div>
+                    </div>
+                    <i data-lucide="chevron-right" class="w-4 h-4 text-slate-300"></i>
+                </button>
+                <button onclick="changeCountry('TH')" class="flex items-center justify-between p-4 rounded-xl border hover:bg-slate-50">
+                    <div class="flex items-center gap-3">
+                        <span class="text-2xl">🇹🇭</span>
+                        <div class="text-left">
+                            <p class="font-bold text-slate-800">태국</p>
+                            <p class="text-xs text-slate-400">Thailand (THB)</p>
+                        </div>
+                    </div>
+                    <i data-lucide="chevron-right" class="w-4 h-4 text-slate-300"></i>
+                </button>
+                <button onclick="changeCountry('VN')" class="flex items-center justify-between p-4 rounded-xl border hover:bg-slate-50">
+                    <div class="flex items-center gap-3">
+                        <span class="text-2xl">🇻🇳</span>
+                        <div class="text-left">
+                            <p class="font-bold text-slate-800">베트남</p>
+                            <p class="text-xs text-slate-400">Vietnam (VND)</p>
+                        </div>
+                    </div>
+                    <i data-lucide="chevron-right" class="w-4 h-4 text-slate-300"></i>
+                </button>
+            </div>
+            <button onclick="toggleCountrySelector()" class="w-full mt-6 py-4 text-slate-500 font-medium">닫기</button>
+        </div>
+    </div>
+
+    <!-- Success Feedback Overlay -->
+    <div id="payment-loader" class="fixed inset-0 z-[100] bg-white hidden flex flex-col items-center justify-center p-8 text-center">
+        <div id="status-icon" class="mb-6">
+            <div class="w-20 h-20 border-4 border-amber-100 border-t-amber-500 rounded-full animate-spin"></div>
+        </div>
+        <h2 id="status-title" class="text-xl font-bold text-slate-800 mb-2">에스크로 결제 처리 중...</h2>
+        <p id="status-desc" class="text-slate-500 text-sm">드라이버가 운행을 수락할 때까지 결제 금액은 안전하게 보호됩니다.</p>
+    </div>
+
+    <script>
+        const countryData = {
+            'KR': {
+                name: '대한민국', flag: '🇰🇷', currency: '₩',
+                pickup: '인천국제공항 T1', dropoff: '서울 신라호텔',
+                basePrice: 75000, fee: 3500,
+                payments: [
+                    { id: 'kakaopay', name: '카카오페이', icon: 'smartphone' },
+                    { id: 'toss', name: '토스', icon: 'zap' },
+                    { id: 'card', name: '신용카드', icon: 'credit-card' },
+                    { id: 'pi', name: 'Pi 코인', icon: 'circle-dot' }
+                ]
+            },
+            'TH': {
+                name: '태국', flag: '🇹🇭', currency: '฿',
+                pickup: '방콕 수완나품 공항', dropoff: '방콕 메리어트 호텔',
+                basePrice: 1200, fee: 80,
+                payments: [
+                    { id: 'grabpay', name: 'GrabPay', icon: 'smartphone' },
+                    { id: 'promptpay', name: 'PromptPay', icon: 'qr-code' },
+                    { id: 'card', name: 'Global Card', icon: 'credit-card' },
+                    { id: 'pi', name: 'Pi Network', icon: 'circle-dot' }
+                ]
+            },
+            'VN': {
+                name: '베트남', flag: '🇻🇳', currency: '₫',
+                pickup: '노이바이 국제공항', dropoff: '하노이 올드쿼터',
+                basePrice: 450000, fee: 25000,
+                payments: [
+                    { id: 'momo', name: 'MoMo Wallet', icon: 'smartphone' },
+                    { id: 'zalopay', name: 'ZaloPay', icon: 'zap' },
+                    { id: 'cash', name: '현장 현금 결제', icon: 'banknote' },
+                    { id: 'pi', name: 'Pi Network', icon: 'circle-dot' }
+                ]
+            }
+        };
+
+        let currentCountry = 'KR';
+        let selectedPayment = 'pi';
+
+        function initApp() {
+            lucide.createIcons();
+            updateUI();
+        }
+
+        function updateUI() {
+            const data = countryData[currentCountry];
+            
+            document.getElementById('current-flag').textContent = data.flag;
+            document.getElementById('current-country-name').textContent = data.name;
+            document.getElementById('pickup-location').textContent = data.pickup;
+            document.getElementById('dropoff-location').textContent = data.dropoff;
+            
+            document.getElementById('base-price').textContent = `${data.basePrice.toLocaleString()} ${data.currency}`;
+            document.getElementById('fee-price').textContent = `${data.fee.toLocaleString()} ${data.currency}`;
+            document.getElementById('total-price').textContent = `${(data.basePrice + data.fee).toLocaleString()} ${data.currency}`;
+            document.getElementById('currency-info').textContent = `현지 통화 기준 결제 (${currentCountry === 'KR' ? 'KRW' : currentCountry})`;
+
+            const grid = document.getElementById('payment-grid');
+            grid.innerHTML = '';
+            
+            data.payments.forEach(pay => {
+                const card = document.createElement('div');
+                card.className = `payment-card border rounded-2xl p-4 flex flex-col items-center gap-2 cursor-pointer ${selectedPayment === pay.id ? 'active' : ''}`;
+                card.onclick = () => {
+                    selectedPayment = pay.id;
+                    updateUI();
+                };
+                card.innerHTML = `
+                    <div class="w-10 h-10 bg-white rounded-full flex items-center justify-center text-slate-600 shadow-sm">
+                        <i data-lucide="${pay.icon}" class="w-5 h-5 ${pay.id === 'pi' ? 'text-amber-500' : ''}"></i>
+                    </div>
+                    <span class="text-xs font-bold text-slate-700">${pay.name}</span>
+                `;
+                grid.appendChild(card);
+            });
+            
+            lucide.createIcons();
+        }
+
+        function toggleCountrySelector() {
+            const modal = document.getElementById('country-modal');
+            const content = document.getElementById('modal-content');
+            
+            if (modal.classList.contains('hidden')) {
+                modal.classList.remove('hidden');
+                setTimeout(() => {
+                    content.classList.remove('translate-y-full');
+                }, 10);
+            } else {
+                content.classList.add('translate-y-full');
+                setTimeout(() => {
+                    modal.classList.add('hidden');
+                }, 300);
+            }
+        }
+
+        function changeCountry(code) {
+            currentCountry = code;
+            selectedPayment = countryData[code].payments[0].id;
+            updateUI();
+            toggleCountrySelector();
+        }
+
+        function handlePayment() {
+            const loader = document.getElementById('payment-loader');
+            const icon = document.getElementById('status-icon');
+            const title = document.getElementById('status-title');
+            const desc = document.getElementById('status-desc');
+            
+            loader.classList.remove('hidden');
+            
+            // Step 1: Processing
+            setTimeout(() => {
+                icon.innerHTML = `
+                    <div class="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center text-green-500 mx-auto">
+                        <i data-lucide="check-circle-2" class="w-10 h-10"></i>
+                    </div>
+                `;
+                title.textContent = "결제 승인 완료";
+                desc.textContent = "운행이 시작될 때까지 에스크로 시스템에 보호됩니다.";
+                lucide.createIcons();
+                
+                // Step 2: Finalizing
+                setTimeout(() => {
+                    loader.classList.add('hidden');
+                    // Reset to original for next simulation
+                    icon.innerHTML = `<div class="w-20 h-20 border-4 border-amber-100 border-t-amber-500 rounded-full animate-spin"></div>`;
+                    title.textContent = "에스크로 결제 처리 중...";
+                }, 2000);
+            }, 2500);
+        }
+
+        window.onload = initApp;
+    </script>
+</body>
+</html>

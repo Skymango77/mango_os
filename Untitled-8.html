@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>MANGO Universe - Full Specs & Optimized</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/lucide/0.263.0/lucide.min.js"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Kanit:ital,wght@1,900&display=swap');
+        
+        :root { 
+            --mango-neon: #ffaa00; 
+            --unified-width: 92%; /* [지침] 모든 윈도우 크기 동일 */
+        }
+
+        body { background-color: #050505; color: white; font-family: 'Pretendard', sans-serif; overflow-x: hidden; margin: 0; }
+        .mango-container { width: var(--unified-width); max-width: 480px; margin: 0 auto; }
+
+        /* --- [1. 애니메이션 엔진] --- */
+        @keyframes gold-shine { 0% { background-position: -200% center; } 100% { background-position: 200% center; } }
+        @keyframes mango-pulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.03); } }
+        @keyframes fall-and-stack { 
+            0% { transform: translateY(-5px); opacity: 0; }
+            15% { opacity: 1; }
+            100% { transform: translateY(32px) scale(0.9); opacity: 0.8; }
+        }
+        @keyframes rotateGlow { 100% { transform: rotate(360deg); } }
+
+        .mango-gold-power {
+            font-family: 'Kanit', sans-serif !important; font-style: italic !important;
+            background: linear-gradient(to right, #f59e0b, #fbbf24, #fff, #fbbf24, #f59e0b);
+            background-size: 200% auto; -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            animation: gold-shine 3s linear infinite, mango-pulse 2s infinite ease-in-out !important;
+            display: inline-block; position: relative;
+        }
+
+        .gold-particle {
+            position: absolute; background: radial-gradient(circle, #ffffff 0%, #ffcc00 60%, #ffaa00 100%);
+            border-radius: 50%; pointer-events: none; z-index: 1000; box-shadow: 0 0 5px #ffd700;
+        }
+
+        /* --- [2. 3D 포털 & 화려한 테두리 애니메이션] --- */
+        .carousel-view { perspective: 2000px; height: 350px; display: flex; align-items: center; justify-content: center; }
+        .carousel-pivot { width: 100%; height: 100%; position: relative; transform-style: preserve-3d; transition: transform 0.6s cubic-bezier(0.23, 1, 0.32, 1); }
+        
+        .portal-door {
+            position: absolute; width: 160px; height: 160px; left: calc(50% - 80px); top: calc(50% - 80px);
+            background: rgba(10, 10, 10, 0.95); border-radius: 40px;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            backface-visibility: hidden; border: 1px solid rgba(255, 170, 0, 0.15);
+            transition: all 0.5s ease;
+        }
+
+        .portal-door.active {
+            border: 3px solid var(--mango-neon); box-shadow: 0 0 30px rgba(255, 170, 0, 0.4);
+            z-index: 100 !important;
+        }
+
+        /* 포털 테두리 회전 광원 효과 (사용자님 요청 복구) */
+        .portal-door.active::after {
+            content: ''; position: absolute; inset: -5px; border-radius: 44px;
+            background: conic-gradient(from 0deg, transparent, var(--mango-neon), #fff, var(--mango-neon), transparent);
+            animation: rotateGlow 2s linear infinite;
+            -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+            mask-composite: exclude; padding: 5px;
+        }
+
+        /* --- [3. UI 스타일] --- */
+        .glass { background: rgba(255, 255, 255, 0.03); backdrop-filter: blur(10px); border: 1px solid rgba(255, 170, 0, 0.2); border-radius: 16px; }
+        .news-track { animation: scrollUp 10s linear infinite; }
+        @keyframes scrollUp { 0% { transform: translateY(0); } 100% { transform: translateY(-100%); } }
+
+        .device-watch .carousel-view { height: 220px; transform: scale(0.8); }
+        .device-watch .hide-on-watch { display: none; }
+    </style>
+</head>
+<body id="main-body" class="py-6 space-y-6">
+
+<div class="mango-container flex justify-between items-center px-2">
+    <div class="flex items-center gap-3">
+        <img src="mango.jpg" class="w-12 h-12 rounded-full border-2 border-yellow-500/20 shadow-lg" alt="M">
+        <div class="flex flex-col">
+            <div class="relative inline-block" id="gold-zone">
+                <span class="mango-gold-power text-[36px] font-[900] tracking-tighter leading-none pr-2">MANGO</span>
+                <div id="gold-dust-container" class="absolute left-0 top-0 w-full h-[60px] pointer-events-none"></div>
+            </div>
+            <span class="text-[12px] text-white/40 uppercase font-bold tracking-[0.2em] ml-1">.pi / ECO-SYSTEM</span>
+        </div>
+    </div>
+    <div class="flex flex-col gap-2 items-end">
+        <select onchange="changeMode(this.value)" class="bg-zinc-900 text-[14px] text-white border border-white/20 rounded px-2 py-1.5 focus:outline-none w-32">
+            <option value="phone">📱 Phone</option>
+            <option value="watch">⌚ Watch</option>
+            <option value="glass">🕶️ Glass</option>
+        </select>
+    </div>
+</div>
+
+<div class="mango-container glass px-4 py-3">
+    <div class="news-ticker h-12 overflow-hidden text-[18px] text-yellow-400 font-black italic tracking-tight">
+        <div class="news-track" id="news-track">
+            <p class="h-12 flex items-center">π NETWORK: 차원을 넘는 미식 여행 MANGO...</p>
+            <p class="h-12 flex items-center">최초의 디지털 화폐 π: 결제 시스템 업데이트</p>
+            <p class="h-12 flex items-center">MANGO REALTY: 실시간 부동산 매물 확인 가능</p>
+            <p class="h-12 flex items-center">PI NETWORK: 글로벌 리더 MANGO UNIVERSE</p>
+        </div>
+    </div>
+</div>
+
+<div id="main-banner" class="mango-container glass h-32 relative overflow-hidden hide-on-watch">
+    <div id="banner-slots" class="relative w-full h-full"></div>
+</div>
+
+<div class="mango-container carousel-view" id="swipe-area">
+    <div class="carousel-pivot" id="pivot"></div>
+</div>
+
+<div class="mango-container space-y-4 pt-4 hide-on-watch">
+    <h3 class="text-xs font-bold text-yellow-500 mb-2 flex items-center uppercase tracking-widest">
+        <i data-lucide="map-pin" class="w-4 h-4 mr-2"></i> 지역 추천 피드
+    </h3>
+    <div class="space-y-4">
+        <div class="glass p-5 flex gap-5 items-center">
+            <div class="w-20 h-20 flex-shrink-0 overflow-hidden rounded-2xl border border-white/10 shadow-inner">
+                <img src="galbi.jpg" class="w-full h-full object-cover" onerror="this.src='https://via.placeholder.com/150?text=MEAT'">
+            </div>
+            <div>
+                <p class="text-[15px] font-bold text-white/95 leading-tight">핫플 갈비 맛집 "명륜진사갈비"</p>
+                <p class="text-[12px] text-orange-400 font-medium mt-1.5">도보 5분 · 파이코인(π) 결제 가능</p>
+                <p class="text-[11px] opacity-40 mt-1">#무한리필 #지역맛집 #π-PAY</p>
+            </div>
+        </div>
+        <div class="glass p-5 flex gap-5 items-center">
+            <div class="w-20 h-20 flex-shrink-0 overflow-hidden rounded-2xl border border-white/10">
+                <img src="market.jpg" class="w-full h-full object-cover" onerror="this.src='https://via.placeholder.com/150?text=MARKET'">
+            </div>
+            <div>
+                <p class="text-[15px] font-bold text-white/95 leading-tight">롯데 캐슬 라센트 단지내 장터</p>
+                <p class="text-[12px] text-yellow-500 font-medium mt-1.5">매주 금요일 오후 단지 내 개최</p>
+                <p class="text-[11px] opacity-40 mt-1">#입주민전용 #먹거리장터 #지역축제</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="detail-modal" class="fixed bottom-10 left-1/2 -translate-x-1/2 w-[85%] max-w-[320px] bg-zinc-950 border-t-[4px] border-yellow-500 rounded-[30px] p-6 transform translate-y-[150%] transition-transform duration-500 z-[9999] shadow-2xl flex flex-col items-center">
+    <div class="w-full flex justify-between items-center mb-4">
+        <h2 id="modal-title" class="text-[18px] font-black text-yellow-500 italic">INFO</h2>
+        <button onclick="closeModal()" class="text-white/20"><i data-lucide="x-circle" class="w-7 h-7"></i></button>
+    </div>
+    <p id="modal-content" class="text-white/90 text-center text-[15px] mb-6 leading-relaxed"></p>
+    <button onclick="closeModal()" class="w-full py-4 bg-yellow-500 text-black font-black rounded-xl active:scale-95 transition-all">CONFIRM</button>
+</div>
+
+<script>
+    // [1] 배너 데이터
+    const promoContents = [
+        { type: 'image', src:'./assets/img/banner1.jpg', text: '차원을 넘는 휴가 여행' },
+        { type: 'image', src:'./assets/img/banner2.jpg', text: 'Premium Selection 미식' },
+        { type: 'video', src:'./assets/video/promo_video.mp4', text: 'REALTY 실시간 예약 시스템' }
+    ];
+
+    let currentPromoIdx = 0;
+    function initBanners() {
+        const slotWrap = document.getElementById('banner-slots');
+        slotWrap.innerHTML = promoContents.map((data, i) => `
+            <div class="banner-item absolute inset-0 transition-all duration-1000 transform ${i === 0 ? 'opacity-100' : 'opacity-0'}" style="z-index: ${i === 0 ? 10 : 1}">
+                ${data.type === 'video' ? `<video src="${data.src}" autoplay muted loop class="w-full h-full object-cover opacity-40"></video>` : `<img src="${data.src}" class="w-full h-full object-cover opacity-40">`}
+                <div class="absolute inset-0 flex items-center px-6"><p class="text-sm font-bold italic text-white drop-shadow-lg">${data.text}</p></div>
+            </div>
+        `).join('');
+    }
+
+    // [2] 포털 이동 로직 (FOOD, REALTY 이동 완벽 보장)
+    const portalData = [
+        { id: 'FOOD', icon: 'utensils', url: 'Food/index.html' },
+        { id: 'TRANSFER', icon: 'repeat', desc: '안전하고 빠른 자산 이동 시스템.' },
+        { id: 'TRAVEL', icon: 'plane', desc: '글로벌 여행 및 숙박 예약 서비스.' },
+        { id: 'HOBBY', icon: 'heart', desc: '가치를 공유하는 라이프스타일 커뮤니티.' },
+        { id: 'REALTY', icon: 'building', url: 'http://localhost:5173' },
+        { id: 'MARKET', icon: 'shopping-cart', desc: '글로벌 파이 에코시스템 쇼핑몰.' },
+        { id: 'SOCIAL', icon: 'message-circle', desc: '실시간 유저 소통 시스템.' },
+        { id: 'ADMIN', icon: 'shield-check', desc: '시스템 보안 및 관리자 패널.' }
+    ];
+
+    const pivot = document.getElementById('pivot');
+    let currentIndex = 0;
+    let autoRotation = null;
+
+    function initPortals() {
+        pivot.innerHTML = '';
+        portalData.forEach((data, i) => {
+            const door = document.createElement('div');
+            door.className = 'portal-door';
+            door.id = `door-${i}`;
+            const iconFileName = `${data.id.toLowerCase()}_icon.png`;
+            door.innerHTML = `<img src="./assets/img/${iconFileName}" class="w-24 h-24 object-contain" onerror="this.src='https://via.placeholder.com/100?text=${data.id}'">`;
+            
+            door.onclick = (e) => {
+                e.stopPropagation();
+                currentIndex = i;
+                updateRotation();
+                stopAuto();
+                setTimeout(() => {
+                    if (data.id === 'ADMIN') { if (prompt("CEO PASSWORD:") !== "mango777") return; }
+                    if (data.url) { 
+                        window.location.href = data.url; // 여기서 Food/Realty로 실제 이동!
+                    } else {
+                        document.getElementById('modal-title').innerText = data.id;
+                        document.getElementById('modal-content').innerText = data.desc;
+                        document.getElementById('detail-modal').style.transform = 'translate(-50%, 0)';
+                    }
+                }, 500);
+            };
+            pivot.appendChild(door);
+        });
+        updateRotation();
+    }
+
+    function updateRotation() {
+        const total = portalData.length;
+        portalData.forEach((_, i) => {
+            const door = document.getElementById(`door-${i}`);
+            const angle = (i - currentIndex) * (360 / total);
+            const radian = (angle * Math.PI) / 180;
+            const x = Math.sin(radian) * 280;
+            const z = (Math.cos(radian) - 1) * 280;
+            door.style.transform = `translate3d(${x}px, 0, ${z}px)`;
+            
+            if (i === (currentIndex % total + total) % total) {
+                door.classList.add('active');
+                door.style.opacity = "1"; door.style.filter = "blur(0)";
+            } else {
+                door.classList.remove('active');
+                door.style.opacity = "0.2"; door.style.filter = "blur(3px)";
+            }
+        });
+    }
+
+    // [3] 부가 효과
+    function startGoldRain() {
+        const container = document.getElementById('gold-dust-container');
+        setInterval(() => {
+            const p = document.createElement('span');
+            p.className = 'gold-particle';
+            const size = Math.random() * 3 + 2;
+            Object.assign(p.style, { width: size+'px', height: size+'px', left: Math.random()*100+'%', top: '0px', animation: `fall-and-stack ${Math.random()*1+1.5}s ease-in-out forwards` });
+            container.appendChild(p);
+            setTimeout(() => p.remove(), 4000);
+        }, 120);
+    }
+
+    function closeModal() { document.getElementById('detail-modal').style.transform = 'translate(-50%, 150%)'; }
+    function changeMode(mode) { document.body.className = `py-6 space-y-6 device-${mode}`; }
+    function startAuto() { autoRotation = setInterval(() => { currentIndex = (currentIndex + 1) % 8; updateRotation(); }, 6000); }
+    function stopAuto() { clearInterval(autoRotation); autoRotation = null; }
+
+    window.addEventListener('DOMContentLoaded', () => {
+        initBanners();
+        setInterval(() => {
+            const items = document.querySelectorAll('.banner-item');
+            if(!items.length) return;
+            items[currentPromoIdx].style.opacity = '0';
+            currentPromoIdx = (currentPromoIdx + 1) % items.length;
+            items[currentPromoIdx].style.opacity = '1';
+        }, 4000);
+        initPortals();
+        startGoldRain();
+        startAuto();
+        lucide.createIcons();
+    });
+</script>
+</body>
+</html>

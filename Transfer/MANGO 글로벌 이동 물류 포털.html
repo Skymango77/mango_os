@@ -1,0 +1,588 @@
+<!DOCTYPE html>
+<!-- saved from url=(0113)file:///C:/Users/%EC%9A%A9%ED%81%AC%EC%BB%B4%ED%93%A8%ED%84%B0/Desktop/mango/transfer_portal/transfer_portal.html -->
+<html lang="ko"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>문화적 맥락을 고려한 망고 이동 수단 가이드</title>
+    <!-- Tailwind CSS CDN 로드 -->
+    <script src="./MANGO 글로벌 이동 물류 포털_files/saved_resource"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap');
+        body { font-family: 'Inter', sans-serif; background-color: #0d1117; }
+        .card {
+            transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+            border: 1px solid rgba(168, 85, 247, 0.3);
+            backdrop-filter: blur(5px);
+            background-color: rgba(30, 41, 59, 0.7);
+        }
+        /* 활성 카드에만 hover 효과 적용 */
+        .card:not(.is-not-ready):hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(168, 85, 247, 0.2), 0 0 15px rgba(168, 85, 247, 0.4);
+        }
+        /* 준비중 상태 스타일 */
+        .is-not-ready {
+            opacity: 0.5; /* Opacity adjusted for more contrast */
+            cursor: not-allowed;
+            pointer-events: auto; /* for onclick handler */
+            position: relative;
+        }
+        /* RTL (Right-to-Left) 지원을 위한 CSS 예시 */
+        .rtl #app-container {
+            direction: rtl; 
+            text-align: right;
+        }
+        /* RTL에서 아이콘 간격 보정 */
+        .rtl .flex.items-center svg {
+            margin-right: 0;
+            margin-left: 0.25rem; 
+        }
+    </style>
+<style>*, ::before, ::after{--tw-border-spacing-x:0;--tw-border-spacing-y:0;--tw-translate-x:0;--tw-translate-y:0;--tw-rotate:0;--tw-skew-x:0;--tw-skew-y:0;--tw-scale-x:1;--tw-scale-y:1;--tw-pan-x: ;--tw-pan-y: ;--tw-pinch-zoom: ;--tw-scroll-snap-strictness:proximity;--tw-gradient-from-position: ;--tw-gradient-via-position: ;--tw-gradient-to-position: ;--tw-ordinal: ;--tw-slashed-zero: ;--tw-numeric-figure: ;--tw-numeric-spacing: ;--tw-numeric-fraction: ;--tw-ring-inset: ;--tw-ring-offset-width:0px;--tw-ring-offset-color:#fff;--tw-ring-color:rgb(59 130 246 / 0.5);--tw-ring-offset-shadow:0 0 #0000;--tw-ring-shadow:0 0 #0000;--tw-shadow:0 0 #0000;--tw-shadow-colored:0 0 #0000;--tw-blur: ;--tw-brightness: ;--tw-contrast: ;--tw-grayscale: ;--tw-hue-rotate: ;--tw-invert: ;--tw-saturate: ;--tw-sepia: ;--tw-drop-shadow: ;--tw-backdrop-blur: ;--tw-backdrop-brightness: ;--tw-backdrop-contrast: ;--tw-backdrop-grayscale: ;--tw-backdrop-hue-rotate: ;--tw-backdrop-invert: ;--tw-backdrop-opacity: ;--tw-backdrop-saturate: ;--tw-backdrop-sepia: ;--tw-contain-size: ;--tw-contain-layout: ;--tw-contain-paint: ;--tw-contain-style: }::backdrop{--tw-border-spacing-x:0;--tw-border-spacing-y:0;--tw-translate-x:0;--tw-translate-y:0;--tw-rotate:0;--tw-skew-x:0;--tw-skew-y:0;--tw-scale-x:1;--tw-scale-y:1;--tw-pan-x: ;--tw-pan-y: ;--tw-pinch-zoom: ;--tw-scroll-snap-strictness:proximity;--tw-gradient-from-position: ;--tw-gradient-via-position: ;--tw-gradient-to-position: ;--tw-ordinal: ;--tw-slashed-zero: ;--tw-numeric-figure: ;--tw-numeric-spacing: ;--tw-numeric-fraction: ;--tw-ring-inset: ;--tw-ring-offset-width:0px;--tw-ring-offset-color:#fff;--tw-ring-color:rgb(59 130 246 / 0.5);--tw-ring-offset-shadow:0 0 #0000;--tw-ring-shadow:0 0 #0000;--tw-shadow:0 0 #0000;--tw-shadow-colored:0 0 #0000;--tw-blur: ;--tw-brightness: ;--tw-contrast: ;--tw-grayscale: ;--tw-hue-rotate: ;--tw-invert: ;--tw-saturate: ;--tw-sepia: ;--tw-drop-shadow: ;--tw-backdrop-blur: ;--tw-backdrop-brightness: ;--tw-backdrop-contrast: ;--tw-backdrop-grayscale: ;--tw-backdrop-hue-rotate: ;--tw-backdrop-invert: ;--tw-backdrop-opacity: ;--tw-backdrop-saturate: ;--tw-backdrop-sepia: ;--tw-contain-size: ;--tw-contain-layout: ;--tw-contain-paint: ;--tw-contain-style: }/* ! tailwindcss v3.4.17 | MIT License | https://tailwindcss.com */*,::after,::before{box-sizing:border-box;border-width:0;border-style:solid;border-color:#e5e7eb}::after,::before{--tw-content:''}:host,html{line-height:1.5;-webkit-text-size-adjust:100%;-moz-tab-size:4;tab-size:4;font-family:ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";font-feature-settings:normal;font-variation-settings:normal;-webkit-tap-highlight-color:transparent}body{margin:0;line-height:inherit}hr{height:0;color:inherit;border-top-width:1px}abbr:where([title]){-webkit-text-decoration:underline dotted;text-decoration:underline dotted}h1,h2,h3,h4,h5,h6{font-size:inherit;font-weight:inherit}a{color:inherit;text-decoration:inherit}b,strong{font-weight:bolder}code,kbd,pre,samp{font-family:ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;font-feature-settings:normal;font-variation-settings:normal;font-size:1em}small{font-size:80%}sub,sup{font-size:75%;line-height:0;position:relative;vertical-align:baseline}sub{bottom:-.25em}sup{top:-.5em}table{text-indent:0;border-color:inherit;border-collapse:collapse}button,input,optgroup,select,textarea{font-family:inherit;font-feature-settings:inherit;font-variation-settings:inherit;font-size:100%;font-weight:inherit;line-height:inherit;letter-spacing:inherit;color:inherit;margin:0;padding:0}button,select{text-transform:none}button,input:where([type=button]),input:where([type=reset]),input:where([type=submit]){-webkit-appearance:button;background-color:transparent;background-image:none}:-moz-focusring{outline:auto}:-moz-ui-invalid{box-shadow:none}progress{vertical-align:baseline}::-webkit-inner-spin-button,::-webkit-outer-spin-button{height:auto}[type=search]{-webkit-appearance:textfield;outline-offset:-2px}::-webkit-search-decoration{-webkit-appearance:none}::-webkit-file-upload-button{-webkit-appearance:button;font:inherit}summary{display:list-item}blockquote,dd,dl,figure,h1,h2,h3,h4,h5,h6,hr,p,pre{margin:0}fieldset{margin:0;padding:0}legend{padding:0}menu,ol,ul{list-style:none;margin:0;padding:0}dialog{padding:0}textarea{resize:vertical}input::placeholder,textarea::placeholder{opacity:1;color:#9ca3af}[role=button],button{cursor:pointer}:disabled{cursor:default}audio,canvas,embed,iframe,img,object,svg,video{display:block;vertical-align:middle}img,video{max-width:100%;height:auto}[hidden]:where(:not([hidden=until-found])){display:none}.pointer-events-none{pointer-events:none}.absolute{position:absolute}.inset-0{inset:0px}.z-10{z-index:10}.mb-2{margin-bottom:0.5rem}.mb-4{margin-bottom:1rem}.mb-8{margin-bottom:2rem}.mt-2{margin-top:0.5rem}.mt-4{margin-top:1rem}.mb-1{margin-bottom:0.25rem}.mr-1{margin-right:0.25rem}.flex{display:flex}.grid{display:grid}.h-4{height:1rem}.min-h-screen{min-height:100vh}.w-4{width:1rem}.grid-cols-1{grid-template-columns:repeat(1, minmax(0, 1fr))}.flex-col{flex-direction:column}.flex-wrap{flex-wrap:wrap}.items-center{align-items:center}.justify-center{justify-content:center}.justify-between{justify-content:space-between}.gap-3{gap:0.75rem}.gap-6{gap:1.5rem}.space-y-3 > :not([hidden]) ~ :not([hidden]){--tw-space-y-reverse:0;margin-top:calc(0.75rem * calc(1 - var(--tw-space-y-reverse)));margin-bottom:calc(0.75rem * var(--tw-space-y-reverse))}.space-y-2 > :not([hidden]) ~ :not([hidden]){--tw-space-y-reverse:0;margin-top:calc(0.5rem * calc(1 - var(--tw-space-y-reverse)));margin-bottom:calc(0.5rem * var(--tw-space-y-reverse))}.rounded-lg{border-radius:0.5rem}.rounded-xl{border-radius:0.75rem}.rounded-2xl{border-radius:1rem}.rounded-full{border-radius:9999px}.border{border-width:1px}.border-t{border-top-width:1px}.border-purple-500\/50{border-color:rgb(168 85 247 / 0.5)}.border-gray-700{--tw-border-opacity:1;border-color:rgb(55 65 81 / var(--tw-border-opacity, 1))}.bg-gray-700{--tw-bg-opacity:1;background-color:rgb(55 65 81 / var(--tw-bg-opacity, 1))}.bg-gray-800\/70{background-color:rgb(31 41 55 / 0.7)}.bg-gray-900\/40{background-color:rgb(17 24 39 / 0.4)}.bg-indigo-600\/50{background-color:rgb(79 70 229 / 0.5)}.bg-purple-600\/50{background-color:rgb(147 51 234 / 0.5)}.p-2{padding:0.5rem}.p-4{padding:1rem}.p-5{padding:1.25rem}.px-3{padding-left:0.75rem;padding-right:0.75rem}.py-1{padding-top:0.25rem;padding-bottom:0.25rem}.pt-3{padding-top:0.75rem}.text-3xl{font-size:1.875rem;line-height:2.25rem}.text-sm{font-size:0.875rem;line-height:1.25rem}.text-xl{font-size:1.25rem;line-height:1.75rem}.text-lg{font-size:1.125rem;line-height:1.75rem}.text-xs{font-size:0.75rem;line-height:1rem}.font-bold{font-weight:700}.font-extrabold{font-weight:800}.font-medium{font-weight:500}.font-semibold{font-weight:600}.italic{font-style:italic}.text-gray-300{--tw-text-opacity:1;color:rgb(209 213 219 / var(--tw-text-opacity, 1))}.text-gray-400{--tw-text-opacity:1;color:rgb(156 163 175 / var(--tw-text-opacity, 1))}.text-purple-400{--tw-text-opacity:1;color:rgb(192 132 252 / var(--tw-text-opacity, 1))}.text-white{--tw-text-opacity:1;color:rgb(255 255 255 / var(--tw-text-opacity, 1))}.text-yellow-400{--tw-text-opacity:1;color:rgb(250 204 21 / var(--tw-text-opacity, 1))}.text-green-400{--tw-text-opacity:1;color:rgb(74 222 128 / var(--tw-text-opacity, 1))}.text-purple-300{--tw-text-opacity:1;color:rgb(216 180 254 / var(--tw-text-opacity, 1))}.text-yellow-300{--tw-text-opacity:1;color:rgb(253 224 71 / var(--tw-text-opacity, 1))}.shadow-lg{--tw-shadow:0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);--tw-shadow-colored:0 10px 15px -3px var(--tw-shadow-color), 0 4px 6px -4px var(--tw-shadow-color);box-shadow:var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow)}.shadow-xl{--tw-shadow:0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);--tw-shadow-colored:0 20px 25px -5px var(--tw-shadow-color), 0 8px 10px -6px var(--tw-shadow-color);box-shadow:var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow)}.focus\:border-purple-500:focus{--tw-border-opacity:1;border-color:rgb(168 85 247 / var(--tw-border-opacity, 1))}.focus\:ring-purple-500:focus{--tw-ring-opacity:1;--tw-ring-color:rgb(168 85 247 / var(--tw-ring-opacity, 1))}@media (min-width: 640px){.sm\:mt-0{margin-top:0px}.sm\:flex-row{flex-direction:row}.sm\:space-x-4 > :not([hidden]) ~ :not([hidden]){--tw-space-x-reverse:0;margin-right:calc(1rem * var(--tw-space-x-reverse));margin-left:calc(1rem * calc(1 - var(--tw-space-x-reverse)))}.sm\:space-y-0 > :not([hidden]) ~ :not([hidden]){--tw-space-y-reverse:0;margin-top:calc(0px * calc(1 - var(--tw-space-y-reverse)));margin-bottom:calc(0px * var(--tw-space-y-reverse))}.sm\:p-8{padding:2rem}}@media (min-width: 768px){.md\:grid-cols-2{grid-template-columns:repeat(2, minmax(0, 1fr))}}@media (min-width: 1024px){.lg\:grid-cols-3{grid-template-columns:repeat(3, minmax(0, 1fr))}}</style></head>
+<body class="text-white">
+
+    <div id="app-container" class="min-h-screen p-4 sm:p-8 container-layout">
+        <header class="mb-8 p-4 rounded-xl bg-gray-800/70 shadow-lg">
+            <h1 class="text-3xl font-extrabold text-purple-400 mb-2">🥭 MANGO 글로벌 이동/물류 포털</h1>
+            <p class="text-gray-400">총 18개 지역의 현지화된 교통 및 물류 정보, 자체 브랜드 '망고' 서비스 중심으로 제공</p>
+
+            <!-- 언어/지역 선택 영역 -->
+            <div class="mt-4 flex flex-col sm:flex-row items-center space-y-3 sm:space-y-0 sm:space-x-4">
+                <label for="locale-select" class="text-sm font-medium">서비스 언어 및 지역:</label>
+                <select id="locale-select" onchange="loadLocalizedData(this.value)" class="p-2 rounded-lg bg-gray-700 border border-purple-500/50 focus:ring-purple-500 focus:border-purple-500 text-white">
+                    <!-- 기존 18개 지역 옵션 유지 -->
+                    <option value="ko-KR">🇰🇷 한국어 (ko-KR)</option>
+                    <option value="en-US">🇺🇸 English (en-US)</option>
+                    <option value="ar-SA">🇸🇦 العربية (ar-SA - RTL) - 사우디</option>
+                    <option value="id-ID">🇮🇩 Bahasa Indonesia (id-ID)</option>
+                    <option value="vi-VN">🇻🇳 Tiếng Việt (vi-VN)</option>
+                    <option value="th-TH">🇹🇭 ไทย (th-TH)</option>
+                    <option value="pt-BR">🇧🇷 Português (pt-BR) - 브라질</option>
+                    <option value="ms-MY">🇲🇾 Bahasa Melayu (ms-MY) - 말레이시아</option>
+                    <option value="he-IL">🇮🇱 עברית (he-IL - RTL) - 이스라엘</option>
+                    <option value="el-GR">🇬🇷 Ελληνικά (el-GR) - 그리스</option>
+                    <option value="sv-SE">🇸🇪 Svenska (sv-SE) - 스웨덴</option>
+                    <option value="pl-PL">🇵🇱 Polski (pl-PL) - 폴란드</option>
+                    <option value="fi-FI">🇫🇮 Suomi (fi-FI) - 핀란드</option>
+                    <option value="de-DE">🇩🇪 Deutsch (de-DE) - 독일</option>
+                    <option value="tl-PH">🇵🇭 Filipino (tl-PH) - 필리핀</option>
+                    <option value="tr-TR">🇹🇷 Türkçe (tr-TR) - 튀르키예</option>
+                    <option value="ru-RU">🇷🇺 Русский (ru-RU) - 러시아</option>
+                    <option value="hi-IN">🇮🇳 हिन्दी (hi-IN) - 인도</option>
+                </select>
+
+                <div class="text-sm mt-2 sm:mt-0 text-yellow-400" id="direction-info">현재: ko-KR (LTR 레이아웃 적용)</div>
+            </div>
+        </header>
+
+        <!-- 핵심 필터링 영역 (L10N-Mandatory Filters) -->
+        <section class="mb-8 p-4 rounded-xl bg-gray-800/70 shadow-lg">
+            <h2 class="text-xl font-bold text-gray-300 mb-4">필수 현지 교통/물류 필터</h2>
+            <div id="l10n-filters" class="flex flex-wrap gap-3"><span class="px-3 py-1 bg-purple-600/50 rounded-full text-sm">🚚 1톤 이상 화물 운송</span><span class="px-3 py-1 bg-indigo-600/50 rounded-full text-sm">🚧 중장비 작업 허가 여부</span></div>
+        </section>
+
+        <!-- 이동 수단 카드 목록 -->
+        <main class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" id="transfer-list">
+                    <div class="card p-5 rounded-2xl shadow-xl flex flex-col justify-between 
+                                " onclick="">
+                        
+                        <!-- 준비중 오버레이 (비활성화 상태일 때만 표시) -->
+                        
+
+                        <div>
+                            <h2 class="text-xl font-bold mb-2 text-purple-300 flex items-center">
+                                🚗 망고 택시 (일반)
+                            </h2>
+                            <p class="text-gray-400 mb-4">가장 빠르고 보편적인 호출 서비스입니다.</p>
+                            
+                            <div class="space-y-2 mb-4">
+                                <p class="text-lg font-semibold text-white">
+                                    ₩2,000 <span class="text-sm text-gray-400">(KRW/km)</span>
+                                </p>
+                                <p class="text-sm text-green-400 flex items-center">
+                                    <svg class="w-4 h-4 mr-1 " fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                                    도착 예상 시간: 약 15분 (현재 위치 기준)
+                                </p>
+                            </div>
+                        </div>
+                        <!-- 현지 에티켓/팁 정보 -->
+                        <div class="mt-4 pt-3 border-t border-gray-700">
+                            <p class="text-sm font-semibold text-yellow-400 mb-1">현지 탑승/이용 에티켓 / 문화 팁</p>
+                            <p class="text-xs text-gray-400 italic">탑승 시 기사님께 간단히 인사하고, 안전벨트 착용은 필수입니다. 팁 문화는 없습니다.</p>
+                        </div>
+                    </div>
+                
+                    <div class="card p-5 rounded-2xl shadow-xl flex flex-col justify-between 
+                                " onclick="">
+                        
+                        <!-- 준비중 오버레이 (비활성화 상태일 때만 표시) -->
+                        
+
+                        <div>
+                            <h2 class="text-xl font-bold mb-2 text-purple-300 flex items-center">
+                                🚐 망고 프리미엄 (고급)
+                            </h2>
+                            <p class="text-gray-400 mb-4">짐이 많거나 단체 이동 시 추천되는 고급 밴 서비스.</p>
+                            
+                            <div class="space-y-2 mb-4">
+                                <p class="text-lg font-semibold text-white">
+                                    ₩3,500 <span class="text-sm text-gray-400">(KRW/km)</span>
+                                </p>
+                                <p class="text-sm text-green-400 flex items-center">
+                                    <svg class="w-4 h-4 mr-1 " fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                                    도착 예상 시간: 약 20분 (현재 위치 기준)
+                                </p>
+                            </div>
+                        </div>
+                        <!-- 현지 에티켓/팁 정보 -->
+                        <div class="mt-4 pt-3 border-t border-gray-700">
+                            <p class="text-sm font-semibold text-yellow-400 mb-1">현지 탑승/이용 에티켓 / 문화 팁</p>
+                            <p class="text-xs text-gray-400 italic">조용하고 쾌적한 환경 유지를 위해 통화는 자제하는 것이 좋습니다.</p>
+                        </div>
+                    </div>
+                
+                    <div class="card p-5 rounded-2xl shadow-xl flex flex-col justify-between 
+                                is-not-ready" onclick="showComingSoon(event, &#39;서울 지하철/버스&#39;)">
+                        
+                        <!-- 준비중 오버레이 (비활성화 상태일 때만 표시) -->
+                        
+                            <div class="absolute inset-0 bg-gray-900/40 flex items-center justify-center text-xl font-bold text-yellow-300 rounded-2xl z-10 pointer-events-none">
+                                🚧 준비중 🚧
+                            </div>
+                        
+
+                        <div>
+                            <h2 class="text-xl font-bold mb-2 text-purple-300 flex items-center">
+                                🚇 서울 지하철/버스
+                            </h2>
+                            <p class="text-gray-400 mb-4">저렴하고 넓은 지역을 커버하는 대중교통.</p>
+                            
+                            <div class="space-y-2 mb-4">
+                                <p class="text-lg font-semibold text-white">
+                                    ₩1,400 <span class="text-sm text-gray-400">(KRW (기본))</span>
+                                </p>
+                                <p class="text-sm text-green-400 flex items-center">
+                                    <svg class="w-4 h-4 mr-1 " fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                                    도착 예상 시간: 약 40분 (현재 위치 기준)
+                                </p>
+                            </div>
+                        </div>
+                        <!-- 현지 에티켓/팁 정보 -->
+                        <div class="mt-4 pt-3 border-t border-gray-700">
+                            <p class="text-sm font-semibold text-yellow-400 mb-1">현지 탑승/이용 에티켓 / 문화 팁</p>
+                            <p class="text-xs text-gray-400 italic">노약자석에 앉지 않도록 주의하고, 하차 시 감사를 표하는 문화는 없습니다.</p>
+                        </div>
+                    </div>
+                
+                    <div class="card p-5 rounded-2xl shadow-xl flex flex-col justify-between 
+                                is-not-ready" onclick="showComingSoon(event, &#39;망고 포장이사 (Full-Moving)&#39;)">
+                        
+                        <!-- 준비중 오버레이 (비활성화 상태일 때만 표시) -->
+                        
+                            <div class="absolute inset-0 bg-gray-900/40 flex items-center justify-center text-xl font-bold text-yellow-300 rounded-2xl z-10 pointer-events-none">
+                                🚧 준비중 🚧
+                            </div>
+                        
+
+                        <div>
+                            <h2 class="text-xl font-bold mb-2 text-purple-300 flex items-center">
+                                🚚 망고 포장이사 (Full-Moving)
+                            </h2>
+                            <p class="text-gray-400 mb-4">이삿짐 운반, 사다리차, 청소 등 모든 것을 한번에.</p>
+                            
+                            <div class="space-y-2 mb-4">
+                                <p class="text-lg font-semibold text-white">
+                                    ₩500,000 <span class="text-sm text-gray-400">(KRW (시작))</span>
+                                </p>
+                                <p class="text-sm text-green-400 flex items-center">
+                                    <svg class="w-4 h-4 mr-1 " fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                                    도착 예상 시간: 약 240분 (현재 위치 기준)
+                                </p>
+                            </div>
+                        </div>
+                        <!-- 현지 에티켓/팁 정보 -->
+                        <div class="mt-4 pt-3 border-t border-gray-700">
+                            <p class="text-sm font-semibold text-yellow-400 mb-1">현지 탑승/이용 에티켓 / 문화 팁</p>
+                            <p class="text-xs text-gray-400 italic">이사 당일에는 현장 팀장과 명확하게 소통하는 것이 중요합니다.</p>
+                        </div>
+                    </div>
+                
+                    <div class="card p-5 rounded-2xl shadow-xl flex flex-col justify-between 
+                                is-not-ready" onclick="showComingSoon(event, &#39;망고 화물 트럭 대여&#39;)">
+                        
+                        <!-- 준비중 오버레이 (비활성화 상태일 때만 표시) -->
+                        
+                            <div class="absolute inset-0 bg-gray-900/40 flex items-center justify-center text-xl font-bold text-yellow-300 rounded-2xl z-10 pointer-events-none">
+                                🚧 준비중 🚧
+                            </div>
+                        
+
+                        <div>
+                            <h2 class="text-xl font-bold mb-2 text-purple-300 flex items-center">
+                                🚚 망고 화물 트럭 대여
+                            </h2>
+                            <p class="text-gray-400 mb-4">1톤~5톤 화물 트럭 및 용달 기사 연동 서비스.</p>
+                            
+                            <div class="space-y-2 mb-4">
+                                <p class="text-lg font-semibold text-white">
+                                    ₩40,000 <span class="text-sm text-gray-400">(KRW (기본))</span>
+                                </p>
+                                <p class="text-sm text-green-400 flex items-center">
+                                    <svg class="w-4 h-4 mr-1 " fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                                    도착 예상 시간: 약 60분 (현재 위치 기준)
+                                </p>
+                            </div>
+                        </div>
+                        <!-- 현지 에티켓/팁 정보 -->
+                        <div class="mt-4 pt-3 border-t border-gray-700">
+                            <p class="text-sm font-semibold text-yellow-400 mb-1">현지 탑승/이용 에티켓 / 문화 팁</p>
+                            <p class="text-xs text-gray-400 italic">운반할 짐의 무게와 부피를 정확히 알려야 합니다.</p>
+                        </div>
+                    </div>
+                
+                    <div class="card p-5 rounded-2xl shadow-xl flex flex-col justify-between 
+                                is-not-ready" onclick="showComingSoon(event, &#39;망고 특송 오토바이&#39;)">
+                        
+                        <!-- 준비중 오버레이 (비활성화 상태일 때만 표시) -->
+                        
+                            <div class="absolute inset-0 bg-gray-900/40 flex items-center justify-center text-xl font-bold text-yellow-300 rounded-2xl z-10 pointer-events-none">
+                                🚧 준비중 🚧
+                            </div>
+                        
+
+                        <div>
+                            <h2 class="text-xl font-bold mb-2 text-purple-300 flex items-center">
+                                📦 망고 특송 오토바이
+                            </h2>
+                            <p class="text-gray-400 mb-4">긴급 서류, 소형 물품의 초고속 배달 서비스.</p>
+                            
+                            <div class="space-y-2 mb-4">
+                                <p class="text-lg font-semibold text-white">
+                                    ₩15,000 <span class="text-sm text-gray-400">(KRW (기본))</span>
+                                </p>
+                                <p class="text-sm text-green-400 flex items-center">
+                                    <svg class="w-4 h-4 mr-1 " fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                                    도착 예상 시간: 약 30분 (현재 위치 기준)
+                                </p>
+                            </div>
+                        </div>
+                        <!-- 현지 에티켓/팁 정보 -->
+                        <div class="mt-4 pt-3 border-t border-gray-700">
+                            <p class="text-sm font-semibold text-yellow-400 mb-1">현지 탑승/이용 에티켓 / 문화 팁</p>
+                            <p class="text-xs text-gray-400 italic">오토바이로 운반 가능한 크기인지 미리 확인해야 합니다.</p>
+                        </div>
+                    </div>
+                
+                    <div class="card p-5 rounded-2xl shadow-xl flex flex-col justify-between 
+                                is-not-ready" onclick="showComingSoon(event, &#39;망고 굴착기/지게차 (장비)&#39;)">
+                        
+                        <!-- 준비중 오버레이 (비활성화 상태일 때만 표시) -->
+                        
+                            <div class="absolute inset-0 bg-gray-900/40 flex items-center justify-center text-xl font-bold text-yellow-300 rounded-2xl z-10 pointer-events-none">
+                                🚧 준비중 🚧
+                            </div>
+                        
+
+                        <div>
+                            <h2 class="text-xl font-bold mb-2 text-purple-300 flex items-center">
+                                🏗️ 망고 굴착기/지게차 (장비)
+                            </h2>
+                            <p class="text-gray-400 mb-4">옹벽 작업, 기초 공사, 조경용 중장비 대여 및 기사 연결.</p>
+                            
+                            <div class="space-y-2 mb-4">
+                                <p class="text-lg font-semibold text-white">
+                                    ₩300,000 <span class="text-sm text-gray-400">(KRW (4시간))</span>
+                                </p>
+                                <p class="text-sm text-green-400 flex items-center">
+                                    <svg class="w-4 h-4 mr-1 " fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                                    도착 예상 시간: 약 240분 (현재 위치 기준)
+                                </p>
+                            </div>
+                        </div>
+                        <!-- 현지 에티켓/팁 정보 -->
+                        <div class="mt-4 pt-3 border-t border-gray-700">
+                            <p class="text-sm font-semibold text-yellow-400 mb-1">현지 탑승/이용 에티켓 / 문화 팁</p>
+                            <p class="text-xs text-gray-400 italic">작업 환경의 안전 규정을 반드시 준수해야 합니다.</p>
+                        </div>
+                    </div>
+                </main>
+    </div>
+    
+    <!-- Custom Modal/Message Box Placeholder -->
+    <div id="message-box-container"></div>
+
+    <script type="module">
+        // Firebase 모듈 임포트 (인증 상태 유지를 위해 구조는 유지)
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, setLogLevel } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+        // 1. Global 변수 설정 (Canvas 환경에서 제공)
+        const firebaseConfig = JSON.parse(typeof __firebase_config !== 'undefined' ? __firebase_config : '{}');
+        const initialAuthToken = typeof __initial_auth_token !== 'undefined' ? __initial_auth_token : null;
+        const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-transfer-portal';
+
+        let db, auth, userId;
+        let isAuthReady = false;
+
+        // 준비 중으로 표시할 모든 복잡한 서비스 유형을 정의합니다.
+        const NOT_READY_TYPES = ['Public Transit', 'Local Transport', 'Shared Taxi', 'Logistics', 'Specialized Delivery', 'Heavy Equipment'];
+
+
+        // 2. 더미 데이터 (i18n 및 위치 기반 서비스를 위한 Mock Data)
+        const mockTransferData = {
+            'ko-KR': [
+                { id: 101, name: "망고 택시 (일반)", type: "Ride-Share", description: "가장 빠르고 보편적인 호출 서비스입니다.", base_cost: 2000, unit: "KRW/km", avg_time: 15, cultureTips: "탑승 시 기사님께 간단히 인사하고, 안전벨트 착용은 필수입니다. 팁 문화는 없습니다." },
+                { id: 102, name: "망고 프리미엄 (고급)", type: "Luxury Van", description: "짐이 많거나 단체 이동 시 추천되는 고급 밴 서비스.", base_cost: 3500, unit: "KRW/km", avg_time: 20, cultureTips: "조용하고 쾌적한 환경 유지를 위해 통화는 자제하는 것이 좋습니다." },
+                { id: 103, name: "서울 지하철/버스", type: "Public Transit", description: "저렴하고 넓은 지역을 커버하는 대중교통.", base_cost: 1400, unit: "KRW (기본)", avg_time: 40, cultureTips: "노약자석에 앉지 않도록 주의하고, 하차 시 감사를 표하는 문화는 없습니다." },
+                // --- 신규 추가된 물류/중장비 서비스 ---
+                { id: 104, name: "망고 포장이사 (Full-Moving)", type: "Logistics", description: "이삿짐 운반, 사다리차, 청소 등 모든 것을 한번에.", base_cost: 500000, unit: "KRW (시작)", avg_time: 240, cultureTips: "이사 당일에는 현장 팀장과 명확하게 소통하는 것이 중요합니다." },
+                { id: 105, name: "망고 화물 트럭 대여", type: "Logistics", description: "1톤~5톤 화물 트럭 및 용달 기사 연동 서비스.", base_cost: 40000, unit: "KRW (기본)", avg_time: 60, cultureTips: "운반할 짐의 무게와 부피를 정확히 알려야 합니다." },
+                { id: 106, name: "망고 특송 오토바이", type: "Specialized Delivery", description: "긴급 서류, 소형 물품의 초고속 배달 서비스.", base_cost: 15000, unit: "KRW (기본)", avg_time: 30, cultureTips: "오토바이로 운반 가능한 크기인지 미리 확인해야 합니다." },
+                { id: 107, name: "망고 굴착기/지게차 (장비)", type: "Heavy Equipment", description: "옹벽 작업, 기초 공사, 조경용 중장비 대여 및 기사 연결.", base_cost: 300000, unit: "KRW (4시간)", avg_time: 240, cultureTips: "작업 환경의 안전 규정을 반드시 준수해야 합니다." }
+            ],
+            'en-US': [
+                { id: 201, name: "Mango Taxi (Standard)", type: "Ride-Share", description: "Standard, affordable ride service.", base_cost: 1.50, unit: "USD/mile", avg_time: 12, cultureTips: "Tipping 15-20% is customary for good service. Confirm your name with the driver before getting in." },
+                { id: 202, name: "Local Public Bus", type: "Public Transit", description: "Extensive network for city travel.", base_cost: 2.75, unit: "USD (flat)", avg_time: 35, cultureTips: "Stand behind the yellow line and let passengers off before boarding. Pay upon entry." },
+                // --- 신규 추가된 물류/중장비 서비스 (Placeholder) ---
+                { id: 203, name: "Mango Moving (Full Service)", type: "Logistics", description: "End-to-end moving, cleaning, and lift services.", base_cost: 450.00, unit: "USD (starting)", avg_time: 300, cultureTips: "Book several weeks in advance. Clearly define what is included in the package." },
+                { id: 204, name: "Mango Truck Rental", type: "Logistics", description: "Rental of various size cargo trucks with or without a driver.", base_cost: 60.00, unit: "USD (base)", avg_time: 90, cultureTips: "Check insurance details before signing the rental agreement." },
+                { id: 205, name: "Mango Express Minivan", type: "Specialized Delivery", description: "Same-day urgent delivery for medium-sized goods.", base_cost: 35.00, unit: "USD (base)", avg_time: 45, cultureTips: "Ensure fragile items are securely packaged for transit." },
+                { id: 206, name: "Mango Heavy Equipment", type: "Heavy Equipment", description: "Excavator and Forklift rental for construction or landscaping.", base_cost: 250.00, unit: "USD (4hrs)", avg_time: 240, cultureTips: "All operators must possess valid safety certifications." }
+            ],
+            // ... (다른 16개 지역 데이터는 지면 관계상 생략하고 코드를 간결하게 유지합니다.)
+            'ar-SA': [
+                { id: 301, name: "مانجو تاكسي (Mango Taxi)", type: "Ride-Share", description: "منصة ركوب شائعة في منطقة الشرق الأوسط.", base_cost: 5.00, unit: "SAR/km", avg_time: 10, cultureTips: "يفضل الجلوس في المقعد الخلفي للسيارة. لا يتم ترك إكرامية عادة." },
+                { id: 302, name: "حافلات النقل العام", type: "Public Transit", description: "شبكة حافلات موثوقة في المدن الكبرى.", base_cost: 3.00, unit: "SAR (تعرفة ثابتة)", avg_time: 45, cultureTips: "يتم تخصيص مقاعد منفصلة للنساء في الحافلات. يُمنع تناول الطعام والشراب." },
+                { id: 303, name: "شاحنات النقل (Moving Trucks)", type: "Logistics", description: "تأجير شاحنات لنقل الأثاث والبضائع.", base_cost: 150.00, unit: "SAR (base)", avg_time: 180, cultureTips: "التحقق من تصاريح المرور للمناطق المزدحمة." }
+            ],
+            'id-ID': [
+                { id: 401, name: "MangoMotor (GoRide)", type: "Motorcycle-Taxi", description: "교통 체증에 강한 가장 빠르고 저렴한 오토바이 택시 서비스.", base_cost: 5000, unit: "IDR/km", avg_time: 8, cultureTips: "기사가 제공하는 헬멧을 반드시 착용하고, 여성의 경우 어깨를 만지지 않도록 주의합니다. 탑승 전 잔돈을 준비하면 편리합니다." },
+                { id: 402, name: "트랜스자카르타", type: "Public Transit", description: "자카르타의 전용차선 버스 시스템.", base_cost: 3500, unit: "IDR (고정)", avg_time: 40, cultureTips: "교통 카드가 필수이며, 출퇴근 시간에는 매우 혼잡합니다." },
+                { id: 403, name: "Mango Express Motor", type: "Specialized Delivery", description: "Dokumen dan barang kecil kiriman cepat.", base_cost: 12000, unit: "IDR (base)", avg_time: 25, cultureTips: "Pastikan alamat pengiriman sudah jelas dan benar." }
+            ],
+            'vi-VN': [
+                { id: 501, name: "MangoMotor (App)", type: "Motorcycle-Taxi", description: "하노이, 호치민 등 대도시에서 가장 인기 있는 앱 기반 오토바이 택시.", base_cost: 8000, unit: "VND (기본)", avg_time: 10, cultureTips: "헬멧 착용은 필수이며, 운전 중에 전화 통화는 피하는 것이 좋습니다. 앱 결제를 사용하면 가격 협상을 할 필요가 없습니다." },
+                { id: 502, name: "Mango Moving", type: "Logistics", description: "Dịch vụ chuyển nhà trọn gói (đóng gói, vận chuyển, sắp xếp).", base_cost: 500000, unit: "VND (bắt đầu)", avg_time: 240, cultureTips: "Nên đặt dịch vụ vào ngày thường để được giá tốt hơn." }
+            ],
+            'th-TH': [
+                { id: 601, name: "MangoMotor (Win)", type: "Motorcycle-Taxi", description: "주황색 조끼를 입은 기사들. 지하철(BTS/MRT) 근처에서 찾기 쉽습니다.", base_cost: 20, unit: "THB (기본)", avg_time: 5, cultureTips: "주로 짧은 거리를 이동하며, 구역(Zone) 요금제가 적용될 수 있습니다. 팁은 필수는 아니지만 일반적입니다." },
+                { id: 602, name: "BTS/MRT (대중교통)", type: "Public Transit", description: "방콕의 주요 교통수단. 시원하고 빠릅니다.", base_cost: 16, unit: "THB (시작)", avg_time: 45, cultureTips: "탑승 시 줄을 서고, 에스컬레이터에서 한 줄 서기를 준수합니다." },
+                { id: 603, name: "Mango Excavator", type: "Heavy Equipment", description: "รถขุดเล็ก/ใหญ่ สำหรับงานสวนหรืองานก่อสร้าง.", base_cost: 5000, unit: "THB (4ชม.)", avg_time: 240, cultureTips: "แจ้งรายละเอียดงานให้ชัดเจนก่อนเริ่มจ้าง." }
+            ]
+            // 나머지 지역 데이터는 기존 구조 유지
+        };
+
+        // 3. Firebase 초기화 및 인증 (구조 유지)
+        async function initializeFirebase() {
+            if (!Object.keys(firebaseConfig).length) {
+                console.warn("Firebase config is missing. Proceeding with mock data.");
+                isAuthReady = true;
+                userId = crypto.randomUUID(); 
+                loadLocalizedData(document.getElementById('locale-select').value);
+                return;
+            }
+
+            try {
+                const app = initializeApp(firebaseConfig);
+                db = getFirestore(app);
+                auth = getAuth(app);
+                setLogLevel('error'); 
+
+                if (initialAuthToken) {
+                    await signInWithCustomToken(auth, initialAuthToken);
+                } else {
+                    await signInAnonymously(auth);
+                }
+
+                onAuthStateChanged(auth, (user) => {
+                    if (user) {
+                        userId = user.uid;
+                    } else {
+                        userId = crypto.randomUUID();
+                    }
+                    isAuthReady = true;
+                    console.log("Authentication complete. User ID:", userId);
+                    loadLocalizedData(document.getElementById('locale-select').value);
+                });
+
+            } catch (error) {
+                console.error("Firebase initialization or sign-in failed:", error);
+                isAuthReady = true;
+                userId = crypto.randomUUID();
+                loadLocalizedData(document.getElementById('locale-select').value); 
+            }
+        }
+        
+        // 4. Custom '준비중' 모달 표시 함수
+        function showComingSoon(event, serviceName) {
+            // 이벤트 버블링 방지
+            event.stopPropagation();
+            event.preventDefault();
+
+            const container = document.getElementById('message-box-container');
+            
+            // 이전에 열린 모달 제거
+            container.innerHTML = ''; 
+
+            const modalHtml = `
+                <div class="fixed inset-0 bg-black bg-opacity-70 z-50 flex items-center justify-center" onclick="document.getElementById('message-box-container').innerHTML = ''">
+                    <div class="bg-gray-800 p-8 rounded-xl shadow-2xl max-w-sm mx-4 transform transition-all duration-300 scale-100" onclick="event.stopPropagation()">
+                        <div class="text-4xl text-yellow-400 text-center mb-4">🚧</div>
+                        <h3 class="text-2xl font-bold text-yellow-400 mb-4 text-center">서비스 준비 중입니다!</h3>
+                        <p class="text-gray-300 mb-6 text-center">
+                            현재 **${serviceName}** 서비스의 실시간 연동 및 현지화 작업이 진행 중입니다.
+                            <br/>더 나은 경험을 위해 최선을 다하고 있습니다.
+                        </p>
+                        <button onclick="document.getElementById('message-box-container').innerHTML = ''"
+                                class="w-full py-3 bg-purple-600 hover:bg-purple-700 text-white font-semibold rounded-lg transition duration-150">
+                            확인하고 닫기
+                        </button>
+                    </div>
+                </div>
+            `;
+            container.innerHTML = modalHtml;
+        }
+
+
+        // 5. 현지화된 데이터 로드 및 UI 업데이트
+        function loadLocalizedData(locale) {
+            if (!isAuthReady) { return; }
+
+            const listContainer = document.getElementById('transfer-list');
+            const directionInfo = document.getElementById('direction-info');
+            const appContainer = document.getElementById('app-container');
+            const l10nFilters = document.getElementById('l10n-filters');
+
+            listContainer.innerHTML = ''; 
+            l10nFilters.innerHTML = ''; 
+
+            const services = mockTransferData[locale] || [];
+            // RTL을 사용하는 지역 코드: 아랍어(ar-), 히브리어(he-)
+            const isRTL = locale.includes('ar-') || locale.includes('he-');
+
+            // 5-1. RTL/LTR 레이아웃 전환
+            if (isRTL) {
+                appContainer.classList.add('rtl');
+                directionInfo.textContent = `현재: ${locale} (RTL 레이아웃 적용)`;
+                document.documentElement.lang = locale.substring(0, 2);
+            } else {
+                appContainer.classList.remove('rtl');
+                directionInfo.textContent = `현재: ${locale} (LTR 레이아웃 적용)`;
+                document.documentElement.lang = locale.substring(0, 2);
+            }
+
+            // 5-2. 금액 포맷팅 (i18n)
+            const currencyCode = services[0]?.unit.split('/')[0] || 'USD';
+            const zeroDecimalCurrencies = ['IDR', 'VND', 'SAR', 'INR', 'TRY', 'PHP', 'RUB', 'BRL', 'PLN', 'SEK', 'ILS', 'MYR', 'KRW', 'THB'];
+            const currencyStyle = zeroDecimalCurrencies.includes(currencyCode) ? 0 : 2;
+            
+            const formatter = new Intl.NumberFormat(locale, {
+                style: 'currency',
+                currency: currencyCode,
+                minimumFractionDigits: currencyStyle,
+                maximumFractionDigits: currencyStyle
+            });
+
+            // 5-3. 동적 현지 필터 로드 (L10N-Mandatory Filters)
+            let filtersHtml = '';
+            switch (locale) {
+                case 'ko-KR':
+                    filtersHtml += `<span class="px-3 py-1 bg-purple-600/50 rounded-full text-sm">🚚 1톤 이상 화물 운송</span>`;
+                    filtersHtml += `<span class="px-3 py-1 bg-indigo-600/50 rounded-full text-sm">🚧 중장비 작업 허가 여부</span>`;
+                    break;
+                case 'ar-SA':
+                    filtersHtml += `<span class="px-3 py-1 bg-purple-600/50 rounded-full text-sm">🧕 عائلات / نساء فقط (Family/Women Only)</span>`;
+                    filtersHtml += `<span class="px-3 py-1 bg-indigo-600/50 rounded-full text-sm">🚚 تأمين البضائع (Cargo Insurance)</span>`;
+                    break;
+                case 'id-ID':
+                    filtersHtml += `<span class="px-3 py-1 bg-purple-600/50 rounded-full text-sm">⛑️ 헬멧 제공 여부</span>`;
+                    filtersHtml += `<span class="px-3 py-1 bg-indigo-600/50 rounded-full text-sm">📦 특송 오토바이 제한 크기</span>`;
+                    break;
+                case 'vi-VN':
+                    filtersHtml += `<span class="px-3 py-1 bg-purple-600/50 rounded-full text-sm">💲 전통 Xe Ôm 가격 협상 필수</span>`;
+                    filtersHtml += `<span class="px-3 py-1 bg-indigo-600/50 rounded-full text-sm">🚚 포장이사 포장재 품질</span>`;
+                    break;
+                case 'th-TH':
+                    filtersHtml += `<span class="px-3 py-1 bg-purple-600/50 rounded-full text-sm">🍊 공식 'Win' 조끼 여부 확인</span>`;
+                    filtersHtml += `<span class="px-3 py-1 bg-indigo-600/50 rounded-full text-sm">🏗️ 건설 장비 라이선스 확인</span>`;
+                    break;
+                // 기타 지역의 필터는 코드 간결성을 위해 생략되었으나, 실제 구현 시에는 모든 18개 지역에 적용되어야 합니다.
+                case 'en-US':
+                default:
+                    filtersHtml += `<span class="px-3 py-1 bg-purple-600/50 rounded-full text-sm">🚚 Cargo Load Limit</span>`;
+                    filtersHtml += `<span class="px-3 py-1 bg-indigo-600/50 rounded-full text-sm">🏗️ Heavy Equipment Operator License</span>`;
+                    break;
+            }
+            l10nFilters.innerHTML = filtersHtml;
+
+
+            // 5-4. 동적 데이터 렌더링 (L10N)
+            services.forEach(service => {
+                const formattedCost = formatter.format(service.base_cost);
+                
+                // 해당 서비스 유형이 NOT_READY_TYPES에 포함되면 준비 중으로 처리
+                const isNotReady = NOT_READY_TYPES.includes(service.type);
+
+                let icon = '🚗';
+                // 아이콘 매핑
+                if (service.type.includes('Motorcycle-Taxi')) icon = '🛵';
+                else if (service.type.includes('Public Transit')) icon = '🚇';
+                else if (service.type.includes('Local Transport') || service.type.includes('Shared Taxi')) icon = '🛺'; 
+                else if (service.type.includes('Luxury')) icon = '🚐';
+                // 신규 매핑
+                else if (service.type.includes('Logistics')) icon = '🚚';
+                else if (service.type.includes('Specialized Delivery')) icon = '📦';
+                else if (service.type.includes('Heavy Equipment')) icon = '🏗️';
+
+
+                const cardHtml = `
+                    <div class="card p-5 rounded-2xl shadow-xl flex flex-col justify-between 
+                                ${isNotReady ? 'is-not-ready' : ''}"
+                         onclick="${isNotReady ? `showComingSoon(event, '${service.name}')` : ''}">
+                        
+                        <!-- 준비중 오버레이 (비활성화 상태일 때만 표시) -->
+                        ${isNotReady ? `
+                            <div class="absolute inset-0 bg-gray-900/40 flex items-center justify-center text-xl font-bold text-yellow-300 rounded-2xl z-10 pointer-events-none">
+                                🚧 준비중 🚧
+                            </div>
+                        ` : ''}
+
+                        <div>
+                            <h2 class="text-xl font-bold mb-2 text-purple-300 flex items-center">
+                                ${icon} ${service.name}
+                            </h2>
+                            <p class="text-gray-400 mb-4">${service.description}</p>
+                            
+                            <div class="space-y-2 mb-4">
+                                <p class="text-lg font-semibold text-white">
+                                    ${formattedCost} <span class="text-sm text-gray-400">(${service.unit})</span>
+                                </p>
+                                <p class="text-sm text-green-400 flex items-center">
+                                    <svg class="w-4 h-4 mr-1 ${isRTL ? 'ml-1' : ''}" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                                    도착 예상 시간: 약 ${service.avg_time}분 (현재 위치 기준)
+                                </p>
+                            </div>
+                        </div>
+                        <!-- 현지 에티켓/팁 정보 -->
+                        <div class="mt-4 pt-3 border-t border-gray-700">
+                            <p class="text-sm font-semibold text-yellow-400 mb-1">현지 탑승/이용 에티켓 / 문화 팁</p>
+                            <p class="text-xs text-gray-400 italic">${service.cultureTips}</p>
+                        </div>
+                    </div>
+                `;
+                listContainer.insertAdjacentHTML('beforeend', cardHtml);
+            });
+        }
+
+        // 6. 초기 로드 시 실행
+        document.addEventListener('DOMContentLoaded', () => {
+            initializeFirebase();
+        });
+
+        // 7. 전역 함수로 노출
+        window.loadLocalizedData = loadLocalizedData;
+        window.showComingSoon = showComingSoon;
+    </script>
+
+</body></html>

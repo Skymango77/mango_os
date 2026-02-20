@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mango Transfer - Security Excellence</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Pretendard:wght@400;600;700;900&display=swap');
+        body { font-family: 'Pretendard', sans-serif; background-color: #0f172a; color: #f8fafc; }
+        
+        .view-content { display: none; }
+        .view-content.active { display: block; animation: fadeIn 0.4s ease-out; }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .safety-gradient {
+            background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+        }
+
+        .pulse-red {
+            animation: pulse-red 2s infinite;
+        }
+        @keyframes pulse-red {
+            0% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7); }
+            70% { box-shadow: 0 0 0 10px rgba(239, 68, 68, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); }
+        }
+
+        .blur-card {
+            background: rgba(30, 41, 59, 0.7);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+    </style>
+</head>
+<body class="min-h-screen">
+
+    <!-- 안심 상태 헤더 -->
+    <header class="fixed top-0 left-0 right-0 z-50 max-w-md mx-auto px-6 py-4 flex justify-between items-center bg-slate-900/80 backdrop-blur-md">
+        <div class="flex items-center gap-2">
+            <div class="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
+            <span class="text-xs font-bold tracking-widest text-green-500 uppercase">End-to-End Encrypted</span>
+        </div>
+        <div class="flex gap-4">
+            <button onclick="triggerEmergency()" class="w-10 h-10 bg-red-600 rounded-full flex items-center justify-center pulse-red">
+                <i data-lucide="shield-alert" class="w-5 h-5 text-white"></i>
+            </button>
+        </div>
+    </header>
+
+    <main class="max-w-md mx-auto pt-20 pb-24 px-6">
+        
+        <!-- 운행 중 보안 대시보드 (핵심 기능) -->
+        <section id="view-active" class="view-content active space-y-6">
+            
+            <!-- 실시간 지도 및 AI 감지 -->
+            <div class="relative w-full h-72 rounded-[32px] overflow-hidden border border-slate-700 shadow-2xl">
+                <div class="absolute inset-0 bg-slate-800">
+                    <!-- 가상 맵 그리드 -->
+                    <div class="absolute inset-0 opacity-20" style="background-image: radial-gradient(#94a3b8 1px, transparent 1px); background-size: 30px 30px;"></div>
+                    
+                    <!-- 차량 경로 시뮬레이션 -->
+                    <svg class="absolute inset-0 w-full h-full" viewBox="0 0 400 300">
+                        <path id="routePath" d="M 50 250 L 150 150 L 300 100" fill="none" stroke="#f59e0b" stroke-width="3" stroke-dasharray="10,5" />
+                        <circle cx="50" cy="250" r="5" fill="#3b82f6" />
+                        <circle cx="300" cy="100" r="5" fill="#ef4444" />
+                        <!-- 움직이는 차량 아이콘 대용 -->
+                        <circle cx="150" cy="150" r="8" fill="#f59e0b" class="animate-pulse" />
+                    </svg>
+                </div>
+
+                <!-- AI 상태 레이어 -->
+                <div class="absolute top-4 left-4 right-4 flex justify-between items-start">
+                    <div class="blur-card px-3 py-2 rounded-2xl flex items-center gap-2">
+                        <i data-lucide="brain-circuit" class="w-4 h-4 text-orange-400"></i>
+                        <span class="text-[10px] font-bold text-orange-100">AI 주행 분석중</span>
+                    </div>
+                    <div class="blur-card px-3 py-2 rounded-2xl text-right">
+                        <p class="text-[10px] text-slate-400 font-bold uppercase">ETA</p>
+                        <p class="text-xs font-black text-white">12:45 PM (12분 남음)</p>
+                    </div>
+                </div>
+
+                <!-- 경로 이탈 경고 알림 (숨김 처리됨) -->
+                <div id="deviation-alert" class="hidden absolute inset-x-4 bottom-4 blur-card border-red-500/50 p-3 rounded-2xl animate-bounce">
+                    <div class="flex items-center gap-3">
+                        <div class="bg-red-500 p-2 rounded-xl">
+                            <i data-lucide="navigation-off" class="w-4 h-4 text-white"></i>
+                        </div>
+                        <div>
+                            <p class="text-xs font-bold text-white">경로 이탈 감지됨</p>
+                            <p class="text-[10px] text-red-200">기사님께 경로 확인 요청을 보냈습니다.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 안심 보안 도구 모음 -->
+            <div class="grid grid-cols-2 gap-4">
+                <button onclick="shareLocation()" class="blur-card p-5 rounded-[24px] text-left hover:bg-slate-700 transition-colors">
+                    <div class="w-10 h-10 bg-blue-500/20 rounded-xl flex items-center justify-center mb-3">
+                        <i data-lucide="share-2" class="w-5 h-5 text-blue-400"></i>
+                    </div>
+                    <p class="text-sm font-bold">위치 공유</p>
+                    <p class="text-[10px] text-slate-400 mt-1">지인에게 실시간 링크 전송</p>
+                </button>
+
+                <button onclick="toggleRecording()" id="rec-btn" class="blur-card p-5 rounded-[24px] text-left hover:bg-slate-700 transition-colors">
+                    <div id="rec-icon-bg" class="w-10 h-10 bg-slate-500/20 rounded-xl flex items-center justify-center mb-3">
+                        <i data-lucide="mic" id="rec-icon" class="w-5 h-5 text-slate-400"></i>
+                    </div>
+                    <p class="text-sm font-bold">안심 녹음</p>
+                    <p class="text-[10px] text-slate-400 mt-1">차내 음성 클라우드 저장</p>
+                </button>
+            </div>
+
+            <!-- 기사 및 차량 정보 상세 (신뢰의 핵심) -->
+            <div class="blur-card p-6 rounded-[32px] space-y-5">
+                <div class="flex items-center gap-4">
+                    <div class="relative">
+                        <img src="https://images.unsplash.com/photo-1633332755192-727a05c4013d?w=100&h=100&fit=crop" class="w-16 h-16 rounded-2xl object-cover grayscale-[0.3]" alt="Driver">
+                        <div class="absolute -bottom-1 -right-1 bg-green-500 p-1 rounded-full border-2 border-slate-800">
+                            <i data-lucide="check" class="w-3 h-3 text-white"></i>
+                        </div>
+                    </div>
+                    <div class="flex-1">
+                        <div class="flex items-center gap-2">
+                            <h3 class="text-lg font-bold">Arun S.</h3>
+                            <span class="bg-blue-500/20 text-blue-400 text-[9px] px-2 py-0.5 rounded-full font-bold uppercase">Verified 5y+</span>
+                        </div>
+                        <p class="text-xs text-slate-400 mt-0.5">Toyota Camry • 12가 3456</p>
+                        <div class="flex items-center gap-1 mt-2">
+                            <i data-lucide="star" class="w-3 h-3 text-yellow-500 fill-current"></i>
+                            <span class="text-xs font-bold text-yellow-500">4.98</span>
+                            <span class="text-[10px] text-slate-500 ml-1">(2,400+ trips)</span>
+                        </div>
+                    </div>
+                    <button class="bg-slate-700 p-3 rounded-2xl">
+                        <i data-lucide="phone" class="w-5 h-5 text-white"></i>
+                    </button>
+                </div>
+
+                <div class="bg-slate-900/50 p-4 rounded-2xl border border-slate-700 flex justify-between items-center">
+                    <div>
+                        <p class="text-[10px] text-slate-500 font-bold uppercase tracking-wider">Safety PIN</p>
+                        <p class="text-xl font-black tracking-[4px] text-orange-500">8 2 9 4</p>
+                    </div>
+                    <p class="text-[10px] text-slate-400 text-right leading-tight">기사님께 이 코드를<br>보여주세요</p>
+                </div>
+            </div>
+
+            <!-- 하단 버튼들 -->
+            <div class="flex gap-3">
+                <button onclick="confirmArrival()" class="flex-1 bg-orange-500 text-white py-5 rounded-2xl font-bold shadow-lg shadow-orange-500/20">목적지 도착 확인</button>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- 안심 센터 연결 모달 (SOS) -->
+    <div id="sos-modal" class="fixed inset-0 z-[100] bg-red-600 hidden items-center justify-center p-8 text-center">
+        <div class="space-y-8">
+            <div class="w-24 h-24 bg-white/20 rounded-full flex items-center justify-center mx-auto animate-ping">
+                <i data-lucide="phone-call" class="w-12 h-12 text-white"></i>
+            </div>
+            <div class="space-y-2">
+                <h2 class="text-3xl font-black text-white">Emergency Call</h2>
+                <p class="text-red-100 font-medium">현지 경찰 및 망고 24시간 보안 팀에<br>현재 위치와 차량 정보가 즉시 전송됩니다.</p>
+            </div>
+            <div class="text-6xl font-black text-white" id="countdown">5</div>
+            <button onclick="cancelEmergency()" class="w-full py-5 bg-white text-red-600 rounded-2xl font-black text-lg">취소 (실수였습니다)</button>
+        </div>
+    </div>
+
+    <!-- 커스텀 알림 박스 -->
+    <div id="toast" class="fixed bottom-28 left-6 right-6 z-[60] bg-white text-slate-900 p-4 rounded-2xl shadow-2xl flex items-center gap-3 translate-y-20 transition-transform duration-300">
+        <div class="bg-blue-100 p-2 rounded-xl">
+            <i data-lucide="info" class="w-5 h-5 text-blue-600"></i>
+        </div>
+        <p class="text-xs font-bold" id="toast-msg">위치 공유 링크가 복사되었습니다.</p>
+    </div>
+
+    <script>
+        lucide.createIcons();
+
+        let recording = false;
+        let emergencyTimer;
+
+        function toggleRecording() {
+            recording = !recording;
+            const btn = document.getElementById('rec-btn');
+            const iconBg = document.getElementById('rec-icon-bg');
+            const icon = document.getElementById('rec-icon');
+            
+            if(recording) {
+                iconBg.classList.replace('bg-slate-500/20', 'bg-red-500/20');
+                icon.classList.replace('text-slate-400', 'text-red-500');
+                showToast("음성 보안 녹음이 시작되었습니다 (서버 전송 중)");
+            } else {
+                iconBg.classList.replace('bg-red-500/20', 'bg-slate-500/20');
+                icon.classList.replace('text-red-500', 'text-slate-400');
+                showToast("녹음이 중단되고 저장되었습니다.");
+            }
+        }
+
+        function shareLocation() {
+            showToast("실시간 경로 공유 링크를 생성했습니다.");
+        }
+
+        function showToast(msg) {
+            const toast = document.getElementById('toast');
+            document.getElementById('toast-msg').innerText = msg;
+            toast.style.transform = "translateY(0)";
+            setTimeout(() => {
+                toast.style.transform = "translateY(150px)";
+            }, 3000);
+        }
+
+        function triggerEmergency() {
+            const modal = document.getElementById('sos-modal');
+            modal.style.display = 'flex';
+            let count = 5;
+            const display = document.getElementById('countdown');
+            display.innerText = count;
+            
+            emergencyTimer = setInterval(() => {
+                count--;
+                display.innerText = count;
+                if(count <= 0) {
+                    clearInterval(emergencyTimer);
+                    alert("긴급 센터로 연결을 시도합니다...");
+                }
+            }, 1000);
+        }
+
+        function cancelEmergency() {
+            clearInterval(emergencyTimer);
+            document.getElementById('sos-modal').style.display = 'none';
+        }
+
+        function confirmArrival() {
+            if(confirm("목적지에 안전하게 도착하셨습니까?")) {
+                location.reload();
+            }
+        }
+
+        // 경로 이탈 시뮬레이션 (랜덤)
+        setTimeout(() => {
+            const alert = document.getElementById('deviation-alert');
+            alert.classList.remove('hidden');
+            // 5초 뒤 자동 복구 시뮬레이션
+            setTimeout(() => alert.classList.add('hidden'), 5000);
+        }, 10000);
+    </script>
+</body>
+</html>

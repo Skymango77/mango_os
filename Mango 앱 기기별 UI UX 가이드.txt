@@ -1,0 +1,17 @@
+Mango 앱 기기별 UI/UX 가이드
+📱 스마트폰 모드 (Portrait)
+목적: 대중 사용자의 실사용 및 결제 중심
+배치: 수직 스택 (Vertical Stack)
+1.[Top Nav] 로고 및 상태
+2.[News] 글로벌 소식 피드
+3.[Wallet] 큰 버튼 위주의 결제 영역
+4.[Ads] 위치 기반 광고 (카드 형태)
+특징: 스크롤이 자유롭고 정보량이 많음
+
+🕶️ 글래스/웨어러블 모드 (Landscape)
+목적: 이동 중 빠른 정보 확인 및 시야 확보
+배치: 수평 분할 (Horizontal Split)좌측(30%): 위치 기반 광고 (현재 위치의 랜드마크나 매장명)우측(70%): 
+글로벌 소식 및 결제 승인 알림특징:불필요한 스크롤 최소화높은 대비(High Contrast)를 통해 야외 가독성 확보텍스트 크기를 키워 시선 이동 최소화
+
+🛠️ 통합 개발 포인트Viewport 설정: <meta name="viewport" content="width=device-width, initial-scale=1.0">를 통해 모든 기기에서 화면이 짤리지 않게 함.
+    단일 코드베이스: mango/와 mango-glass/를 합친 이 코드는 기기를 인식하여 자동으로 레이아웃을 변형함.

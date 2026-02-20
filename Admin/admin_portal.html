@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+
+<html lang="ko">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Mango App 운영자 포털</title>
+
+    <!-- Tailwind CSS CDN -->
+
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <style>
+
+        body {
+
+            font-family: 'Inter', sans-serif;
+
+            background-color: #1f2937;
+
+            min-height: 100vh;
+
+            padding: 2rem;
+
+        }
+
+        .container {
+
+            max-width: 800px;
+
+            margin: auto;
+
+        }
+
+    </style>
+
+</head>
+
+<body>
+
+    <div class="container bg-gray-800 p-8 rounded-xl shadow-2xl">
+
+        <h1 class="text-3xl font-bold text-yellow-400 mb-6 border-b border-gray-700 pb-2">
+
+            ⚙️ Mango App 최상위 운영자 포털
+
+        </h1>
+
+        <p class="text-gray-400 mb-8">
+
+            앱의 핵심 설정(로고 등)을 관리합니다. 이 포털은 최상위 운영자만 접근 가능합니다.
+
+        </p>
+
+
+
+        <!-- 로고 이미지 설정 섹션 -->
+
+        <div class="bg-gray-700 p-6 rounded-lg mb-8">
+
+            <h2 class="text-2xl font-semibold text-white mb-4">앱 로고 이미지 설정</h2>
+
+            <p class="text-sm text-gray-400 mb-4">메인 화면 최상단에 표시될 로고 이미지 URL을 입력하세요.</p>
+
+            
+
+            <label for="logo-url" class="block text-sm font-medium text-gray-300 mb-2">로고 이미지 URL:</label>
+
+            <input type="text" id="logo-url" class="w-full p-3 mb-4 bg-gray-800 border border-gray-600 rounded-lg text-white placeholder-gray-500 focus:ring-yellow-400 focus:border-yellow-400" placeholder="예: https://example.com/logo.png">
+
+
+
+            <div class="flex items-center space-x-4 mb-4">
+
+                <button id="load-logo-btn" class="px-4 py-2 bg-blue-500 text-white font-semibold rounded-lg hover:bg-blue-600 transition duration-150">현재 로고 불러오기</button>
+
+                <button id="save-logo-btn" class="px-4 py-2 bg-yellow-500 text-gray-900 font-semibold rounded-lg hover:bg-yellow-600 transition duration-150">로고 URL 저장</button>
+
+            </div>
+
+
+
+            <!-- 미리보기 -->
+
+            <div class="mt-4">
+
+                <p class="text-sm font-medium text-gray-300 mb-2">미리보기:</p>
+
+                <div class="w-full h-16 bg-gray-900 rounded-lg flex items-center justify-center border border-dashed border-gray-500 overflow-hidden">
+
+                    <img id="logo-preview" class="h-full w-auto object-contain" src="https://placehold.co/150x64/f97316/ffffff?text=LOGO+PREVIEW" alt="로고 미리보기" onerror="this.src='https://placehold.co/150x64/f97316/ffffff?text=LOGO+PREVIEW';" />
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+
+        <div id="status-message" class="mt-6 p-3 rounded-lg hidden text-sm"></div>
+
+    </div>
+
+
+
+    <!-- Firebase Logic -->
+
+    <script type="module">
+
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+
+        import { getAuth, signInWithCustomToken, signInAnonymously } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+
+        import { getFirestore, doc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+
+
+        // Global Canvas Variables
+
+        const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
+
+        const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : null;
+
+        const initialAuthToken = typeof __initial_auth_token !== 'undefined' ? __initial_auth_token : null;
+
+        
+
+        let db, auth;
+
+        const LOGO_DOC_PATH = ['artifacts', appId, 'public', 'data', 'app-config', 'logo-image'];
+
+
+
+        // Elements
+
+        const logoUrlInput = document.getElementById('logo-url');
+
+        const logoPreview = document.getElementById('logo-preview');
+
+        const saveLogoBtn = document.getElementById('save-logo-btn');
+
+        const loadLogoBtn = document.getElementById('load-logo-btn');
+
+        const statusMessage = document.getElementById('status-message');
+
+
+
+        function setStatus(message, isError = false) {
+
+            statusMessage.textContent = message;
+
+            statusMessage.classList.remove('hidden', 'bg-red-500/20', 'text-red-300', 'bg-green-500/20', 'text-green-300');
+
+            statusMessage.classList.add(isError ? 'bg-red-500/20' : 'bg-green-500/20', isError ? 'text-red-300' : 'text-green-300');
+
+        }
+
+
+
+        async function initFirebase() {
+
+            if (!firebaseConfig) {
+
+                setStatus("Firebase 설정이 누락되었습니다.", true);
+
+                return;
+
+            }
+
+
+
+            try {
+
+                const app = initializeApp(firebaseConfig);
+
+                db = getFirestore(app);
+
+                auth = getAuth(app);
+
+
+
+                // 관리자 포털이므로 권한 확인을 위해 인증 시도
+
+                if (initialAuthToken) {
+
+                    await signInWithCustomToken(auth, initialAuthToken);
+
+                } else {
+
+                    await signInAnonymously(auth);
+
+                }
+
+                
+
+                setStatus(`인증 성공: 사용자 ID ${auth.currentUser.uid.substring(0, 8)}...`, false);
+
+                loadLogoUrl();
+
+            } catch (error) {
+
+                setStatus(`Firebase 초기화 또는 인증 오류: ${error.message}`, true);
+
+                console.error("Firebase Init/Auth Error:", error);
+
+            }
+
+        }
+
+
+
+        function updatePreview(url) {
+
+            logoPreview.src = url || 'https://placehold.co/150x64/f97316/ffffff?text=LOGO+PREVIEW';
+
+        }
+
+
+
+        async function loadLogoUrl() {
+
+            if (!db) return;
+
+            try {
+
+                const docRef = doc(db, ...LOGO_DOC_PATH);
+
+                const docSnap = await getDoc(docRef);
+
+
+
+                if (docSnap.exists() && docSnap.data().imageUrl) {
+
+                    const url = docSnap.data().imageUrl;
+
+                    logoUrlInput.value = url;
+
+                    updatePreview(url);
+
+                    setStatus("현재 로고 URL을 성공적으로 불러왔습니다.", false);
+
+                } else {
+
+                    logoUrlInput.value = '';
+
+                    updatePreview(null);
+
+                    setStatus("저장된 로고 URL이 없습니다. 기본 미리보기를 표시합니다.", true);
+
+                }
+
+            } catch (error) {
+
+                setStatus(`로고 불러오기 오류: ${error.message}`, true);
+
+                console.error("Load Logo Error:", error);
+
+            }
+
+        }
+
+
+
+        async function saveLogoUrl() {
+
+            if (!db) return;
+
+            const url = logoUrlInput.value.trim();
+
+
+
+            if (!url) {
+
+                setStatus("저장할 로고 URL을 입력해주세요.", true);
+
+                return;
+
+            }
+
+
+
+            try {
+
+                const docRef = doc(db, ...LOGO_DOC_PATH);
+
+                await setDoc(docRef, { imageUrl: url }, { merge: true });
+
+                updatePreview(url);
+
+                setStatus("로고 URL이 성공적으로 저장되었습니다!", false);
+
+            } catch (error) {
+
+                setStatus(`로고 저장 오류: ${error.message}`, true);
+
+                console.error("Save Logo Error:", error);
+
+            }
+
+        }
+
+
+
+        // Event Listeners
+
+        saveLogoBtn.addEventListener('click', saveLogoUrl);
+
+        loadLogoBtn.addEventListener('click', loadLogoUrl);
+
+        logoUrlInput.addEventListener('input', () => updatePreview(logoUrlInput.value.trim()));
+
+
+
+        initFirebase();
+
+    </script>
+
+</body>
+
+</html>

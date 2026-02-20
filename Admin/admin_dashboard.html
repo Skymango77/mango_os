@@ -1,0 +1,696 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MANGO 관리자 콘솔</title>
+    <!-- Tailwind CSS CDN 로드 -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f8f8f8;
+        }
+        .container {
+            max-width: 900px;
+        }
+        /* 기존 아이콘 미리보기 스타일 */
+        .icon-preview-box {
+            width: 120px;
+            height: 120px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: #fff;
+            border: 2px dashed #ccc;
+            border-radius: 12px;
+            font-size: 2.5rem;
+            color: #666;
+            margin-bottom: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+            overflow: hidden; 
+            position: relative; /* 별점 위치 지정을 위해 추가 */
+        }
+        .icon-preview-box img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain; 
+        }
+        .portal-card {
+            transition: all 0.2s ease;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        .portal-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 10px rgba(0, 0, 0, 0.15);
+        }
+        /* 별점 동그라미 스타일 */
+        .rating-circle {
+            position: absolute;
+            top: 4px;
+            right: 4px;
+            background-color: #ffc107; /* 노란색 배경 */
+            color: #1f2937; /* 진한 글자색 */
+            font-size: 0.75rem;
+            font-weight: bold;
+            padding: 4px 8px;
+            border-radius: 9999px; /* 완전한 동그라미 */
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+            z-index: 10;
+        }
+        /* Custom Modal UI for confirmation */
+        .custom-modal-backdrop {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.6);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 50;
+        }
+        .custom-modal {
+            background-color: white;
+            padding: 24px;
+            border-radius: 12px;
+            width: 90%;
+            max-width: 400px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+        }
+    </style>
+</head>
+<body class="min-h-screen p-4 sm:p-8 bg-gray-50">
+    <!-- 메인 컨테이너 -->
+    <div class="container mx-auto">
+        
+        <!-- 헤더 -->
+        <header class="mb-8 p-4 bg-white rounded-xl shadow-lg flex justify-between items-center">
+            <h1 class="text-3xl font-bold text-red-600 flex items-center">
+                <span class="text-4xl mr-2">⚙️</span> MANGO 관리자 콘솔
+            </h1>
+            <button 
+                onclick="goToDashboard()"
+                class="px-4 py-2 bg-gray-200 hover:bg-gray-300 text-gray-800 font-semibold rounded-lg transition duration-150 flex items-center"
+            >
+                <svg class="w-5 h-5 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path></svg>
+                메인 메뉴
+            </button>
+        </header>
+
+        <!-- 인증 및 사용자 정보 -->
+        <div id="auth-info" class="mb-6 p-4 bg-red-100 border-l-4 border-red-500 text-red-800 rounded-lg">
+            인증 상태 확인 중...
+        </div>
+
+        <!-- 아이콘 관리 섹션 -->
+        <section class="mb-8 p-6 bg-white rounded-xl shadow-lg border border-red-200">
+            <h2 class="text-2xl font-semibold text-gray-700 mb-4 border-b pb-2">포털 아이콘 관리</h2>
+            
+            <!-- 포털 아이콘 목록 -->
+            <div id="portal-list" class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-4">
+                <p class="col-span-full text-center text-gray-500 py-4">포털 데이터를 로드하는 중...</p>
+            </div>
+            
+            <!-- 상태 메시지 -->
+            <div id="status-message" class="mt-4 text-center text-sm text-red-500"></div>
+
+        </section>
+
+        <!-- 아이콘 추가/수정 폼 -->
+        <section class="p-6 bg-white rounded-xl shadow-lg border border-red-200">
+            <h2 class="text-2xl font-semibold text-gray-700 mb-4 border-b pb-2">새 포털 아이콘 추가/수정</h2>
+            
+            <form id="portal-form" class="space-y-4">
+                <input type="hidden" id="portal-id">
+
+                <div>
+                    <label for="icon-name" class="block text-sm font-medium text-gray-700">이름 (고유 ID, 영어):</label>
+                    <input type="text" id="icon-name" required class="mt-1 block w-full rounded-md border-gray-300 shadow-sm p-2 border">
+                </div>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label for="icon-label" class="block text-sm font-medium text-gray-700">레이블 (포털명, 한국어):</label>
+                        <input type="text" id="icon-label" required class="mt-1 block w-full rounded-md border-gray-300 shadow-sm p-2 border">
+                    </div>
+                    <div>
+                        <label for="icon-sub" class="block text-sm font-medium text-gray-700">서브 텍스트 (설명):</label>
+                        <input type="text" id="icon-sub" required class="mt-1 block w-full rounded-md border-gray-300 shadow-sm p-2 border">
+                        <p class="text-xs text-gray-500 mt-1">
+                            포털 아래에 표시될 보조 설명을 입력하세요. 예: 맛집, 후기 칭찬
+                        </p>
+                    </div>
+                </div>
+
+                <!-- 별점 입력 필드 추가 -->
+                <div>
+                    <label for="rating-score" class="block text-sm font-medium text-gray-700">별점 점수 (Rating Score):</label>
+                    <input type="text" id="rating-score" maxlength="5" placeholder="예: 4.8 또는 5" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm p-2 border">
+                    <p class="text-xs text-gray-500 mt-1">
+                        0~5 사이의 점수를 입력하세요. 메인 포털에서 동그라미 안에 표시됩니다.
+                    </p>
+                </div>
+
+                <!-- 아이콘 타입 선택 -->
+                <div class="space-y-2">
+                    <label class="block text-sm font-medium text-gray-700">아이콘 타입:</label>
+                    <div class="flex space-x-4">
+                        <label class="flex items-center">
+                            <input type="radio" name="icon-type" value="emoji" id="icon-type-emoji" checked class="form-radio text-red-600">
+                            <span class="ml-2 text-gray-700">이모지/텍스트</span>
+                        </label>
+                        <label class="flex items-center">
+                            <input type="radio" name="icon-type" value="image" id="icon-type-image" class="form-radio text-red-600">
+                            <span class="ml-2 text-gray-700">이미지 파일 (PNG/JPG/SVG)</span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- 이모지 입력 필드 (기본) -->
+                <div id="emoji-field" class="space-y-1">
+                    <label for="icon-emoji" class="block text-sm font-medium text-gray-700">아이콘 이모지/텍스트:</label>
+                    <input type="text" id="icon-emoji" maxlength="5" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm p-2 border">
+                    <p class="text-xs text-gray-500 mt-1">이모지 1~2글자 또는 짧은 텍스트만 허용됩니다. 예: 🛒, 🛠️</p>
+                </div>
+                
+                <!-- 이미지 업로드 필드 (숨김) -->
+                <div id="image-field" class="space-y-1 hidden">
+                    <label for="icon-file" class="block text-sm font-medium text-gray-700">아이콘 이미지 파일:</label>
+                    <input type="file" id="icon-file" accept="image/png, image/jpeg, image/svg+xml" class="mt-1 block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-red-50 file:text-red-600 hover:file:bg-red-100">
+                    <p class="text-xs text-gray-500 mt-1">PNG, JPG, SVG 파일을 선택하세요. 권장 크기: 200KB 이하.</p>
+                </div>
+
+
+                <div class="flex items-center space-x-4">
+                    <!-- 미리보기에 별점 점수 표시 추가 -->
+                    <div id="icon-preview" class="icon-preview-box">
+                        <span id="preview-rating" class="hidden"></span>
+                        ?
+                    </div>
+                    <div class="flex-grow">
+                        <button type="submit" id="submit-button" class="w-full md:w-auto px-6 py-2 border border-transparent text-base font-medium rounded-md shadow-sm text-white bg-red-600 hover:bg-red-700 focus:outline-none transition duration-150">
+                            포털 아이콘 저장
+                        </button>
+                        <button type="button" onclick="resetForm()" class="w-full md:w-auto mt-2 md:mt-0 px-6 py-2 border border-gray-300 text-base font-medium rounded-md shadow-sm text-gray-700 bg-white hover:bg-gray-50 transition duration-150">
+                            취소/새로 만들기
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </section>
+
+    </div>
+
+    <!-- 삭제 확인 모달 UI -->
+    <div id="delete-modal" class="custom-modal-backdrop hidden">
+        <div class="custom-modal">
+            <h3 class="text-xl font-bold text-red-600 mb-4">포털 삭제 확인</h3>
+            <p id="modal-message" class="text-gray-700 mb-6"></p>
+            <div class="flex justify-end space-x-3">
+                <button onclick="closeModal()" class="px-4 py-2 rounded-lg text-gray-700 bg-gray-200 hover:bg-gray-300 transition duration-150">취소</button>
+                <button id="confirm-delete-button" class="px-4 py-2 rounded-lg text-white bg-red-600 hover:bg-red-700 transition duration-150">삭제</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Firebase SDK 및 앱 로직 -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, doc, setDoc, deleteDoc, onSnapshot, collection, query } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+        import { setLogLevel } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+        import { getStorage, ref, uploadBytes, getDownloadURL, deleteObject } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-storage.js";
+
+        // Firebase 로그 레벨 설정 (디버깅용)
+        setLogLevel('debug');
+
+        // 전역 변수 설정 (Canvas 환경에서 제공됨)
+        const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : {};
+        const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
+        const initialAuthToken = typeof __initial_auth_token !== 'undefined' ? __initial_auth_token : null;
+
+        let app, db, auth, storage, userId;
+        let unsubscribePortals = null;
+        let portalsCache = {};
+        let currentPortalImageUrl = null;
+
+        // --- DOM 요소 캐싱 ---
+        const authInfoDiv = document.getElementById('auth-info');
+        const portalListDiv = document.getElementById('portal-list');
+        const statusMessageDiv = document.getElementById('status-message');
+        const portalForm = document.getElementById('portal-form');
+        const iconPreview = document.getElementById('icon-preview');
+        const portalIdInput = document.getElementById('portal-id');
+        const iconNameInput = document.getElementById('icon-name');
+        const iconLabelInput = document.getElementById('icon-label');
+        const iconSubInput = document.getElementById('icon-sub');
+        const ratingScoreInput = document.getElementById('rating-score'); // 별점 입력 필드
+        const previewRatingSpan = document.getElementById('preview-rating'); // 미리보기 별점
+        
+        // 아이콘 타입 관련
+        const iconTypeEmojiRadio = document.getElementById('icon-type-emoji');
+        const iconTypeImageRadio = document.getElementById('icon-type-image');
+        const emojiField = document.getElementById('emoji-field');
+        const imageField = document.getElementById('image-field');
+        const iconEmojiInput = document.getElementById('icon-emoji');
+        const iconFileInput = document.getElementById('icon-file');
+        
+        const submitButton = document.getElementById('submit-button');
+        const deleteModal = document.getElementById('delete-modal');
+        const modalMessage = document.getElementById('modal-message');
+        const confirmDeleteButton = document.getElementById('confirm-delete-button');
+
+        // --- UI 헬퍼 함수 ---
+
+        // 메인 메뉴(index.html)로 돌아가기
+        window.goToDashboard = function() {
+            window.location.href = './index.html'; 
+        };
+
+        // 별점 UI 렌더링 함수
+        const renderRatingCircle = (score, parentElement) => {
+            const normalizedScore = parseFloat(score);
+            // 0보다 크거나 5.0 이하인 유효한 점수일 경우에만 표시
+            if (normalizedScore > 0 && normalizedScore <= 5.0) {
+                const displayScore = normalizedScore.toFixed(1).replace('.0', ''); // 5.0 -> 5
+                
+                // 기존 rating-circle이 있다면 제거
+                parentElement.querySelectorAll('.rating-circle').forEach(el => el.remove());
+
+                const ratingElement = document.createElement('div');
+                ratingElement.className = 'rating-circle flex items-center space-x-0.5';
+                ratingElement.innerHTML = `
+                    <svg class="w-3 h-3 text-white fill-current" viewBox="0 0 24 24">
+                        <path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/>
+                    </svg>
+                    <span>${displayScore}</span>
+                `;
+                parentElement.appendChild(ratingElement);
+            } else {
+                 parentElement.querySelectorAll('.rating-circle').forEach(el => el.remove());
+            }
+        };
+
+        // 폼 초기화
+        window.resetForm = function() {
+            portalForm.reset();
+            portalIdInput.value = '';
+            iconPreview.innerHTML = '?';
+            submitButton.textContent = '포털 아이콘 저장';
+            iconNameInput.disabled = false;
+            currentPortalImageUrl = null;
+            
+            iconTypeEmojiRadio.checked = true;
+            toggleIconFields('emoji'); 
+            
+            renderRatingCircle(0, iconPreview); // 별점 미리보기 초기화
+        };
+
+        // 모달 닫기
+        window.closeModal = function() {
+            deleteModal.classList.add('hidden');
+        };
+
+        // 아이콘 타입에 따라 폼 필드 토글
+        const toggleIconFields = (type) => {
+            if (type === 'emoji') {
+                emojiField.classList.remove('hidden');
+                imageField.classList.add('hidden');
+                iconFileInput.value = '';
+                iconEmojiInput.setAttribute('required', 'required');
+                iconFileInput.removeAttribute('required');
+            } else { // image
+                emojiField.classList.add('hidden');
+                imageField.classList.remove('hidden');
+                iconEmojiInput.value = '';
+                iconFileInput.setAttribute('required', 'required');
+                iconEmojiInput.removeAttribute('required');
+            }
+        };
+
+        // 포털 데이터 컬렉션 경로
+        const getPortalCollectionRef = () => {
+            return collection(db, 'artifacts', appId, 'public', 'data', 'portals');
+        };
+
+        // Storage 경로: artifacts/{appId}/public/images/
+        const getStoragePath = (filename) => {
+            return `artifacts/${appId}/public/images/${filename}`;
+        };
+
+
+        // --- CRUD 로직 ---
+
+        // 포털 아이콘 목록 실시간 구독
+        const subscribeToPortals = () => {
+            if (unsubscribePortals) {
+                unsubscribePortals();
+                unsubscribePortals = null;
+            }
+
+            const q = query(getPortalCollectionRef());
+
+            unsubscribePortals = onSnapshot(q, (snapshot) => {
+                const portals = [];
+                portalsCache = {};
+
+                snapshot.forEach(doc => {
+                    const data = doc.data();
+                    const portal = { id: doc.id, ...data };
+                    // ratingScore는 숫자로 파싱하거나, 저장된 값이 없을 경우 0으로 설정
+                    portal.ratingScore = parseFloat(data.ratingScore) || 0; 
+                    portals.push(portal);
+                    portalsCache[doc.id] = portal;
+                });
+                
+                portals.sort((a, b) => a.name.localeCompare(b.name, 'en', { sensitivity: 'base' }));
+
+                renderPortals(portals);
+                statusMessageDiv.textContent = `✅ 총 ${portals.length}개의 포털 아이콘이 로드되었습니다.`;
+            }, (error) => {
+                console.error("Error listening to portals:", error);
+                statusMessageDiv.textContent = `❌ 오류: 포털 데이터를 불러올 수 없습니다. (${error.message})`;
+            });
+        };
+
+        // 포털 목록 렌더링
+        const renderPortals = (portals) => {
+            portalListDiv.innerHTML = '';
+            if (portals.length === 0) {
+                portalListDiv.innerHTML = `<p class="col-span-full text-center text-gray-500 py-4">저장된 포털 아이콘이 없습니다. 새로운 아이콘을 추가해 보세요!</p>`;
+                return;
+            }
+
+            portals.forEach(portal => {
+                const card = document.createElement('div');
+                card.className = 'portal-card bg-white p-4 rounded-xl border border-gray-200 text-center flex flex-col items-center justify-between relative'; // relative 추가
+                
+                let iconHtml = '';
+                if (portal.iconType === 'image' && portal.iconData) {
+                    iconHtml = `<img src="${portal.iconData}" alt="${portal.label} icon" class="w-full h-full object-contain">`;
+                } else {
+                    iconHtml = portal.iconData || '?';
+                }
+
+                card.innerHTML = `
+                    <div class="text-5xl mb-2 icon-preview-box w-full h-full relative">
+                        ${iconHtml}
+                    </div>
+                    <p class="font-bold text-gray-800 text-sm truncate w-full">${portal.label}</p>
+                    <p class="text-xs text-gray-500 mb-2 truncate w-full">${portal.name}</p>
+                    <div class="flex space-x-2 w-full mt-auto">
+                        <button data-id="${portal.id}" class="edit-btn text-xs w-1/2 py-1 rounded bg-blue-500 text-white hover:bg-blue-600">수정</button>
+                        <button data-id="${portal.id}" class="delete-btn text-xs w-1/2 py-1 rounded bg-red-500 text-white hover:bg-red-600">삭제</button>
+                    </div>
+                `;
+                portalListDiv.appendChild(card);
+                
+                // 별점 표시
+                const previewBox = card.querySelector('.icon-preview-box');
+                renderRatingCircle(portal.ratingScore, previewBox);
+            });
+
+            document.querySelectorAll('.edit-btn').forEach(button => button.addEventListener('click', handleEdit));
+            document.querySelectorAll('.delete-btn').forEach(button => button.addEventListener('click', handleDelete));
+        };
+
+        // Firebase Storage에 파일 업로드 및 URL 반환
+        const uploadFile = async (file, portalName) => {
+            const fileName = `${portalName}-${Date.now()}-${file.name.replace(/\s/g, '_')}`;
+            const storageRef = ref(storage, getStoragePath(fileName));
+            
+            statusMessageDiv.textContent = `⏳ 파일 업로드 중... ${file.name}`;
+            
+            const snapshot = await uploadBytes(storageRef, file);
+            const downloadURL = await getDownloadURL(snapshot.ref);
+            
+            statusMessageDiv.textContent = `✅ 파일 업로드 성공: ${file.name}`;
+            return downloadURL;
+        };
+
+        // 포털 데이터 저장/업데이트
+        portalForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const portalId = portalIdInput.value;
+            const name = iconNameInput.value.trim();
+            const label = iconLabelInput.value.trim();
+            const sub = iconSubInput.value.trim();
+            const ratingScore = ratingScoreInput.value.trim(); // 별점 점수 가져오기
+            const iconType = document.querySelector('input[name="icon-type"]:checked').value;
+            
+            const docId = name;
+            let iconData = null;
+
+            if (!name || !label) {
+                statusMessageDiv.textContent = '❌ 오류: 이름과 레이블은 필수입니다.';
+                return;
+            }
+            
+            // 별점 유효성 검사
+            const parsedRating = parseFloat(ratingScore);
+            if (ratingScore && (isNaN(parsedRating) || parsedRating < 0 || parsedRating > 5)) {
+                statusMessageDiv.textContent = '❌ 오류: 별점 점수는 0에서 5 사이의 유효한 숫자여야 합니다.';
+                return;
+            }
+
+            // 1. 아이콘 데이터 준비 (이모지 vs 이미지)
+            try {
+                if (iconType === 'emoji') {
+                    iconData = iconEmojiInput.value.trim();
+                    if (!iconData) {
+                        statusMessageDiv.textContent = '❌ 오류: 이모지를 입력해주세요.';
+                        return;
+                    }
+                } else {
+                    const file = iconFileInput.files[0];
+                    if (!file && !currentPortalImageUrl) {
+                         statusMessageDiv.textContent = '❌ 오류: 이미지를 선택하거나 기존 이미지를 유지해야 합니다.';
+                         return;
+                    }
+                    if (file) {
+                        if (currentPortalImageUrl) {
+                            await deleteStorageFile(currentPortalImageUrl);
+                        }
+                        iconData = await uploadFile(file, name);
+                    } else {
+                        iconData = currentPortalImageUrl;
+                    }
+                }
+            } catch (error) {
+                console.error("Icon data preparation error:", error);
+                statusMessageDiv.textContent = `❌ 아이콘 준비 중 오류 발생: ${error.message}`;
+                return;
+            }
+
+            // 2. Firestore에 저장
+            const dataToSave = { 
+                name, 
+                label, 
+                sub, 
+                ratingScore: parsedRating || 0, // 유효한 숫자 점수 저장
+                iconType,
+                iconData,
+                timestamp: Date.now() 
+            };
+            
+            try {
+                const docRef = doc(getPortalCollectionRef(), docId);
+                await setDoc(docRef, dataToSave);
+                
+                statusMessageDiv.textContent = `✅ ${label} 포털이 성공적으로 ${portalId ? '수정' : '추가'}되었습니다.`;
+                resetForm();
+            } catch (error) {
+                console.error("Error saving portal:", error);
+                statusMessageDiv.textContent = `❌ 저장 중 오류 발생: ${error.message}`;
+            }
+        });
+
+        // 수정 버튼 핸들러
+        const handleEdit = (e) => {
+            const id = e.target.dataset.id;
+            const portalData = portalsCache[id];
+
+            if (portalData) {
+                portalIdInput.value = id;
+                iconNameInput.value = portalData.name;
+                iconLabelInput.value = portalData.label;
+                iconSubInput.value = portalData.sub;
+                ratingScoreInput.value = portalData.ratingScore > 0 ? portalData.ratingScore : ''; // 0점은 비워서 표시
+                
+                iconNameInput.disabled = true; 
+                submitButton.textContent = '수정 완료';
+                statusMessageDiv.textContent = `✏️ ${portalData.label} 수정 중... (ID: ${id})`;
+
+                const type = portalData.iconType || 'emoji';
+                
+                if (type === 'image') {
+                    iconTypeImageRadio.checked = true;
+                    toggleIconFields('image');
+                    currentPortalImageUrl = portalData.iconData; 
+                    iconPreview.innerHTML = `<img src="${portalData.iconData}" alt="${portalData.label} icon" class="w-full h-full object-contain">`;
+                } else {
+                    iconTypeEmojiRadio.checked = true;
+                    toggleIconFields('emoji');
+                    iconEmojiInput.value = portalData.iconData;
+                    iconPreview.innerHTML = portalData.iconData;
+                    currentPortalImageUrl = null;
+                }
+                
+                // 별점 미리보기 업데이트
+                renderRatingCircle(portalData.ratingScore, iconPreview);
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            } else {
+                statusMessageDiv.textContent = '❌ 수정할 데이터를 찾을 수 없습니다. 페이지를 새로고침하세요.';
+            }
+        };
+        
+        // Storage에서 파일 삭제
+        const deleteStorageFile = async (fileUrl) => {
+            if (!fileUrl || !fileUrl.startsWith('http')) return;
+            
+            try {
+                const pathMatch = fileUrl.match(/o=(artifacts%2F.*?)\?/);
+                if (pathMatch && pathMatch[1]) {
+                    const filePath = decodeURIComponent(pathMatch[1]);
+                    const fileRef = ref(storage, filePath);
+                    await deleteObject(fileRef);
+                    console.log(`Storage file deleted: ${filePath}`);
+                }
+            } catch (error) {
+                console.warn("Could not delete old storage file (may not exist or permission issue):", error);
+            }
+        };
+
+        // 실제 삭제 실행
+        const performDelete = async (id, label) => {
+            try {
+                const portalData = portalsCache[id];
+                
+                if (portalData.iconType === 'image' && portalData.iconData) {
+                    await deleteStorageFile(portalData.iconData);
+                }
+
+                const docRef = doc(getPortalCollectionRef(), id);
+                await deleteDoc(docRef);
+                
+                statusMessageDiv.textContent = `✅ ${label} 포털이 성공적으로 삭제되었습니다.`;
+                resetForm();
+            } catch (error) {
+                console.error("Error deleting portal:", error);
+                statusMessageDiv.textContent = `❌ 삭제 중 오류 발생: ${error.message}`;
+            }
+        }
+        
+        // 삭제 버튼 핸들러 (모달 표시)
+        const handleDelete = (e) => {
+            const id = e.target.dataset.id;
+            const portalData = portalsCache[id];
+            
+            if (!portalData) {
+                statusMessageDiv.textContent = '❌ 삭제할 데이터를 찾을 수 없습니다.';
+                return;
+            }
+
+            modalMessage.textContent = `포털 [${portalData.label} (${portalData.name})]을(를) 영구적으로 삭제하시겠습니까? (연결된 이미지 파일도 삭제됩니다)`;
+            deleteModal.classList.remove('hidden');
+
+            const oldConfirmBtn = confirmDeleteButton.cloneNode(true);
+            confirmDeleteButton.parentNode.replaceChild(oldConfirmBtn, confirmDeleteButton);
+            
+            document.getElementById('confirm-delete-button').addEventListener('click', async () => {
+                await performDelete(id, portalData.label);
+                closeModal();
+            }, { once: true });
+        };
+        
+        // 아이콘 미리보기 업데이트 (이모지 및 이미지 파일)
+        iconEmojiInput.addEventListener('input', (e) => {
+            // 이모지만 업데이트 (별점은 별도 필드에서 처리)
+            iconPreview.querySelector('.rating-circle')?.remove(); // 이모지 입력 시 별점 숨김
+            iconPreview.innerHTML = e.target.value.trim() || '?';
+            renderRatingCircle(ratingScoreInput.value, iconPreview); // 별점 다시 표시
+        });
+
+        iconFileInput.addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    iconPreview.innerHTML = `<img src="${e.target.result}" alt="Preview" class="w-full h-full object-contain">`;
+                    renderRatingCircle(ratingScoreInput.value, iconPreview); // 별점 다시 표시
+                };
+                reader.readAsDataURL(file);
+            } else {
+                iconPreview.innerHTML = '?';
+                renderRatingCircle(ratingScoreInput.value, iconPreview); // 별점 다시 표시
+            }
+        });
+        
+        // 별점 필드 입력 시 미리보기 업데이트
+        ratingScoreInput.addEventListener('input', (e) => {
+            renderRatingCircle(e.target.value, iconPreview);
+        });
+
+        // 라디오 버튼 변경 이벤트 리스너
+        document.querySelectorAll('input[name="icon-type"]').forEach(radio => {
+            radio.addEventListener('change', (e) => {
+                toggleIconFields(e.target.value);
+                iconPreview.innerHTML = '?';
+                renderRatingCircle(ratingScoreInput.value, iconPreview); // 별점 다시 표시
+            });
+        });
+
+        // --- Firebase 초기화 및 인증 ---
+        const initFirebase = async () => {
+            try {
+                app = initializeApp(firebaseConfig);
+                auth = getAuth(app);
+                db = getFirestore(app);
+                storage = getStorage(app); 
+                
+                onAuthStateChanged(auth, (user) => {
+                    if (user) {
+                        userId = user.uid;
+                        authInfoDiv.innerHTML = `
+                            <p class="font-bold">✅ 인증 성공 (관리자 모드)</p>
+                            <p class="text-xs">사용자 ID: ${userId}</p>
+                        `;
+                        subscribeToPortals(); 
+                    } else {
+                        authInfoDiv.innerHTML = `
+                            <p class="font-bold text-red-600">⚠️ 인증 대기 중 / 익명 로그인 시도 중</p>
+                            <p class="text-xs">데이터 관리 권한을 얻는 중입니다...</p>
+                        `;
+                    }
+                });
+
+                if (initialAuthToken) {
+                    await signInWithCustomToken(auth, initialAuthToken).catch(e => {
+                        console.warn("Custom token sign-in failed, falling back to anonymous:", e);
+                        return signInAnonymously(auth);
+                    });
+                } else {
+                    await signInAnonymously(auth);
+                }
+
+            } catch (error) {
+                console.error('Firebase initialization error:', error);
+                authInfoDiv.innerHTML = `
+                    <p class="font-bold text-red-600">🚨 치명적인 Firebase 오류</p>
+                    <p class="text-xs">콘솔 로그를 확인하세요. (${error.message})</p>
+                `;
+            }
+        };
+
+        // 앱 시작
+        initFirebase();
+        
+        window.addEventListener('load', () => {
+            toggleIconFields(iconTypeEmojiRadio.checked ? 'emoji' : 'image');
+        });
+    </script>
+</body>
+</html>

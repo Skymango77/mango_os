@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mango Glass OS</title>
+    <link rel="icon" type="image/x-icon" href="./mango.ico">
+    <script src="https://sdk.minepi.com/pi-sdk.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;900&display=swap');
+
+        :root {
+            --glass-bg: rgba(0, 0, 0, 0.4);
+            --neon-gold: #fbbf24;
+        }
+
+        body {
+            background-color: #000; /* 안경 디스플레이에서 검은색은 투명하게 처리됨 */
+            font-family: 'Inter', sans-serif;
+            color: white;
+            overflow: hidden;
+            height: 100vh;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* 스마트 안경의 시야 방해 최소화를 위한 상단 상태바 */
+        .status-bar {
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: linear-gradient(to bottom, rgba(0,0,0,0.8), transparent);
+        }
+
+        .mango-logo-text {
+            font-size: 1.5rem;
+            font-weight: 900;
+            font-style: italic;
+            color: var(--neon-gold);
+            text-shadow: 0 0 15px rgba(251, 191, 36, 0.8);
+        }
+
+        /* 중앙 시야를 확보하기 위한 카루셀 레이아웃 */
+        #viewport {
+            perspective: 1200px;
+            flex: 1;
+            display: flex;
+            align-items: flex-end; /* 시야 하단에 배치 */
+            justify-content: center;
+            padding-bottom: 10vh;
+        }
+
+        #carousel {
+            position: relative;
+            width: 220px;
+            height: 280px;
+            transform-style: preserve-3d;
+            transition: transform 0.6s cubic-bezier(0.23, 1, 0.32, 1);
+        }
+
+        .card {
+            position: absolute;
+            inset: 0;
+            background: var(--glass-bg);
+            border: 1.5px solid var(--clr);
+            border-radius: 30px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            backface-visibility: hidden;
+            transition: all 0.4s ease;
+            backdrop-filter: blur(5px);
+        }
+
+        /* 활성 카드는 더 선명하고 크게 (사용자 주목) */
+        .card.active {
+            filter: brightness(1.5);
+            transform: rotateY(var(--ry)) translateZ(350px) scale(1.15);
+            box-shadow: 0 0 40px var(--clr);
+            opacity: 1;
+        }
+
+        /* 비활성 카드는 투명도를 높여 주변 시야 확보 */
+        .card:not(.active) {
+            opacity: 0.15;
+            transform: rotateY(var(--ry)) translateZ(350px) scale(0.8);
+            filter: blur(2px);
+        }
+
+        /* 음성 명령 또는 터치 제스처 힌트 */
+        .gesture-hint {
+            position: fixed;
+            bottom: 2rem;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 0.75rem;
+            color: rgba(255,255,255,0.4);
+            letter-spacing: 0.2rem;
+            text-transform: uppercase;
+        }
+
+        .nav-indicator {
+            position: absolute;
+            bottom: -50px;
+            display: flex;
+            gap: 8px;
+        }
+
+        .dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.2);
+            transition: 0.3s;
+        }
+
+        .dot.active {
+            background: var(--neon-gold);
+            box-shadow: 0 0 10px var(--neon-gold);
+            transform: scale(1.3);
+        }
+    </style>
+</head>
+<body>
+
+    <header class="status-bar">
+        <div class="flex items-center gap-3">
+            <img src="./mango.ico" alt="Logo" class="w-8 h-8 filter drop-shadow-md" onerror="this.src='https://cdn-icons-png.flaticon.com/512/888/888853.png'">
+            <h1 class="mango-logo-text">MANGO GLASS</h1>
+        </div>
+        <div id="clock" class="text-sm font-mono text-yellow-500/80">00:00 AM</div>
+    </header>
+
+    <div id="viewport">
+        <div id="carousel"></div>
+        <div class="nav-indicator" id="dots"></div>
+    </div>
+
+    <div class="gesture-hint">Swipe or Tilt to Navigate</div>
+
+    <!-- 안경 조작 테스트를 위한 보이지 않는 터치 영역 (PC 테스트용) -->
+    <div class="fixed inset-0 flex">
+        <div id="prevArea" class="w-1/2 h-full cursor-west-resize"></div>
+        <div id="nextArea" class="w-1/2 h-full cursor-east-resize"></div>
+    </div>
+
+    <script>
+        const PORTALS = [
+            { name: 'Food', icon: '🍱', color: '#ff4d4d' },
+            { name: 'Pay', icon: '💳', color: '#00e676' },
+            { name: 'Trip', icon: '✈️', color: '#00b0ff' },
+            { name: 'Mall', icon: '🛍️', color: '#ffea00' },
+            { name: 'Home', icon: '🏠', color: '#ffffff' },
+            { name: 'Chat', icon: '💬', color: '#d500f9' }
+        ];
+
+        let angle = 0;
+        let currentIndex = 0;
+        const carousel = document.getElementById('carousel');
+        const dotsContainer = document.getElementById('dots');
+        const step = 360 / PORTALS.length;
+
+        function init() {
+            carousel.innerHTML = '';
+            dotsContainer.innerHTML = '';
+            
+            PORTALS.forEach((p, i) => {
+                // 카드 생성
+                const card = document.createElement('div');
+                card.className = 'card';
+                card.style.setProperty('--clr', p.color);
+                card.style.setProperty('--ry', `${i * step}deg`);
+                card.innerHTML = `
+                    <div class="text-6xl mb-4" style="filter: drop-shadow(0 0 10px ${p.color})">${p.icon}</div>
+                    <div class="text-xl font-black tracking-widest uppercase" style="color:${p.color}">${p.name}</div>
+                `;
+                carousel.appendChild(card);
+
+                // 하단 인디케이터 도트 생성
+                const dot = document.createElement('div');
+                dot.className = 'dot';
+                dotsContainer.appendChild(dot);
+            });
+            update();
+            startTime();
+        }
+
+        function update() {
+            carousel.style.transform = `rotateY(${angle}deg)`;
+            
+            const activeIndex = Math.round((-angle / step) % PORTALS.length);
+            currentIndex = activeIndex < 0 ? activeIndex + PORTALS.length : activeIndex;
+            
+            document.querySelectorAll('.card').forEach((c, i) => {
+                c.classList.toggle('active', i === currentIndex);
+            });
+
+            document.querySelectorAll('.dot').forEach((d, i) => {
+                d.classList.toggle('active', i === currentIndex);
+            });
+        }
+
+        function startTime() {
+            const now = new Date();
+            let h = now.getHours();
+            let m = now.getMinutes();
+            let ampm = h >= 12 ? 'PM' : 'AM';
+            h = h % 12 || 12;
+            m = m < 10 ? '0' + m : m;
+            document.getElementById('clock').innerHTML = h + ":" + m + " " + ampm;
+            setTimeout(startTime, 1000);
+        }
+
+        // 제스처 모방 클릭 이벤트
+        document.getElementById('nextArea').onclick = () => {
+            angle -= step;
+            update();
+        };
+
+        document.getElementById('prevArea').onclick = () => {
+            angle += step;
+            update();
+        };
+
+        // 키보드 조작 (안경 페어링 컨트롤러 대응)
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowRight') { angle -= step; update(); }
+            if (e.key === 'ArrowLeft') { angle += step; update(); }
+        });
+
+        window.onload = init;
+    </script>
+</body>
+</html>

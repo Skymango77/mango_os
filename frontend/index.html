@@ -1,0 +1,625 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🥭 Mango Heaven - 트로피컬 엘레강스 다이닝</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap');
+        
+        :root {
+            --deep-jungle: #13231f;
+            --wet-stone: #1e302c;
+            --mango-glow: #fcd34d;
+            --tropical-sunset: #f97316;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--deep-jungle);
+            color: #e2e8f0;
+            overflow-x: hidden;
+        }
+        
+        /* 촉촉한 돌의 질감 카드 스타일 */
+        .tropical-card {
+            background-color: var(--wet-stone);
+            border: 1px solid rgba(252, 211, 77, 0.1);
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.5), inset 0 0 10px rgba(0, 0, 0, 0.2);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .tropical-card:hover {
+             background-color: #2a3c39;
+             transform: translateY(-4px);
+             border-color: rgba(252, 211, 77, 0.4);
+        }
+        
+        /* 예약 박스 그라데이션 */
+        .tropical-accent-box {
+            background: linear-gradient(145deg, #fcd34d 0%, #f97316 100%);
+            color: #1e302c;
+            box-shadow: 0 15px 30px rgba(252, 211, 77, 0.3);
+        }
+
+        /* 메뉴 호버 애니메이션 */
+        .menu-item img {
+            transition: transform 0.6s ease, filter 0.4s ease;
+        }
+        .menu-item:hover img {
+            transform: scale(1.1);
+            filter: brightness(1.1);
+        }
+        
+        /* 하트 아이콘 애니메이션 */
+        .liked #heartIcon {
+            fill: #ef4444; 
+            stroke: #ef4444;
+            animation: pulse 0.5s;
+        }
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.3); }
+            100% { transform: scale(1); }
+        }
+
+        /* 모달 오버레이 */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            inset: 0;
+            background-color: rgba(19, 35, 31, 0.95);
+            backdrop-filter: blur(12px);
+            align-items: center;
+            justify-content: center;
+            padding: 1rem;
+        }
+
+        /* 좌석 카드 선택 효과 */
+        .seat-card {
+            transition: all 0.3s ease;
+            cursor: pointer;
+            border: 2px solid transparent;
+            background-color: rgba(255, 255, 255, 0.9);
+        }
+        .seat-card.selected {
+            border-color: var(--tropical-sunset);
+            background-color: #fff9e6;
+            box-shadow: 0 0 15px rgba(252, 211, 77, 0.6);
+            transform: scale(1.02);
+        }
+
+        /* 커스텀 토스트 알림 */
+        #toast {
+            visibility: hidden;
+            min-width: 250px;
+            background-color: var(--wet-stone);
+            color: #fff;
+            text-align: center;
+            border-radius: 50px;
+            padding: 16px;
+            position: fixed;
+            z-index: 2000;
+            left: 50%;
+            bottom: 30px;
+            transform: translateX(-50%);
+            border: 1px solid var(--mango-glow);
+        }
+        #toast.show {
+            visibility: visible;
+            animation: fadein 0.5s, fadeout 0.5s 2.5s;
+        }
+        @keyframes fadein { from { bottom: 0; opacity: 0; } to { bottom: 30px; opacity: 1; } }
+        @keyframes fadeout { from { bottom: 30px; opacity: 1; } to { bottom: 0; opacity: 0; } }
+
+        /* 스크롤바 커스텀 */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: var(--deep-jungle); }
+        ::-webkit-scrollbar-thumb { background: #3c4a47; border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: #4d5c59; }
+    </style>
+</head>
+<body class="antialiased selection:bg-yellow-500/30">
+
+    <div id="toast">알림 메시지</div>
+
+    <div class="max-w-6xl mx-auto my-4 sm:my-8 bg-[#13231f] rounded-[2rem] shadow-2xl overflow-hidden border border-white/5">
+
+        <!-- 1. 히어로 섹션 -->
+        <header class="relative h-80 sm:h-[450px] bg-cover bg-center" style="background-image: url('https://images.unsplash.com/photo-1544124499-58912cbddaad?auto=format&fit=crop&q=80&w=1200');">
+            <div class="absolute inset-0 bg-gradient-to-t from-[#13231f] via-black/40 to-transparent flex items-end p-6 sm:p-12">
+                <div class="w-full flex flex-col sm:flex-row justify-between items-start sm:items-end gap-6">
+                    <div>
+                        <span class="inline-block px-4 py-1 rounded-full bg-yellow-500/20 text-yellow-400 text-sm font-bold mb-4 backdrop-blur-md border border-yellow-500/30">Premium Tropical Dining</span>
+                        <h1 class="text-5xl sm:text-7xl font-black mb-2 tracking-tight text-white">Mango Heaven</h1>
+                        <p class="text-xl text-yellow-400 font-medium">#트로피컬퓨전 #프리미엄다이닝 #오션뷰</p>
+                        <div class="flex items-center mt-4">
+                            <div class="flex text-yellow-400">
+                                <svg class="w-5 h-5 fill-current" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+                                <svg class="w-5 h-5 fill-current" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+                                <svg class="w-5 h-5 fill-current" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+                                <svg class="w-5 h-5 fill-current" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+                                <svg class="w-5 h-5 fill-current opacity-50" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+                            </div>
+                            <span class="ml-3 text-lg font-medium text-gray-200">4.8 (1,248 reviews)</span>
+                        </div>
+                    </div>
+                    
+                    <button id="likeButton" class="group p-4 rounded-full bg-white/10 backdrop-blur-xl border border-white/20 hover:bg-white/20 transition-all duration-300" onclick="toggleLike()">
+                         <svg id="heartIcon" class="w-8 h-8 text-white transition-all duration-300 group-hover:scale-110" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3.32.74-4.5 2-1.18-1.26-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        </header>
+
+        <!-- 2. 메인 콘텐츠 -->
+        <main class="p-6 sm:p-12 grid grid-cols-1 lg:grid-cols-12 gap-10">
+
+            <!-- 좌측: 정보 및 메뉴 (8칸) -->
+            <div class="lg:col-span-8 space-y-12">
+                
+                <!-- 셰프 인사말 -->
+                <section class="p-8 tropical-card rounded-3xl border-l-[6px] border-yellow-500 relative overflow-hidden">
+                    <div class="absolute top-0 right-0 p-4 opacity-10">
+                        <svg class="w-24 h-24" fill="currentColor" viewBox="0 0 24 24"><path d="M14.017 21L14.017 18C14.017 16.8954 14.9124 16 16.017 16H19.017C19.5693 16 20.017 15.5523 20.017 15V9C20.017 8.44772 19.5693 8 19.017 8H14.017C13.4647 8 13.017 8.44772 13.017 9V14C13.017 15.1046 12.1216 16 11.017 16H10.017V21H14.017ZM5.017 21L5.017 18C5.017 16.8954 5.91243 16 7.017 16H10.017C10.5693 16 11.017 15.5523 11.017 15V9C11.017 8.44772 10.5693 8 10.017 8H5.017C4.46472 8 4.017 8.44772 4.017 9V14C4.017 15.1046 3.12157 16 2.017 16H1.017V21H5.017Z"/></svg>
+                    </div>
+                    <h2 class="text-3xl font-bold mb-4 text-yellow-400">셰프의 초대</h2>
+                    <p class="text-gray-300 leading-relaxed text-lg">
+                        Mango Heaven은 자연의 정직함과 열대의 화려함을 한 그릇에 담아냅니다. 40년간의 연구 끝에 탄생한 <span class="text-yellow-200 font-bold">'트로피컬 엘레강스'</span> 스타일은 단순한 식사를 넘어선 감각의 여행을 선사할 것입니다. 
+                    </p>
+                </section>
+
+                <!-- 운영 시간 -->
+                <section class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="p-6 tropical-card rounded-2xl border-l-4 border-emerald-500">
+                        <h3 class="text-emerald-400 font-bold flex items-center mb-4">
+                            <span class="mr-2 text-xl">🕒</span> 평일 운영
+                        </h3>
+                        <p class="text-2xl font-bold text-white">11:00 - 22:00</p>
+                        <p class="text-gray-400 text-sm mt-1">Break Time: 15:00 - 17:00</p>
+                    </div>
+                    <div class="p-6 tropical-card rounded-2xl border-l-4 border-orange-500">
+                        <h3 class="text-orange-400 font-bold flex items-center mb-4">
+                            <span class="mr-2 text-xl">☀️</span> 주말 및 공휴일
+                        </h3>
+                        <p class="text-2xl font-bold text-white">10:00 - 23:00</p>
+                        <p class="text-gray-400 text-sm mt-1">Full Service Brunch available</p>
+                    </div>
+                </section>
+
+                <!-- 시그니처 메뉴 -->
+                <section>
+                    <div class="flex justify-between items-end mb-8">
+                        <div>
+                            <h2 class="text-4xl font-bold text-white">Signature Menu</h2>
+                            <p class="text-gray-400 mt-2">셰프가 엄선한 이번 시즌 최고의 요리입니다.</p>
+                        </div>
+                        <button class="text-yellow-400 font-bold hover:underline">See All Menu</button>
+                    </div>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                        <!-- 메뉴 1 -->
+                        <div class="menu-item group tropical-card rounded-3xl overflow-hidden" onclick="openMenuModal('taco')">
+                            <div class="relative h-48 overflow-hidden">
+                                <img src="https://images.unsplash.com/photo-1512838243191-e81e8f66f1fd?auto=format&fit=crop&q=80&w=400" alt="망고 타코" class="w-full h-full object-cover">
+                                <div class="absolute inset-0 bg-black/20 group-hover:bg-transparent transition-colors"></div>
+                                <div class="absolute top-4 right-4 bg-yellow-500 text-black text-xs font-black px-3 py-1 rounded-full">BEST</div>
+                            </div>
+                            <div class="p-5">
+                                <h3 class="text-xl font-bold text-white mb-1">망고 쉬림프 타코</h3>
+                                <p class="text-gray-400 text-sm mb-4 line-clamp-1">신선한 망고 살사와 매콤한 그릴드 쉬림프</p>
+                                <div class="flex justify-between items-center">
+                                    <span class="text-yellow-400 font-bold text-xl">22,000원</span>
+                                    <button class="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center hover:bg-yellow-500 hover:text-black transition-all">
+                                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M12 6v6m0 0v6m0-6h6m-6 0H6"/></svg>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 메뉴 2 -->
+                        <div class="menu-item group tropical-card rounded-3xl overflow-hidden" onclick="openMenuModal('noodle')">
+                            <div class="relative h-48 overflow-hidden">
+                                <img src="https://images.unsplash.com/photo-1473093226795-af9932fe5856?auto=format&fit=crop&q=80&w=400" alt="아보카도 누들" class="w-full h-full object-cover">
+                                <div class="absolute top-4 right-4 bg-emerald-500 text-white text-xs font-black px-3 py-1 rounded-full">HEALTHY</div>
+                            </div>
+                            <div class="p-5">
+                                <h3 class="text-xl font-bold text-white mb-1">아보카도 크림 누들</h3>
+                                <p class="text-gray-400 text-sm mb-4 line-clamp-1">부드러운 아보카도 무스와 생면의 만남</p>
+                                <div class="flex justify-between items-center">
+                                    <span class="text-yellow-400 font-bold text-xl">25,000원</span>
+                                    <button class="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center hover:bg-yellow-500 hover:text-black transition-all">
+                                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M12 6v6m0 0v6m0-6h6m-6 0H6"/></svg>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 메뉴 3 -->
+                        <div class="menu-item group tropical-card rounded-3xl overflow-hidden" onclick="openMenuModal('rice')">
+                            <div class="relative h-48 overflow-hidden">
+                                <img src="https://images.unsplash.com/photo-1512058564366-18510be2db19?auto=format&fit=crop&q=80&w=400" alt="파인애플 라이스" class="w-full h-full object-cover">
+                                <div class="absolute top-4 right-4 bg-orange-500 text-white text-xs font-black px-3 py-1 rounded-full">POPULAR</div>
+                            </div>
+                            <div class="p-5">
+                                <h3 class="text-xl font-bold text-white mb-1">트로피컬 라이스</h3>
+                                <p class="text-gray-400 text-sm mb-4 line-clamp-1">파인애플 볼에 담긴 정통 타이 볶음밥</p>
+                                <div class="flex justify-between items-center">
+                                    <span class="text-yellow-400 font-bold text-xl">18,000원</span>
+                                    <button class="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center hover:bg-yellow-500 hover:text-black transition-all">
+                                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M12 6v6m0 0v6m0-6h6m-6 0H6"/></svg>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- 고객 Vibe 키워드 -->
+                <section class="p-8 tropical-card rounded-3xl">
+                    <h2 class="text-2xl font-bold text-purple-400 mb-6">#고객_리얼_바이브</h2>
+                    <div class="flex flex-wrap gap-4">
+                        <span class="px-6 py-3 rounded-full bg-yellow-900/40 text-yellow-300 border border-yellow-500/30 font-medium">✨ 인스타 인생샷 명소</span>
+                        <span class="px-6 py-3 rounded-full bg-emerald-900/40 text-emerald-300 border border-emerald-500/30 font-medium">🥭 망고 소스가 사기급</span>
+                        <span class="px-6 py-3 rounded-full bg-blue-900/40 text-blue-300 border border-blue-500/30 font-medium">🌊 파도 소리 들리는 테라스</span>
+                        <span class="px-6 py-3 rounded-full bg-purple-900/40 text-purple-300 border border-purple-500/30 font-medium">🤵 서비스가 5성급 호텔급</span>
+                    </div>
+                </section>
+            </div>
+
+            <!-- 우측: 사이드바 예약창 (4칸) -->
+            <aside class="lg:col-span-4">
+                <div class="sticky top-8 space-y-6">
+                    
+                    <!-- 예약/주문 컨트롤러 -->
+                    <div class="tropical-accent-box rounded-[2rem] p-8 text-gray-900">
+                        <h2 class="text-3xl font-black mb-6 flex items-center">
+                            <span class="mr-2">⚡</span> Quick Order
+                        </h2>
+
+                        <!-- 방문 형태 선택 -->
+                        <div class="space-y-3 mb-8">
+                            <label class="text-sm font-black uppercase tracking-widest opacity-70">Service Type</label>
+                            <div class="grid grid-cols-1 gap-2">
+                                <label class="flex items-center p-4 bg-white/40 rounded-2xl cursor-pointer hover:bg-white/60 transition group border-2 border-transparent has-[:checked]:border-black">
+                                    <input type="radio" name="mode" value="delivery" class="hidden" onchange="updateMode(this.value)" checked>
+                                    <span class="w-6 h-6 rounded-full border-2 border-black flex items-center justify-center mr-3 group-hover:scale-110">
+                                        <div class="w-3 h-3 bg-black rounded-full opacity-0 check-mark"></div>
+                                    </span>
+                                    <span class="font-bold">배달 (Delivery)</span>
+                                </label>
+                                <label class="flex items-center p-4 bg-white/40 rounded-2xl cursor-pointer hover:bg-white/60 transition group border-2 border-transparent has-[:checked]:border-black">
+                                    <input type="radio" name="mode" value="takeout" class="hidden" onchange="updateMode(this.value)">
+                                    <span class="w-6 h-6 rounded-full border-2 border-black flex items-center justify-center mr-3 group-hover:scale-110">
+                                        <div class="w-3 h-3 bg-black rounded-full opacity-0 check-mark"></div>
+                                    </span>
+                                    <div class="flex flex-col">
+                                        <span class="font-bold">포장 (Takeout)</span>
+                                        <span class="text-xs font-black text-green-800">10% DISCOUNT</span>
+                                    </div>
+                                </label>
+                                <label class="flex items-center p-4 bg-white/40 rounded-2xl cursor-pointer hover:bg-white/60 transition group border-2 border-transparent has-[:checked]:border-black">
+                                    <input type="radio" name="mode" value="reservation" class="hidden" onchange="updateMode(this.value)">
+                                    <span class="w-6 h-6 rounded-full border-2 border-black flex items-center justify-center mr-3 group-hover:scale-110">
+                                        <div class="w-3 h-3 bg-black rounded-full opacity-0 check-mark"></div>
+                                    </span>
+                                    <span class="font-bold">매장 예약 (Reservation)</span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <!-- 장바구니 영역 -->
+                        <div id="cartSection" class="bg-white/20 backdrop-blur-md rounded-2xl p-6 mb-8 border border-white/30">
+                            <h3 class="font-bold mb-4 flex justify-between">
+                                <span>🛒 Cart</span>
+                                <span id="cartCount" class="bg-black text-white px-2 py-0.5 rounded text-xs">0</span>
+                            </h3>
+                            <div id="cartItems" class="space-y-3 max-h-48 overflow-y-auto mb-4 text-sm font-medium">
+                                <p class="text-center opacity-50 py-4 italic text-xs">장바구니가 비어 있습니다.</p>
+                            </div>
+                            <div class="border-t border-black/10 pt-4">
+                                <div class="flex justify-between text-xs opacity-70 mb-1" id="discountRow" style="display:none">
+                                    <span>포장 할인 (10%)</span>
+                                    <span id="discountPrice">-0원</span>
+                                </div>
+                                <div class="flex justify-between font-black text-xl">
+                                    <span>Total</span>
+                                    <span id="totalPrice">0원</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 예약 전용 폼 -->
+                        <div id="reservationForm" class="hidden space-y-6">
+                            <div class="space-y-2">
+                                <label class="text-xs font-black uppercase tracking-widest opacity-70">Schedule</label>
+                                <input type="date" id="res_date" class="w-full p-4 rounded-2xl bg-white/80 border-none font-bold focus:ring-2 focus:ring-black">
+                                <select id="res_people" onchange="calculateDeposit()" class="w-full p-4 rounded-2xl bg-white/80 border-none font-bold focus:ring-2 focus:ring-black">
+                                    <option value="1">1명</option>
+                                    <option value="2" selected>2명</option>
+                                    <option value="4">4명</option>
+                                    <option value="6">6명 (룸 타입 전용)</option>
+                                </select>
+                            </div>
+
+                            <div class="space-y-2">
+                                <label class="text-xs font-black uppercase tracking-widest opacity-70">Seat Selection</label>
+                                <div class="grid grid-cols-2 gap-2">
+                                    <div onclick="selectSeat('G', 5000)" class="seat-card p-3 rounded-xl selected" id="seat-G">
+                                        <p class="font-black text-sm">일반 홀</p>
+                                        <p class="text-[10px] opacity-60">기본 보증금</p>
+                                    </div>
+                                    <div onclick="selectSeat('P1', 10000)" class="seat-card p-3 rounded-xl" id="seat-P1">
+                                        <p class="font-black text-sm">오션뷰</p>
+                                        <p class="text-[10px] opacity-60">+5,000원</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div id="depositInfo" class="p-4 bg-black/10 rounded-2xl border-2 border-black/20">
+                                <p class="text-xs font-bold mb-1">🔒 노쇼 방지 보증금</p>
+                                <p id="depositAmount" class="text-2xl font-black">10,000원</p>
+                                <p class="text-[10px] opacity-60 mt-2 font-medium">방문 시 메뉴 금액에서 차감되거나 환불됩니다.</p>
+                            </div>
+                        </div>
+
+                        <button onclick="handleSubmit()" id="mainSubmitBtn" class="w-full py-5 mt-4 bg-black text-white font-black rounded-3xl hover:scale-[1.02] transition-transform shadow-xl">
+                            주문하기
+                        </button>
+                    </div>
+
+                    <!-- 회원 혜택 카드 -->
+                    <div class="p-6 tropical-card rounded-3xl border border-yellow-500/20 flex items-center gap-4">
+                        <div class="w-16 h-16 rounded-full bg-yellow-500/10 flex items-center justify-center text-3xl">⭐</div>
+                        <div>
+                            <p class="font-bold text-yellow-400">골드 멤버십 혜택</p>
+                            <p class="text-sm text-gray-400">재방문 시 에이드 1잔 무료 쿠폰!</p>
+                        </div>
+                    </div>
+                </div>
+            </aside>
+        </main>
+
+        <!-- 3. 매장 미리보기 -->
+        <section class="p-6 sm:p-12 border-t border-white/5 bg-black/20">
+            <h2 class="text-3xl font-bold mb-8 text-center text-emerald-400">Experience Our Jungle</h2>
+            <div class="aspect-video sm:aspect-[21/9] rounded-3xl tropical-card flex items-center justify-center group cursor-pointer overflow-hidden relative">
+                <img src="https://images.unsplash.com/photo-1559339352-11d035aa65de?auto=format&fit=crop&q=80&w=1200" alt="Interior" class="absolute inset-0 w-full h-full object-cover opacity-40 group-hover:scale-105 transition-transform duration-1000">
+                <div class="relative z-10 text-center">
+                    <div class="w-20 h-20 bg-emerald-500/20 rounded-full flex items-center justify-center mx-auto mb-4 backdrop-blur-md border border-emerald-500/30">
+                        <svg class="w-10 h-10 text-emerald-400" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+                    </div>
+                    <p class="text-xl font-bold text-white tracking-widest">LAUNCH 360° VR TOUR</p>
+                </div>
+            </div>
+        </section>
+
+        <footer class="p-10 text-center border-t border-white/5 text-gray-600 text-sm">
+            <p class="mb-2">Mango Heaven Luxury Dining & Tropical Portal</p>
+            <p>&copy; 2025 Mango Heaven. All Rights Reserved.</p>
+        </footer>
+    </div>
+
+    <!-- 메뉴 상세 모달 -->
+    <div id="menuModal" class="modal" onclick="if(event.target == this) closeMenuModal()">
+        <div class="max-w-2xl w-full tropical-card rounded-[2.5rem] overflow-hidden shadow-2xl relative">
+            <button onclick="closeMenuModal()" class="absolute top-6 right-6 z-20 w-12 h-12 bg-black/50 text-white rounded-full flex items-center justify-center hover:bg-black transition-colors">&times;</button>
+            <div class="grid grid-cols-1 md:grid-cols-2">
+                <div class="h-64 md:h-full">
+                    <img id="modalImg" src="" class="w-full h-full object-cover" alt="Detail">
+                </div>
+                <div class="p-10 space-y-6">
+                    <div>
+                        <h2 id="modalTitle" class="text-4xl font-black text-yellow-400 mb-2">메뉴 이름</h2>
+                        <p id="modalPrice" class="text-2xl font-bold text-white">0원</p>
+                    </div>
+                    <div class="space-y-4">
+                        <div>
+                            <h4 class="text-xs font-black uppercase tracking-tighter text-emerald-500">Chef's Note</h4>
+                            <p id="modalDesc" class="text-gray-300 text-sm leading-relaxed">상세 설명이 여기에 표시됩니다.</p>
+                        </div>
+                        <div>
+                            <h4 class="text-xs font-black uppercase tracking-tighter text-orange-500">Ingredients</h4>
+                            <p id="modalIngred" class="text-gray-400 text-xs">망고, 새우, 칠리 등...</p>
+                        </div>
+                        <div class="p-3 bg-red-900/20 border border-red-900/40 rounded-xl">
+                            <h4 class="text-[10px] font-black uppercase text-red-400">Allergy Alert</h4>
+                            <p id="modalAllergy" class="text-red-200 text-xs">새우, 땅콩 포함</p>
+                        </div>
+                    </div>
+                    <button id="addToCartBtn" class="w-full py-4 bg-yellow-500 text-black font-black rounded-2xl hover:bg-yellow-400 transition transform active:scale-95 shadow-lg">
+                        장바구니에 담기
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 전역 상태 관리
+        let state = {
+            isLiked: false,
+            currentMode: 'delivery', // delivery, takeout, reservation
+            cart: [],
+            selectedSeat: 'G',
+            seatPrice: 5000,
+            menuData: {
+                taco: { id: 'taco', title: '망고 쉬림프 타코', price: 22000, desc: '신선한 망고 살사와 매콤하게 구워낸 타이거 쉬림프를 곁들인 시그니처 타코입니다.', ingred: '망고, 타이거 쉬림프, 옥수수 또띠아, 고수, 라임', allergy: '새우, 조개류', img: 'https://images.unsplash.com/photo-1512838243191-e81e8f66f1fd?auto=format&fit=crop&q=80&w=800' },
+                noodle: { id: 'noodle', title: '아보카도 크림 누들', price: 25000, desc: '잘 익은 아보카도를 갈아 만든 녹진한 소스와 이탈리안 생면 파스타의 조화로운 맛입니다.', ingred: '아보카도, 생면 파스타, 파마산 치즈, 바질', allergy: '우유, 밀(글루텐)', img: 'https://images.unsplash.com/photo-1473093226795-af9932fe5856?auto=format&fit=crop&q=80&w=800' },
+                rice: { id: 'rice', title: '트로피컬 라이스', price: 18000, desc: '파인애플의 달콤함과 특제 소스의 매콤함이 어우러진 정통 트로피컬 스타일 볶음밥입니다.', ingred: '파인애플, 태국산 자스민 라이스, 계란, 캐슈넛', allergy: '견과류, 계란', img: 'https://images.unsplash.com/photo-1512058564366-18510be2db19?auto=format&fit=crop&q=80&w=800' }
+            }
+        };
+
+        // 초기 로드
+        window.onload = () => {
+            updateMode('delivery');
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById('res_date').value = today;
+            document.getElementById('res_date').min = today;
+        };
+
+        // 좋아요 기능
+        function toggleLike() {
+            state.isLiked = !state.isLiked;
+            const btn = document.getElementById('likeButton');
+            if(state.isLiked) {
+                btn.classList.add('liked');
+                showToast("❤️ 위시리스트에 추가되었습니다.");
+            } else {
+                btn.classList.remove('liked');
+                showToast("💔 위시리스트에서 제거되었습니다.");
+            }
+        }
+
+        // 서비스 모드 변경
+        function updateMode(mode) {
+            state.currentMode = mode;
+            const resForm = document.getElementById('reservationForm');
+            const submitBtn = document.getElementById('mainSubmitBtn');
+            const discountRow = document.getElementById('discountRow');
+
+            if (mode === 'reservation') {
+                resForm.classList.remove('hidden');
+                submitBtn.textContent = '보증금 결제 및 예약하기';
+                discountRow.style.display = 'none';
+            } else {
+                resForm.classList.add('hidden');
+                submitBtn.textContent = mode === 'takeout' ? '10% 할인 받고 주문하기' : '주문하기';
+                discountRow.style.display = mode === 'takeout' ? 'flex' : 'none';
+            }
+            updateCartUI();
+        }
+
+        // 메뉴 모달 열기
+        function openMenuModal(menuId) {
+            const menu = state.menuData[menuId];
+            document.getElementById('modalTitle').textContent = menu.title;
+            document.getElementById('modalPrice').textContent = menu.price.toLocaleString() + '원';
+            document.getElementById('modalDesc').textContent = menu.desc;
+            document.getElementById('modalIngred').textContent = menu.ingred;
+            document.getElementById('modalAllergy').textContent = menu.allergy;
+            document.getElementById('modalImg').src = menu.img;
+            
+            document.getElementById('addToCartBtn').onclick = () => {
+                addToCart(menuId);
+                closeMenuModal();
+            };
+            
+            document.getElementById('menuModal').style.display = 'flex';
+        }
+
+        function closeMenuModal() {
+            document.getElementById('menuModal').style.display = 'none';
+        }
+
+        // 장바구니 추가
+        function addToCart(menuId) {
+            const menu = state.menuData[menuId];
+            const existing = state.cart.find(item => item.id === menuId);
+            
+            if (existing) {
+                existing.qty++;
+            } else {
+                state.cart.push({ ...menu, qty: 1 });
+            }
+            
+            showToast(`✅ ${menu.title}가 담겼습니다.`);
+            updateCartUI();
+        }
+
+        // 장바구니 UI 업데이트
+        function updateCartUI() {
+            const container = document.getElementById('cartItems');
+            const count = document.getElementById('cartCount');
+            const totalDisplay = document.getElementById('totalPrice');
+            const discountDisplay = document.getElementById('discountPrice');
+            
+            if (state.cart.length === 0) {
+                container.innerHTML = '<p class="text-center opacity-50 py-4 italic text-xs">장바구니가 비어 있습니다.</p>';
+            } else {
+                container.innerHTML = state.cart.map((item, idx) => `
+                    <div class="flex justify-between items-center bg-black/5 p-2 rounded-lg">
+                        <div class="flex items-center gap-2">
+                            <span class="font-black text-xs w-4">${item.qty}</span>
+                            <span>${item.title}</span>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <span class="font-bold">${(item.price * item.qty).toLocaleString()}원</span>
+                            <button onclick="removeFromCart(${idx})" class="text-red-500 hover:text-red-700">×</button>
+                        </div>
+                    </div>
+                `).join('');
+            }
+
+            let rawTotal = state.cart.reduce((sum, item) => sum + (item.price * item.qty), 0);
+            let finalTotal = rawTotal;
+
+            if (state.currentMode === 'takeout') {
+                const discount = Math.floor(rawTotal * 0.1);
+                finalTotal = rawTotal - discount;
+                discountDisplay.textContent = `-${discount.toLocaleString()}원`;
+            }
+
+            count.textContent = state.cart.reduce((sum, item) => sum + item.qty, 0);
+            totalDisplay.textContent = finalTotal.toLocaleString() + '원';
+            
+            calculateDeposit();
+        }
+
+        function removeFromCart(index) {
+            state.cart.splice(index, 1);
+            updateCartUI();
+        }
+
+        // 좌석 선택 및 보증금 계산
+        function selectSeat(type, price) {
+            state.selectedSeat = type;
+            state.seatPrice = price;
+            
+            document.querySelectorAll('.seat-card').forEach(card => card.classList.remove('selected'));
+            document.getElementById(`seat-${type}`).classList.add('selected');
+            
+            calculateDeposit();
+        }
+
+        function calculateDeposit() {
+            if (state.currentMode !== 'reservation') return;
+            
+            const people = parseInt(document.getElementById('res_people').value);
+            const amount = people * state.seatPrice;
+            document.getElementById('depositAmount').textContent = amount.toLocaleString() + '원';
+        }
+
+        // 제출 핸들러
+        function handleSubmit() {
+            if (state.cart.length === 0 && state.currentMode !== 'reservation') {
+                showToast("⚠️ 주문할 메뉴를 먼저 담아주세요.");
+                return;
+            }
+
+            const modeNames = { delivery: '배달', takeout: '포장', reservation: '예약' };
+            const msg = state.currentMode === 'reservation' 
+                ? `📅 ${document.getElementById('res_date').value} / ${document.getElementById('res_people').value}인 예약이 접수되었습니다.`
+                : `🚀 Mango Heaven ${modeNames[state.currentMode]} 주문이 완료되었습니다.`;
+            
+            showToast(msg);
+            
+            // 초기화
+            if (state.currentMode !== 'reservation') state.cart = [];
+            updateCartUI();
+        }
+
+        // 토스트 알림
+        function showToast(msg) {
+            const toast = document.getElementById("toast");
+            toast.textContent = msg;
+            toast.className = "show";
+            setTimeout(() => { toast.className = toast.className.replace("show", ""); }, 3000);
+        }
+    </script>
+</body>
+</html>

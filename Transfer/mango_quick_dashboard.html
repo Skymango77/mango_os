@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Mango Quick | Global Logistics</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@600;900&family=Outfit:wght@300;500;700&display=swap');
+        
+        body { 
+            background-color: #050505;
+            background-image: radial-gradient(circle at 50% 0%, #001a33 0%, #000000 75%);
+            font-family: 'Outfit', sans-serif; 
+            color: #fff;
+            overflow: hidden;
+            height: 100vh;
+            display: flex; align-items: center; justify-content: center;
+        }
+
+        /* 럭셔리 글래스 카드 */
+        .glass-card {
+            background: rgba(15, 15, 15, 0.7);
+            backdrop-filter: blur(40px);
+            -webkit-backdrop-filter: blur(40px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-top: 1px solid rgba(59, 130, 246, 0.3);
+            box-shadow: 0 40px 100px rgba(0, 0, 0, 0.9);
+            border-radius: 3.5rem;
+            width: 100%;
+            max-width: 420px;
+            position: relative;
+        }
+
+        /* 텍스트 그라데이션 (에러 완벽 수정본) */
+        .text-gold-gradient {
+            background: linear-gradient(135deg, #FFF 0%, #FFD700 60%, #B8860B 100%);
+            -webkit-background-clip: text; /* 기존 코드 */
+            background-clip: text;         /* ★ 이 표준 속성이 빠지면 에러가 납니다! */
+            -webkit-text-fill-color: transparent;
+            padding-right: 0.6rem;         /* 'I', 'K' 끝부분 잘림 방지 */
+            display: inline-block;        /* 그라데이션과 패딩이 정확히 먹히도록 추가 */
+        }
+
+        /* 고도화된 프로그레스 바 */
+        .progress-track {
+            background: rgba(255, 255, 255, 0.03);
+            box-shadow: inset 0 2px 10px rgba(0,0,0,0.8);
+            height: 12px;
+            border-radius: 10px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            width: 0%;
+            height: 100%;
+            background: linear-gradient(90deg, #1e40af, #3b82f6, #93c5fd);
+            box-shadow: 0 0 20px rgba(59, 130, 246, 0.6);
+            border-radius: 10px;
+            transition: width 2.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+            position: relative;
+        }
+
+        /* 배송 차량 위치 핀 효과 */
+        .delivery-pointer {
+            position: absolute;
+            right: -5px; top: 50%;
+            transform: translateY(-50%);
+            width: 18px; height: 18px;
+            background: #fff;
+            border-radius: 50%;
+            box-shadow: 0 0 15px #3b82f6;
+        }
+
+        /* 정보 카드 섹션 */
+        .info-card {
+            background: linear-gradient(145deg, rgba(255,255,255,0.05) 0%, rgba(255,255,255,0.01) 100%);
+            border: 1px solid rgba(255,255,255,0.05);
+            border-radius: 2rem;
+        }
+
+        /* 펄스 애니메이션 (배송 중 강조) */
+        .pulse-dot {
+            width: 8px; height: 8px;
+            background: #3b82f6;
+            border-radius: 50%;
+            display: inline-block;
+            margin-right: 8px;
+            animation: pulse 1.5s infinite;
+        }
+        @keyframes pulse {
+            0% { transform: scale(1); opacity: 1; }
+            100% { transform: scale(3); opacity: 0; }
+        }
+
+        .shimmer-btn {
+            position: relative;
+            overflow: hidden;
+            background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+            transition: 0.3s;
+        }
+        .shimmer-btn::after {
+            content: ''; position: absolute; top: -50%; left: -50%; width: 200%; height: 200%;
+            background: linear-gradient(45deg, transparent, rgba(255,255,255,0.2), transparent);
+            transform: rotate(45deg); animation: shimmer 3s infinite;
+        }
+        @keyframes shimmer { 0% { left: -150%; } 100% { left: 150%; } }
+
+    </style>
+</head>
+<body class="p-4">
+
+    <div class="glass-card p-10">
+        <div class="flex flex-col items-center mb-12">
+            <div class="w-24 h-24 mb-6 relative">
+                <div class="absolute inset-0 bg-blue-500 blur-[40px] opacity-20 rounded-full"></div>
+                <img src="../assets/img/Quick-Service.png" alt="Quick Service" class="w-full h-full object-contain relative z-10 drop-shadow-[0_0_20px_rgba(59,130,246,0.4)]">
+            </div>
+            <h1 class="text-3xl font-orbitron font-black italic tracking-tighter text-gold-gradient">MANGO QUICK</h1>
+            <p class="text-[9px] text-gray-500 tracking-[0.5em] uppercase mt-2">Elite Delivery Network</p>
+        </div>
+
+        <div class="text-center mb-10">
+            <div class="inline-flex items-center px-4 py-1.5 rounded-full bg-blue-500/10 border border-blue-500/20 mb-4">
+                <span class="pulse-dot"></span>
+                <span class="text-[10px] font-bold text-blue-400 tracking-widest uppercase">On Delivery</span>
+            </div>
+            <h2 class="text-xl font-bold tracking-tight mb-1">물품을 배송 중입니다</h2>
+            <p class="text-xs text-gray-500 font-light">도착 예정 시간: <span class="text-white font-bold">15분 뒤</span></p>
+        </div>
+
+        <div class="mb-12">
+            <div class="progress-track mb-4">
+                <div class="progress-fill" id="pBar">
+                    <div class="delivery-pointer"></div>
+                </div>
+            </div>
+            <div class="flex justify-between text-[10px] font-bold tracking-tighter">
+                <div class="text-gray-600 uppercase">Pick-up</div>
+                <div class="text-blue-400 uppercase">In Transit</div>
+                <div class="text-gray-600 uppercase">Arrived</div>
+            </div>
+        </div>
+
+        <div class="info-card p-5 space-y-4 mb-8">
+            <div class="flex justify-between items-center">
+                <span class="text-[10px] text-gray-500 uppercase tracking-widest">Order ID</span>
+                <span class="text-xs font-mono font-bold">#MQ-882910</span>
+            </div>
+            <div class="flex justify-between items-center">
+                <span class="text-[10px] text-gray-500 uppercase tracking-widest">Package</span>
+                <span class="text-xs font-bold text-blue-400">MacBook Pro 16"</span>
+            </div>
+            <div class="border-t border-white/5 pt-4 flex items-center gap-4">
+                <div class="w-10 h-10 rounded-full bg-gray-800 border border-white/10 flex items-center justify-center text-lg">👨🏻‍✈️</div>
+                <div class="flex-1">
+                    <p class="text-[10px] text-gray-500 uppercase">Courier</p>
+                    <p class="text-xs font-bold">김망고 <span class="text-gray-600 font-normal ml-1">010-****-1234</span></p>
+                </div>
+            </div>
+        </div>
+
+        <button class="shimmer-btn w-full py-5 rounded-3xl text-black font-black text-sm tracking-widest uppercase active:scale-95">
+            Contact Courier
+        </button>
+
+        <button onclick="history.back()" class="w-full text-center mt-8 text-[9px] text-gray-700 font-bold tracking-[0.4em] uppercase hover:text-blue-400 transition-colors">
+            Return to Portal
+        </button>
+    </div>
+
+    <script>
+        window.onload = function() {
+            // 로딩 시 부드러운 애니메이션 효과
+            setTimeout(() => {
+                document.getElementById('pBar').style.width = '68%';
+            }, 600);
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>파트너 백엔드 대시보드 - Mango Travel</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap');
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f1f5f9;
+        }
+        .nav-item.active {
+            background-color: #1e40af;
+            border-left: 4px solid #60a5fa;
+        }
+    </style>
+</head>
+<body class="flex h-screen overflow-hidden">
+
+    <!-- Sidebar Navigation -->
+    <aside id="sidebar" class="w-64 bg-gray-900 text-white flex flex-col transition-all duration-300">
+        <div class="p-6">
+            <h2 class="text-3xl font-extrabold text-indigo-400">🥭 MANGO</h2>
+            <p class="text-[10px] text-gray-400 font-bold uppercase tracking-widest">Travel Partner Hub</p>
+        </div>
+        
+        <nav class="flex-1 px-4 space-y-2">
+            <a href="#" class="nav-item active flex items-center gap-3 p-3 rounded-lg text-sm font-semibold transition-colors">
+                <span>📊 대시보드 홈</span>
+            </a>
+            <a href="#" class="nav-item flex items-center gap-3 p-3 rounded-lg text-sm font-semibold text-gray-400 hover:bg-gray-800 hover:text-white transition-colors">
+                <span>🏨 숙소 관리</span>
+            </a>
+            <a href="#" class="nav-item flex items-center gap-3 p-3 rounded-lg text-sm font-semibold text-gray-400 hover:bg-gray-800 hover:text-white transition-colors">
+                <span>📅 예약 캘린더</span>
+            </a>
+            <a href="#" class="nav-item flex items-center gap-3 p-3 rounded-lg text-sm font-semibold text-gray-400 hover:bg-gray-800 hover:text-white transition-colors">
+                <span>💬 고객 리뷰</span>
+            </a>
+        </nav>
+
+        <div class="p-6 border-t border-gray-800">
+            <div class="flex items-center gap-3">
+                <div class="w-8 h-8 rounded-full bg-indigo-500"></div>
+                <div class="text-xs">
+                    <p class="font-bold">Admin Manager</p>
+                    <p class="text-gray-500">online</p>
+                </div>
+            </div>
+        </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="flex-1 flex flex-col overflow-hidden">
+        <!-- Top Header -->
+        <header class="bg-white border-b border-gray-200 px-8 py-4 flex items-center justify-between">
+            <h1 id="header-title" class="text-xl font-bold text-gray-800">여행 서비스 분석 대시보드</h1>
+            <div class="flex items-center gap-4">
+                <span id="current-date" class="text-sm text-gray-500 font-medium"></span>
+                <button class="bg-indigo-600 text-white px-4 py-2 rounded-lg text-xs font-bold shadow-lg shadow-indigo-100">데이터 내보내기</button>
+            </div>
+        </header>
+
+        <!-- Dashboard Content -->
+        <div class="flex-1 overflow-y-auto p-8 space-y-8">
+            <!-- Key Metrics -->
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+                    <p class="text-xs font-bold text-gray-400 uppercase tracking-wider">총 매출</p>
+                    <h3 id="total-revenue" class="text-2xl font-black text-gray-900 mt-2">₩0</h3>
+                    <p class="text-[10px] text-emerald-500 font-bold mt-1">↑ 지난달 대비 12%</p>
+                </div>
+                <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+                    <p class="text-xs font-bold text-gray-400 uppercase tracking-wider">신규 예약</p>
+                    <h3 id="new-bookings" class="text-2xl font-black text-gray-900 mt-2">0건</h3>
+                    <p class="text-[10px] text-emerald-500 font-bold mt-1">↑ 오늘 5건 발생</p>
+                </div>
+                <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+                    <p class="text-xs font-bold text-gray-400 uppercase tracking-wider">평균 평점</p>
+                    <h3 id="avg-rating" class="text-2xl font-black text-gray-900 mt-2">0.0</h3>
+                    <p class="text-[10px] text-indigo-500 font-bold mt-1">최근 리뷰 48개 기준</p>
+                </div>
+                <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+                    <p class="text-xs font-bold text-gray-400 uppercase tracking-wider">예약 취소율</p>
+                    <h3 id="cancellation-rate" class="text-2xl font-black text-gray-900 mt-2">0%</h3>
+                    <p class="text-[10px] text-rose-500 font-bold mt-1">↓ 2% 감소 중</p>
+                </div>
+            </div>
+
+            <!-- Charts Placeholder -->
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <div class="lg:col-span-2 bg-white p-8 rounded-[32px] shadow-sm border border-gray-100 h-80 flex flex-col">
+                    <h4 class="font-bold text-gray-800 mb-4">월간 예약 추이</h4>
+                    <div class="flex-1 bg-gray-50 rounded-2xl border-2 border-dashed border-gray-200 flex items-center justify-center text-gray-400 text-sm">
+                        Chart Area: Monthly Booking Trends
+                    </div>
+                </div>
+                <div class="bg-white p-8 rounded-[32px] shadow-sm border border-gray-100 h-80 flex flex-col">
+                    <h4 class="font-bold text-gray-800 mb-4">인기 숙소 카테고리</h4>
+                    <div class="flex-1 bg-gray-50 rounded-2xl border-2 border-dashed border-gray-200 flex items-center justify-center text-gray-400 text-sm">
+                        Chart Area: Popular Categories
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Recent Activity Table -->
+            <div class="bg-white rounded-[32px] shadow-sm border border-gray-100 overflow-hidden">
+                <div class="p-8 border-b border-gray-100 flex items-center justify-between">
+                    <h4 class="font-bold text-gray-800">최근 예약 현황</h4>
+                    <button class="text-indigo-600 text-xs font-bold hover:underline">전체보기</button>
+                </div>
+                <table class="w-full text-left">
+                    <thead class="bg-gray-50 border-b border-gray-100">
+                        <tr>
+                            <th class="px-8 py-4 text-[10px] font-bold text-gray-400 uppercase">예약자</th>
+                            <th class="px-8 py-4 text-[10px] font-bold text-gray-400 uppercase">숙소명</th>
+                            <th class="px-8 py-4 text-[10px] font-bold text-gray-400 uppercase">체크인</th>
+                            <th class="px-8 py-4 text-[10px] font-bold text-gray-400 uppercase">상태</th>
+                        </tr>
+                    </thead>
+                    <tbody id="booking-rows">
+                        <!-- JS로 채워질 예정 -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </main>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-app.js";
+        import { getFirestore, doc, onSnapshot } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-firestore.js";
+        import { getAuth, onAuthStateChanged, signInAnonymously } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-auth.js";
+
+        const firebaseConfig = JSON.parse(__firebase_config);
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+        const auth = getAuth(app);
+        const appId = typeof __app_id !== 'undefined' ? __app_id : 'mango-travel-v1';
+
+        // 목업 데이터 (Auth 대기 중 표시용)
+        const mockDashboardData = {
+            revenue: "₩24,850,000",
+            bookings: "142건",
+            rating: "4.8",
+            cancellation: "3.2%",
+            recent: [
+                { user: "김민수", stay: "모던 포레스트 캐빈", date: "2024.12.28", status: "확정" },
+                { user: "Sarah J.", stay: "씨사이드 빌라", date: "2024.12.30", status: "대기" },
+                { user: "Park H.", stay: "스카이라인 펜트하우스", date: "2025.01.02", status: "확정" }
+            ]
+        };
+
+        const updateUI = (data) => {
+            document.getElementById('total-revenue').innerText = data.revenue;
+            document.getElementById('new-bookings').innerText = data.bookings;
+            document.getElementById('avg-rating').innerText = data.rating;
+            document.getElementById('cancellation-rate').innerText = data.cancellation;
+
+            const tbody = document.getElementById('booking-rows');
+            tbody.innerHTML = data.recent.map(row => `
+                <tr class="border-b border-gray-50 hover:bg-gray-50 transition-colors">
+                    <td class="px-8 py-4 text-sm font-bold text-gray-700">${row.user}</td>
+                    <td class="px-8 py-4 text-sm text-gray-500">${row.stay}</td>
+                    <td class="px-8 py-4 text-sm text-gray-500">${row.date}</td>
+                    <td class="px-8 py-4">
+                        <span class="px-2 py-1 rounded-md text-[10px] font-black ${row.status === '확정' ? 'bg-emerald-100 text-emerald-600' : 'bg-orange-100 text-orange-600'}">
+                            ${row.status}
+                        </span>
+                    </td>
+                </tr>
+            `).join('');
+        };
+
+        // 초기화
+        window.onload = async () => {
+            document.getElementById('current-date').innerText = new Date().toLocaleDateString('ko-KR', { year: 'numeric', month: 'long', day: 'numeric' });
+            updateUI(mockDashboardData);
+
+            // Firebase Auth & Real-time Update
+            onAuthStateChanged(auth, (user) => {
+                if (user) {
+                    // 실제 DB 연동 예시 (추후 활성화 가능)
+                    // const docRef = doc(db, 'artifacts', appId, 'public', 'dashboard');
+                    // onSnapshot(docRef, (snapshot) => { if(snapshot.exists()) updateUI(snapshot.data()); });
+                } else {
+                    signInAnonymously(auth);
+                }
+            });
+        };
+    </script>
+</body>
+</html>

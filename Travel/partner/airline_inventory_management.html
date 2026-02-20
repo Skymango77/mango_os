@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>항공사: 재고 및 가격 관리</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap');
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f1f5f9; /* Tailwind slate-100 */
+        }
+        .data-grid-item {
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr 1fr 1fr 1fr 1fr;
+            gap: 1rem;
+            align-items: center;
+            padding: 0.75rem 1rem;
+            border-bottom: 1px solid #e5e7eb;
+        }
+        .data-grid-item:last-child {
+            border-bottom: none;
+        }
+    </style>
+</head>
+<body class="p-6">
+
+    <div class="max-w-7xl mx-auto">
+        <h1 class="text-3xl font-bold text-gray-800 mb-2">✈️ 항공사: 재고 및 가격 관리</h1>
+        <p class="text-gray-500 mb-6">등록된 항공 노선별 잔여 좌석 재고와 가격 정책을 실시간으로 관리합니다.</p>
+
+        <!-- Current Partner Status (for context and security check) -->
+        <div class="bg-blue-50 border-l-4 border-blue-500 text-blue-800 p-4 rounded-lg mb-8">
+            <p class="font-semibold">현재 파트너 ID: <span id="current-user-id" class="font-mono text-sm bg-blue-200 px-2 py-0.5 rounded">로딩 중...</span></p>
+            <p class="text-sm">이 화면은 해당 ID에 등록된 항공편 재고 데이터만 조회 및 수정할 수 있습니다.</p>
+        </div>
+
+        <!-- KPI Cards -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+            <div class="bg-white p-6 rounded-xl shadow-lg border-l-4 border-teal-400">
+                <p class="text-sm font-medium text-gray-500">등록 노선 수</p>
+                <p id="kpi-routes" class="text-4xl font-extrabold text-gray-900 mt-1">0</p>
+            </div>
+            <div class="bg-white p-6 rounded-xl shadow-lg border-l-4 border-amber-400">
+                <p class="text-sm font-medium text-gray-500">다음 7일 좌석 부족 위험</p>
+                <p id="kpi-low-inventory" class="text-4xl font-extrabold text-gray-900 mt-1">0</p>
+            </div>
+            <div class="bg-white p-6 rounded-xl shadow-lg border-l-4 border-red-400">
+                <p class="text-sm font-medium text-gray-500">가격 미설정 노선</p>
+                <p id="kpi-no-price" class="text-4xl font-extrabold text-gray-900 mt-1">0</p>
+            </div>
+        </div>
+
+        <!-- Main Inventory Management Section -->
+        <div class="bg-white p-6 rounded-xl shadow-lg">
+            <h2 class="text-xl font-semibold text-gray-800 mb-4">항공편별 잔여 좌석 재고 현황 (등급별)</h2>
+
+            <!-- Grid Header -->
+            <div class="data-grid-item bg-gray-50 font-bold text-sm text-gray-700 rounded-t-lg border-b-2">
+                <div>노선 / 항공편 (날짜)</div>
+                <div>총 좌석</div>
+                <div>이코노미</div>
+                <div>프리미엄</div>
+                <div>비즈니스</div>
+                <div>퍼스트</div>
+                <div class="text-right">액션</div>
+            </div>
+
+            <!-- List Body - Items will be injected here -->
+            <div id="inventory-list">
+                <p class="text-gray-500 text-center py-8" id="loading-indicator">데이터를 로드하는 중입니다...</p>
+                <!-- Dynamic list items will be injected here by JS -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Inventory Update Modal -->
+    <div id="update-modal" class="fixed inset-0 bg-gray-600 bg-opacity-50 hidden items-center justify-center z-50 p-4">
+        <div class="bg-white p-8 rounded-xl shadow-2xl max-w-lg w-full">
+            <h3 class="text-2xl font-bold text-gray-900 mb-4 border-b pb-2">재고 및 가격 업데이트</h3>
+            
+            <p class="text-lg font-medium text-blue-600 mb-4" id="modal-flight-info"></p>
+
+            <div class="space-y-4">
+                <div id="inventory-inputs" class="space-y-3">
+                    <!-- Dynamic inventory input fields will be inserted here -->
+                </div>
+                
+                <h4 class="text-lg font-semibold mt-6 mb-3">가격 정책 (기본 운임)</h4>
+                <div class="flex items-center space-x-3">
+                    <label for="base-price" class="block text-sm font-medium text-gray-700 w-1/4">기본 운임 (KRW)</label>
+                    <input type="number" id="base-price" placeholder="예: 550000" class="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500">
+                </div>
+            </div>
+
+            <div class="flex justify-end mt-8 pt-4 border-t">
+                <button onclick="document.getElementById('update-modal').classList.add('hidden'); document.getElementById('update-modal').classList.remove('flex');"
+                        class="bg-gray-300 text-gray-800 px-5 py-2 rounded-lg hover:bg-gray-400 transition shadow-md mr-3">
+                    닫기
+                </button>
+                <button onclick="saveInventoryChanges()"
+                        class="bg-blue-600 text-white px-5 py-2 rounded-lg hover:bg-blue-700 transition shadow-md">
+                    변경 사항 저장
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Custom Modal for General Messages (Reusing the previous design) -->
+    <div id="message-modal" class="fixed inset-0 bg-gray-600 bg-opacity-50 hidden items-center justify-center z-50">
+        <div class="bg-white p-6 rounded-lg shadow-xl max-w-sm w-full">
+            <h3 class="text-lg font-semibold text-gray-900 mb-3" id="modal-title">알림</h3>
+            <p class="text-gray-700 mb-4" id="modal-message">메시지 내용</p>
+            <div class="flex justify-end">
+                <button onclick="document.getElementById('message-modal').classList.add('hidden'); document.getElementById('message-modal').classList.remove('flex');"
+                        class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition">확인</button>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- JavaScript and Firebase Logic -->
+    <script type="module">
+        // Firebase Imports
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, collection, query, where, onSnapshot, setLogLevel, doc, updateDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+        // Global Firebase and State Variables
+        let db;
+        let auth;
+        let userId = null;
+        let currentFlightId = null; // 현재 모달에서 작업 중인 항공편 ID
+        let allFlights = []; // 모든 항공편 데이터를 전역으로 저장
+        const appId = typeof __app_id !== 'undefined' ? __app_id : 'mango-travel-portal';
+        
+        // --- 헬퍼 함수 및 상수 ---
+        function showMessage(title, message) {
+            document.getElementById('modal-title').textContent = title;
+            document.getElementById('modal-message').textContent = message;
+            document.getElementById('message-modal').classList.remove('hidden');
+            document.getElementById('message-modal').classList.add('flex');
+        }
+
+        const SEAT_CLASSES = ['Economy', 'Premium', 'Business', 'First'];
+
+        // --- UI 업데이트 함수 ---
+        function updateInventoryUI(flights) {
+            allFlights = flights; // 전역 변수 업데이트
+            
+            const listEl = document.getElementById('inventory-list');
+            
+            // 1. KPI 계산 (간단한 Mock 기준)
+            const routesCount = new Set(flights.map(f => `${f.origin}-${f.destination}`)).size;
+            const lowInventoryCount = flights.filter(f => f.inventory.Economy < 10).length;
+            const noPriceCount = flights.filter(f => !f.basePrice || f.basePrice === 0).length;
+
+            document.getElementById('kpi-routes').textContent = routesCount;
+            document.getElementById('kpi-low-inventory').textContent = lowInventoryCount;
+            document.getElementById('kpi-no-price').textContent = noPriceCount;
+
+            // 2. 리스트 렌더링
+            if (flights.length === 0) {
+                listEl.innerHTML = '<p class="text-gray-500 text-center py-8">등록된 항공편 재고 정보가 없습니다.</p>';
+            } else {
+                listEl.innerHTML = flights.map(flight => {
+                    const totalSeats = SEAT_CLASSES.reduce((sum, cls) => sum + (flight.inventory[cls] || 0), 0);
+                    const flightDate = new Date(flight.departureDate).toLocaleDateString('ko-KR', { month: '2-digit', day: '2-digit' });
+
+                    return `
+                        <div class="data-grid-item">
+                            <div class="font-semibold text-gray-800">
+                                ${flight.flightNumber} (${flightDate}) <span class="text-sm text-gray-500 block">${flight.origin} → ${flight.destination}</span>
+                            </div>
+                            <div class="text-center text-gray-600 font-bold">${totalSeats}</div>
+                            <div class="text-center text-sm ${flight.inventory.Economy < 15 ? 'text-red-500 font-bold' : 'text-gray-700'}">${flight.inventory.Economy || 0}</div>
+                            <div class="text-center text-sm text-gray-700">${flight.inventory.Premium || 0}</div>
+                            <div class="text-center text-sm text-gray-700">${flight.inventory.Business || 0}</div>
+                            <div class="text-center text-sm text-gray-700">${flight.inventory.First || 0}</div>
+                            <div class="text-right">
+                                <button onclick="window.showUpdateModal('${flight.id}')" 
+                                        class="bg-blue-100 text-blue-700 hover:bg-blue-200 text-xs px-3 py-1.5 rounded-lg transition font-medium">
+                                    재고/가격 수정
+                                </button>
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+            }
+        }
+
+        // --- 재고 업데이트 모달 표시 함수 ---
+        window.showUpdateModal = (flightId) => {
+            const flight = allFlights.find(f => f.id === flightId);
+            if (!flight) {
+                showMessage("오류", "해당 항공편 정보를 찾을 수 없습니다.");
+                return;
+            }
+
+            currentFlightId = flightId;
+            document.getElementById('modal-flight-info').textContent = `${flight.flightNumber} (${flight.origin} → ${flight.destination}) - ${flight.departureDate}`;
+            
+            // 재고 입력 필드 동적 생성
+            const inventoryInputsEl = document.getElementById('inventory-inputs');
+            inventoryInputsEl.innerHTML = SEAT_CLASSES.map(cls => `
+                <div class="flex items-center space-x-3">
+                    <label for="inventory-${cls}" class="block text-sm font-medium text-gray-700 w-1/4">${cls} 좌석</label>
+                    <input type="number" id="inventory-${cls}" value="${flight.inventory[cls] || 0}"
+                           class="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500"
+                           min="0">
+                </div>
+            `).join('');
+
+            // 가격 설정
+            document.getElementById('base-price').value = flight.basePrice || 0;
+
+            // 모달 표시
+            document.getElementById('update-modal').classList.remove('hidden');
+            document.getElementById('update-modal').classList.add('flex');
+        };
+
+        // --- 변경 사항 저장 함수 ---
+        window.saveInventoryChanges = async () => {
+            if (!currentFlightId || !userId) {
+                showMessage("오류", "처리할 항공편 ID나 사용자 ID가 유효하지 않습니다.");
+                return;
+            }
+
+            const newInventory = {};
+            SEAT_CLASSES.forEach(cls => {
+                const value = parseInt(document.getElementById(`inventory-${cls}`).value, 10);
+                newInventory[cls] = isNaN(value) || value < 0 ? 0 : value;
+            });
+
+            const newBasePrice = parseInt(document.getElementById('base-price').value, 10);
+            const priceToSave = isNaN(newBasePrice) || newBasePrice < 0 ? 0 : newBasePrice;
+
+            try {
+                // Firestore 업데이트
+                const docRef = doc(db, 'artifacts', appId, 'public', 'data', 'flights', currentFlightId);
+                await updateDoc(docRef, {
+                    inventory: newInventory,
+                    basePrice: priceToSave,
+                    lastUpdated: new Date().toISOString()
+                });
+
+                document.getElementById('update-modal').classList.add('hidden');
+                showMessage("성공", "항공편 재고 및 가격 정보가 성공적으로 업데이트되었습니다.");
+                
+            } catch (error) {
+                console.error("Error updating inventory:", error);
+                showMessage("업데이트 실패", "재고 정보 업데이트 중 오류가 발생했습니다: " + error.message);
+            }
+        };
+
+
+        // --- Firestore Real-time Listener (onSnapshot) ---
+        function setupFlightsListener(currentUserId) {
+            document.getElementById('current-user-id').textContent = currentUserId;
+
+            // Collection path: /artifacts/{appId}/public/data/flights
+            const collectionRef = collection(db, 'artifacts', appId, 'public', 'data', 'flights');
+
+            // 쿼리: partnerId가 현재 로그인한 userId와 일치하는 문서만 필터링합니다.
+            const q = query(collectionRef, where('partnerId', '==', currentUserId));
+
+            // Listen for real-time updates
+            onSnapshot(q, (snapshot) => {
+                document.getElementById('loading-indicator').classList.add('hidden'); // Hide loading indicator
+
+                const flights = [];
+                snapshot.forEach(doc => {
+                    const data = doc.data();
+                    flights.push({
+                        id: doc.id,
+                        ...data
+                    });
+                });
+                
+                // 데이터를 출발 날짜 기준으로 정렬
+                flights.sort((a, b) => new Date(a.departureDate) - new Date(b.departureDate));
+
+                console.log(`Loaded ${flights.length} flights for partner: ${currentUserId}`);
+                updateInventoryUI(flights);
+
+            }, (error) => {
+                console.error("Firestore listen error (Flights):", error);
+                showMessage("데이터 로드 오류", "항공편 데이터를 불러오는 중 오류가 발생했습니다: " + error.message);
+            });
+        }
+
+
+        // --- Firebase Initialization and Authentication ---
+        async function initFirebase() {
+            try {
+                const firebaseConfig = JSON.parse(typeof __firebase_config !== 'undefined' ? __firebase_config : '{}');
+                const app = initializeApp(firebaseConfig);
+                auth = getAuth(app);
+                db = getFirestore(app);
+                setLogLevel('Debug'); // Enable debug logging
+
+                // Initial Authentication
+                const initialAuthToken = typeof __initial_auth_token !== 'undefined' ? __initial_auth_token : null;
+                if (initialAuthToken) {
+                    await signInWithCustomToken(auth, initialAuthToken);
+                } else {
+                    await signInAnonymously(auth);
+                }
+
+                // Set up Auth State Listener and initialize app state
+                onAuthStateChanged(auth, (user) => {
+                    if (user) {
+                        userId = user.uid;
+                        console.log("Auth state changed. User ID:", userId);
+                        setupFlightsListener(userId); 
+                    } else {
+                        userId = null;
+                        console.error("User logged out or authentication failed.");
+                        showMessage("인증 필요", "사용자 인증에 실패했습니다. 데이터를 보려면 로그인을 확인해 주세요.");
+                        document.getElementById('inventory-list').innerHTML = '<p class="text-red-500 text-center py-8">인증되지 않은 사용자입니다. 데이터 접근이 거부되었습니다.</p>';
+                    }
+                });
+
+            } catch (error) {
+                console.error("Firebase initialization or auth failed:", error);
+                showMessage("Firebase 오류", `Firebase 초기화 또는 인증에 실패했습니다: ${error.message}`);
+            }
+        }
+
+        // --- Initial Setup ---
+        window.onload = () => {
+            initFirebase();
+        };
+
+        // --- Mock Data Insertion (For demonstration) ---
+        // 이 함수를 콘솔에서 실행하여 데이터베이스에 테스트 데이터를 삽입할 수 있습니다.
+        window.insertMockFlights = async () => {
+             if (!userId) {
+                showMessage("오류", "먼저 Firebase 인증이 완료되어야 목업 데이터를 삽입할 수 있습니다.");
+                return;
+            }
+            try {
+                const mockFlights = [
+                    { 
+                        partnerId: userId, // <<< 현재 로그인한 유저 ID로 설정!
+                        flightNumber: "AC101", 
+                        origin: "ICN (인천)", 
+                        destination: "JFK (뉴욕)", 
+                        departureDate: "2025-09-05", 
+                        inventory: { Economy: 45, Premium: 12, Business: 5, First: 2 },
+                        basePrice: 650000,
+                        lastUpdated: new Date().toISOString()
+                    },
+                    { 
+                        partnerId: userId, // <<< 현재 로그인한 유저 ID로 설정!
+                        flightNumber: "AC203", 
+                        origin: "ICN (인천)", 
+                        destination: "CDG (파리)", 
+                        departureDate: "2025-09-08", 
+                        inventory: { Economy: 8, Premium: 2, Business: 1, First: 0 }, // Low Inventory
+                        basePrice: 590000,
+                        lastUpdated: new Date().toISOString()
+                    },
+                    { 
+                        partnerId: userId, // <<< 현재 로그인한 유저 ID로 설정!
+                        flightNumber: "AC315", 
+                        origin: "ICN (인천)", 
+                        destination: "BKK (방콕)", 
+                        departureDate: "2025-09-15", 
+                        inventory: { Economy: 120, Premium: 30, Business: 10, First: 0 },
+                        basePrice: 310000,
+                        lastUpdated: new Date().toISOString()
+                    },
+                ];
+
+                for (const flight of mockFlights) {
+                    const tempId = `flight-${Date.now()}-${Math.random().toString(36).substring(2, 9)}`;
+                    await fetch(`https://generativelanguage.googleapis.com/v1beta/projects/firebase-emulator/databases/(default)/documents/artifacts/${appId}/public/data/flights/${tempId}?key=`, {
+                        method: 'PATCH',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ fields: flight })
+                    });
+                }
+                showMessage("성공", "항공편 목업 데이터가 성공적으로 삽입되었습니다. 화면을 확인하세요.");
+            } catch (e) {
+                console.error("Error adding mock documents: ", e);
+                showMessage("실패", "목업 데이터 삽입 중 오류가 발생했습니다. 콘솔을 확인하세요.");
+            }
+        };
+
+    </script>
+</body>
+</html>

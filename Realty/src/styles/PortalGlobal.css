@@ -1,0 +1,33 @@
+/* 모든 포털 카드와 윈도우의 공통 규격 */
+.portal-window, 
+.realty-card, 
+.banner-ad, 
+.pi-news-window {
+    width: 92% !important; /* 모든 창의 너비를 메인 화면 기준 92%로 고정 */
+    margin-left: auto;
+    margin-right: auto;
+    margin-bottom: 20px;
+    border-radius: 15px;
+    box-sizing: border-box; /* 패딩이 너비에 영향을 주지 않도록 설정 */
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    background-color: #ffffff;
+    overflow: hidden; /* 내부 요소가 밖으로 나가지 않게 차단 */
+}
+
+/* 상하로 움직이는 Pi 뉴스 창 애니메이션 */
+.pi-news-window {
+    height: 50px;
+    display: flex;
+    align-items: center;
+    border: 1px solid #ffcc00;
+}
+
+.news-scroller {
+    width: 100%;
+    animation: newsScrollUpDown 6s ease-in-out infinite;
+}
+
+@keyframes newsScrollUpDown {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-10px); } /* 부드러운 상하 움직임 */
+}

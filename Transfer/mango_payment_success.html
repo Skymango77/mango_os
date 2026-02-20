@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Payment Confirmed | Mango Proxy</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* 글로벌 프리미엄 스타일 업그레이드 */
+        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@900&family=Inter:ital,wght@0,400;0,700;1,900&display=swap');
+
+        :root {
+            --mango-gold: linear-gradient(135deg, #D4AF37 0%, #F9E498 50%, #B8860B 100%);
+            --premium-black: #050505;
+            --glass-border: rgba(212, 175, 55, 0.2);
+        }
+
+        body { background-color: transparent; font-family: 'Inter', sans-serif; overflow: hidden; color: white; }
+
+        .text-metallic-gold {
+            background: var(--mango-gold);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));
+        }
+
+        .bg-metallic-gold {
+            background: var(--mango-gold);
+            box-shadow: 0 4px 15px rgba(212, 175, 55, 0.3);
+        }
+
+        .premium-card {
+            background: rgba(10, 10, 10, 0.8);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 2.5rem;
+        }
+
+        /* 폰트 디테일 조정 */
+        .font-orbitron {
+            font-family: 'Orbitron', sans-serif;
+            letter-spacing: -0.05em;
+            text-transform: uppercase;
+        }
+        .animate-fade-in-down { animation: fadeInDown 0.8s ease-out; }
+        @keyframes fadeInDown {
+            0% { opacity: 0; transform: translateY(-20px); }
+            100% { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body class="m-0 p-0 text-white flex justify-center items-center min-h-screen">
+
+    <div class="fixed inset-0 bg-gradient-to-br from-gray-950 to-gray-900 -z-10"></div>
+
+    <div class="w-full max-w-[450px] premium-card p-8 shadow-[0_20px_50px_rgba(0,0,0,0.5)] animate-fade-in-down relative overflow-hidden">
+        
+        <div class="flex justify-center mb-6">
+            <div class="flex items-center gap-2">
+                <span class="text-2xl">🥭</span>
+                <span class="font-orbitron font-black text-lg tracking-tighter text-metallic-gold">MANGO PROXY</span>
+            </div>
+        </div>
+
+        <div class="flex justify-center mb-8">
+            <div class="w-24 h-24 rounded-full border-4 border-green-500/30 flex items-center justify-center relative">
+                <div class="absolute inset-0 rounded-full border-4 border-green-500 animate-ping opacity-20"></div>
+                <svg class="w-12 h-12 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="4" d="M5 13l4 4L19 7"></path>
+                </svg>
+            </div>
+        </div>
+
+        <div class="text-center mb-8">
+            <h1 class="text-2xl font-black font-orbitron mb-2 uppercase tracking-tight">Payment Confirmed!</h1>
+            <p class="text-gray-400 text-sm font-medium">Order No. <span class="text-white font-orbitron">#2026-082</span></p>
+        </div>
+
+        <div class="bg-white/5 rounded-2xl p-4 flex items-center gap-4 mb-8 border border-white/10">
+            <div class="w-14 h-14 bg-black rounded-xl overflow-hidden border border-gray-700 flex-shrink-0 flex items-center justify-center relative">
+                <img src="./nike.png" class="w-full h-full object-cover" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                <span class="hidden text-xl">🛍️</span>
+            </div>
+            <div class="text-left">
+                <p class="text-[10px] text-gray-500 uppercase font-black tracking-widest leading-none mb-1">Purchased Item</p>
+                <h3 class="text-xs font-bold text-white uppercase truncate">Nike Limited Edition Item</h3>
+            </div>
+            <div class="ml-auto text-right">
+                <p class="text-[10px] text-gray-500 uppercase font-black tracking-widest leading-none mb-1">Total Paid</p>
+                <p class="text-sm font-black text-metallic-gold font-orbitron">₩385,400</p>
+            </div>
+        </div>
+
+        <div class="space-y-4">
+            <button onclick="location.href='mango_dashboard.html'" class="w-full py-4 bg-white text-black rounded-2xl font-black text-sm uppercase shadow-xl hover:bg-gray-200 transition-all active:scale-95">
+                Track Order (Dashboard)
+            </button>
+            <button onclick="location.href='index.html'" class="w-full py-4 bg-transparent border border-gray-700 text-gray-400 rounded-2xl font-black text-sm uppercase hover:text-white hover:border-white transition-all">
+                Back to Home
+            </button>
+        </div>
+
+        <div class="absolute bottom-0 left-0 w-full h-1.5 bg-gradient-to-r from-green-500 via-emerald-500 to-green-500"></div>    
+    </div>
+</body>
+</html>

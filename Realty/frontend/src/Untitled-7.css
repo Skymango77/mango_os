@@ -1,0 +1,49 @@
+/* 사용자 지침: 너비 92% 준수 */
+.news-window-container {
+  width: 92%;
+  height: 40px;
+  margin: 10px auto;
+  background: #111;
+  border: 1px solid #ffaa00;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  overflow: hidden; /* 넘치는 텍스트 숨김 */
+}
+
+.news-label {
+  background: #ffaa00;
+  color: #000;
+  padding: 0 10px;
+  font-weight: bold;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  white-space: nowrap;
+}
+
+.news-ticker {
+  flex: 1;
+  height: 100%;
+  position: relative;
+}
+
+.news-track {
+  display: flex;
+  flex-direction: column;
+  animation: scrollUp 10s linear infinite; /* 위로 스크롤 애니메이션 */
+}
+
+.news-item {
+  height: 40px;
+  display: flex;
+  align-items: center;
+  padding-left: 15px;
+  color: #fff;
+  font-size: 0.9rem;
+}
+
+@keyframes scrollUp {
+  0% { transform: translateY(0); }
+  100% { transform: translateY(-50%); } /* 전체 리스트의 절반만큼 이동 */
+}

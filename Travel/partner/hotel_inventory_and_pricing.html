@@ -1,0 +1,552 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>숙박 파트너: 객실 재고 및 요금 관리</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap');
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f1f5f9; /* Tailwind slate-100 */
+        }
+        .date-range-input {
+            width: 150px;
+        }
+    </style>
+</head>
+<body class="p-6">
+
+    <div class="max-w-7xl mx-auto">
+        <h1 class="text-3xl font-bold text-gray-800 mb-2">🏨 숙박 파트너: 객실 재고 및 요금 관리</h1>
+        <p class="text-gray-500 mb-6">기간별 객실 타입 재고와 일일 요금을 효과적으로 관리하세요.</p>
+
+        <!-- Current Partner Status -->
+        <div class="bg-blue-50 border-l-4 border-blue-500 text-blue-800 p-4 rounded-lg mb-8">
+            <p class="font-semibold">현재 파트너 ID: <span id="current-user-id" class="font-mono text-sm bg-blue-200 px-2 py-0.5 rounded">로딩 중...</span></p>
+            <p class="text-sm">이 화면은 해당 ID에 등록된 객실 재고 및 요금 데이터만 조회 및 수정할 수 있습니다.</p>
+        </div>
+
+        <!-- Date Range Filter & Actions -->
+        <div class="bg-white p-6 rounded-xl shadow-lg mb-8 flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0 md:space-x-6">
+            <div class="flex items-center space-x-4 w-full md:w-auto">
+                <label class="text-gray-700 font-medium whitespace-nowrap">조회 기간:</label>
+                <input type="date" id="start-date" class="date-range-input px-3 py-2 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500">
+                <span class="text-gray-500">-</span>
+                <input type="date" id="end-date" class="date-range-input px-3 py-2 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500">
+            </div>
+            
+            <button onclick="refreshInventoryView()"
+                    class="w-full md:w-auto bg-gray-200 text-gray-800 px-5 py-2 rounded-lg hover:bg-gray-300 transition shadow-md font-medium">
+                🗓️ 기간 조회
+            </button>
+            
+            <button onclick="showBulkUpdateModal()"
+                    id="bulk-update-btn"
+                    class="w-full md:w-auto bg-indigo-600 text-white px-5 py-2 rounded-lg hover:bg-indigo-700 transition shadow-md font-medium disabled:opacity-50"
+                    disabled>
+                🚀 일괄 재고/요금 업데이트
+            </button>
+        </div>
+
+        <!-- Room Inventory Table -->
+        <div class="bg-white p-6 rounded-xl shadow-lg">
+            <h2 class="text-xl font-semibold text-gray-800 mb-4">객실 타입별 재고 및 요금 현황</h2>
+            
+            <div id="room-types-list" class="space-y-6">
+                <p class="text-gray-500 text-center py-8" id="loading-indicator">데이터를 로드하는 중입니다...</p>
+                <!-- Dynamic room type sections will be injected here -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Bulk Update Modal -->
+    <div id="bulk-update-modal" class="fixed inset-0 bg-gray-600 bg-opacity-50 hidden items-center justify-center z-50 p-4">
+        <div class="bg-white p-8 rounded-xl shadow-2xl max-w-2xl w-full">
+            <h3 class="text-2xl font-bold text-gray-900 mb-4 border-b pb-2">객실 재고/요금 일괄 업데이트</h3>
+            
+            <div class="space-y-6">
+                <!-- 1. 기간 선택 (Display only, based on filter selection) -->
+                <div class="border p-4 rounded-lg bg-gray-50">
+                    <p class="font-semibold text-gray-700">업데이트 대상 기간:</p>
+                    <p id="modal-date-range" class="text-lg font-mono text-indigo-600 mt-1">2024-01-01 ~ 2024-01-31</p>
+                    <p class="text-sm text-red-500 mt-2">주의: 이 기간 내의 모든 날짜에 변경 사항이 적용됩니다.</p>
+                </div>
+
+                <!-- 2. 객실 타입 선택 -->
+                <div>
+                    <label for="modal-room-type" class="block text-sm font-medium text-gray-700 mb-2">업데이트할 객실 타입:</label>
+                    <select id="modal-room-type" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500">
+                        <!-- Options injected by JS -->
+                    </select>
+                </div>
+
+                <!-- 3. 재고/요금 입력 -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                        <label for="modal-new-inventory" class="block text-sm font-medium text-gray-700 mb-2">신규 잔여 객실 수 (재고)</label>
+                        <input type="number" id="modal-new-inventory" placeholder="예: 10" min="0" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500">
+                    </div>
+                    <div>
+                        <label for="modal-new-price" class="block text-sm font-medium text-gray-700 mb-2">신규 1박당 요금 (KRW)</label>
+                        <input type="number" id="modal-new-price" placeholder="예: 150000" min="0" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500">
+                    </div>
+                </div>
+            </div>
+
+            <div class="flex justify-end mt-8 pt-4 border-t">
+                <button onclick="document.getElementById('bulk-update-modal').classList.add('hidden'); document.getElementById('bulk-update-modal').classList.remove('flex');"
+                        class="bg-gray-300 text-gray-800 px-5 py-2 rounded-lg hover:bg-gray-400 transition shadow-md mr-3">
+                    취소
+                </button>
+                <button onclick="applyBulkUpdate()"
+                        class="bg-indigo-600 text-white px-5 py-2 rounded-lg hover:bg-indigo-700 transition shadow-md">
+                    일괄 업데이트 적용
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Custom Message Modal (for alerts) -->
+    <div id="message-modal" class="fixed inset-0 bg-gray-600 bg-opacity-50 hidden items-center justify-center z-50">
+        <div class="bg-white p-6 rounded-lg shadow-xl max-w-sm w-full">
+            <h3 class="text-lg font-semibold text-gray-900 mb-3" id="modal-title">알림</h3>
+            <p class="text-gray-700 mb-4" id="modal-message">메시지 내용</p>
+            <div class="flex justify-end">
+                <button onclick="document.getElementById('message-modal').classList.add('hidden'); document.getElementById('message-modal').classList.remove('flex');"
+                        class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition">확인</button>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- JavaScript and Firebase Logic -->
+    <script type="module">
+        // Firebase Imports
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, collection, query, where, onSnapshot, setLogLevel, doc, setDoc, getDocs } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+        // Global Firebase and State Variables
+        let db;
+        let auth;
+        let userId = null;
+        let allRoomTypes = []; // 모든 객실 타입 정보를 저장
+        let inventoryData = {}; // 기간별 재고/요금 정보를 저장 { 'YYYY-MM-DD': {roomId: {inventory, price}} }
+        const appId = typeof __app_id !== 'undefined' ? __app_id : 'mango-travel-portal';
+        
+        // --- 헬퍼 함수 및 상수 ---
+        function showMessage(title, message) {
+            document.getElementById('modal-title').textContent = title;
+            document.getElementById('modal-message').textContent = message;
+            document.getElementById('message-modal').classList.remove('hidden');
+            document.getElementById('message-modal').classList.add('flex');
+        }
+
+        /**
+         * YYYY-MM-DD 형식의 문자열 날짜를 Date 객체로 변환합니다.
+         * @param {string} dateString 'YYYY-MM-DD'
+         * @returns {Date}
+         */
+        function parseDate(dateString) {
+            const [year, month, day] = dateString.split('-').map(Number);
+            // 월은 0부터 시작하므로 -1
+            return new Date(year, month - 1, day);
+        }
+
+        /**
+         * 두 날짜 사이의 모든 날짜(YYYY-MM-DD)를 배열로 반환합니다.
+         * @param {string} startDateString 'YYYY-MM-DD'
+         * @param {string} endDateString 'YYYY-MM-DD'
+         * @returns {string[]} 날짜 배열
+         */
+        function getDateRange(startDateString, endDateString) {
+            const dates = [];
+            let currentDate = parseDate(startDateString);
+            const endDate = parseDate(endDateString);
+
+            while (currentDate <= endDate) {
+                // YYYY-MM-DD 형식으로 변환
+                const dateStr = currentDate.toISOString().split('T')[0];
+                dates.push(dateStr);
+                // 다음 날짜로 이동
+                currentDate.setDate(currentDate.getDate() + 1);
+            }
+            return dates;
+        }
+
+        // --- UI 초기화 및 날짜 설정 ---
+        function initializeUI() {
+            const today = new Date();
+            const tomorrow = new Date(today);
+            tomorrow.setDate(today.getDate() + 1);
+            const sevenDaysLater = new Date(today);
+            sevenDaysLater.setDate(today.getDate() + 7);
+
+            const formatDate = (date) => date.toISOString().split('T')[0];
+
+            document.getElementById('start-date').value = formatDate(tomorrow);
+            document.getElementById('end-date').value = formatDate(sevenDaysLater);
+        }
+
+        // --- 재고/요금 UI 렌더링 함수 ---
+        function renderInventoryTable(roomTypes) {
+            const listEl = document.getElementById('room-types-list');
+            listEl.innerHTML = '';
+            
+            const startDateStr = document.getElementById('start-date').value;
+            const endDateStr = document.getElementById('end-date').value;
+
+            if (!startDateStr || !endDateStr) {
+                listEl.innerHTML = '<p class="text-gray-500 text-center py-8">조회 기간을 설정해 주세요.</p>';
+                document.getElementById('bulk-update-btn').disabled = true;
+                return;
+            }
+
+            const dates = getDateRange(startDateStr, endDateStr);
+            if (dates.length === 0) {
+                 listEl.innerHTML = '<p class="text-gray-500 text-center py-8">선택된 기간이 유효하지 않습니다.</p>';
+                 document.getElementById('bulk-update-btn').disabled = true;
+                 return;
+            }
+
+            document.getElementById('bulk-update-btn').disabled = false;
+            
+            roomTypes.forEach(room => {
+                const roomSection = document.createElement('div');
+                roomSection.className = 'border border-gray-200 rounded-xl overflow-hidden shadow-sm';
+                
+                // Header
+                const header = `
+                    <div class="bg-indigo-50 p-4 flex justify-between items-center">
+                        <h3 class="text-lg font-bold text-indigo-800">${room.name} (${room.maxOccupancy}인 기준)</h3>
+                        <span class="text-sm font-medium text-gray-600">${room.beds} 침대 | ${room.size}㎡</span>
+                    </div>
+                `;
+                
+                // Table structure
+                let tableContent = `<div class="overflow-x-auto"><table class="min-w-full divide-y divide-gray-200">`;
+
+                // Table Header (Dates)
+                tableContent += `
+                    <thead>
+                        <tr class="bg-gray-50">
+                            <th class="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider sticky left-0 z-10 bg-gray-50 w-32">날짜</th>
+                            ${dates.map(d => `<th class="px-3 py-2 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">${new Date(d).toLocaleDateString('ko-KR', { month: 'short', day: 'numeric', weekday: 'short' })}</th>`).join('')}
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-gray-200">
+                `;
+
+                // Inventory Row
+                const inventoryRow = `
+                    <tr class="hover:bg-yellow-50/50">
+                        <td class="px-3 py-2 whitespace-nowrap text-sm font-medium text-gray-900 sticky left-0 z-10 bg-white">잔여 재고</td>
+                        ${dates.map(date => {
+                            const data = inventoryData[date] ? inventoryData[date][room.id] : null;
+                            const inv = data ? data.inventory : (room.defaultInventory || 0);
+                            const textColor = inv <= 5 ? 'text-red-600 font-bold' : 'text-gray-900';
+                            return `<td class="px-3 py-2 whitespace-nowrap text-sm text-center ${textColor}">${inv}</td>`;
+                        }).join('')}
+                    </tr>
+                `;
+
+                // Price Row
+                const priceRow = `
+                    <tr class="hover:bg-green-50/50">
+                        <td class="px-3 py-2 whitespace-nowrap text-sm font-medium text-gray-900 sticky left-0 z-10 bg-white">1박 요금 (KRW)</td>
+                        ${dates.map(date => {
+                            const data = inventoryData[date] ? inventoryData[date][room.id] : null;
+                            const price = data && data.price ? data.price.toLocaleString() : (room.defaultPrice || 0).toLocaleString();
+                            const priceClass = data && data.price ? 'font-semibold text-green-700' : 'text-gray-500';
+                            return `<td class="px-3 py-2 whitespace-nowrap text-sm text-center ${priceClass}">${price}</td>`;
+                        }).join('')}
+                    </tr>
+                `;
+
+                tableContent += inventoryRow;
+                tableContent += priceRow;
+                tableContent += `
+                    </tbody>
+                </table></div>`;
+                
+                roomSection.innerHTML = header + tableContent;
+                listEl.appendChild(roomSection);
+            });
+        }
+        
+        // --- 데이터 로드 함수 ---
+
+        /**
+         * 현재 선택된 기간의 모든 일일 재고/요금 데이터를 로드합니다.
+         */
+        async function loadInventoryData(startDateStr, endDateStr) {
+             if (!userId) return;
+
+             // Firestore 컬렉션 경로: /artifacts/{appId}/public/data/hotel_inventory
+             const inventoryCollectionRef = collection(db, 'artifacts', appId, 'public', 'data', 'hotel_inventory');
+             
+             // 쿼리: partnerId가 현재 userId와 일치하는 문서만 필터링합니다.
+             // 실제 서비스에서는 날짜 범위 쿼리가 필요하지만, Firestore의 제한으로 인해 여기서는
+             // 일단 partnerId만 필터링하고 JS에서 날짜를 필터링합니다. (또는 getDocs를 사용)
+             
+             // onSnapshot으로 실시간 변경 감지 설정
+             const q = query(inventoryCollectionRef, where('partnerId', '==', userId));
+
+             onSnapshot(q, (snapshot) => {
+                 const newInventoryData = {};
+                 
+                 snapshot.forEach(doc => {
+                     const data = doc.data();
+                     const docDate = data.date; // YYYY-MM-DD
+                     
+                     if (docDate >= startDateStr && docDate <= endDateStr) {
+                         if (!newInventoryData[docDate]) {
+                             newInventoryData[docDate] = {};
+                         }
+                         // 객실 타입별 재고/요금 데이터를 날짜 아래에 저장
+                         newInventoryData[docDate][data.roomId] = {
+                             inventory: data.inventory,
+                             price: data.price
+                         };
+                     }
+                 });
+
+                 inventoryData = newInventoryData;
+                 console.log("Inventory data loaded/updated:", inventoryData);
+                 renderInventoryTable(allRoomTypes);
+             }, (error) => {
+                 console.error("Error fetching inventory data:", error);
+                 showMessage("데이터 오류", "재고 데이터를 불러오는 중 오류가 발생했습니다: " + error.message);
+             });
+        }
+        
+        /**
+         * 객실 타입 기본 정보를 로드하고 인벤토리 로드를 트리거합니다.
+         */
+        function setupRoomTypesListener() {
+             if (!userId) return;
+
+             // Collection path: /artifacts/{appId}/public/data/hotel_room_types
+             const roomTypesCollectionRef = collection(db, 'artifacts', appId, 'public', 'data', 'hotel_room_types');
+             
+             // 쿼리: partnerId가 현재 userId와 일치하는 문서만 필터링합니다.
+             const q = query(roomTypesCollectionRef, where('partnerId', '==', userId));
+
+             onSnapshot(q, (snapshot) => {
+                 document.getElementById('loading-indicator').classList.add('hidden');
+                 allRoomTypes = [];
+                 
+                 snapshot.forEach(doc => {
+                     allRoomTypes.push({
+                         id: doc.id,
+                         ...doc.data()
+                     });
+                 });
+                 
+                 // 객실 타입을 이름순으로 정렬
+                 allRoomTypes.sort((a, b) => a.name.localeCompare(b.name, 'ko'));
+                 console.log(`Loaded ${allRoomTypes.length} room types.`);
+
+                 // 객실 타입이 로드되면 인벤토리 데이터를 로드합니다.
+                 refreshInventoryView();
+
+             }, (error) => {
+                 console.error("Error fetching room types:", error);
+                 showMessage("데이터 오류", "객실 타입 데이터를 불러오는 중 오류가 발생했습니다: " + error.message);
+             });
+        }
+
+        /**
+         * 기간 필터에 따라 인벤토리 뷰를 새로고침합니다.
+         */
+        window.refreshInventoryView = () => {
+            const startDateStr = document.getElementById('start-date').value;
+            const endDateStr = document.getElementById('end-date').value;
+
+            if (startDateStr && endDateStr) {
+                // 이전에 설정된 onSnapshot 리스너가 새 쿼리 조건(날짜)으로 업데이트되지는 않으므로,
+                // 리스너는 모든 partnerId 데이터를 가져오고 JS에서 날짜 필터링을 수행합니다.
+                // onSnapshot이 이미 partnerId 필터로 설정되어 있으므로, 단순히 데이터를 다시 로드합니다.
+                loadInventoryData(startDateStr, endDateStr);
+            } else {
+                 renderInventoryTable(allRoomTypes); // 날짜 미선택 시 테이블 비우기
+            }
+        }
+        
+        // --- 일괄 업데이트 모달 처리 ---
+        window.showBulkUpdateModal = () => {
+            const startDateStr = document.getElementById('start-date').value;
+            const endDateStr = document.getElementById('end-date').value;
+
+            if (!startDateStr || !endDateStr) {
+                showMessage("필수 정보", "일괄 업데이트를 적용할 기간을 먼저 설정해 주세요.");
+                return;
+            }
+
+            document.getElementById('modal-date-range').textContent = `${startDateStr} ~ ${endDateStr}`;
+
+            const selectEl = document.getElementById('modal-room-type');
+            selectEl.innerHTML = allRoomTypes.map(room => `<option value="${room.id}">${room.name}</option>`).join('');
+            
+            // 모달 초기값 설정
+            document.getElementById('modal-new-inventory').value = '';
+            document.getElementById('modal-new-price').value = '';
+
+            document.getElementById('bulk-update-modal').classList.remove('hidden');
+            document.getElementById('bulk-update-modal').classList.add('flex');
+        };
+
+        /**
+         * 일괄 업데이트를 적용하고 Firestore에 기록합니다.
+         */
+        window.applyBulkUpdate = async () => {
+            const startDateStr = document.getElementById('start-date').value;
+            const endDateStr = document.getElementById('end-date').value;
+            const roomId = document.getElementById('modal-room-type').value;
+            const inventory = parseInt(document.getElementById('modal-new-inventory').value, 10);
+            const price = parseInt(document.getElementById('modal-new-price').value, 10);
+
+            if (!roomId || isNaN(inventory) || inventory < 0 || isNaN(price) || price < 0) {
+                showMessage("입력 오류", "유효한 객실 타입 선택과 0 이상의 재고/요금을 입력해 주세요.");
+                return;
+            }
+
+            const datesToUpdate = getDateRange(startDateStr, endDateStr);
+            if (datesToUpdate.length === 0) {
+                showMessage("오류", "유효한 날짜 범위가 아닙니다.");
+                return;
+            }
+
+            try {
+                // 모든 날짜에 대해 Firestore에 쓰기 작업 수행
+                const batchUpdates = datesToUpdate.map(dateStr => {
+                    const docId = `${userId}_${roomId}_${dateStr}`;
+                    const docRef = doc(db, 'artifacts', appId, 'public', 'data', 'hotel_inventory', docId);
+                    
+                    const updateData = {
+                        partnerId: userId,
+                        roomId: roomId,
+                        date: dateStr,
+                        inventory: inventory,
+                        price: price,
+                        lastUpdated: new Date().toISOString()
+                    };
+                    
+                    // setDoc으로 upsert (문서가 없으면 생성, 있으면 덮어쓰기)
+                    return setDoc(docRef, updateData);
+                });
+
+                await Promise.all(batchUpdates);
+
+                document.getElementById('bulk-update-modal').classList.add('hidden');
+                showMessage("성공", `${datesToUpdate.length}일치 재고 및 요금 정보가 성공적으로 일괄 업데이트되었습니다.`);
+                
+            } catch (error) {
+                console.error("Error applying bulk update:", error);
+                showMessage("업데이트 실패", "일괄 업데이트 중 오류가 발생했습니다: " + error.message);
+            }
+        };
+
+
+        // --- Firebase Initialization and Authentication ---
+        async function initFirebase() {
+            try {
+                const firebaseConfig = JSON.parse(typeof __firebase_config !== 'undefined' ? __firebase_config : '{}');
+                const app = initializeApp(firebaseConfig);
+                auth = getAuth(app);
+                db = getFirestore(app);
+                setLogLevel('Debug');
+
+                const initialAuthToken = typeof __initial_auth_token !== 'undefined' ? __initial_auth_token : null;
+                if (initialAuthToken) {
+                    await signInWithCustomToken(auth, initialAuthToken);
+                } else {
+                    await signInAnonymously(auth);
+                }
+
+                onAuthStateChanged(auth, (user) => {
+                    if (user) {
+                        userId = user.uid;
+                        document.getElementById('current-user-id').textContent = userId;
+                        console.log("Auth state changed. User ID:", userId);
+                        setupRoomTypesListener(); // 인증 후 객실 타입 로드 시작
+                    } else {
+                        userId = null;
+                        document.getElementById('current-user-id').textContent = '인증 실패';
+                        console.error("User logged out or authentication failed.");
+                        showMessage("인증 필요", "사용자 인증에 실패했습니다. 데이터를 보려면 로그인을 확인해 주세요.");
+                    }
+                });
+
+            } catch (error) {
+                console.error("Firebase initialization or auth failed:", error);
+                showMessage("Firebase 오류", `Firebase 초기화 또는 인증에 실패했습니다: ${error.message}`);
+            }
+        }
+
+        // --- Initial Setup ---
+        window.onload = () => {
+            initializeUI(); // 초기 날짜 설정
+            initFirebase();
+        };
+
+        // --- Mock Data Insertion (For demonstration) ---
+        // 이 함수를 콘솔에서 실행하여 데이터베이스에 테스트 데이터를 삽입할 수 있습니다.
+        window.insertMockRoomTypes = async () => {
+             if (!userId) {
+                showMessage("오류", "먼저 Firebase 인증이 완료되어야 목업 데이터를 삽입할 수 있습니다.");
+                return;
+            }
+            try {
+                const mockRooms = [
+                    { 
+                        partnerId: userId, // <<< 현재 로그인한 유저 ID로 설정!
+                        name: "스탠다드 더블", 
+                        maxOccupancy: 2, 
+                        beds: "더블 1개", 
+                        size: 25, // m2
+                        defaultInventory: 15,
+                        defaultPrice: 120000
+                    },
+                    { 
+                        partnerId: userId, // <<< 현재 로그인한 유저 ID로 설정!
+                        name: "디럭스 트윈", 
+                        maxOccupancy: 3, 
+                        beds: "싱글 2개", 
+                        size: 35,
+                        defaultInventory: 10,
+                        defaultPrice: 180000
+                    },
+                    { 
+                        partnerId: userId, // <<< 현재 로그인한 유저 ID로 설정!
+                        name: "프리미어 스위트", 
+                        maxOccupancy: 4, 
+                        beds: "킹 1개", 
+                        size: 60,
+                        defaultInventory: 3,
+                        defaultPrice: 350000
+                    },
+                ];
+
+                for (const room of mockRooms) {
+                    const tempId = `room-${Math.random().toString(36).substring(2, 9)}`;
+                    // Use a simple fetch to push data to the emulator for setDoc behavior
+                    await fetch(`https://generativelanguage.googleapis.com/v1beta/projects/firebase-emulator/databases/(default)/documents/artifacts/${appId}/public/data/hotel_room_types/${tempId}?key=`, {
+                        method: 'PATCH',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ fields: room })
+                    });
+                }
+                showMessage("성공", "객실 타입 목업 데이터가 성공적으로 삽입되었습니다. 화면을 확인하세요.");
+            } catch (e) {
+                console.error("Error adding mock documents: ", e);
+                showMessage("실패", "목업 데이터 삽입 중 오류가 발생했습니다. 콘솔을 확인하세요.");
+            }
+        };
+
+    </script>
+</body>
+</html>

@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Mango Heavy | Advanced Operations</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;900&family=Inter:wght@400;700;900&display=swap');
+        
+        body { background-color: #080808; font-family: 'Inter', sans-serif; }
+        .font-orbitron { font-family: 'Orbitron', sans-serif; }
+        
+        .heavy-panel {
+            background: linear-gradient(145deg, #151515, #222);
+            border: 1px solid rgba(255, 180, 0, 0.2);
+            box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+        }
+
+        /* 보물상자 애니메이션 */
+        @keyframes box-bounce {
+            0%, 100% { transform: translateY(0) rotate(0); }
+            50% { transform: translateY(-10px) rotate(5deg); }
+        }
+        .treasure-box { animation: box-bounce 2s infinite ease-in-out; }
+        
+        /* 작업 진행 바 애니메이션 */
+        .progress-shimmer {
+            background: linear-gradient(90deg, transparent, rgba(255,180,0,0.4), transparent);
+            background-size: 200% 100%;
+            animation: shimmer 2s infinite linear;
+        }
+        @keyframes shimmer { 0% { background-position: -200% 0; } 100% { background-position: 200% 0; } }
+    </style>
+</head>
+<body class="min-h-screen flex items-center justify-center p-4 overflow-hidden">
+    <div class="w-full max-w-[430px] heavy-panel rounded-[40px] overflow-hidden relative">
+        
+        <div class="p-6 border-b border-white/5 bg-black/40 flex justify-between items-center">
+            <div class="flex items-center gap-3">
+                <img src="/assets/img/mango-s.png" class="w-14 h-14 object-contain" alt="Logo">
+                <div>
+                    <h1 class="text-white font-black text-lg font-orbitron tracking-tighter uppercase leading-tight">Heavy <span class="text-yellow-500">Ops</span></h1> 
+                    <p class="text-[11px] text-yellow-500/60 font-bold tracking-[0.2em]">UNIT ASSIGNED: HVY-77</p>
+                </div>
+            </div>
+            <button onclick="location.href='index.html'" class="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center text-white/40 hover:text-white transition-all">✕</button>
+        </div>
+
+        <div class="p-6 space-y-5">
+            <div class="relative bg-zinc-900/80 rounded-3xl p-5 border border-white/5 overflow-hidden">
+                <div class="absolute top-0 right-0 p-3">
+                    <span class="flex h-2 w-2">
+                        <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-yellow-400 opacity-75"></span>
+                        <span class="relative inline-flex rounded-full h-2 w-2 bg-yellow-500"></span>
+                    </span>
+                </div>
+                <div class="flex items-center gap-6">
+                    <div class="w-24 h-24 bg-black/50 rounded-2xl flex items-center justify-center border border-yellow-500/20">
+                        <img src="/assets/img/Heavy-Equipment.png" class="w-[110%] h-[110%] max-w-none object-contain p-1" alt="Equip">
+                    </div>
+                    <div>
+                        <p class="text-[10px] text-yellow-500 font-black uppercase mb-1">Assigned Equipment</p>
+                        <h2 class="text-xl font-black text-white italic">굴착기 10LC</h2>
+                        <p class="text-xs text-white/40">장비번호: 02가 1234</p>
+                        <p class="text-[11px] text-white/60 mt-1">기사: 강망고 (숙련도 98%)</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-black/30 rounded-3xl p-5 space-y-4">
+                <h3 class="text-[10px] text-white/30 font-bold uppercase tracking-widest">Operation Status</h3>
+                <div class="relative h-2 bg-zinc-800 rounded-full overflow-hidden">
+                    <div class="absolute top-0 left-0 h-full w-[65%] bg-yellow-500 progress-shimmer"></div>
+                </div>
+                <div class="flex justify-between items-center text-[11px]">
+                    <span class="text-yellow-500 font-bold">현장 이동 중 (65%)</span>
+                    <span class="text-white/40">예상 도착 14:20</span>
+                </div>
+            </div>
+
+            <div class="relative w-full h-24 bg-gradient-to-br from-yellow-600/20 to-orange-600/10 rounded-[2rem] border border-yellow-500/20 flex items-center justify-between px-6 group cursor-pointer" onclick="openGift()">
+                <div class="z-10">
+                    <h4 class="text-sm font-black text-white italic">SURPRISE GIFT</h4>
+                    <p class="text-[10px] text-yellow-500/80 font-bold">첫 이용 감사 혜택</p>
+                </div>
+                
+                <div class="treasure-box flex flex-col items-center">
+                    <span class="text-4xl drop-shadow-[0_0_15px_rgba(255,191,0,0.6)]">🎁</span>
+                    <div class="h-1 w-8 bg-black/40 rounded-full mt-1 blur-[2px]"></div>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-2 gap-3">
+                <button class="py-4 bg-white/5 rounded-2xl text-[11px] font-bold text-white/60 hover:bg-white/10 transition-all border border-white/5">현장 안전 수칙</button>
+                <button class="py-4 bg-yellow-600 rounded-2xl text-[11px] font-black text-black uppercase hover:bg-yellow-500 transition-all shadow-lg shadow-yellow-900/20 active:scale-95">기사님 연락하기</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function openGift() {
+            alert('🎊 보물상자를 발견했습니다! \n\n중장비 유류비 지원 2% 특별 쿠폰이 발급되었습니다. \n내 지갑에서 확인 가능합니다! 🥭');
+        }
+    </script>
+</body>
+</html>

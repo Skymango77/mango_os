@@ -1,0 +1,46 @@
+{
+  "lastUpdated": "2026-01-05",
+  "admin": "CEO_MANGO",
+  "config": {
+    "autoPlaySpeed": 5000,
+    "transitionEffect": "fade-in"
+  },
+  "promotions": [
+    {
+      "id": 1,
+      "type": "image",
+      "src": "asset/img/promo/steak-main.webp",
+      "subtitle": "MANGO Special Promotion",
+      "title": "차원을 넘는 미식 여행",
+      "link": "Food/index.html",
+      "isActive": true
+    },
+    {
+      "id": 2,
+      "type": "image",
+      "src": "asset/img/promo/resort-seaside.webp",
+      "subtitle": "Seaside Resort",
+      "title": "에메랄드 빛 바다와 함께하는 다이닝",
+      "link": "Travel/index.html",
+      "isActive": true
+    },
+    {
+      "id": 3,
+      "type": "video",
+      "src": "asset/video/chef-cooking.mp4",
+      "subtitle": "Premium Chef",
+      "title": "장인의 손길이 닿은 예술적 요리",
+      "link": "Food/chef-special.html",
+      "isActive": true
+    },
+    {
+      "id": 4,
+      "type": "image",
+      "src": "asset/img/promo/pi-payment.webp",
+      "subtitle": "Pi Network Ecosystem",
+      "title": "전 세계 어디서나 파이로 결제하세요",
+      "link": "Market/index.html",
+      "isActive": true
+    }
+  ]
+}
