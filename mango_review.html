@@ -60,10 +60,11 @@
 
         /* 텍스트 그라데이션 */
         .text-mango {
-            background: linear-gradient(to right, #FF8200, #FFCC00);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
+    background: linear-gradient(to right, #FF8200, #FFCC00);
+    -webkit-background-clip: text; 
+    background-clip: text; /* 표준 속성 추가 */
+    -webkit-text-fill-color: transparent;
+}
 
         /* 글래스모피즘 컨테이너 */
         .glass-box {

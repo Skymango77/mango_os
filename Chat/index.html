@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Mango Chat | Fantasy Realm</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body { background: #050505; max-width: 480px; margin: 0 auto; color: #e0e0e0; overflow-x: hidden; }
+        /* 마법 같은 오로라 효과 */
+        .magic-bg { background: radial-gradient(circle at top right, rgba(99, 102, 241, 0.15), transparent), radial-gradient(circle at bottom left, rgba(168, 85, 247, 0.15), transparent); }
+        .glass-tome { background: rgba(20, 20, 30, 0.6); backdrop-filter: blur(25px); border: 1px solid rgba(139, 92, 246, 0.3); box-shadow: 0 0 20px rgba(139, 92, 246, 0.1); }
+        .mana-bar { height: 4px; background: #312e81; border-radius: 2px; overflow: hidden; }
+        .mana-fill { height: 100%; background: linear-gradient(90deg, #6366f1, #a855f7); width: 70%; box-shadow: 0 0 10px #6366f1; }
+        .character-slot { position: relative; border-radius: 50%; padding: 3px; background: linear-gradient(45deg, #f59e0b, #6366f1); }
+    </style>
+</head>
+<body class="magic-bg min-h-screen italic">
+    <header class="p-8 pb-4">
+        <div class="flex justify-between items-end mb-6">
+            <div>
+                <h1 class="text-3xl font-black tracking-widest text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 to-purple-400">MANIFEST</h1>
+                <p class="text-[10px] text-indigo-300/50 tracking-[0.3em] font-bold">EMOTICON FORGE & CHAT</p>
+            </div>
+            <button onclick="location.href='../index.html'" class="text-indigo-400 hover:text-white transition-all"><i class="fas fa-feather-pointed text-2xl"></i></button>
+        </div>
+        
+        <div class="glass-tome rounded-[2.5rem] p-6 mb-8 relative overflow-hidden group">
+            <div class="absolute -right-4 -top-4 opacity-20 group-hover:rotate-12 transition-transform duration-700">
+                <i class="fas fa-wand-magic-sparkles text-8xl text-indigo-500"></i>
+            </div>
+            <h3 class="font-bold text-indigo-200 mb-1">Spirit Forge <span class="text-[10px] bg-indigo-500/20 px-2 py-0.5 rounded text-indigo-400 ml-2">Market Open</span></h3>
+            <p class="text-xs text-white/40 mb-4 leading-relaxed">자신만의 수호신 캐릭터를 소환하고<br>생태계 시장에 등록하여 파이를 획득하세요.</p>
+            <div class="flex gap-2">
+                <button class="flex-1 py-3 bg-indigo-600 rounded-2xl text-xs font-black shadow-lg shadow-indigo-600/30">캐릭터 소환 (AI)</button>
+                <button class="px-6 py-3 glass-tome rounded-2xl text-xs font-bold border-indigo-500/50">판매 관리</button>
+            </div>
+        </div>
+    </header>
+
+    <main class="px-8 space-y-4 pb-12">
+        <div class="flex items-center gap-4 p-5 glass-tome rounded-[2rem] border-l-4 border-l-indigo-500 hover:translate-x-2 transition-transform">
+            <div class="character-slot">
+                <div class="w-14 h-14 bg-black rounded-full overflow-hidden border-2 border-black">
+                    <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Felix" alt="avatar" class="w-full h-full object-cover">
+                </div>
+            </div>
+            <div class="flex-1">
+                <div class="flex justify-between items-center mb-1">
+                    <span class="text-sm font-black text-indigo-200 uppercase tracking-tighter">Dragon Valley</span>
+                    <span class="text-[9px] text-white/30 tracking-widest">3m ago</span>
+                </div>
+                <div class="mana-bar mb-2"><div class="mana-fill"></div></div>
+                <p class="text-[11px] text-white/60 truncate italic">"전설의 등급 이모티콘이 마켓에 올라왔습니다!"</p>
+            </div>
+        </div>
+    </main>
+</body>
+</html>

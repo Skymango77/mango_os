@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Mango OS | Chronos-Verse Apex</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700;900&family=Space+Grotesk:wght@300;500;700&family=Noto+Sans+KR:wght@100;400;900&display=swap');
+
+        /* [SYSTEM VARIABLES] */
+        :root {
+            --p-gold: #d4af37; --p-cyan: #06b6d4; --p-emerald: #10b981;
+            --p-crimson: #991b1b; --p-slate: #1e293b;
+            --void: #02040a; --glass: rgba(255, 255, 255, 0.03);
+            --blur: blur(25px); --transition: all 0.9s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        /* [CORE LAYOUT] */
+        * { margin: 0; padding: 0; box-sizing: border-box; -webkit-font-smoothing: antialiased; }
+        body {
+            background-color: var(--void); color: #f8fafc;
+            font-family: 'Space Grotesk', 'Noto Sans KR', sans-serif;
+            overflow: hidden; max-width: 480px; margin: 0 auto;
+            border-left: 1px solid rgba(255,255,255,0.05); border-right: 1px solid rgba(255,255,255,0.05);
+        }
+
+        /* [ENGINE] Cinematic 3D Scroller */
+        #chronos-engine {
+            height: 100vh; perspective: 1800px;
+            overflow-y: scroll; overflow-x: hidden; scroll-behavior: smooth;
+        }
+        #chronos-engine::-webkit-scrollbar { display: none; }
+
+        .world-shaper {
+            position: relative; transform-style: preserve-3d;
+            padding-bottom: 20000px; /* 초장거리 탐험 영역 */
+        }
+
+        /* [REALM ARCHITECTURE] */
+        .realm-island {
+            position: absolute; transform-style: preserve-3d; transition: var(--transition);
+            will-change: transform, opacity; border-radius: 50px;
+            background: rgba(10, 10, 10, 0.9); border: 1.5px solid rgba(255, 255, 255, 0.08);
+            box-shadow: 0 120px 100px -60px rgba(0,0,0,1);
+        }
+
+        /* [TEXTURE ENGINE] */
+        .tex-egypt { background: url('https://www.transparenttextures.com/patterns/sandpaper.png'), linear-gradient(145deg, #451a03, #1a0a02); border-color: var(--p-gold); }
+        .tex-roman { background: url('https://www.transparenttextures.com/patterns/marble-similar.png'), linear-gradient(145deg, #1e293b, #0f172a); border-color: #64748b; }
+        .tex-oriental { background: radial-gradient(circle at top right, #064e3b, #022c22); border-color: var(--p-emerald); border-radius: 100px 20px 100px 20px; }
+        .tex-maya { background: linear-gradient(225deg, #14532d, #052e16); clip-path: polygon(15% 0%, 85% 0%, 100% 100%, 0% 100%); }
+        .tex-islamic { background: #064e3b; border-radius: 50% 50% 15px 15px; border-color: #34d399; }
+        .tex-greek { background: #f8fafc; color: #0f172a; border: none; }
+        .tex-medieval { border-radius: 0; border-top: 15px solid #475569; background: #1e293b; }
+        .tex-nomad { border-radius: 40% 40% 10% 10%; border: 3px dashed rgba(251, 146, 60, 0.4); }
+
+        /* [INTERACTIVE UI ELEMENTS] */
+        .hologram-card {
+            position: absolute; background: rgba(6, 182, 212, 0.05);
+            backdrop-filter: var(--blur); border: 1px solid rgba(6, 182, 212, 0.3);
+            border-radius: 20px; padding: 15px; z-index: 50;
+            animation: h-float 4s ease-in-out infinite alternate;
+        }
+        @keyframes h-float { from { transform: translateY(0) rotateX(5deg); } to { transform: translateY(-25px) rotateX(-5deg); } }
+
+        .scan-line {
+            width: 100%; height: 2px; background: linear-gradient(90deg, transparent, var(--p-cyan), transparent);
+            position: absolute; top: 0; animation: scan 3s linear infinite;
+        }
+        @keyframes scan { 0% { top: 0; opacity: 0; } 50% { opacity: 1; } 100% { top: 100%; opacity: 0; } }
+
+        /* [PORTAL BUTTONS] */
+        .portal-btn {
+            padding: 12px 20px; border-radius: 15px; background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.1); font-size: 10px; font-weight: 700;
+            letter-spacing: 0.2em; text-transform: uppercase; transition: 0.4s;
+            display: flex; flex-direction: column; align-items: center; gap: 8px;
+        }
+        .portal-btn:hover { background: rgba(255,255,255,0.15); transform: translateY(-5px); border-color: var(--p-cyan); }
+
+        /* [NAV] Warp Engine */
+        .warp-core {
+            position: fixed; bottom: 40px; left: 50%; transform: translateX(-50%);
+            width: 80px; height: 80px; background: linear-gradient(135deg, #0891b2, #1d4ed8);
+            border-radius: 30px; rotate: 45deg; z-index: 1000;
+            box-shadow: 0 0 50px rgba(6, 182, 212, 0.4); display: flex; align-items: center; justify-content: center;
+        }
+        .warp-core i { rotate: -45deg; font-size: 28px; filter: drop-shadow(0 0 10px white); }
+
+    </style>
+</head>
+<body class="no-scrollbar">
+
+    <div class="fixed inset-0 pointer-events-none z-0 overflow-hidden">
+        <div class="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,_#0f172a_0%,_#02040a_100%)]"></div>
+        <div id="star-field"></div>
+    </div>
+
+    <div id="chronos-engine">
+        <div class="world-shaper">
+
+            <header class="fixed top-0 w-full max-w-[480px] z-[500] p-10 flex justify-between items-start pointer-events-none">
+                <div class="pointer-events-auto">
+                    <h1 class="text-4xl font-black cinzel-font tracking-tighter italic text-white">MANGO</h1>
+                    <p class="text-[9px] tracking-[0.8em] text-cyan-400 font-bold uppercase mt-1">Chronos-Verse Prime</p>
+                </div>
+                <div class="text-right">
+                    <div id="clock" class="text-xl font-light tracking-widest text-white/80">19:00</div>
+                    <span class="text-[8px] text-white/30 tracking-[0.5em] uppercase">Status: Active</span>
+                </div>
+            </header>
+
+            <section class="realm-island tex-egypt" style="width: 380px; height: 280px; top: 600px; left: 50px; transform: rotateX(15deg);">
+                <div class="p-8 h-full flex flex-col justify-between relative">
+                    <div class="hologram-card" style="width: 180px; top: -100px; right: 20px;">
+                        <div class="scan-line"></div>
+                        <p class="text-[9px] font-bold text-cyan-400 uppercase mb-1">Oracle's Vision</p>
+                        <p class="text-[10px] leading-relaxed opacity-80">통치자의 연대기가 98% 동기화되었습니다. 새로운 정책 제안이 대기 중입니다.</p>
+                    </div>
+                    <div>
+                        <span class="text-[10px] font-bold text-yellow-500/60 tracking-[0.5em]">REALM 01</span>
+                        <h2 class="text-4xl font-black cinzel-font text-yellow-500 mt-2 uppercase">Admin Hall</h2>
+                        <div class="w-12 h-1 bg-yellow-600/30 mt-4"></div>
+                    </div>
+                    <div class="flex gap-4">
+                        <button onclick="location.href='admin/index.html'" class="flex-1 py-4 bg-yellow-600/20 border border-yellow-600/40 rounded-2xl text-[10px] font-bold tracking-widest">ENTER ARCHIVES</button>
+                        <div class="w-14 h-14 bg-black/40 rounded-2xl border border-yellow-600/40 flex items-center justify-center text-yellow-500"><i class="fa-solid fa-scroll"></i></div>
+                    </div>
+                </div>
+            </section>
+
+            <section class="realm-island tex-roman" style="width: 420px; height: 340px; top: 1600px; right: -30px; transform: rotateX(10deg) rotateY(-8deg);">
+                <div class="p-10">
+                    <div class="flex items-center gap-3 mb-8">
+                        <div class="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center text-[10px]">02</div>
+                        <h2 class="text-3xl font-black cinzel-font tracking-widest">ETERNAL FORUM</h2>
+                    </div>
+                    <div class="grid grid-cols-2 gap-4 mt-10">
+                        <div class="portal-btn" onclick="location.href='realty/index.html'">
+                            <i class="fa-solid fa-landmark text-2xl text-slate-400"></i>
+                            <span>Realty</span>
+                        </div>
+                        <div class="portal-btn" onclick="location.href='market/index.html'">
+                            <i class="fa-solid fa-coins text-2xl text-yellow-500"></i>
+                            <span>Market</span>
+                        </div>
+                    </div>
+                    <p class="text-[10px] mt-10 text-center opacity-30 tracking-[0.5em]">CAPITAL OF CHRONOS</p>
+                </div>
+            </section>
+
+            <section class="realm-island tex-oriental" style="width: 360px; height: 260px; top: 2800px; left: -20px; transform: rotateX(12deg) rotateY(10deg);">
+                <div class="p-10">
+                    <div class="flex justify-between items-start">
+                        <h2 class="text-3xl font-black italic text-emerald-400">신선의 연회</h2>
+                        <i class="fa-solid fa-fan text-emerald-500/20 text-5xl"></i>
+                    </div>
+                    <div class="mt-12 p-6 bg-black/40 border border-emerald-500/20 rounded-3xl" onclick="location.href='food/index.html'">
+                        <p class="text-[9px] text-emerald-300 font-bold uppercase tracking-widest">Celestial Feast</p>
+                        <div class="flex justify-between items-center mt-2">
+                            <span class="text-sm font-bold">만고의 숲 신선 식단</span>
+                            <i class="fa-solid fa-chevron-right text-emerald-400"></i>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section class="realm-island tex-maya" style="width: 380px; height: 360px; top: 3800px; right: 20px; transform: translateZ(-200px);">
+                <div class="p-12 flex flex-col items-center justify-center h-full text-center">
+                    <div class="w-24 h-24 rounded-full border-4 border-emerald-400/30 flex items-center justify-center mb-6">
+                        <i class="fa-solid fa-compass text-4xl text-emerald-400 animate-pulse"></i>
+                    </div>
+                    <h2 class="text-4xl font-black cinzel-font text-emerald-400 tracking-widest">XIBALBA</h2>
+                    <button onclick="location.href='travel/index.html'" class="mt-8 px-8 py-3 bg-emerald-500 text-black font-black text-[10px] rounded-full uppercase tracking-widest">Start Expedition</button>
+                </div>
+            </section>
+
+            <section class="realm-island tex-islamic" style="width: 360px; height: 300px; top: 4800px; left: 40px; transform: rotateX(10deg);">
+                <div class="p-10 text-center">
+                    <h2 class="text-2xl font-black text-emerald-200 uppercase tracking-widest mb-10">Emerald Minaret</h2>
+                    <div class="flex justify-center gap-6">
+                        <div class="portal-btn" onclick="location.href='transfer/index.html'" style="width: 100px; height: 100px; justify-content: center;">
+                            <i class="fa-solid fa-paper-plane text-2xl text-emerald-400"></i>
+                            <span class="text-[8px]">Transfer</span>
+                        </div>
+                        <div class="portal-btn" onclick="location.href='chat/index.html'" style="width: 100px; height: 100px; justify-content: center;">
+                            <i class="fa-solid fa-comments text-2xl text-emerald-400"></i>
+                            <span class="text-[8px]">Chat</span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section class="realm-island tex-medieval" style="width: 400px; height: 280px; top: 5800px; right: -20px; transform: rotateX(15deg) rotateY(-5deg);">
+                <div class="p-8">
+                    <div class="flex justify-between items-center mb-8">
+                        <h2 class="text-2xl font-black cinzel-font text-slate-200">IRON CITADEL</h2>
+                        <i class="fa-solid fa-shield-halved text-slate-500"></i>
+                    </div>
+                    <div class="grid grid-cols-2 gap-3">
+                        <div class="p-4 bg-slate-800/50 border border-slate-700 rounded-xl" onclick="location.href='hobby/index.html?cat=forge'">
+                            <p class="text-[10px] font-bold text-slate-400">THE FORGE</p>
+                            <p class="text-xs font-bold mt-1">장인의 공방</p>
+                        </div>
+                        <div class="p-4 bg-slate-800/50 border border-slate-700 rounded-xl" onclick="location.href='hobby/index.html?cat=arena'">
+                            <p class="text-[10px] font-bold text-slate-400">ARENA</p>
+                            <p class="text-xs font-bold mt-1">명예의 결투</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section class="realm-island tex-greek" style="width: 380px; height: 320px; top: 6800px; left: 50px; transform: rotateX(-5deg) translateZ(50px);">
+                <div class="p-10 flex flex-col justify-between h-full">
+                    <div>
+                        <h2 class="text-4xl font-black cinzel-font tracking-tighter">ACADEMIA</h2>
+                        <div class="w-16 h-1 bg-black mt-4 mb-8"></div>
+                        <p class="text-sm italic leading-relaxed font-medium">"너 자신을 알라, 그것이 배움의 시작이다."</p>
+                    </div>
+                    <button onclick="location.href='education/index.html'" class="w-full py-4 bg-black text-white rounded-2xl font-bold text-[10px] tracking-widest uppercase hover:bg-slate-800 transition">Mastery Course</button>
+                </div>
+            </section>
+
+            <section class="realm-island tex-nomad" style="width: 340px; height: 200px; top: 7800px; right: 40px; transform: rotateX(10deg);">
+                <div class="p-6">
+                    <div class="flex items-center gap-3 mb-6">
+                        <i class="fa-solid fa-tent text-orange-400 text-xl"></i>
+                        <h2 class="text-lg font-bold text-orange-200">STEPPE TENT</h2>
+                    </div>
+                    <div class="flex items-center justify-between bg-black/30 p-4 rounded-2xl border border-orange-500/20">
+                        <div class="flex -space-x-3">
+                            <div class="w-10 h-10 rounded-full border-2 border-orange-500 bg-cover" style="background-image: url('https://i.pravatar.cc/100?u=1')"></div>
+                            <div class="w-10 h-10 rounded-full border-2 border-orange-500 bg-cover" style="background-image: url('https://i.pravatar.cc/100?u=2')"></div>
+                            <div class="w-10 h-10 rounded-full border-2 border-orange-500 bg-cover" style="background-image: url('https://i.pravatar.cc/100?u=3')"></div>
+                        </div>
+                        <button class="text-[10px] font-bold text-orange-400 uppercase tracking-widest">Join Tribe</button>
+                    </div>
+                </div>
+            </section>
+
+        </div>
+    </div>
+
+    <nav class="fixed bottom-8 left-1/2 -translate-x-1/2 w-[88%] max-w-[420px] h-20 bg-white/5 backdrop-blur-3xl border border-white/10 rounded-[40px] z-[1000] flex justify-around items-center px-6">
+        <div class="flex flex-col items-center text-cyan-400">
+            <i class="fa-solid fa-dharmachakra text-xl animate-spin-slow"></i>
+            <span class="text-[7px] font-bold mt-2 uppercase tracking-tighter">Chronos</span>
+        </div>
+        <div class="flex flex-col items-center text-white/30" onclick="location.href='market/index.html'">
+            <i class="fa-solid fa-shop text-xl"></i>
+            <span class="text-[7px] font-bold mt-2 uppercase tracking-tighter">Market</span>
+        </div>
+        <div class="warp-core" id="warp-drive">
+            <i class="fa-solid fa-bolt-lightning text-white"></i>
+        </div>
+        <div class="flex flex-col items-center text-white/30" onclick="location.href='education/index.html'">
+            <i class="fa-solid fa-graduation-cap text-xl"></i>
+            <span class="text-[7px] font-bold mt-2 uppercase tracking-tighter">Learn</span>
+        </div>
+        <div class="flex flex-col items-center text-white/30" onclick="location.href='admin/index.html'">
+            <i class="fa-solid fa-user-shield text-xl"></i>
+            <span class="text-[7px] font-bold mt-2 uppercase tracking-tighter">Admin</span>
+        </div>
+    </nav>
+
+    <script>
+        const engine = document.getElementById('chronos-engine');
+        const starField = document.getElementById('star-field');
+        const clock = document.getElementById('clock');
+
+        // 1. 배경 별 생성 (Cinematic Atmosphere)
+        for (let i = 0; i < 200; i++) {
+            const star = document.createElement('div');
+            star.className = 'absolute bg-white rounded-full opacity-20';
+            const size = Math.random() * 2;
+            star.style.width = `${size}px`; star.style.height = `${size}px`;
+            star.style.top = `${Math.random() * 100}%`; star.style.left = `${Math.random() * 100}%`;
+            starField.appendChild(star);
+        }
+
+        // 2. 실시간 시계 (Temporal Sync)
+        setInterval(() => {
+            const now = new Date();
+            clock.innerText = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
+        }, 1000);
+
+        // 3. 워프 엔진 로직 (Dimensional Travel)
+        document.getElementById('warp-drive').addEventListener('click', () => {
+            const world = document.querySelector('.world-shaper');
+            world.style.transition = 'transform 1.5s cubic-bezier(0.85, 0, 0.15, 1)';
+            world.style.transform = 'translateZ(3000px) rotateY(180deg)';
+            setTimeout(() => {
+                engine.scrollTo({ top: 0, behavior: 'auto' });
+                world.style.transform = 'translateZ(0px) rotateY(0deg)';
+            }, 1500);
+        });
+
+        // 4. 스크롤 인터랙션 고도화
+        engine.addEventListener('scroll', () => {
+            const val = engine.scrollTop;
+            const islands = document.querySelectorAll('.realm-island');
+            islands.forEach((isl, i) => {
+                const rect = isl.getBoundingClientRect();
+                if(rect.top < window.innerHeight && rect.bottom > 0) {
+                    const rotateVal = (val * 0.02) % 360;
+                    // isl.style.transform += ` rotateZ(${rotateVal}deg)`; // 필요 시 추가
+                }
+            });
+        });
+    </script>
+</body>
+</html>

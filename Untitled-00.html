@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>MANGO Universe Final</title>
+    <script src="https://sdk.minepi.com/pi-sdk.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Kanit:ital,wght@1,900&display=swap');
+        
+        :root {
+            --mango-neon: #ffaa00;
+            --unified-max-width: 430px;
+            --bg-dark: #000000;
+            --mango-gold-grad: linear-gradient(-45deg, #aa771c, #fcf6ba, #ffffff, #fcf6ba, #aa771c);
+        }
+
+        body {
+            background-color: var(--bg-dark);
+            margin: 0; display: flex; flex-direction: column; align-items: center;
+            min-height: 100vh; color: white; font-family: 'Pretendard', sans-serif;
+            overflow-x: hidden;
+        }
+
+        /* [2026-01-01 지침] 규격 통일 */
+        .mango-container, .glass, .banner-window, #news-track-container, [class*="_portal"] {
+            width: 92% !important;
+            max-width: var(--unified-max-width) !important;
+            margin: 12px auto !important;
+            box-sizing: border-box;
+        }
+
+        /* 3D 회전 기구 엔진 */
+        .carousel-view {
+            perspective: 2000px; height: 350px;
+            display: flex; align-items: center; justify-content: center;
+            position: relative; width: 100%;
+        }
+        .carousel-pivot {
+            width: 100%; height: 180px; position: relative;
+            transform-style: preserve-3d;
+            transition: transform 0.8s cubic-bezier(0.2, 0.8, 0.2, 1);
+            -webkit-box-reflect: below 2px linear-gradient(transparent 60%, rgba(255, 255, 255, 0.1));
+        }
+
+        /* 8개 포털 원형 배치 (수학적 45도 간격) */
+        .portal-door {
+            position: absolute; width: 140px; height: 140px;
+            left: calc(50% - 70px); top: calc(50% - 70px);
+            background: rgba(15, 15, 15, 0.95); border-radius: 35px;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            border: 1px solid rgba(255, 170, 0, 0.1);
+            backface-visibility: hidden; transition: all 0.5s;
+            opacity: 0.4; filter: grayscale(100%) blur(1px);
+        }
+
+        /* 각도별 배치 */
+        .portal-door:nth-child(1) { transform: rotateY(0deg) translateZ(250px); }
+        .portal-door:nth-child(2) { transform: rotateY(45deg) translateZ(250px); }
+        .portal-door:nth-child(3) { transform: rotateY(90deg) translateZ(250px); }
+        .portal-door:nth-child(4) { transform: rotateY(135deg) translateZ(250px); }
+        .portal-door:nth-child(5) { transform: rotateY(180deg) translateZ(250px); }
+        .portal-door:nth-child(6) { transform: rotateY(225deg) translateZ(250px); }
+        .portal-door:nth-child(7) { transform: rotateY(270deg) translateZ(250px); }
+        .portal-door:nth-child(8) { transform: rotateY(315deg) translateZ(250px); }
+
+        /* 활성화 상태 (중앙 포털) */
+        .portal-door.active {
+            opacity: 1; filter: grayscale(0%) blur(0);
+            border: 3px solid var(--mango-neon);
+            box-shadow: 0 0 30px rgba(255, 170, 0, 0.6);
+            transform: inherit; /* 아래 JS에서 동적으로 제어 */
+            z-index: 100;
+        }
+
+        /* 금빛 텍스트 효과 */
+        .portal-door.active span {
+            background: var(--mango-gold-grad);
+            -webkit-background-clip: text; background-clip: text;
+            -webkit-text-fill-color: transparent; font-weight: bold;
+            animation: gold-glint 2s linear infinite;
+        }
+
+        @keyframes gold-glint { 0% { background-position: 0% 50%; } 100% { background-position: 200% 50%; } }
+    </style>
+</head>
+<body>
+
+    <div class="carousel-view">
+        <div class="carousel-pivot" id="main-pivot">
+            <div class="portal-door active" onclick="rotateTo(0)"><i data-lucide="utensils"></i><span>Food</span></div>
+            <div class="portal-door" onclick="rotateTo(1)"><i data-lucide="arrow-left-right"></i><span>Transfer</span></div>
+            <div class="portal-door" onclick="rotateTo(2)"><i data-lucide="plane"></i><span>Travel</span></div>
+            <div class="portal-door" onclick="rotateTo(3)"><i data-lucide="palmtree"></i><span>Hobby</span></div>
+            <div class="portal-door" onclick="rotateTo(4)"><i data-lucide="home"></i><span>Realty</span></div>
+            <div class="portal-door" onclick="rotateTo(5)"><i data-lucide="shopping-bag"></i><span>Market</span></div>
+            <div class="portal-door" onclick="rotateTo(6)"><i data-lucide="message-circle"></i><span>Chat</span></div>
+            <div class="portal-door" onclick="rotateTo(7)"><i data-lucide="graduation-cap"></i><span>Education</span></div>
+        </div>
+    </div>
+
+    <script>
+        // 아이콘 로드
+        lucide.createIcons();
+
+        // 회전 로직
+        let currentAngle = 0;
+        function rotateTo(index) {
+            currentAngle = index * -45;
+            document.getElementById('main-pivot').style.transform = `rotateY(${currentAngle}deg)`;
+            
+            const doors = document.querySelectorAll('.portal-door');
+            doors.forEach((door, i) => {
+                door.classList.remove('active');
+                if(i === index) door.classList.add('active');
+            });
+        }
+    </script>
+</body>
+</html>

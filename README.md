@@ -3282,3 +3282,226 @@ Lv.4 골드,결제데이터 공유,VIP 우선 배차,피추천인 결제액의 3
 
 - **Gamification:** 정보 제공 동의 및 활동에 따른 '망고 트러스트(매너온도)' 상승.
 - **Referral:** 1:1 추천 코드 기반의 수익 공유 시스템 UI 구현.
+  📑 MANGO Universe 통합 작업 일지 (2026-02-21)1. [오전] 코드 정화 및 레이아웃 복구 (Purge & Recovery)3D 회전 엔진 복구: Ctrl + Z 여파로 소실된 8개 포털(Food, Transfer, Travel, Hobby, Realty, Market, Chat, Education)의 45도 단위 rotateY 배치 로직 완벽 재정립.중복 스타일 통합: :root, body, .glass, .header-area 등 코드 곳곳에 산재해 있던 중복 선언을 하나로 통합하여 가독성 증대.애니메이션 최적화: gold-shine, gold-glint 등 유사 애니메이션을 하나로 합쳐 성능 효율 확보.2. [오후] 규격 표준화 (Standardization)92% 너비 지침 적용: [2026-01-01] 가이드에 따라 모든 카드형 윈도우(포털, 뉴스바, 광고 배너)의 너비를 92% (Max 430px)로 강제 통일.정렬 엔진 보정: .portal-unit 내 align-items: center 및 justify-content: center를 확정하여 아이콘과 텍스트의 정중앙 배치 완료.레일 시스템 정비: 메인 컨테이너를 감싸는 좌/우 레일(#rail-left, #rail-right)의 위치 수치를 92% 규격에 맞춰 재계산 및 배치.3. [저녁] Pi Network SDK 연동 (System Integration)SDK 초기화: Pi.init 버전 2.0 및 sandbox: true (Testnet) 모드 설정 완료.인증 및 보안: Pi.authenticate()를 통한 유저 정보 확보 및 관리자 2FA(OTP) 로직 중복 충돌 해결.결제 함수(startPayment) 구현: \* 1.0 $\pi$ 결제 요청 인터페이스 구축.onReadyForServerApproval, onReadyForServerCompletion 콜백 구조 설계.초기화 최적화: window.load 시점에만 SDK가 구동되도록 중복 호출 리스너 제거.4. [심야] 최종 검수 및 법적 데이터 구축 (Final Audit)윈도우 배치 보정: .mango-window의 top: 100% 오류를 50%로 수정하여 화면 중앙 노출 정상화.데이터 자산화: MANGO_LEGAL_DATA 객체를 생성하여 이용약관, 개인정보 정책 등 법적 텍스트 구조화.무결성 확인: 부동산 상세페이지 내 버튼 태그 중복 및 loginWithPi 함수명 중복 등 자잘한 문법 오류 전수 수정 완료.
+
+# [2026-02-21] Mango OS 도메인 인증 완료 및 배포 확인
+
+- **최종 결과:** `validation-key.txt` 파일이 GitHub 원격 저장소(`mango_os`) 최상단에 성공적으로 업로드됨을 확인.
+- **파일 위치:** `shim.html` 하단, `README.md` 상단 위치함.
+- **남은 절차:** Pi Developer 앱 내 App Checklist 8번 항목 'Verify' 클릭 및 승인 확인.
+
+# [2026-02-22] Mango OS 메인 시스템 통합(Shim-Main 연결)
+
+- **작업 배경:** 2,650행의 메인 index.html(8대 포털 통합본)을 Pi Browser 최적화 환경인 shim.html에 연결.
+- **수정 사항:** - `shim.html` 내 iframe의 소스 경로(`src`)를 `./travel/index.html`에서 `./index.html`로 변경.
+  - iframe ID를 `travelApp`에서 `mangoMain`으로 변경하여 가독성 확보.
+- **결과:** 파이 브라우저 접속 시 여행 앱 단독 구동이 아닌, Mango OS 전체 플랫폼이 로드됨.
+
+# [2026-02-23] GitHub Pages 배포 지연 및 캐시 이슈 점검
+
+- **현상:** GitHub에서 코드 수정 완료 후에도 `mango_os` 배포 사이트에 로고 미출력.
+- **예상 원인:** 1. GitHub Actions 빌드 프로세스 지연 (약 2~3분 소요). 2. 브라우저 로컬 캐시로 인한 이전 상태 유지. 3. 절대 경로(/) 사용에 따른 GitHub Pages 서브디렉토리 참조 오류.
+- **조치:** 1. [Actions] 탭 배포 완료 여부 확인. 2. 강력 새로고침(Ctrl + Shift + R) 수행. 3. 필요 시 경로를 상대 경로(`./assets/...`)로 재수정.
+
+# [2026-02-23] Mango OS 8대 포털 명칭 동기화 시작
+
+- **완료 사항:** 메인 로고 이미지 출력 성공 (`assets/img/mango.jpg` 경로 수정).
+- **진행 중:** 8대 핵심 메뉴 리네이밍 (Share -> Hobby, Social -> Chat, Admin -> Education).
+- **작업 목표:** 1. `index.html` 내 메뉴 라벨 및 아이콘 텍스트 일괄 업데이트. 2. 폴더 구조 최적화 및 레거시 파일(Admin 내 구버전 파일) 제거. 3. Pi Network News 배너와 카드 사이즈 균형 재점검.
+
+# [2026-02-23] Mango OS 메인 코드(2650행) 정밀 수정 계획
+
+- **Portal Data 동기화 (1638행):** `ADMIN` -> `EDUCATION`으로 변경 및 `education/index.html` 경로 연결.
+- **포털 구조 최적화:** 8대 포털(Food, Transfer, Travel, Hobby, Realty, Market, Chat, Education) 체계 완성.
+- **인증 로직 유지:** 기존 Admin 전용 2FA 로직은 보존하되 명칭을 교육 센터 관리 모드로 내부적 리브랜딩.
+- **추가 작업:** `hobby/` 및 `chat/` 폴더 신설 후 `index.html` 내 경로 재확인 필수.
+
+# [2026-02-23] Mango OS 2FA 로직 업데이트 및 검수 완료
+
+- **파일:** `index.html` (1980행)
+- **수정 사항:** 1. 기존 `Admin 2FA Logic` 주석 및 내부 Mock 메시지를 `Education` 테마로 변경. 2. 일반 유저 로그인 시 출력되는 보안 경고 메시지(`24단어 사용 ❌`) 로직 보존 확인.
+- **결과:** 관리자 기능(Education Gate)과 일반 보안 경고 기능이 충돌 없이 통합됨.
+
+# [2026-02-23] Hobby 및 Chat 포털 신규 구축 보고
+
+- **Hobby Portal (`hobby/`):** - 테마: 오렌지-핑크 그라디언트.
+  - 주요 기능: 일상 공유, 취미 클럽 게이트웨이 구성.
+- **Chat Portal (`chat/`):** - 테마: 블루-시안 그라디언트.
+  - 주요 기능: 실시간 글로벌 채팅 인터페이스 기초 설계.
+- **디자인 규격 준수:** - 모든 포털 너비 480px 강제 적용 (`max-width: 480px`).
+  - 망고 OS 메인으로 돌아가기(Close) 버튼 활성화.
+- **다음 작업:** GitHub 저장소에 해당 폴더 및 파일 업로드 후 메인 `index.html` 연결 확인.
+
+# [2026-02-23] Mango Universe '환타지 서사' 고도화 보고
+
+- **Concept:** 일반적인 앱 UI를 넘어선 '환타지 RPG' 스타일의 몰입형 경험 제공.
+- **Chat Portal (Character Forge):** - AI 기반 캐릭터 이모티콘 생성 시스템 가시화.
+  - 개인 창작물을 생태계 마켓에 판매하여 파이를 획득하는 비즈니스 모델 설계.
+- **Hobby Portal (Adventurer Tavern):**
+  - 취미 활동을 '퀘스트'와 '파티' 개념으로 전환하여 사교적 기능 극대화.
+  - 파티원 모집 UI를 통한 유저 간 실시간 교류 유도.
+- **Design:** 480px 너비 유지, 글래스모피즘과 환타지 리소스를 결합한 '미스틱 골드' 테마 적용.
+
+# [2026-02-23] Mango OS 'Passion-Commerce' 수익 모델 설계
+
+## 1. 개요
+
+취미 데이터를 활용한 타겟 광고 및 커뮤니티 커머스 통합.
+
+## 2. 수익화 전략
+
+- **Enterprise Ads:** 기업 신제품을 취미 관심 유저에게 노출 (Ad Fee 발생).
+- **P2P Market:** 유저 간 중고 교환 및 나눔의 장 마련 (안전 거래 수수료).
+- **Market Integration:** Hobby와 Market 포털 간의 Seamless한 경로 구축.
+
+## 3. UI/UX 고도화
+
+- 고화질 제품 이미지를 활용한 'Brand Showcase' 섹션 추가.
+- 지역 기반 P2P 거래 정보 표시 (교환/나눔 상태 구분).
+- 알고리즘 기반 추천 시스템 시각화 (Mango AI Demo).
+
+# [2026-02-23] Mango OS 인트로 이미지 최종 선정
+
+- **선택 시안:** Mango Gold (Square Type)
+- **보정 사항:** 1. 400x400px 정사각형 비율 맞춤. 2. 로고 주변에 미세한 외부 광채(Outer Glow) 추가하여 입체감 극대화. 3. 배경은 #000000(순수 블랙)으로 처리하여 Pi Browser와 무한 확장감 형성.
+
+# [2026-02-24] Mango Token & Pay 파일 시스템 구축
+
+## 1. 파일 생성 정보
+
+- **경로:** `mango_pay/core/`
+- **파일명:** `token-logic.js`
+- **목적:** Mango Token(MNG) 발행 로직 및 Pi 코인 연동 환율 제어
+
+## 2. 코드 뼈대 (복사해서 token-logic.js에 저장)
+
+```javascript
+/**
+ * Mango Token (MNG) Logic v1.0
+ * Context: 2026-2029 Mango Ecosystem Strategy
+ */
+
+const MangoTokenSystem = {
+  symbol: "MNG",
+  baseRate: 1000, // 1 Pi = 1000 MNG
+
+  // 유저의 망고 토큰 잔액 가져오기
+  fetchBalance: function () {
+    return localStorage.getItem("mng_balance") || "0.00";
+  },
+
+  // Pi 결제 성공 후 토큰 발행
+  mintToken: function (piAmount) {
+    const minted = piAmount * this.baseRate;
+    let current = parseFloat(this.fetchBalance());
+    localStorage.setItem("mng_balance", (current + minted).toFixed(2));
+    return minted;
+  },
+};
+```
+
+# [2026-02-24] Mango Pay 시스템 구축 현황
+
+## 1. 완료 사항
+
+- `mango_pay/core/token-logic.js` 파일 생성 및 경로 확보.
+- Pi Browser 정책에 따른 로그인 방어 로직 검수 완료.
+
+## 2. 다음 단계 (To-Do)
+
+- **UI 연동:** `index.html` 상단 내비게이션 바에 Mango Pay 잔액 표시 섹션 추가.
+- **결제 연동:** Pi SDK `createPayment` 함수와 `chargeToken` 로직 연결.
+- **디자인:** 금빛 망고 코인 아이콘을 결제 완료 화면의 애니메이션으로 활용.
+  📝 디자이너님을 위한 작업 메모 (VSCode 저장용)
+  Markdown
+
+# [2026-02-24] Mango Pay 코어 로직 초고도화 검수 완료 (부산)
+
+## 1. 파일 상태
+
+- 경로: `mango_pay/core/token-logic.js`
+- 상태: **보안 및 트랜잭션 초고도화 완료 (v2.0)**
+
+## 2. 향후 3년(2026-2029) 확장을 위한 핵심 기능
+
+- **트랜잭션 장부(`addHistory`):** Food, Realty 등 8개 포털에서 발생한 결제 내역을 영수증 형태로 저장. 추후 '내 지갑' 화면의 데이터로 활용.
+- **CustomEvent 방송(`mangoPayUpdated`):** 기존의 함수 호출 방식을 버리고, 이벤트 기반으로 통신. 이를 통해 모든 포털 창(가로폭이 동일한 카드뷰들)과 배너 뷰가 동시에 잔액을 동기화할 수 있음.
+- **오류 차단:** 음수 및 문자열 기반의 악의적 결제 시도 원천 차단 기능 적용.
+
+## 3. 적용 방법 지시서
+
+- 해당 JS를 저장한 후, 다른 UI 코드에서 잔액이 바뀔 때마다 화면을 갱신하려면 아래 리스너를 붙이면 됨.
+  ```javascript
+  window.addEventListener("mangoPayUpdated", (e) => {
+    console.log("새 잔액:", e.detail.balance);
+    // document.getElementById('balance-display').innerText = e.detail.balance;
+  });
+  ```
+
+# [2026-02-24] Mango OS 메인 UI 및 통일 규격 설계 (Busan)
+
+## 1. Mango Pay 골드 카드 구축
+
+- **위치:** 메인 화면 최상단
+- **기능:** `token-logic.js`에서 발생하는 `mangoPayUpdated` 이벤트를 수신하여 화면 새로고침 없이 잔액(MNG)을 실시간으로 부드럽게 변경.
+- **테스트:** 카드 하단의 '충전/결제' 버튼을 눌러 초고도화된 보안/장부 로직이 UI와 잘 물려 돌아가는지 확인.
+
+## 2. 윈도우 사이즈 절대 통일 전략 (CSS Architecture)
+
+- **적용 대상:** 1) 8대 포털: Food, Transfer, Travel, Share, Realty, Market, Social, Admin 2) 배너 광고 창 (Banner Ad Window) 3) 파이 네트워크 뉴스 창 (Scrolling News Window)
+- **핵심 기술:** 모든 요소에 `.mango-universal-width` 클래스를 부여.
+- **CSS 변수:** `--mango-card-width: 92%` (모바일 대응), `--mango-card-max-width: 480px` (PC 대응)을 사용하여 디바이스가 바뀌어도 가로폭의 일관성을 100% 유지함.
+
+## 3. 디자이너(VSCode) 지시 사항
+
+- `index.html`에 제공된 골드 카드 HTML을 삽입하고, 기존 8개 포털의 `<div>` 태그 클래스 목록에 `mango-universal-width`를 일괄 추가(`Ctrl + Shift + F` 활용 권장)할 것.
+
+# [2026-02-24] Mango OS UI & Layout 1차 검수 보고서 (Busan)
+
+## 1. 코드 배치 상태
+
+- **HTML:** Mango Pay 카드가 최상단에 위치하여 시인성 확보 (확인 완료)
+- **JS:** 이벤트 기반 잔액 업데이트 로직이 초기화 섹션에 안착 (확인 완료)
+- **CSS:** '절대 규격 시스템' 변수가 스타일 상단에 정의되어 일관성 확보 (확인 완료)
+
+## 2. 특이 사항
+
+- `body`에 `background-color: #000000`을 적용하여 골드 카드의 광채(`--mango-gold-gradient`)가 더욱 고급스럽게 대비됨.
+- `mango-pay-updated` 이벤트 수신 시 숫자가 부드럽게 바뀌는 애니메이션이 작동 준비 완료.
+
+## 3. 다음 실행 권고
+
+- VSCode에서 `Ctrl + F`를 눌러 `_portal` 단어를 찾으신 뒤, 모든 포털 `div`에 `mango-universal-width` 클래스를 한 번씩만 더 적어주세요.
+
+# [2026-02-24] Mango OS 인터페이스 및 로직 통합 완료
+
+**담당:** Mango Top Designer
+**위치:** 2424행 ~ 파일 끝까지
+
+## 1. UI/UX 수정 사항
+
+- **상담창(Consult Modal):** 고정 픽셀(`400px`)에서 유연한 규격(`w-[92%] max-w-[400px]`)으로 변경하여 모든 기기 대응 완료.
+- **부동산 상세:** `property-detail-modal`에 PI Network 결제 버튼 및 동적 데이터 바인딩 로직 안정화.
+
+## 2. 시스템 로직 (JavaScript)
+
+- **Realty Data:** `loadRealtyData` 함수의 문법 오류를 수정하여 리스트 렌더링 정상화.
+- **Balance Update:** `mangoPayUpdated` 커스텀 이벤트를 통해 결제 시 실시간 잔액 갱신 기능 구현.
+- **Admin Access:** 로고 롱터치(3초) 기반의 CEO 마스터 레이어 진입 로직 검증 완료.
+
+## 3. 향후 3년(2026-2029) 유지보수 가이드
+
+- 모든 새로운 윈도우는 `--mango-card-width: 92%` 변수를 참조할 것.
+- 스크립트 작성 시 템플릿 리터럴(백틱) 마감 후 `.join('');` 형식을 엄수하여 문법 강조 오류를 방지할 것.
+
+### [2026-02-24] Mango Food Portal(app.js) 개발 로그
+
+**위치:** 부산 작업실
+
+1. **작업 내용**:
+   - `Pi.init` 및 `Pi.authenticate` 로직 이식 완료.
+   - `sandbox: true` 플래그 활성화.
+2. **디자인 동기화**:
+   - Food Portal 내 모든 카드의 `max-width`를 뉴스 창 및 타 포털과 동일하게 450px로 고정 [cite: 2026-01-01].
+3. **다음 단계**:
+   - VSCode 터미널에서 `npm start` 후 샌드박스 브라우저 확인.
