@@ -3505,3 +3505,62 @@ const MangoTokenSystem = {
    - Food Portal 내 모든 카드의 `max-width`를 뉴스 창 및 타 포털과 동일하게 450px로 고정 [cite: 2026-01-01].
 3. **다음 단계**:
    - VSCode 터미널에서 `npm start` 후 샌드박스 브라우저 확인.
+
+### [2026-02-24] Mango OS 로고 및 경로 수정 완료
+
+**1. 수정 내용**:
+
+- 이미지 파일명 대소문자 불일치 해결 (M -> m).
+- 8개 포털 카드 너비 동기화 로직 재점검. [cite: 2026-01-01]
+  **2. 배포 상태**:
+- Vercel 자동 재배포 대기 중.
+- Pi Developer Portal [Submit] 승인 대기.
+  **3. 디자인 준수**:
+- 로고 복구 확인 후 뉴스 창과의 가로 폭 1:1 일치 여부 최종 검수. [cite: 2026-01-01]
+
+### [2026-02-24] Mango OS 배포 및 Push 최종 확인
+
+- **상태**: GitHub Push 완료 ("Fix logo case sensitivity...")
+- **확인 사항**:
+  - Vercel 자동 배포 주소에서 로고 출력 여부 검수.
+  - Pi Developer Portal App Settings [Submit] 완료.
+- **디자인 가이드**: 8개 포털 윈도우와 뉴스 창 너비 동일화(Sync) 최종 점검. [cite: 2026-01-01]
+
+### [2026-02-24] Mango OS 커스텀 아이콘 적용 가이드
+
+**1. 규격**: 1024x1024 PNG (최고 디자이너 제작본) [cite: 2026-02-15]
+**2. 적용 경로**: Pi Developer Portal > App Settings > Icon Upload
+**3. 확인 사항**:
+
+- [Submit] 버튼 클릭 후 Pi 브라우저 내 아이콘 변경 확인.
+- 아이콘 변경 후에도 8개 포털 카드의 너비 동일화 규격 유지 검수. [cite: 2026-01-01]
+
+# [2026-02-25] Mango Transfer 안정화 복구 완료
+
+## 📍 조치 사항
+
+- `Ctrl + Z` 상태를 유지하며 안전하게 코드 이식.
+- 모든 이미지에 `object-contain`을 적용하여 박스 탈출 현상 해결.
+- 이미지 경로를 `/assets/img/`로 절대 경로화하여 Vercel 엑박 방지.
+
+## 📍 Pi Network 도메인 설정 안내
+
+- `pi-app-manifest.json` 파일을 현재 이 코드가 있는 `index.html`과 같은 폴더에 만드세요.
+- Pi Developer 포털에서 제공하는 코드를 복사해서 넣고 `git push` 하시면 끝납니다.
+
+## 📍 다음 단계
+
+- VSCode에서 `Ctrl + S` 저장.
+- 터미널에서 `git push` 하여 Vercel 업데이트 확인.
+
+# [2026-02-25] Vercel 배포 및 Pi 인증 가이드
+
+## 📍 배포 핵심 명령어 (Terminal)
+
+1. `git add .` : 수정 사항 전체 선택
+2. `git commit -m "수정내용"` : 수정 기록 저장
+3. `git push` : 서버로 전송 및 실시간 반영
+
+## 📍 인증 절차
+
+- 파일 전송 완료 후 Pi Developer 포털에서 도메인 소유권 승인 버튼 클릭.

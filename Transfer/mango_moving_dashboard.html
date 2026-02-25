@@ -6,139 +6,172 @@
     <title>Mango Moving | Cyber Edition</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Noto+Sans+KR:wght@300;500;700&display=swap');
-        
-        body { 
-            background: radial-gradient(circle at center, #1a1a1a 0%, #000000 100%);
-            font-family: 'Noto Sans KR', sans-serif;
-            color: #fff;
-            overflow: hidden;
-        }
+    @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Noto+Sans+KR:wght@300;500;700&display=swap');
+    
+    body { 
+        background: #0a0a0a;
+        background-image: 
+            radial-gradient(at 0% 0%, rgba(255, 215, 0, 0.05) 0px, transparent 50%),
+            radial-gradient(at 100% 100%, rgba(249, 115, 22, 0.05) 0px, transparent 50%);
+        font-family: 'Noto Sans KR', sans-serif;
+        color: #fff;
+        overflow-x: hidden;
+    }
 
-        .cyber-border {
-            position: relative;
-            background: rgba(255, 255, 255, 0.03);
-            border: 1px solid rgba(255, 215, 0, 0.2);
-            backdrop-filter: blur(20px);
-            box-shadow: 0 0 30px rgba(0,0,0,0.5), inset 0 0 20px rgba(255, 165, 0, 0.05);
-        }
+    .cyber-border {
+        position: relative;
+        background: rgba(20, 20, 20, 0.8);
+        border: 1px solid rgba(255, 215, 0, 0.3);
+        backdrop-filter: blur(30px);
+        box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.7);
+    }
 
-        .cyber-border::before {
-            content: '';
-            position: absolute;
-            top: -2px; left: -2px; right: -2px; bottom: -2px;
-            background: linear-gradient(45deg, transparent, rgba(255, 215, 0, 0.3), transparent);
-            z-index: -1;
-            border-radius: 2.5rem;
-        }
+    .gold-glow-text {
+        color: #FFD700;
+        text-shadow: 0 0 15px rgba(255, 215, 0, 0.6);
+        font-family: 'Orbitron', sans-serif;
+        letter-spacing: 2px;
+    }
 
-        .gold-glow-text {
-            color: #FFD700;
-            text-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
-            font-family: 'Orbitron', sans-serif;
-        }
+    .input-group {
+        background: rgba(255, 255, 255, 0.03);
+        border: 1px solid rgba(255, 255, 255, 0.05);
+        border-left: 4px solid #FFD700;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
 
-        .input-group {
-            background: rgba(255, 255, 255, 0.05);
-            border-left: 3px solid #f97316;
-            transition: all 0.3s ease;
-        }
+    .input-group:focus-within {
+        background: rgba(255, 255, 255, 0.08);
+        border: 1px solid rgba(255, 215, 0, 0.3);
+        border-left: 4px solid #ffffff;
+        transform: scale(1.02);
+    }
 
-        .input-group:focus-within {
-            background: rgba(255, 255, 255, 0.1);
-            border-left: 3px solid #FFD700;
-            transform: translateX(5px);
-        }
+    label {
+        color: #FFD700 !important;
+        text-shadow: 0 0 5px rgba(255, 215, 0, 0.3);
+        letter-spacing: 1px;
+    }
 
-        input, select {
-            background: transparent !important;
-            border: none !important;
-            outline: none !important;
-            color: #fff !important;
-            width: 100%;
-        }
+    /* 🚨 핵심 복구: 흉측한 흰색 배경을 제거하고 럭셔리하게 튜닝 */
+    input, select {
+        background: transparent !important;
+        border: none !important;
+        outline: none !important;
+        color: #fff !important;
+        width: 100%;
+        appearance: none; /* 브라우저 기본 스타일(테두리, 화살표) 완전 제거 */
+        font-size: 14px;
+        padding: 4px 0; /* 글자가 상하로 찌그러지지 않게 여백 추가 */
+    }
 
-        .submit-btn {
-            background: linear-gradient(90deg, #b45309 0%, #f59e0b 50%, #b45309 100%);
-            background-size: 200% auto;
-            transition: 0.5s;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-        }
+    input::placeholder {
+        color: rgba(255, 255, 255, 0.2) !important;
+        font-weight: 300;
+    }
 
-        .submit-btn:hover {
-            background-position: right center;
-            box-shadow: 0 0 20px rgba(245, 158, 11, 0.4);
-        }
+    /* 달력 아이콘 색상 반전 (안 보임 방지) */
+    input[type="date"]::-webkit-calendar-picker-indicator {
+        filter: invert(1);
+        opacity: 0.5;
+        cursor: pointer;
+        transition: 0.3s;
+    }
+    
+    input[type="date"]::-webkit-calendar-picker-indicator:hover {
+        opacity: 1;
+    }
 
-        /* 날짜 아이콘 흰색으로 */
-        input[type="date"]::-webkit-calendar-picker-indicator { filter: invert(1); opacity: 0.6; }
-    </style>
+    /* 드롭다운(Select) 커스텀 황금색 화살표 주입 */
+    select {
+        background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23FFD700' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e") !important;
+        background-repeat: no-repeat !important;
+        background-position: right 0px center !important;
+        background-size: 16px !important;
+        padding-right: 20px !important;
+    }
+
+    select option {
+        background: #1a1a1a;
+        color: #FFD700;
+    }
+
+    .submit-btn {
+        background: linear-gradient(135deg, #FFD700 0%, #B8860B 100%);
+        color: #000;
+        font-weight: 900;
+        transition: 0.3s;
+        box-shadow: 0 0 20px rgba(255, 215, 0, 0.2);
+    }
+
+    .submit-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 0 30px rgba(255, 215, 0, 0.5);
+        filter: brightness(1.1);
+    }
+</style>
 </head>
-<body class="min-h-screen flex items-center justify-center p-4">
+<body class="min-h-screen flex items-center justify-center p-6">
+    <div class="fixed top-0 left-0 w-full h-full pointer-events-none overflow-hidden -z-10">
+        <div class="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-amber-500/10 blur-[150px] rounded-full"></div>
+        <div class="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-orange-600/10 blur-[150px] rounded-full"></div>
+    </div>
 
-    <div class="fixed top-1/4 -left-20 w-64 h-64 bg-orange-600/10 blur-[120px] rounded-full"></div>
-    <div class="fixed bottom-1/4 -right-20 w-64 h-64 bg-yellow-600/10 blur-[120px] rounded-full"></div>
-
-    <div class="max-w-md w-full cyber-border rounded-[2.5rem] p-8 relative">
+    <div class="max-w-md w-full cyber-border rounded-[2rem] p-8 relative overflow-hidden">
+        <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-yellow-500 to-transparent opacity-50"></div>
         
-        <div class="text-center mb-8">
+        <div class="text-center mb-10">
             <div class="relative inline-block">
-                <div class="absolute inset-0 bg-orange-500 blur-xl opacity-20"></div>
-                <img src="../assets/img/packing_mover.png" alt="Moving" class="w-20 h-20 relative z-10 mx-auto drop-shadow-[0_0_10px_rgba(255,215,0,0.5)]">
+                <div class="absolute inset-0 bg-yellow-500 blur-2xl opacity-30"></div>
+                <img src="/assets/img/packing_mover.png" alt="Moving" class="w-24 h-24 relative z-10 mx-auto drop-shadow-[0_0_15px_rgba(255,215,0,0.8)]">
             </div>
-            <h1 class="gold-glow-text text-2xl font-black mt-4 italic tracking-tighter">MANGO MOVING</h1>
-            <div class="flex justify-center items-center gap-2 mt-1">
-                <span class="h-[1px] w-8 bg-orange-500/50"></span>
-                <span class="text-[9px] text-gray-400 uppercase tracking-[0.5em]">Premium Logistics</span>
-                <span class="h-[1px] w-8 bg-orange-500/50"></span>
-            </div>
+            <h1 class="gold-glow-text text-3xl font-black mt-4 italic">MANGO MOVING</h1>
+            <p class="text-[10px] text-white/60 uppercase tracking-[0.6em] mt-2">Elite Global Logistics</p>
         </div>
 
-        <div class="space-y-5">
-            <div class="input-group p-3 rounded-r-xl">
-                <label class="block text-[9px] text-orange-400 font-bold uppercase mb-1">Schedule</label>
-                <input type="date" class="text-sm">
+        <div class="space-y-4">
+            <div class="input-group p-4 rounded-xl">
+                <label class="block text-[10px] font-black uppercase mb-1">Moving Schedule</label>
+                <input type="date" class="text-base font-medium">
             </div>
 
-            <div class="grid grid-cols-2 gap-4">
-                <div class="input-group p-3 rounded-r-xl">
-                    <label class="block text-[9px] text-orange-400 font-bold uppercase mb-1">Departure</label>
-                    <input type="text" placeholder="출발지" class="text-sm placeholder:text-gray-600">
+            <div class="grid grid-cols-2 gap-3">
+                <div class="input-group p-4 rounded-xl">
+                    <label class="block text-[10px] font-black uppercase mb-1">Departure</label>
+                    <input type="text" placeholder="FROM" class="text-sm">
                 </div>
-                <div class="input-group p-3 rounded-r-xl">
-                    <label class="block text-[9px] text-orange-400 font-bold uppercase mb-1">Arrival</label>
-                    <input type="text" placeholder="도착지" class="text-sm placeholder:text-gray-600">
+                <div class="input-group p-4 rounded-xl">
+                    <label class="block text-[10px] font-black uppercase mb-1">Arrival</label>
+                    <input type="text" placeholder="TO" class="text-sm">
                 </div>
             </div>
 
-            <div class="input-group p-3 rounded-r-xl">
-                <label class="block text-[9px] text-orange-400 font-bold uppercase mb-1">Service Type</label>
-                <select class="text-sm">
-                    <option class="bg-black">VIP 포장이사</option>
-                    <option class="bg-black">사무실 이전 전문</option>
-                    <option class="bg-black">소형/원룸 이사</option>
+            <div class="input-group p-4 rounded-xl">
+                <label class="block text-[10px] font-black uppercase mb-1">Premium Service</label>
+                <select class="text-sm font-bold cursor-pointer">
+                    <option class="bg-[#1a1a1a]">VIP Full-Service Moving</option>
+                    <option class="bg-[#1a1a1a]">Corporate Office Relocation</option>
+                    <option class="bg-[#1a1a1a]">Express Studio Moving</option>
                 </select>
             </div>
 
-            <div class="input-group p-3 rounded-r-xl">
-                <label class="block text-[9px] text-orange-400 font-bold uppercase mb-1">Contact</label>
-                <input type="tel" placeholder="010-0000-0000" class="text-sm placeholder:text-gray-600">
+            <div class="input-group p-4 rounded-xl">
+                <label class="block text-[10px] font-black uppercase mb-1">Customer Liaison</label>
+                <input type="tel" placeholder="010-0000-0000" class="text-sm">
             </div>
         </div>
 
-        <div class="mt-10">
-            <button onclick="alert('데이터 전송 중...')" class="submit-btn w-full py-4 rounded-xl text-black font-black text-xs shadow-[0_10px_20px_rgba(0,0,0,0.3)] active:scale-95 transition-all mb-4">
-                Get Estimate Now
+        <div class="mt-10 space-y-4">
+            <button onclick="alert('데이터 분석 중...')" class="submit-btn w-full py-5 rounded-2xl text-sm tracking-[3px] active:scale-95 transition-all">
+                ANALYZE ESTIMATE
             </button>
-            <button onclick="history.back()" class="w-full text-[10px] text-gray-500 hover:text-orange-400 transition-colors tracking-widest font-bold">
-                RETURN TO PORTAL
+            <button onclick="history.back()" class="w-full text-[11px] text-white/40 hover:text-yellow-500 transition-all tracking-[4px] font-medium">
+                [ BACK TO PORTAL ]
             </button>
         </div>
 
-        <div class="absolute top-8 right-8 w-4 h-4 border-t-2 border-r-2 border-orange-500/30"></div>
-        <div class="absolute bottom-8 left-8 w-4 h-4 border-b-2 border-l-2 border-orange-500/30"></div>
+        <div class="absolute top-4 right-4 w-6 h-6 border-t border-r border-yellow-500/50"></div>
+        <div class="absolute bottom-4 left-4 w-6 h-6 border-b border-l border-yellow-500/50"></div>
     </div>
-
 </body>
 </html>
