@@ -3564,3 +3564,15 @@ const MangoTokenSystem = {
 ## 📍 인증 절차
 
 - 파일 전송 완료 후 Pi Developer 포털에서 도메인 소유권 승인 버튼 클릭.
+
+# [2026-02-25] Mango 배포 오류 즉각 수정 가이드
+
+## 📍 오류 원인
+
+- `git add` 명령어 사용 시 대상 지정(`.`) 누락으로 인한 파일 전송 실패.
+- `pi-app-manifest.json` 파일이 서버에 도달하지 못해 PiNet 인증 대기 중.
+
+## 📍 조치 사항
+
+- `git add .` 명령어를 통해 수정된 모든 파일(HTML, JSON)을 전송 목록에 포함.
+- `git push origin main`으로 Vercel 실시간 업데이트 강제 실행.
