@@ -3576,3 +3576,36 @@ const MangoTokenSystem = {
 
 - `git add .` 명령어를 통해 수정된 모든 파일(HTML, JSON)을 전송 목록에 포함.
 - `git push origin main`으로 Vercel 실시간 업데이트 강제 실행.
+
+# [2026-02-26] Mango App Ecosystem Listing 제출 완료
+
+## 📍 현황 보고
+
+- **상태:** 데이터 저장 완료 (Saved!)
+- **조치:** 필수 URL(Terms of Service 등) 입력 및 검수 완료
+
+## 📍 디자인 자산 확정
+
+- **Screenshot:** 750x1500px 3장 (정상 등록)
+- **App Icon:** 400x400px (정상 등록)
+
+## 📍 다음 액션
+
+- [Apply for Unverified Listing] 버튼 클릭하여 최종 심사 요청 발송.
+
+# [2026-02-26] Mango.pi 샌드박스 테스트 가이드
+
+## 📍 테스트 환경
+
+- **URL:** 파이 개발자 포털 제공 샌드박스 주소
+- **대상 주소:** https://mango-os-6xu2.vercel.app
+
+## 📍 주요 확인 사항 (image_ccd3e3.png 기준)
+
+1. **인증 팝업:** 'Mango와 정보 공유' 메시지 정상 출력 여부
+2. **UI 정렬:** 배경의 Transfer 카드 및 로고 배치 정밀도
+3. **인터랙션:** '허용하다' 버튼 클릭 시 다음 화면 전환 속도
+
+## 📍 다음 단계
+
+- 샌드박스에서 UI 오차 발견 시 VSCode에서 CSS 수정 후 Vercel 재배포.
