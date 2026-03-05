@@ -289,50 +289,62 @@
     </div>
     
     <div class="grid grid-cols-2 gap-3">
-        <div class="premium-glass p-4 group active:scale-95 transition-all cursor-pointer border-l-2 border-orange-500/40 relative overflow-hidden">
-            <div class="flex justify-between items-start mb-2 relative z-10">
-                <div class="p-1.5 bg-orange-500/10 rounded text-orange-400 group-hover:bg-orange-500 group-hover:text-black transition-colors">
-                    <i data-lucide="utensils" class="w-3.5 h-3.5"></i>
-                </div>
-                <span class="text-[8px] text-orange-500 font-bold border border-orange-500/20 px-1 rounded">LIVE</span>
+    
+    <div class="premium-glass aspect-square p-3 flex flex-col justify-between border-l-2 border-orange-500/40 relative overflow-hidden group active:scale-95 transition-all">
+        <div class="flex justify-between items-start relative z-10">
+            <div class="p-1.5 bg-orange-500/10 rounded text-orange-400">
+                <i data-lucide="utensils" class="w-4 h-4"></i>
             </div>
-            <h4 class="text-[10px] font-black text-white/30 uppercase font-orb relative z-10">Food_Portal</h4>
-            <p class="text-[12px] font-bold text-white mt-1 leading-tight relative z-10 text-shadow-sm">해운대 암소갈비<br><span class="text-orange-400 text-[10px]">대기 12팀 (40분)</span></p>
+            <span class="text-[8px] text-orange-500 font-bold border border-orange-500/20 px-1 rounded">LIVE</span>
         </div>
-
-        <div class="premium-glass p-4 group active:scale-95 transition-all cursor-pointer border-l-2 border-blue-500/40 relative overflow-hidden">
-            <div class="flex justify-between items-start mb-2 relative z-10">
-                <div class="p-1.5 bg-blue-500/10 rounded text-blue-400 group-hover:bg-blue-500 group-hover:text-white transition-colors">
-                    <i data-lucide="bus" class="w-3.5 h-3.5"></i>
-                </div>
-                <span class="text-[8px] text-blue-400 font-bold border border-blue-500/20 px-1 rounded">NEAR</span>
-            </div>
-            <h4 class="text-[10px] font-black text-white/30 uppercase font-orb relative z-10">Transfer_Portal</h4>
-            <p class="text-[12px] font-bold text-white mt-1 leading-tight relative z-10 text-shadow-sm">공항 리무진<br><span class="text-blue-400 text-[10px]">8분 후 도착 (정류장 A)</span></p>
-        </div>
-
-        <div class="premium-glass p-4 group active:scale-95 transition-all cursor-pointer border-l-2 border-teal-500/40 relative overflow-hidden">
-            <div class="flex justify-between items-start mb-2 relative z-10">
-                <div class="p-1.5 bg-teal-500/10 rounded text-teal-400 group-hover:bg-teal-500 group-hover:text-black transition-colors">
-                    <i data-lucide="share-2" class="w-3.5 h-3.5"></i>
-                </div>
-                <span class="text-[8px] text-teal-400 font-bold border border-teal-500/20 px-1 rounded">SYNC</span>
-            </div>
-            <h4 class="text-[10px] font-black text-white/30 uppercase font-orb relative z-10">Share_Portal</h4>
-            <p class="text-[12px] font-bold text-white mt-1 leading-tight relative z-10 text-shadow-sm">현재 경로 공유<br><span class="text-teal-400 text-[10px]">Active Sync (2인)</span></p>
-        </div>
-
-        <div class="premium-glass p-4 group active:scale-95 transition-all cursor-pointer border-l-2 border-purple-500/40 relative overflow-hidden">
-            <div class="flex justify-between items-start mb-2 relative z-10">
-                <div class="p-1.5 bg-purple-500/10 rounded text-purple-400 group-hover:bg-purple-500 group-hover:text-white transition-colors">
-                    <i data-lucide="map" class="w-3.5 h-3.5"></i>
-                </div>
-                <span class="text-[8px] text-purple-400 font-bold border border-purple-500/20 px-1 rounded">POI</span>
-            </div>
-            <h4 class="text-[10px] font-black text-white/30 uppercase font-orb relative z-10">Travel_Portal</h4>
-            <p class="text-[12px] font-bold text-white mt-1 leading-tight relative z-10 text-shadow-sm">더베이101<br><span class="text-purple-400 text-[10px]">현재 위치에서 900m</span></p>
+        <div class="relative z-10">
+            <h4 class="text-[9px] font-black text-white/30 uppercase font-orb">Food_Portal</h4>
+            <p class="text-[11px] font-bold text-white mt-1 leading-tight tracking-tighter">해운대 암소갈비<br><span class="text-orange-400 text-[9px]">대기 12팀</span></p>
         </div>
     </div>
+
+    <div class="premium-glass aspect-square p-3 flex flex-col justify-between border-l-2 border-blue-500/40 relative overflow-hidden group active:scale-95 transition-all">
+        <div class="flex justify-between items-start relative z-10">
+            <div class="p-1.5 bg-blue-500/10 rounded text-blue-400">
+                <i data-lucide="bus" class="w-4 h-4"></i>
+            </div>
+            <span class="text-[8px] text-blue-400 font-bold border border-blue-500/20 px-1 rounded">NEAR</span>
+        </div>
+        <div class="relative z-10">
+            <h4 class="text-[9px] font-black text-white/30 uppercase font-orb">Transfer_Portal</h4>
+            <p class="text-[11px] font-bold text-white mt-1 leading-tight tracking-tighter">공항 리무진<br><span class="text-blue-400 text-[9px]">8분 후 도착</span></p>
+        </div>
+    </div>
+
+    <div class="premium-glass aspect-square p-3 flex flex-col justify-between border-l-2 border-purple-500/40 relative overflow-hidden group active:scale-95 transition-all">
+        <div class="flex justify-between items-start relative z-10">
+            <div class="p-1.5 bg-purple-500/10 rounded text-purple-400">
+                <i data-lucide="map" class="w-4 h-4"></i>
+            </div>
+            <span class="text-[8px] text-purple-400 font-bold border border-purple-500/20 px-1 rounded">POI</span>
+        </div>
+        <div class="relative z-10">
+            <h4 class="text-[9px] font-black text-white/30 uppercase font-orb">Travel_Portal</h4>
+            <p class="text-[10px] font-black text-white mt-1 leading-none tracking-tighter uppercase font-orb break-all">
+                HAEUNDAE_BEACH
+            </p>
+            <p class="text-purple-400 text-[8px] mt-1 font-bold">900M DISTANCE</p>
+        </div>
+    </div>
+
+    <div class="premium-glass aspect-square p-3 flex flex-col justify-between border-l-2 border-teal-500/40 relative overflow-hidden group active:scale-95 transition-all">
+        <div class="flex justify-between items-start relative z-10">
+            <div class="p-1.5 bg-teal-500/10 rounded text-teal-400">
+                <i data-lucide="share-2" class="w-4 h-4"></i>
+            </div>
+            <span class="text-[8px] text-teal-400 font-bold border border-teal-500/20 px-1 rounded">SYNC</span>
+        </div>
+        <div class="relative z-10">
+            <h4 class="text-[9px] font-black text-white/30 uppercase font-orb">Share_Portal</h4>
+            <p class="text-[11px] font-bold text-white mt-1 leading-tight tracking-tighter">현재 경로 공유<br><span class="text-teal-400 text-[9px]">Active (2인)</span></p>
+        </div>
+    </div>
+</div>
 </section>
 
 <section class="w-full space-y-4 px-2">
