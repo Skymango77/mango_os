@@ -507,7 +507,20 @@ body {
     background-color:  #000000; /* PC 배경색 */
 }
 
+/* [초고도화] 오뚜기(Wobble) 애니메이션 - <style> 태그 안 최하단에 복사 */
+@keyframes mango-ottugi-swing {
+    0% { transform: rotate(0deg) scale(1); }
+    20% { transform: rotate(-15deg) scale(1.1); }
+    40% { transform: rotate(12deg) scale(1.05); }
+    60% { transform: rotate(-8deg) scale(1.1); }
+    80% { transform: rotate(4deg) scale(1.02); }
+    100% { transform: rotate(0deg) scale(1); }
+}
 
+.mango-ottugi-active {
+    animation: mango-ottugi-swing 2s cubic-bezier(0.45, 0, 0.55, 1) both;
+    transform-origin: bottom center !important; /* 아래를 축으로 흔들림 */
+}
 </style> 
 
 <div id="partner-modal" class="fixed inset-0 z-[100] hidden bg-black/95 backdrop-blur-xl flex items-start justify-center overflow-y-auto pt-4 pb-10">
@@ -819,7 +832,12 @@ button, .confirm-btn, [class*="confirm"] {
             <div class="wind-layer" style="border: 12px solid transparent; border-top-color: #4DBCE9; border-bottom-color: #4DBCE9; border-radius: 50%; position: absolute; inset: 0; animation: spin-fast 1.5s linear infinite;"></div>
             <div class="wind-layer" style="border: 16px solid transparent; border-left-color: #A0E4FF; border-right-color: #A0E4FF; border-radius: 50%; position: absolute; inset: 30px; animation: spin-reverse 2s linear infinite; opacity: 0.8;"></div>
             <div class="wind-layer" style="border: 8px solid transparent; border-top-color: #1E90FF; border-radius: 50%; position: absolute; inset: 60px; animation: spin-fast 1s linear infinite;"></div>
-            <img src="assets/img/mango.jpg" class="mango-logo-core" alt="Mango" style="width: 140px; border-radius: 2.8rem; z-index: 10; animation: splash-pulse 2s ease-in-out infinite; box-shadow: 0 10px 30px rgba(0,0,0,0.15);">
+            <img src="assets/img/mango.jpg" 
+     id="main-mango-logo" 
+     class="mango-logo-core w-24 h-24 rounded-[3rem]" 
+     alt="Mango" 
+     style="width: 140px; border-radius: 2.8rem; z-index: 10; box-shadow: 0 10px 30px rgba(0,0,0,0.15);">
+
         </div>
         <p style="color: #4DBCE9; margin-top: 50px; font-weight: 900; font-size: 1.3rem; letter-spacing: 6px; font-style: italic; text-transform: uppercase;">Mango System Starting</p>
         <style>
@@ -2932,6 +2950,47 @@ window.addEventListener('load', () => {
 setInterval(() => {
     playMangoSweetSound();
     showMangoToast("다시 만나는 달콤한 망고 타임! (10분 주기)"); //
+}, 200000);
+
+/* [초고도화] 브라우저 통합 사운드 및 오뚜기 로직 */
+
+// 1. 오디오 객체 생성
+const mangoSweetSound = new Audio('assets/sounds/mangomangodaldalhe.mp3');
+
+// 2. 사운드와 로고를 동시에 실행하는 마스터 함수
+function bootMangoExperience() {
+    // 사운드 재생 (사파리/엣지 대응을 위해 인터랙션 시점에 호출 권장)
+    mangoSweetSound.play().catch(err => {
+        console.log("자동재생 차단됨 - 첫 클릭 시 재생됩니다.");
+    });
+
+    // 오뚜기 로고 애니메이션 실행
+    const logo = document.getElementById('main-mango-logo');
+    if (logo) {
+        logo.classList.add('mango-ottugi-active');
+        // 애니메이션 완료 후 클래스 제거 (나중에 다시 쓰기 위함)
+        setTimeout(() => logo.classList.remove('mango-ottugi-active'), 2000);
+    }
+}
+
+// [핵심] 3. 메인 화면 진입 시점 (window load)
+window.addEventListener('load', () => {
+    // 로딩 완료 1초 후 실행
+    setTimeout(() => {
+        bootMangoExperience();
+    }, 1000);
+});
+
+// [핵심] 4. 사파리/엣지 강제 잠금 해제 (화면 어디든 첫 터치 시)
+document.addEventListener('click', () => {
+    if (mangoSweetSound.paused) {
+        bootMangoExperience();
+    }
+}, { once: true }); // 딱 한 번만 실행
+
+// 5. 10분 주기 반복 (600,000ms)
+setInterval(() => {
+    bootMangoExperience();
 }, 600000);
 </script>
 </body>
