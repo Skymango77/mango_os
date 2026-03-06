@@ -795,22 +795,24 @@ button, .confirm-btn, [class*="confirm"] {
     color: white !important;
     border: none !important;
 }
-@keyframes blue-wind-flow {
-        0% { transform: rotate(0deg) scale(1); }
-        50% { transform: rotate(180deg) scale(1.1); }
-        100% { transform: rotate(360deg) scale(1); }
-    }
-    .animate-blue-wind {
-        animation: blue-wind-flow 1.5s ease-in-out infinite;
-        transform-origin: center center;
-    }
+/* 오뚜기(좌우 흔들기) 애니메이션 */
+@keyframes mango-otogi {
+    0% { transform: rotate(0deg); }
+    20% { transform: rotate(15deg); }  /* 오른쪽으로 살짝 */
+    40% { transform: rotate(-15deg); } /* 왼쪽으로 살짝 */
+    60% { transform: rotate(10deg); }  /* 다시 오른쪽 조금 */
+    80% { transform: rotate(-10deg); } /* 다시 왼쪽 조금 */
+    100% { transform: rotate(0deg); }  /* 정지 */
+}
+
+.animate-mango-otogi {
+    animation: mango-otogi 1.5s ease-in-out infinite; /* 계속 흔들리게 하려면 infinite */
+    transform-origin: bottom center; /* 아래쪽을 축으로 흔들려야 오뚜기 같습니다 */
+}
     </style>
 </head>
 
 <body id="main-body" class="bg-black text-white min-h-screen overflow-x-hidden flex flex-col items-center py-6 space-y-6">
-
-    
-    
 
     <div id="integrated-auth-modal" class="hidden fixed inset-0 z-[10001] flex items-center justify-center p-4 bg-black/90 backdrop-blur-xl">
         <div class="w-full max-w-[480px] bg-zinc-900 border border-yellow-500/30 rounded-[2.5rem] overflow-hidden shadow-[0_0_50px_rgba(234,179,8,0.2)]">
@@ -900,7 +902,7 @@ button, .confirm-btn, [class*="confirm"] {
     <div class="flex items-center gap-3">
         <div class="logo-container" onclick="location.reload()" style="cursor: pointer;">
             <img id="mango-charging-logo" src="assets/img/mango.jpg" 
-     class="w-14 h-14 rounded-2xl border border-white/10 object-cover animate-blue-wind transition-all duration-1000" 
+     class="w-14 h-14 rounded-2xl border border-white/10 object-cover animate-mango-otogi transition-all duration-1000" 
      alt="mango Logo">
         </div>
         
@@ -2846,10 +2848,9 @@ function spawnHiddenTreasure() {
         const logo = document.getElementById('mango-charging-logo');
         if (logo) {
             setTimeout(() => {
-                // 파란 바람 회전을 멈추게 합니다.
-                logo.classList.remove('animate-blue-wind');
-                console.log("Mango Status: Charging Complete!");
-            }, 2500); // 2.5초 뒤에 멈춤
+                logo.classList.remove('animate-mango-otogi');
+                console.log("Mango Performance: 3-step Otogi Complete.");
+            }, 3100);
         }
     });
 </script>
