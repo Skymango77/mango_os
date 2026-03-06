@@ -834,10 +834,8 @@ button, .confirm-btn, [class*="confirm"] {
             <div class="wind-layer" style="border: 8px solid transparent; border-top-color: #1E90FF; border-radius: 50%; position: absolute; inset: 60px; animation: spin-fast 1s linear infinite;"></div>
             <img src="assets/img/mango.jpg" 
      id="main-mango-logo" 
-     class="mango-logo-core w-24 h-24 rounded-[3rem]" 
-     alt="Mango" 
-     style="width: 140px; border-radius: 2.8rem; z-index: 10; box-shadow: 0 10px 30px rgba(0,0,0,0.15);">
-
+class="mango-logo-core rounded-[2.8rem]"     alt="Mango" 
+style="width: 140px; height: 140px; aspect-ratio: 1/1; object-fit: cover; z-index: 10; box-shadow: 0 10px 30px rgba(0,0,0,0.15); display: block;">
         </div>
         <p style="color: #4DBCE9; margin-top: 50px; font-weight: 900; font-size: 1.3rem; letter-spacing: 6px; font-style: italic; text-transform: uppercase;">Mango System Starting</p>
         <style>
@@ -2954,44 +2952,43 @@ setInterval(() => {
 
 /* [초고도화] 브라우저 통합 사운드 및 오뚜기 로직 */
 
-// 1. 오디오 객체 생성
-const mangoSweetSound = new Audio('assets/sounds/mangomangodaldalhe.mp3');
+// 🎵 Mango OS 브라우저 통합 사운드 엔진 (Safari/Edge 완벽 대응)
+let mangoSweetSound = new Audio('assets/sounds/mangomangodaldalhe.mp3');
 
-// 2. 사운드와 로고를 동시에 실행하는 마스터 함수
-function bootMangoExperience() {
-    // 사운드 재생 (사파리/엣지 대응을 위해 인터랙션 시점에 호출 권장)
-    mangoSweetSound.play().catch(err => {
-        console.log("자동재생 차단됨 - 첫 클릭 시 재생됩니다.");
-    });
-
-    // 오뚜기 로고 애니메이션 실행
+function playMangoWithMotion() {
+    // 1. 오뚜기 애니메이션 실행
     const logo = document.getElementById('main-mango-logo');
     if (logo) {
         logo.classList.add('mango-ottugi-active');
-        // 애니메이션 완료 후 클래스 제거 (나중에 다시 쓰기 위함)
         setTimeout(() => logo.classList.remove('mango-ottugi-active'), 2000);
+    }
+
+    // 2. 사운드 재생 시도
+    const playPromise = mangoSweetSound.play();
+    
+    if (playPromise !== undefined) {
+        playPromise.catch(() => {
+            // 차단 시: 사운드 객체를 재초기화하여 대기
+            mangoSweetSound.load(); 
+        });
     }
 }
 
-// [핵심] 3. 메인 화면 진입 시점 (window load)
-window.addEventListener('load', () => {
-    // 로딩 완료 1초 후 실행
-    setTimeout(() => {
-        bootMangoExperience();
-    }, 1000);
-});
-
-// [핵심] 4. 사파리/엣지 강제 잠금 해제 (화면 어디든 첫 터치 시)
+// [핵심] 사용자가 화면 어디든 '처음 클릭'할 때 사운드 잠금을 완전히 해제
 document.addEventListener('click', () => {
     if (mangoSweetSound.paused) {
-        bootMangoExperience();
+        playMangoWithMotion();
+        showMangoToast("달콤한 망고 시스템 활성화 🥭");
     }
-}, { once: true }); // 딱 한 번만 실행
+}, { once: true });
 
-// 5. 10분 주기 반복 (600,000ms)
-setInterval(() => {
-    bootMangoExperience();
-}, 600000);
+// 진입 시 시도 (크롬용)
+window.addEventListener('load', () => {
+    setTimeout(playMangoWithMotion, 1500);
+});
+
+// 10분 주기 리마인더
+setInterval(playMangoWithMotion, 600000);
 </script>
 </body>
 </html>
