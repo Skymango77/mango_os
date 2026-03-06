@@ -2857,9 +2857,8 @@ function spawnHiddenTreasure() {
 }
 
 .animate-mango-otogi {
-    /* 1.2초 동안 1회 작동하며, 총 3번 반복 후 멈춤 */
-    animation: mango-otogi 1s ease-in-out 3 forwards;
-    transform-origin: bottom center;
+        animation: mango-otogi 1.2s ease-in-out 3 forwards !important;
+        transform-origin: bottom center !important;    /* 1.2초 동안 1회 작동하며, 총 3번 반복 후 멈춤 */
 }
     </style>
 
@@ -2889,9 +2888,12 @@ function spawnHiddenTreasure() {
     `).join('');
     }
 // 🚨 핵심: 페이지가 로드되자마자 위 함수를 실행하라는 특급 명령입니다.
+
     window.addEventListener('load', updateLegacyNews);
     // 2843행부터 수정 시작
     window.addEventListener('load', () => {
+
+        if (typeof updateLegacyNews === 'function') updateLegacyNews();
         const logo = document.getElementById('mango-charging-logo');
         const splash = document.getElementById('mango-splash'); // 🌪️ 스플래시 요소 추가
 
@@ -2912,6 +2914,8 @@ function spawnHiddenTreasure() {
             console.log("Mango Performance: 3-step Otogi & Splash Complete.");
         }, 3100); 
     });
+    // [추가 제안] 스플래시가 걷히는 시점에 맞춰 사운드와 메인 오뚜기 시작!
+if (typeof bootMangoExperience === 'function') bootMangoExperience();
 
 
     window.addEventListener('load', () => {
@@ -2927,9 +2931,13 @@ function spawnHiddenTreasure() {
 
 // 🎵 Mango Signature Sound Logic (2026 Busan OS Update)
 const mangoAudio = new Audio('assets/sounds/mangomangodaldalhe.mp3'); //
-
+let isMangoBooted = false;
 // 사운드 재생 함수 (볼륨 조절 포함)
 function playMangoSweetSound() {
+    if (isMangoBooted) return; 
+    isMangoBooted = true;
+
+
     mangoAudio.volume = 0.5; // 너무 크지 않게 적절한 크기로 설정
     mangoAudio.play().catch(error => {
         console.log("브라우저 정책으로 인해 첫 인터랙션 후 재생될 수 있습니다:", error);
@@ -2952,10 +2960,11 @@ setInterval(() => {
 
 /* [초고도화] 브라우저 통합 사운드 및 오뚜기 로직 */
 
-// 🎵 Mango OS 브라우저 통합 사운드 엔진 (Safari/Edge 완벽 대응)
-let mangoSweetSound = new Audio('assets/sounds/mangomangodaldalhe.mp3');
+
 
 function playMangoWithMotion() {
+    if (isMangoBooted) return; // 👈 1. 이미 소리가 났다면 여기서 중단!
+    isMangoBooted = true;      // 👈 2. 이제 소리가 날 것이라고 표시!
     // 1. 오뚜기 애니메이션 실행
     const logo = document.getElementById('main-mango-logo');
     if (logo) {
@@ -2964,19 +2973,19 @@ function playMangoWithMotion() {
     }
 
     // 2. 사운드 재생 시도
-    const playPromise = mangoSweetSound.play();
+    const playPromise = mangoAudio.play(); // ✅ mangoAudio로 통일
     
     if (playPromise !== undefined) {
         playPromise.catch(() => {
             // 차단 시: 사운드 객체를 재초기화하여 대기
-            mangoSweetSound.load(); 
+            mangoAudio.load(); 
         });
     }
 }
 
 // [핵심] 사용자가 화면 어디든 '처음 클릭'할 때 사운드 잠금을 완전히 해제
 document.addEventListener('click', () => {
-    if (mangoSweetSound.paused) {
+    if (mangoAudio.paused) {
         playMangoWithMotion();
         showMangoToast("달콤한 망고 시스템 활성화 🥭");
     }
@@ -2989,6 +2998,34 @@ window.addEventListener('load', () => {
 
 // 10분 주기 리마인더
 setInterval(playMangoWithMotion, 600000);
+
+
+function bootMangoExperience() {
+    if (isMangoBooted) return; // 이미 소리가 났다면 또 내지 않음
+    isMangoBooted = true;
+
+    mangoAudio.volume = 0.5;
+    mangoAudio.play().then(() => {
+
+// [복구 완료] 토스트 메시지 출력! 🥭
+        showMangoToast("망고망고 달달해~ 🥭");
+
+        const logo = document.getElementById('main-mango-logo');
+        if (logo) {
+            logo.classList.add('animate-mango-otogi');
+            setTimeout(() => logo.classList.remove('animate-mango-otogi'), 4000);
+        }
+    }).catch(() => {
+        isMangoBooted = false; // 실패 시(사파리/엣지) 다음 클릭을 위해 리셋
+    });
+}
+
+// 화면 첫 클릭 시 실행 (가장 확실함)
+document.addEventListener('click', bootMangoExperience, { once: true });
+// 로드 1.5초 후 시도 (크롬용)
+window.addEventListener('load', () => setTimeout(bootMangoExperience, 1500));
+// 10분 주기 리마인드
+setInterval(() => { isMangoBooted = false; bootMangoExperience(); }, 600000);
 </script>
 </body>
 </html>
