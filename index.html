@@ -795,39 +795,21 @@ button, .confirm-btn, [class*="confirm"] {
     color: white !important;
     border: none !important;
 }
-
-/* 훌라후프 애니메이션 (여기에 복사) */
-    @keyframes mango-pulse {
-        0%, 100% { transform: scale(1); opacity: 1; }
-        50% { transform: scale(1.05); opacity: 0.9; }
+@keyframes blue-wind-flow {
+        0% { transform: rotate(0deg) scale(1); }
+        50% { transform: rotate(180deg) scale(1.1); }
+        100% { transform: rotate(360deg) scale(1); }
     }
-    @keyframes hula-hoop-rotate {
-        0% { transform: rotateX(70deg) rotateZ(0deg); opacity: 0; }
-        50% { transform: rotateX(70deg) rotateZ(180deg); opacity: 1; }
-        100% { transform: rotateX(70deg) rotateZ(360deg); opacity: 0; }
+    .animate-blue-wind {
+        animation: blue-wind-flow 1.5s ease-in-out infinite;
+        transform-origin: center center;
     }
-    .animate-mango-pulse { animation: mango-pulse 2s infinite; }
-    .animate-hula-hoop { transform-style: preserve-3d; animation: hula-hoop-rotate 1.5s linear infinite; }
     </style>
 </head>
 
 <body id="main-body" class="bg-black text-white min-h-screen overflow-x-hidden flex flex-col items-center py-6 space-y-6">
 
-    <div id="splash-screen" class="fixed inset-0 z-[9999] flex flex-col items-center justify-center bg-[#050505]">
-        <div class="relative w-40 h-40 flex items-center justify-center">
-            <img src="image_40a4cf.png" alt="Mango Logo" class="w-24 h-24 z-10 animate-mango-pulse">
-            <div class="absolute inset-0 border-[6px] border-orange-500/80 rounded-full animate-hula-hoop shadow-[0_0_30px_#f97316]"></div>
-            <div class="absolute inset-2 border-[4px] border-orange-400/50 rounded-full animate-hula-hoop shadow-[0_0_20px_#fb923c]" style="animation-delay: 0.5s;"></div>
-        </div>
-        <div class="mt-8 text-center">
-            <h1 class="text-3xl font-black italic text-orange-500 tracking-tighter">MANGO UNIVERSE</h1>
-            <p class="mt-2 text-[10px] text-gray-500 tracking-[0.3em] uppercase">Connecting to the flavor dimension...</p>
-        </div>
-    </div>
-
-    <div id="main-app" class="hidden opacity-0 w-full flex flex-col items-center space-y-6">
-        
-        </div> </body>
+    
     
 
     <div id="integrated-auth-modal" class="hidden fixed inset-0 z-[10001] flex items-center justify-center p-4 bg-black/90 backdrop-blur-xl">
@@ -917,7 +899,9 @@ button, .confirm-btn, [class*="confirm"] {
 <div class="mango-container flex justify-between items-center px-4 pt-6">
     <div class="flex items-center gap-3">
         <div class="logo-container" onclick="location.reload()" style="cursor: pointer;">
-            <img src="assets/img/mango.jpg" class="w-14 h-14 rounded-2xl border border-white/10 object-cover" alt="mango Logo">
+            <img id="mango-charging-logo" src="assets/img/mango.jpg" 
+     class="w-14 h-14 rounded-2xl border border-white/10 object-cover animate-blue-wind transition-all duration-1000" 
+     alt="mango Logo">
         </div>
         
         <div class="flex flex-col">
@@ -2859,21 +2843,15 @@ function spawnHiddenTreasure() {
 
     window.addEventListener('load', updateLegacyNews);
     window.addEventListener('load', () => {
-            const splash = document.getElementById('splash-screen');
-            const app = document.getElementById('main-app');
-
+        const logo = document.getElementById('mango-charging-logo');
+        if (logo) {
             setTimeout(() => {
-                splash.style.transition = 'opacity 1s ease-in-out';
-                splash.style.opacity = '0';
-                
-                app.classList.remove('hidden');
-                setTimeout(() => {
-                    splash.style.display = 'none';
-                    app.style.transition = 'opacity 1s ease-in-out';
-                    app.style.opacity = '1';
-                }, 1000);
-            }, 2500); // 2.5초간 훌라후프 감상 시간
-        });
+                // 파란 바람 회전을 멈추게 합니다.
+                logo.classList.remove('animate-blue-wind');
+                console.log("Mango Status: Charging Complete!");
+            }, 2500); // 2.5초 뒤에 멈춤
+        }
+    });
 </script>
 </body>
 </html>
