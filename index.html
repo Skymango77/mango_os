@@ -2842,7 +2842,8 @@ function spawnHiddenTreasure() {
             </a>
         `).join('');
     }
-
+// 🚨 핵심: 페이지가 로드되자마자 위 함수를 실행하라는 특급 명령입니다.
+    window.addEventListener('load', updateLegacyNews);
     // 2843행부터 수정 시작
     window.addEventListener('load', () => {
         const logo = document.getElementById('mango-charging-logo');
