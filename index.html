@@ -2829,6 +2829,22 @@ function spawnHiddenTreasure() {
             flex-direction: column;
             gap: 15px;
         }
+
+        /* 902행 메인 로고 전용: 오뚜기 3회 퍼포먼스 */
+@keyframes mango-otogi {
+    0% { transform: rotate(0deg); }
+    20% { transform: rotate(15deg); }
+    40% { transform: rotate(-15deg); }
+    60% { transform: rotate(10deg); }
+    80% { transform: rotate(-10deg); }
+    100% { transform: rotate(0deg); }
+}
+
+.animate-mango-otogi {
+    /* 1.2초 동안 1회 작동하며, 총 3번 반복 후 멈춤 */
+    animation: mango-otogi 1s ease-in-out 3 forwards;
+    transform-origin: bottom center;
+}
     </style>
 
     <script>
@@ -2880,6 +2896,43 @@ function spawnHiddenTreasure() {
             console.log("Mango Performance: 3-step Otogi & Splash Complete.");
         }, 3100); 
     });
+
+
+    window.addEventListener('load', () => {
+        const logo = document.getElementById('mango-charging-logo');
+        if (logo) {
+            // 오뚜기 퍼포먼스(약 3초)가 끝난 후 클래스 제거
+            setTimeout(() => {
+                logo.classList.remove('animate-mango-otogi');
+                console.log("Mango Performance: 3-step Otogi Complete.");
+            }, 3100); 
+        }
+    });
+
+// 🎵 Mango Signature Sound Logic (2026 Busan OS Update)
+const mangoAudio = new Audio('assets/sounds/mangomangodaldalhe.mp3'); //
+
+// 사운드 재생 함수 (볼륨 조절 포함)
+function playMangoSweetSound() {
+    mangoAudio.volume = 0.5; // 너무 크지 않게 적절한 크기로 설정
+    mangoAudio.play().catch(error => {
+        console.log("브라우저 정책으로 인해 첫 인터랙션 후 재생될 수 있습니다:", error);
+    });
+}
+
+// [시점 1] 진입 시 1회 재생 (페이지 로드 후 1초 뒤)
+window.addEventListener('load', () => {
+    setTimeout(() => {
+        playMangoSweetSound();
+        showMangoToast("망고망고 달콤해~ 시그니처 사운드 재생 🥭"); //
+    }, 1000);
+});
+
+// [시점 2] 10분(600,000ms)마다 1회 재생 루프
+setInterval(() => {
+    playMangoSweetSound();
+    showMangoToast("다시 만나는 달콤한 망고 타임! (10분 주기)"); //
+}, 600000);
 </script>
 </body>
 </html>

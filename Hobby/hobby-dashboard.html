@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mango Hobby Dashboard - 취미 탐험</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Pretendard:wght@400;700;900&display=swap');
+        body { font-family: 'Pretendard', sans-serif; background-color: #000; color: #fff; }
+        
+        /* 다채로운 그릇을 형상화한 그라데이션 애니메이션 */
+        .hobby-bowl {
+            background: linear-gradient(135.2deg, rgba(77, 188, 233, 0.1) 1.1%, rgba(160, 228, 255, 0.1) 98.7%);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .hobby-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 40px rgba(77, 188, 233, 0.2);
+        }
+        /* 초고도화 디자인 엔진 */
+:root {
+    --mango-blue: #4DBCE9;
+    --glass-bg: rgba(255, 255, 255, 0.03);
+    --glass-border: rgba(255, 255, 255, 0.1);
+}
+
+body {
+    background: radial-gradient(circle at top right, #0a1128, #000);
+    overflow-x: hidden;
+}
+
+/* 움직이는 빛의 구체 (그릇 내부의 열정) */
+.orb {
+    position: fixed;
+    width: 600px;
+    height: 600px;
+    border-radius: 50%;
+    filter: blur(120px);
+    z-index: -1;
+    opacity: 0.15;
+    animation: orb-move 20s infinite alternate;
+}
+
+@keyframes orb-move {
+    0% { transform: translate(-10%, -10%) scale(1); background: var(--mango-blue); }
+    100% { transform: translate(20%, 30%) scale(1.2); background: #8b5cf6; }
+}
+
+/* 고도화된 취미 그릇 (Glass Container) */
+.hobby-bowl-container {
+    background: var(--glass-bg);
+    backdrop-filter: blur(40px) saturate(150%);
+    border: 1px solid var(--glass-border);
+    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.8),
+                inset 0 0 80px rgba(77, 188, 233, 0.05);
+}
+
+/* 카드 규격 통일 (2026-01-01 지침 준수) */
+.hobby-card {
+    height: 380px; /* 모든 포털 카드와 동일한 높이감 유지 */
+    background: rgba(255, 255, 255, 0.02);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    transition: all 0.5s cubic-bezier(0.23, 1, 0.32, 1);
+}
+
+.hobby-card:hover {
+    background: rgba(255, 255, 255, 0.08);
+    border-color: var(--mango-blue);
+    transform: translateY(-15px) scale(1.02);
+    box-shadow: 0 30px 60px rgba(0, 0, 0, 0.5),
+                0 0 20px rgba(77, 188, 233, 0.2);
+}
+    </style>
+</head>
+<body class="min-h-screen flex flex-col items-center py-12 px-4 overflow-x-hidden">
+
+    <header class="text-center mb-16">
+        <h1 class="text-5xl font-black italic tracking-tighter text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-cyan-300 mb-4">
+            HOBBY EXPLORER
+        </h1>
+        <p class="text-zinc-400 font-medium">전 세계의 다채로운 열정을 담는 단 하나의 그릇</p>
+    </header>
+
+    <main class="hobby-bowl w-full max-w-5xl rounded-[3rem] p-8 md:p-16 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        
+        <div class="hobby-card bg-zinc-900/50 p-8 rounded-[2rem] border border-white/5 transition-all duration-500 cursor-pointer group">
+            <div class="w-14 h-14 bg-orange-500/20 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
+                <i data-lucide="palette" class="text-orange-500 w-8 h-8"></i>
+            </div>
+            <h3 class="text-xl font-bold mb-2">ART & DESIGN</h3>
+            <p class="text-zinc-500 text-sm leading-relaxed">디자이너님의 감각을 깨울 창조적 예술의 세계로 초대합니다.</p>
+        </div>
+
+        <div class="hobby-card bg-zinc-900/50 p-8 rounded-[2rem] border border-white/5 transition-all duration-500 cursor-pointer group">
+            <div class="w-14 h-14 bg-blue-500/20 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
+                <i data-lucide="bike" class="text-blue-500 w-8 h-8"></i>
+            </div>
+            <h3 class="text-xl font-bold mb-2">SPORTS</h3>
+            <p class="text-zinc-500 text-sm leading-relaxed">한계를 넘어서는 역동적인 움직임, 에너지를 발산하세요.</p>
+        </div>
+
+        <div class="hobby-card bg-zinc-900/50 p-8 rounded-[2rem] border border-white/5 transition-all duration-500 cursor-pointer group">
+            <div class="w-14 h-14 bg-purple-500/20 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
+                <i data-lucide="gamepad-2" class="text-purple-500 w-8 h-8"></i>
+            </div>
+            <h3 class="text-xl font-bold mb-2">GAMING</h3>
+            <p class="text-zinc-500 text-sm leading-relaxed">새로운 차원의 가상 세계에서 펼쳐지는 무한한 모험.</p>
+        </div>
+<div class="orb"></div>
+
+<div class="w-full max-w-[1400px] mx-auto px-6">
+    <div class="py-20 flex flex-col items-center">
+        <span class="text-xs font-black tracking-[0.5em] text-blue-400 uppercase mb-4 opacity-70">Global Community</span>
+        <h1 class="text-7xl font-black italic tracking-tighter text-white mb-6">
+            THE <span class="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-white">BOWL</span> OF PASSION
+        </h1>
+        <div class="w-24 h-1 bg-gradient-to-r from-blue-500 to-transparent rounded-full"></div>
+    </div>
+
+    <div class="hobby-bowl-container rounded-[4rem] p-12 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+        
+        <div class="hobby-card group rounded-[3rem] p-10 flex flex-col justify-between overflow-hidden relative">
+            <div class="absolute -top-10 -right-10 w-40 h-40 bg-orange-500/10 rounded-full blur-3xl group-hover:bg-orange-500/20 transition-all"></div>
+            <div>
+                <div class="w-16 h-16 bg-white/5 rounded-2xl flex items-center justify-center mb-8">
+                    <i data-lucide="palette" class="text-orange-500 w-8 h-8"></i>
+                </div>
+                <h3 class="text-2xl font-bold text-white mb-4">ART & DESIGN</h3>
+                <p class="text-zinc-500 leading-relaxed">전 세계 아티스트들과 교감하는 망고만의 캔버스.</p>
+            </div>
+            <button class="w-full py-4 rounded-2xl bg-white/5 text-xs font-black hover:bg-orange-500 hover:text-white transition-all">EXPLORE</button>
+        </div>
+
+        </div>
+</div>
+<div class="mb-12">
+    <div class="flex items-center space-x-3 mb-8">
+        <i data-lucide="map-pin" class="text-blue-400 w-6 h-6"></i>
+        <h2 class="text-3xl font-black italic text-white">RESERVE YOUR SPACE</h2>
+    </div>
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+        <div class="ultra-card group rounded-[3rem] p-8 flex flex-col justify-between" style="--card-color: #22c55e;">
+            <div>
+                <span class="text-[10px] font-bold bg-green-500/20 text-green-400 px-3 py-1 rounded-full">REAL-TIME</span>
+                <h3 class="text-xl font-bold text-white mt-4 mb-2">FUTSAL ARENA</h3>
+                <p class="text-zinc-500 text-sm">부산 및 수도권 500개 구장 즉시 연결</p>
+            </div>
+            <button class="w-full py-4 rounded-2xl bg-white/5 border border-green-500/30 text-green-400 font-bold hover:bg-green-500 hover:text-white transition-all">BOOK NOW</button>
+        </div>
+        </div>
+</div>
+<div class="mb-12">
+    <div class="flex items-center space-x-3 mb-8">
+        <i data-lucide="shopping-bag" class="text-orange-400 w-6 h-6"></i>
+        <h2 class="text-3xl font-black italic text-white">GEAR & RENTAL</h2>
+    </div>
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+        <div class="ultra-card group rounded-[3rem] p-8 flex flex-col justify-between" style="--card-color: #f59e0b;">
+            <div class="relative overflow-hidden rounded-2xl mb-4 h-32 bg-white/5 flex items-center justify-center">
+                <i data-lucide="package" class="w-12 h-12 text-orange-500/50"></i>
+            </div>
+            <h3 class="text-xl font-bold text-white mb-2">PREMIUM GEAR</h3>
+            <p class="text-zinc-500 text-sm">전문가용 장비 대여 및 특가 판매</p>
+            <div class="flex space-x-2 mt-4">
+                <button class="flex-1 py-3 rounded-xl bg-orange-500 text-white text-xs font-bold">BUY</button>
+                <button class="flex-1 py-3 rounded-xl bg-white/10 text-white text-xs font-bold">RENT</button>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="w-full mb-12">
+    <div class="w-full hobby-bowl-container rounded-[2.5rem] p-1 overflow-hidden relative group cursor-pointer">
+        <div class="bg-gradient-to-r from-blue-600/20 to-purple-600/20 flex flex-col md:flex-row items-center justify-between px-10 py-8 rounded-[2.3rem]">
+            <div class="flex flex-col mb-4 md:mb-0">
+                <span class="text-blue-400 font-black text-xs tracking-widest mb-2 uppercase">SPONSORED BY PI NETWORK</span>
+                <h2 class="text-2xl font-bold text-white">Join the Global Hobby Tournament 2026</h2>
+                <p class="text-zinc-400 text-sm">지금 참가하고 50,000 PI 리워드를 받으세요!</p>
+            </div>
+            <button class="px-8 py-4 bg-white text-black font-black rounded-full hover:scale-105 transition-transform">DETAILS</button>
+        </div>
+        <div class="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000"></div>
+    </div>
+</div>
+    </main>
+
+    <footer class="mt-16">
+        <a href="index.html" class="flex items-center space-x-2 text-zinc-500 hover:text-white transition-colors">
+            <i data-lucide="arrow-left" class="w-5 h-5"></i>
+            <span class="font-bold">BACK TO MANGO HOME</span>
+        </a>
+    </footer>
+
+    <script>
+    // 카드 위에서 마우스 움직임에 따른 3D 틸트 효과
+document.querySelectorAll('.hobby-card').forEach(card => {
+    card.addEventListener('mousemove', (e) => {
+        const rect = card.getBoundingClientRect();
+        const x = e.clientX - rect.left;
+        const y = e.clientY - rect.top;
+        
+        const xc = rect.width / 2;
+        const yc = rect.height / 2;
+        
+        const dx = x - xc;
+        const dy = y - yc;
+        
+        card.style.transform = `perspective(1000px) rotateY(${dx/10}deg) rotateX(${-dy/10}deg) translateY(-15px)`;
+    });
+    
+    card.addEventListener('mouseleave', () => {
+        card.style.transform = `perspective(1000px) rotateY(0deg) rotateX(0deg) translateY(0px)`;
+    });
+});
+
+        lucide.createIcons();
+    </script>
+</body>
+</html>
