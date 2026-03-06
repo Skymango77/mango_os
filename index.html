@@ -2896,7 +2896,9 @@ function spawnHiddenTreasure() {
         if (typeof updateLegacyNews === 'function') updateLegacyNews();
         const logo = document.getElementById('mango-charging-logo');
         const splash = document.getElementById('mango-splash'); // 🌪️ 스플래시 요소 추가
-
+// 🚨 [부활] 로딩 시작하자마자 오뚜기 애니메이션 실행!
+        const chargingLogo = document.getElementById('mango-charging-logo');
+        if (chargingLogo) chargingLogo.classList.add('animate-mango-otogi');
         // 1단계: 3.1초 뒤 로직 실행
         setTimeout(() => {
             // 로고 애니메이션 중지
@@ -2919,16 +2921,29 @@ if (typeof bootMangoExperience === 'function') bootMangoExperience();
 
 
     window.addEventListener('load', () => {
+        if (typeof updateLegacyNews === 'function') updateLegacyNews();
         const logo = document.getElementById('mango-charging-logo');
-        if (logo) {
-            // 오뚜기 퍼포먼스(약 3초)가 끝난 후 클래스 제거
-            setTimeout(() => {
-                logo.classList.remove('animate-mango-otogi');
-                console.log("Mango Performance: 3-step Otogi Complete.");
-            }, 3100); 
-        }
-    });
+        const splash = document.getElementById('mango-splash'); 
 
+        // 🚨 여기부터 추가된 부분
+        if (logo) logo.classList.add('animate-mango-otogi'); 
+        // 여기까지
+
+        // 1단계: 3.1초 뒤 로직 실행
+        setTimeout(() => {
+            // 로고 애니메이션 중지
+            if (logo) logo.classList.remove('animate-mango-otogi');
+
+            // 스플래시 화면 페이드아웃 및 제거
+            if (splash) {
+                splash.style.opacity = '0';
+                setTimeout(() => {
+                    splash.style.display = 'none';
+                }, 800);
+            }
+        }, 3100); 
+    });
+    
 // 🎵 Mango Signature Sound Logic (2026 Busan OS Update)
 const mangoAudio = new Audio('assets/sounds/mangomangodaldalhe.mp3'); //
 let isMangoBooted = false;
