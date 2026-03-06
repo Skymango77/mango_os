@@ -2843,15 +2843,27 @@ function spawnHiddenTreasure() {
         `).join('');
     }
 
-    window.addEventListener('load', updateLegacyNews);
+    // 2843행부터 수정 시작
     window.addEventListener('load', () => {
         const logo = document.getElementById('mango-charging-logo');
-        if (logo) {
-            setTimeout(() => {
-                logo.classList.remove('animate-mango-otogi');
-                console.log("Mango Performance: 3-step Otogi Complete.");
-            }, 3100);
-        }
+        const splash = document.getElementById('mango-splash'); // 🌪️ 스플래시 요소 추가
+
+        // 1단계: 3.1초 뒤 로직 실행
+        setTimeout(() => {
+            // 로고 애니메이션 중지
+            if (logo) logo.classList.remove('animate-mango-otogi');
+
+            // 스플래시 화면 페이드아웃 및 제거 (이게 해결의 핵심!)
+            if (splash) {
+                splash.style.opacity = '0';
+                setTimeout(() => {
+                    splash.style.display = 'none';
+                    console.log("Mango Status: Splash Screen Cleanly Removed.");
+                }, 800); // 페이드아웃 애니메이션 시간
+            }
+            
+            console.log("Mango Performance: 3-step Otogi & Splash Complete.");
+        }, 3100); 
     });
 </script>
 </body>

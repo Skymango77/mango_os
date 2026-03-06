@@ -1,0 +1,48 @@
+<div id="mango-splash" style="
+    position: fixed; 
+    top: 0; 
+    left: 0; 
+    width: 100vw; 
+    height: 100vh; 
+    background-color: #ffffff; 
+    z-index: 999999; 
+    display: flex; 
+    flex-direction: column; 
+    align-items: center; 
+    justify-content: center; 
+    margin: 0; 
+    padding: 0;
+    transition: opacity 0.8s ease-in-out;
+">
+    <div class="mango-wind-container" style="position: relative; width: 320px; height: 320px; display: flex; align-items: center; justify-content: center;">
+        <div class="wind-layer outer" style="border: 8px double #4DBCE9; border-top-color: transparent; border-radius: 50%; position: absolute; inset: 0; animation: rotate 2s linear infinite;"></div>
+        <div class="wind-layer middle" style="border: 5px solid #A0E4FF; border-bottom-color: transparent; border-radius: 50%; position: absolute; inset: 40px; animation: rotate 1.5s linear infinite reverse; opacity: 0.6;"></div>
+        <div class="wind-layer inner" style="border: 3px dashed #4DBCE9; border-left-color: transparent; border-radius: 50%; position: absolute; inset: 80px; animation: rotate 1s linear infinite;"></div>
+        
+        <img src="assets/img/mango.jpg" class="mango-logo-core" alt="Mango" 
+             style="width: 130px; border-radius: 2.8rem; z-index: 10; animation: pulse 2s ease-in-out infinite; box-shadow: 0 10px 30px rgba(0,0,0,0.1);">
+    </div>
+
+    <p style="
+        color: #4DBCE9; 
+        margin-top: 50px; 
+        font-weight: 900; 
+        font-size: 1.2rem; 
+        letter-spacing: 6px; 
+        font-style: italic;
+        text-transform: uppercase;
+    ">Mango System Starting</p>
+</div>
+
+<style>
+/* 🔄 회전 및 오뚜기 애니메이션 정의 */
+@keyframes rotate {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+@keyframes pulse {
+    0%, 100% { transform: scale(1) rotate(-3deg); }
+    50% { transform: scale(1.05) rotate(3deg); }
+}
+</style>
