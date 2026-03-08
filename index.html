@@ -2943,10 +2943,67 @@ if (typeof bootMangoExperience === 'function') bootMangoExperience();
             }
         }, 3100); 
     });
-    
+
 // 🎵 Mango Signature Sound Logic (2026 Busan OS Update)
 const mangoAudio = new Audio('assets/sounds/mangomangodaldalhe.mp3'); //
 let isMangoBooted = false;
+
+// 🎵 Mango Signature Audio Engine (2026 Update)
+const mangoSweetSound = new Audio('assets/sounds/mangomangodaldalhe.mp3');
+
+/**
+ * 망고 사운드 재생 함수
+ * 브라우저 정책 대응: 첫 사용자 상호작용 후 오디오 컨텍스트 활성화
+ */
+function playMangoSignature() {
+    mangoSweetSound.volume = 0.6; // 디자이너님의 귀를 즐겁게 할 최적의 볼륨
+    mangoSweetSound.play().catch(err => {
+        console.warn("[Mango OS] 사용자 상호작용 전 자동 재생이 제한되었습니다. 첫 클릭 시 활성화됩니다.");
+    });
+}
+
+// [시점 1] 메인 화면 진입 시 1회 재생 (로딩 후 1.5초 뒤, 가장 달콤한 타이밍)
+window.addEventListener('load', () => {
+    setTimeout(() => {
+        playMangoSignature();
+        showMangoToast("🥭 망고망고 달콤해~ (Signature Sound)");
+    }, 1500);
+});
+
+// [시점 2] 10분 주기 반복 재생 (600,000ms)
+// 디자이너님이 작업에 몰입하시다가도 '아, 내가 망고의 세계에 있지!'라고 느낄 수 있게 합니다.
+setInterval(() => {
+    console.log("[Mango OS] 주기적 사운드 재생 타이밍 (10분 경과)");
+    playMangoSignature();
+    showMangoToast("다시 충전되는 달콤한 망고 타임! 🥭");
+}, 600000);
+
+// 추가 고도화: 브라우저 차단 대비, 화면 어디든 첫 클릭 시 사운드 엔진 예열
+document.addEventListener('click', () => {
+    if (mangoSweetSound.paused && mangoSweetSound.currentTime === 0) {
+        // 아직 재생 전이라면 엔진만 예열 (무음 재생 등)
+    }
+}, { once: true });
+
+// 사운드 잠금 해제 및 재생 함수
+function initMangoSound() {
+    // 1. 사운드 재생 시도
+    const playPromise = mangoAudio.play();
+
+    if (playPromise !== undefined) {
+        playPromise.then(_ => {
+            // 재생 성공
+            console.log("Sound started on Edge/Safari/Chrome");
+        }).catch(error => {
+            // 차단 시: 사용자 화면 클릭 시 즉시 재생되도록 예약
+            document.addEventListener('click', () => {
+                mangoAudio.play();
+                startOttugiEffect(); // 사운드 시작 시 로고 흔들기
+            }, { once: true });
+        });
+    }
+}
+
 // 사운드 재생 함수 (볼륨 조절 포함)
 function playMangoSweetSound() {
     if (isMangoBooted) return; 
@@ -2967,11 +3024,10 @@ window.addEventListener('load', () => {
     }, 1000);
 });
 
-// [시점 2] 10분(600,000ms)마다 1회 재생 루프
+// 5. 10분 주기 반복 (600,000ms)
 setInterval(() => {
-    playMangoSweetSound();
-    showMangoToast("다시 만나는 달콤한 망고 타임! (10분 주기)"); //
-}, 200000);
+    bootMangoExperience();
+}, 600000);
 
 /* [초고도화] 브라우저 통합 사운드 및 오뚜기 로직 */
 
