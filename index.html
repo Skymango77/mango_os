@@ -2950,7 +2950,7 @@ let isMangoBooted = false;
 
 // 🎵 Mango Signature Audio Engine (2026 Update)
 const mangoSweetSound = new Audio('assets/sounds/mangomangodaldalhe.mp3');
-
+let isMangoAudioInitialized = false; // 중복 재생 및 초기화 확인용
 /**
  * 망고 사운드 재생 함수
  * 브라우저 정책 대응: 첫 사용자 상호작용 후 오디오 컨텍스트 활성화
@@ -2961,21 +2961,66 @@ function playMangoSignature() {
         console.warn("[Mango OS] 사용자 상호작용 전 자동 재생이 제한되었습니다. 첫 클릭 시 활성화됩니다.");
     });
 }
+/**
+ * 망고 사운드 재생 함수
+ * 로딩 중 사용자의 지루함을 달래고 시스템 활성화를 알림
+ */
+function playMangoSignature() {
+    mangoSweetSound.volume = 0.6; // 디자이너님의 귀를 즐겁게 할 최적의 볼륨
+    
+    // 재생 시도
+    const playPromise = mangoSweetSound.play();
+    
+    if (playPromise !== undefined) {
+        playPromise.then(() => {
+            console.log("[Mango OS] 시그니처 사운드 재생 성공");
+        }).catch(err => {
+            console.warn("[Mango OS] 브라우저 정책으로 인해 첫 클릭 시 사운드가 활성화됩니다.");
+            // 실패 시 소리 객체 재로드 준비
+            mangoSweetSound.load();
+        });
+    }
+}
 
-// [시점 1] 메인 화면 진입 시 1회 재생 (로딩 후 1.5초 뒤, 가장 달콤한 타이밍)
+/**
+ * [핵심] 사용자가 앱 아이콘을 클릭하거나 화면을 처음 터치할 때 즉시 호출
+ * 로딩 시간 동안 "어 뭐지?" 하는 의구심을 단번에 해결
+ */
+function startMangoExperience() {
+    if (isMangoAudioInitialized) return;
+    
+    // 1. 즉시 사운드 재생 (로딩 대기 시간의 지루함 해소)
+    playMangoSignature();
+    
+    // 2. 즉시 토스트 알림으로 시각적 피드백 제공
+    if (typeof showMangoToast === 'function') {
+        showMangoToast("🥭 망고망고 달콤해~ (Signature Sound)");
+    }
+    
+    isMangoAudioInitialized = true;
+}
+// [시점 1] 사용자가 화면 어디든 '처음 클릭/터치'할 때 즉시 실행 (가장 확실한 방법)
+document.addEventListener('click', startMangoExperience, { once: true });
+document.addEventListener('touchstart', startMangoExperience, { once: true });
+// [시점 2] 페이지 로드 후 1.5초 뒤 자동 시도 (이미 권한이 있는 경우)
 window.addEventListener('load', () => {
     setTimeout(() => {
-        playMangoSignature();
-        showMangoToast("🥭 망고망고 달콤해~ (Signature Sound)");
+        if (!isMangoAudioInitialized) {
+            playMangoSignature();
+            showMangoToast("🥭 망고망고 달콤해~ (Signature Sound)");
+            isMangoAudioInitialized = true;
+        }
     }, 1500);
 });
 
-// [시점 2] 10분 주기 반복 재생 (600,000ms)
-// 디자이너님이 작업에 몰입하시다가도 '아, 내가 망고의 세계에 있지!'라고 느낄 수 있게 합니다.
+// [시점 3] 10분 주기 반복 재생 (600,000ms)
+// 작업 몰입 중에도 망고의 감성을 리마인드
 setInterval(() => {
     console.log("[Mango OS] 주기적 사운드 재생 타이밍 (10분 경과)");
     playMangoSignature();
-    showMangoToast("다시 충전되는 달콤한 망고 타임! 🥭");
+    if (typeof showMangoToast === 'function') {
+        showMangoToast("다시 충전되는 달콤한 망고 타임! 🥭");
+    }
 }, 600000);
 
 // 추가 고도화: 브라우저 차단 대비, 화면 어디든 첫 클릭 시 사운드 엔진 예열
