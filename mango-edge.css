@@ -1,0 +1,36 @@
+/* 1. 우측 투명 태그(핸들) */
+.mango-edge-handle {
+    position: fixed !important;
+    right: 0 !important;
+    top: 50% !important;
+    transform: translateY(-50%) !important;
+    width: 12px !important; 
+    height: 120px !important;
+    background: rgba(255, 193, 7, 0.4) !important; /* 반투명 골드 */
+    border-radius: 20px 0 0 20px !important;
+    cursor: pointer !important;
+    z-index: 100000 !important; /* 최상위 우선순위 */
+    box-shadow: -2px 0 10px rgba(0,0,0,0.3);
+    transition: width 0.3s;
+}
+
+/* 2. 숨겨진 슬라이드 메뉴 패널 */
+.mango-edge-panel {
+    position: fixed !important;
+    right: -320px !important; /* 평소엔 화면 밖으로 완전히 숨김 */
+    top: 0 !important;
+    width: 300px !important;
+    height: 100vh !important;
+    background: rgba(10, 10, 10, 0.98) !important; /* 더 짙은 블랙 */
+    backdrop-filter: blur(25px) !important;
+    border-left: 3px solid #ffc107;
+    z-index: 99999 !important;
+    transition: right 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+    padding: 50px 25px !important;
+    box-shadow: -20px 0 50px rgba(0,0,0,0.9);
+}
+
+/* 활성화 상태 */
+.mango-edge-panel.active {
+    right: 0 !important;
+}

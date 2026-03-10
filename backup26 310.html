@@ -2860,51 +2860,6 @@ function spawnHiddenTreasure() {
         animation: mango-otogi 1.2s ease-in-out 3 forwards !important;
         transform-origin: bottom center !important;    /* 1.2초 동안 1회 작동하며, 총 3번 반복 후 멈춤 */
 }
-/* 5분위 그리드 레이어: 전체 화면을 가로로 5등분하여 배치 제어 */
-        .mango-glass-layout-engine {
-            position: fixed;
-            inset: 0;
-            display: grid;
-            grid-template-columns: repeat(5, 1fr); /* 5등분 시스템 */
-            pointer-events: none; /* 하단 레이어 조작 방해 금지 */
-            z-index: 10000; /* 최상단 유지 */
-        }
-
-        /* 5번째 칸(가장 우측 20% 영역) 하단 고정 앵커 */
-        .hex-right-anchor {
-            grid-column: 5; /* 5번째 칸 선택 */
-            display: flex;
-            align-items: flex-end;
-            justify-content: flex-end;
-            padding: 50px;
-            pointer-events: auto; /* 배지만 클릭 가능하도록 설정 */
-        }
-
-        /* 디자이너님의 오뚜기 애니메이션을 입힐 육각형 배지 */
-        .diamond-hex-badge {
-            width: 140px;
-            height: 160px;
-            background: #C2A6E8; /* 이미지 속 연보라색 */
-            clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            box-shadow: 0 30px 60px rgba(0,0,0,0.5);
-            border: none;
-            transition: filter 0.3s;
-        }
-
-        .diamond-hex-badge:hover {
-            filter: brightness(1.2);
-        }
-
-        .diamond-hex-badge span {
-            font-size: 3.5rem;
-            filter: drop-shadow(0 4px 10px rgba(0,0,0,0.3));
-        }
-
-
     </style>
 
     <script>
@@ -3143,25 +3098,6 @@ window.addEventListener('load', () => setTimeout(bootMangoExperience, 1500));
 // 10분 주기 리마인드
 setInterval(() => { isMangoBooted = false; bootMangoExperience(); }, 600000);
 </script>
-<div id="mango-diamond-portal" style="position: fixed !important; top: 0; left: 50%; transform: translateX(-50%); width: 100%; max-width: 480px; height: 0; pointer-events: none; z-index: 2147483647 !important;">
-    
-    <div style="position: absolute; top: 380px; right: -70px; pointer-events: auto;">
-        
-        <div class="diamond-hex-badge animate-mango-otogi" 
-             onclick="if(typeof bootMangoExperience === 'function') bootMangoExperience()" 
-             style="width: 58px; height: 68px; background: rgba(10, 10, 10, 0.95); backdrop-filter: blur(15px); clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%); display: flex; align-items: center; justify-content: center; cursor: pointer; border: 1.5px solid rgba(194, 166, 232, 0.7); box-shadow: 0 0 25px rgba(194, 166, 232, 0.5); animation: mango-lock-float 4s ease-in-out infinite;">
-            <span style="font-size: 1.6rem; filter: drop-shadow(0 0 8px rgba(255,255,255,0.4));">💎</span>
-        </div>
 
-    </div>
-</div>
-
-<style>
-/* 부유 애니메이션 (에러 방지를 위해 깔끔하게 정리) */
-@keyframes mango-lock-float {
-    0%, 100% { transform: translateY(0); }
-    50% { transform: translateY(-8px); }
-}
-</style>
 </body>
 </html>

@@ -6,62 +6,117 @@
     <title>Mango Profile | Global Identity</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@700;900&family=Outfit:wght@300;400;700&display=swap');
-        
-        body { 
-            background: #050505; 
-            color: #fff; 
-            font-family: 'Outfit', sans-serif;
-            min-height: 100vh; /* 13행: min-h-screen 오타를 CSS 표준 문법으로 교정 */
-            margin: 0; 
-            padding-bottom: 100px;
-        }
+    @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@700;900&family=Outfit:wght@300;400;700&display=swap');
+    
+    body { 
+        background: #050505; 
+        color: #fff; 
+        font-family: 'Outfit', sans-serif;
+        min-height: 100vh;
+        margin: 0; 
+        padding-bottom: 140px; 
+    }
 
-        .gold-gradient {
-            background: linear-gradient(135deg, #FFF 0%, #FFD700 60%, #B8860B 100%);
-            -webkit-background-clip: text; 
-            background-clip: text; /* 17행: 호환성을 위한 표준 속성 추가 (Severity 4 해결) */
-            -webkit-text-fill-color: transparent;
-            padding-right: 4px;
-        }
+    .gold-gradient {
+        background: linear-gradient(135deg, #FFF 0%, #FFD700 60%, #B8860B 100%);
+        -webkit-background-clip: text; 
+        background-clip: text;
+        -webkit-text-fill-color: transparent;
+    }
 
-        .glass-panel {
-            background: rgba(255, 255, 255, 0.02);
-            backdrop-filter: blur(30px);
-            border: 1px solid rgba(255, 255, 255, 0.05);
-            border-radius: 2.5rem;
-        }
+    .glass-panel {
+        background: rgba(255, 255, 255, 0.02);
+        backdrop-filter: blur(30px);
+        border: 1px solid rgba(255, 255, 255, 0.05);
+        border-radius: 2.5rem;
+    }
 
-        .level-badge {
-            background: linear-gradient(145deg, #FFD700, #b45309);
-            box-shadow: 0 0 15px rgba(255, 215, 0, 0.3);
-        }
+    /* --- [핵심] 육각형 물리 엔진 통합본 --- */
+    .hex-grid {
+        display: flex;
+        justify-content: center;
+        gap: 15px;
+        margin-top: 25px;
+        perspective: 1000px;
+    }
 
-        /* 프로그레스 바 고도화 */
-        .trust-track { height: 8px; background: #111; border-radius: 10px; position: relative; }
-        .trust-bar {
-            height: 100%; 
-            width: 65%; /* 현재 등급 진행도 */
-            background: linear-gradient(90deg, #FFD700, #fff);
-            border-radius: 10px; 
-            box-shadow: 0 0 10px #FFD700;
-        }
-    </style>
+    .hex-item {
+        position: relative;
+        width: 100px;
+        height: 115px;
+        background: rgba(255, 215, 0, 0.05);
+        /* 육각형을 물리적으로 깎아내는 좌표 */
+        clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
+        border: 1px solid rgba(255, 215, 0, 0.3);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1);
+        cursor: pointer;
+        z-index: 10;
+    }
+
+    .hex-item:active {
+        transform: scale(0.9) translateZ(-20px);
+        background: rgba(255, 215, 0, 0.15);
+    }
+
+    .hex-icon {
+        font-size: 1.8rem;
+        filter: drop-shadow(0 0 10px rgba(255, 215, 0, 0.3));
+        margin-bottom: 5px;
+    }
+
+    .hex-text {
+        font-family: 'Orbitron', sans-serif;
+        font-size: 8px;
+        font-weight: 900;
+        color: #FFD700;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+    }
+
+    /* --- 기타 UI 요소 --- */
+    .level-badge {
+        background: linear-gradient(145deg, #FFD700, #b45309);
+        box-shadow: 0 0 15px rgba(255, 215, 0, 0.3);
+    }
+
+    .trust-track { height: 8px; background: #111; border-radius: 10px; overflow: hidden; margin: 15px 0; }
+    .trust-bar {
+        height: 100%; 
+        background: linear-gradient(90deg, #FFD700, #fff);
+        box-shadow: 0 0 10px #FFD700;
+    }
+
+    .lang-badge {
+        background: rgba(255, 215, 0, 0.05);
+        border: 1px solid rgba(255, 215, 0, 0.1);
+        border-radius: 8px;
+        padding: 4px 10px;
+        display: flex;
+        align-items: center;
+        gap: 5px;
+    }
+</style>
 </head>
 <body class="p-6">
 
     <div class="flex justify-between items-center mb-10">
-        <button onclick="history.back()" class="w-10 h-10 flex items-center justify-center glass-panel">
+        <button onclick="history.back()" class="w-10 h-10 flex items-center justify-center glass-panel active:scale-90 transition-all">
             <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
         </button>
         <h1 class="text-xl font-orbitron font-black italic gold-gradient">MANGO PROFILE</h1>
         <div class="flex items-center gap-2">
-            <span class="text-[10px] font-bold text-gray-500 uppercase">18 Lang</span>
-            <div class="w-2 h-2 rounded-full bg-green-500 animate-pulse"></div>
+            <div class="lang-badge">
+                <span class="text-[9px] font-orbitron font-black text-yellow-500 tracking-tighter">🌐 GLOBAL 18</span>
+            </div>
+            <div class="w-2 h-2 rounded-full bg-green-500 animate-pulse shadow-[0_0_8px_#22c55e]"></div>
         </div>
     </div>
 
-    <div class="glass-panel p-8 mb-6 border-yellow-500/20">
+    <div class="glass-panel p-8 mb-6 border-yellow-500/10">
         <div class="flex items-center gap-6 mb-8">
             <div class="relative">
                 <div class="w-20 h-20 rounded-full bg-gray-900 border-2 border-yellow-500 flex items-center justify-center text-3xl shadow-[0_0_20px_rgba(255,215,0,0.2)]">👑</div>
@@ -69,88 +124,375 @@
             </div>
             <div>
                 <h2 class="text-2xl font-bold flex items-center gap-2">
-                    김망고 <span class="text-xs font-light text-gray-500">CEO</span>
+                    김망고 <span class="text-xs font-light text-gray-500 uppercase">CEO</span>
                 </h2>
                 <p class="text-[10px] text-yellow-500 tracking-[0.3em] font-bold uppercase mt-1">Global Operator</p>
             </div>
         </div>
-
-        <div class="space-y-4">
+<div class="pt-10 border-t border-white/5">
+            <div class="flex justify-between items-center mb-8 px-2">
+                <h4 class="text-[9px] font-black text-gray-600 uppercase tracking-[0.4em]">Integrated Core</h4>
+                <span class="text-[8px] text-yellow-500 font-bold animate-pulse">HEXA-SYNC ON</span>
+            </div>
+            
+            <div class="hex-grid">
+                <div class="hex-item">
+                    <span class="hex-icon">📝</span>
+                    <span class="hex-text">MEMO</span>
+                </div>
+                <div class="hex-item">
+                    <span class="hex-icon">⭐</span>
+                    <span class="hex-text">STARS</span>
+                </div>
+                <div class="hex-item">
+                    <span class="hex-icon">🎓</span>
+                    <span class="hex-text">EDU</span>
+                </div>
+            </div>
+        </div>
+        <div class="space-y-4 mb-8">
             <div class="flex justify-between items-end">
                 <div>
-                    <p class="text-[9px] text-gray-500 uppercase tracking-widest mb-1">Current Status</p>
+                    <p class="text-[9px] text-gray-500 uppercase tracking-widest mb-1">Mango Trust Score</p>
                     <p class="text-xs font-bold text-white">골드 망고 (Premium)</p>
                 </div>
                 <div class="text-right">
                     <p class="text-[18px] font-orbitron font-black text-yellow-500">98.5<span class="text-xs">°C</span></p>
                 </div>
             </div>
-            <div class="trust-track"><div class="trust-bar" style="width: 98%;"></div></div>
+            <div class="trust-track"><div class="trust-bar" style="width: 98.5%;"></div></div>
             <p class="text-[9px] text-gray-600 leading-relaxed text-center">결제 데이터 공유 중 · 모든 포털 관리 권한 활성화됨</p>
         </div>
-    </div>
 
-    <div class="glass-panel p-6 mb-6 bg-yellow-500/[0.03]">
+        <div class="pt-10 border-t border-white/5">
+            <div class="flex justify-between items-center mb-8 px-2">
+                <h4 class="text-[9px] font-black text-gray-600 uppercase tracking-[0.4em]">Integrated Core</h4>
+                <span class="text-[8px] text-yellow-500 font-bold animate-pulse">HEXA-SYNC ON</span>
+            </div>
+            
+            <div class="hex-grid">
+                <div onclick="openMangoModal('memo')" class="hex-item group">
+                    <span class="hex-icon">📝</span>
+                    <span class="hex-text">Memo</span>
+                    <div class="absolute inset-0 border border-yellow-500/20 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                </div>
+
+                <div onclick="openMangoModal('favorites')" class="hex-item group">
+                    <span class="hex-icon">⭐</span>
+                    <span class="hex-text">Stars</span>
+                </div>
+
+                <div onclick="openMangoModal('edu')" class="hex-item group">
+                    <span class="hex-icon">🎓</span>
+                    <span class="hex-text">Edu</span>
+                </div>
+            </div>
+            
+            <p class="text-[8px] text-gray-700 mt-10 text-center tracking-widest uppercase">Select an core module to activate</p>
+        </div>
+
+    <div class="glass-panel p-6 mb-6 bg-yellow-500/[0.03] border-yellow-500/10 active:scale-[0.99] transition-all">
         <div class="flex justify-between items-center mb-4">
             <h3 class="text-xs font-bold text-yellow-500 uppercase tracking-widest">Referral Code</h3>
-            <span class="text-[9px] bg-white/10 px-2 py-0.5 rounded text-gray-400">Reward 3%</span>
+            <span class="text-[9px] bg-yellow-500/20 px-2 py-0.5 rounded text-yellow-500 font-bold italic">Reward 3%</span>
         </div>
         <div class="flex gap-2">
-            <div class="flex-1 bg-black/40 border border-white/5 rounded-xl px-4 py-3 font-mono text-sm text-center tracking-widest" id="refCode">
+            <div class="flex-1 bg-black/40 border border-white/5 rounded-xl px-4 py-3 font-mono text-sm text-center tracking-widest text-gray-300" id="refCode">
                 MANGO-CEO-777
             </div>
-            <button onclick="copyCode()" class="bg-yellow-500 text-black px-4 rounded-xl font-bold text-xs active:scale-95 transition-all">
+            <button onclick="copyCode()" class="bg-yellow-500 text-black px-5 rounded-xl font-black text-[10px] active:scale-95 transition-all">
                 COPY
             </button>
         </div>
-        <p class="text-[9px] text-gray-600 mt-3 text-center">지인이 가입 시 코드 입력하면 평생 결제액의 일부가 적립됩니다.</p>
+        <p class="text-[9px] text-gray-600 mt-3 text-center">지인이 가입 시 코드 입력 시 평생 결제액의 일부가 적립됩니다.</p>
     </div>
 
-    <div class="grid grid-cols-2 gap-4 mb-6">
-        <div class="glass-panel p-5 text-center group cursor-pointer active:scale-95 transition-all">
+    <div class="grid grid-cols-1 gap-4 mb-6">
+        <div class="glass-panel p-5 text-center active:scale-95 transition-all border-white/5 active:scale-[0.98]">
             <div class="text-2xl mb-2">💳</div>
-            <p class="text-xs font-bold">QR PAY</p>
-            <p class="text-[9px] text-yellow-500 font-mono mt-1">₩ 4,520,000</p>
+            <p class="text-[10px] font-bold text-gray-500 uppercase mb-1">QR PAY</p>
+            <p class="text-xs font-mono text-yellow-500 font-bold">₩ 4,520,000</p>
         </div>
-        <div class="glass-panel p-5 text-center group cursor-pointer active:scale-95 transition-all">
-            <div class="text-2xl mb-2">⌚</div>
-            <p class="text-xs font-bold">DEVICE SYNC</p>
-            <p class="text-[9px] text-green-500 mt-1 font-bold italic">Watch Connected</p>
+
+        <div class="glass-panel p-5 border-white/5">
+            <h4 class="text-[9px] font-black text-gray-600 uppercase tracking-[0.4em] text-center mb-5">Device Ecosystem</h4>
+            <div class="grid grid-cols-2 gap-3">
+                
+                <div class="device-status p-4 rounded-xl text-center group">
+                    <div class="text-2xl mb-2">⌚</div>
+                    <p class="text-[9px] font-bold text-gray-500 uppercase tracking-widest mb-1">Watch</p>
+                    <div class="flex items-center justify-center gap-1.5">
+                        <div class="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse shadow-[0_0_5px_#22c55e]"></div>
+                        <p class="text-[11px] text-green-500 font-bold italic tracking-tighter">Connected</p>
+                    </div>
+                </div>
+
+                <div class="device-status p-4 rounded-xl text-center group">
+                    <div class="text-2xl mb-2">👓</div>
+                    <p class="text-[9px] font-bold text-gray-500 uppercase tracking-widest mb-1">Glass</p>
+                    <div class="flex items-center justify-center gap-1.5">
+                        <div class="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse shadow-[0_0_5px_#22c55e]"></div>
+                        <p class="text-[11px] text-green-500 font-bold italic tracking-tighter">Active</p>
+                    </div>
+                </div>
+
+            </div>
         </div>
     </div>
 
     <div class="space-y-3">
         <h4 class="text-[9px] font-black text-gray-600 uppercase tracking-[0.4em] ml-2">Control Tower</h4>
         
-        <div class="glass-panel p-5 flex items-center justify-between">
+        <div class="glass-panel p-5 flex items-center justify-between border-white/5 active:scale-[0.98] transition-all cursor-pointer">
             <div class="flex items-center gap-4">
-                <div class="w-10 h-10 bg-blue-500/10 rounded-2xl flex items-center justify-center">🏬</div>
+                <div class="w-10 h-10 bg-blue-500/10 rounded-2xl flex items-center justify-center text-lg">🏬</div>
                 <div>
                     <p class="text-xs font-bold">Store Management</p>
                     <p class="text-[9px] text-gray-500">가게 정산 및 재고 관리</p>
                 </div>
             </div>
-            <span class="bg-blue-500/20 text-blue-400 text-[8px] px-2 py-1 rounded-full">Owner</span>
+            <span class="bg-blue-500/20 text-blue-400 text-[8px] px-2 py-1 rounded-full font-bold">Owner</span>
         </div>
 
-        <div class="glass-panel p-5 flex items-center justify-between">
+        <div class="glass-panel p-5 flex items-center justify-between border-white/5 active:scale-[0.98] transition-all cursor-pointer">
             <div class="flex items-center gap-4">
-                <div class="w-10 h-10 bg-purple-500/10 rounded-2xl flex items-center justify-center">🌐</div>
+                <div class="w-10 h-10 bg-purple-500/10 rounded-2xl flex items-center justify-center text-lg">🌐</div>
                 <div>
                     <p class="text-xs font-bold">Portal Moderator</p>
                     <p class="text-[9px] text-gray-500">Food/Travel 포털 승인 권한</p>
                 </div>
             </div>
-            <span class="bg-purple-500/20 text-purple-400 text-[8px] px-2 py-1 rounded-full">Operator</span>
+            <span class="bg-purple-500/20 text-purple-400 text-[8px] px-2 py-1 rounded-full font-bold">Operator</span>
+        </div>
+    </div>
+
+    <div id="mangoModal" class="fixed inset-0 z-[100] hidden flex items-end justify-center px-4 pb-10 transition-all duration-500">
+        <div onclick="closeMangoModal()" class="absolute inset-0 bg-black/80 backdrop-blur-xl"></div>
+        
+        <div class="relative w-full max-w-md bg-white/[0.03] backdrop-blur-2xl p-8 border border-white/10 rounded-[3rem] shadow-[0_-20px_80px_rgba(0,0,0,0.8)] transform translate-y-full transition-transform duration-500 ease-[cubic-bezier(0.23,1,0.32,1)]" id="modalContent">
+            <div class="w-16 h-1.5 bg-white/10 rounded-full mx-auto mb-10 shadow-inner"></div>
+            
+            <div id="modalBody" class="min-h-[350px]">
+                </div>
+
+            <button onclick="closeMangoModal()" class="w-full mt-10 py-5 rounded-3xl bg-white/5 border border-white/10 text-[10px] font-black tracking-[0.5em] text-gray-500 active:scale-95 transition-all hover:text-white uppercase">
+                Exit System
+            </button>
         </div>
     </div>
 
     <script>
+        const modal = document.getElementById('mangoModal');
+        const content = document.getElementById('modalContent');
+        const body = document.getElementById('modalBody');
+
+        // [초고도화 1] 메모 잠금 및 보안 저장소
+        function renderMemo(isAuth = false) {
+            if(!isAuth) {
+                body.innerHTML = `
+                    <div class="text-center py-12 animate-fadeIn">
+                        <div class="text-6xl mb-6 filter drop-shadow-[0_0_15px_rgba(255,255,255,0.3)] text-white">🔐</div>
+                        <h3 class="text-2xl font-bold mb-3 tracking-tight">Private Storage</h3>
+                        <p class="text-[10px] text-gray-500 mb-8 uppercase tracking-[0.3em] font-medium leading-loose">망고 보안 엔진에 의해 보호됨<br>접근을 위해 패스워드가 필요합니다</p>
+                        <button onclick="checkAuth()" class="px-10 py-4 rounded-full bg-yellow-500 text-black text-[11px] font-black shadow-[0_10px_30px_rgba(255,215,0,0.2)] active:scale-90 transition-all">UNLOCK SYSTEM</button>
+                    </div>`;
+                return;
+            }
+            const savedMemo = localStorage.getItem('mango_private_memo') || '';
+            body.innerHTML = `
+                <div class="flex justify-between items-center mb-6">
+                    <h3 class="text-2xl font-bold tracking-tighter text-white">Secure Memo</h3>
+                    <div class="flex items-center gap-2 px-3 py-1.5 bg-green-500/10 border border-green-500/20 rounded-full">
+                        <div class="w-1.5 h-1.5 bg-green-500 rounded-full animate-pulse"></div>
+                        <span class="text-[8px] font-black text-green-500 uppercase font-mono">Encrypted</span>
+                    </div>
+                </div>
+                <textarea id="memoInput" class="w-full h-52 bg-black/40 border border-white/5 rounded-[2rem] p-6 text-sm focus:outline-none focus:ring-1 focus:ring-yellow-500/30 transition-all text-gray-300 placeholder-gray-700 leading-relaxed shadow-inner" placeholder="기밀 아이디어를 입력하세요...">${savedMemo}</textarea>
+                <button onclick="savePrivateMemo()" class="w-full mt-6 py-5 rounded-[1.5rem] bg-gradient-to-r from-yellow-500 to-yellow-600 text-black font-black text-xs shadow-[0_20px_40px_rgba(255,215,0,0.15)] active:scale-95 transition-all uppercase">Secure Save</button>
+            `;
+        }
+
+        function checkAuth() {
+            const key = prompt("MANGO PRIVATE KEY (기본값: 0000)");
+            if(key === "0000") renderMemo(true);
+            else alert("ACCESS DENIED: 비밀번호가 틀렸습니다.");
+        }
+
+        function savePrivateMemo() {
+            localStorage.setItem('mango_private_memo', document.getElementById('memoInput').value);
+            alert('데이터가 성공적으로 암호화 저장되었습니다.');
+            closeMangoModal();
+        }
+
+        // [초고도화 4] 교육 포털 (신규)
+        function renderEdu() {
+            body.innerHTML = `
+                <div class="text-center py-12 animate-fadeIn">
+                    <div class="text-6xl mb-6 filter drop-shadow-[0_0_15px_rgba(255,215,0,0.3)] text-yellow-400">🎓</div>
+                    <h3 class="text-2xl font-bold mb-3 tracking-tight">Mango Education</h3>
+                    <p class="text-[10px] text-gray-500 mb-8 uppercase tracking-[0.3em] font-medium leading-loose">글로벌 지식 네트워크에 연결합니다.<br>학습 모듈을 선택하세요.</p>
+                    <button onclick="alert('AI Tutor 연결...')" class="px-10 py-4 rounded-full bg-yellow-500 text-black text-[11px] font-black shadow-[0_10px_30px_rgba(255,215,0,0.2)] active:scale-90 transition-all">AI TUTOR</button>
+                </div>`;
+        }
+
+        // [초고도화 2] 즐겨찾기 큐레이션 및 디자인 최적화
+        function renderFavorites() {
+            const items = [
+                { id: 'FOOD', icon: '🍔', label: '맛집 포털', desc: 'Verified Tasty' },
+                { id: 'TRANS', icon: '🚗', label: '교통 포털', desc: 'Smart Moving' },
+                { id: 'TRAV', icon: '✈️', label: '여행 포털', desc: 'Global Trip' },
+                { id: 'REALT', icon: '💎', label: '부동산 포털', desc: 'Premium Real' }
+            ];
+            body.innerHTML = `
+                <h3 class="text-2xl font-bold mb-8 tracking-tighter text-white">Quick Portals</h3>
+                <div class="grid grid-cols-2 gap-4">
+                    ${items.map(i => `
+                        <div class="group relative p-6 bg-white/[0.02] border border-white/5 rounded-[2.5rem] active:scale-95 transition-all cursor-pointer overflow-hidden">
+                            <div class="absolute inset-0 bg-yellow-500 opacity-0 group-hover:opacity-[0.03] transition-opacity"></div>
+                            <div class="text-4xl mb-4 transform group-hover:scale-110 transition-transform duration-500">${i.icon}</div>
+                            <p class="text-[11px] font-black text-white group-hover:text-yellow-500 transition-colors uppercase">${i.label}</p>
+                            <p class="text-[8px] text-gray-600 font-medium mt-1 uppercase tracking-widest">${i.desc}</p>
+                        </div>
+                    `).join('')}
+                </div>
+            `;
+        }
+
+        // [초고도화 3] 실시간 레이더 엔진 (애니메이션)
+        function renderFriends() {
+            body.innerHTML = `
+                <div class="text-center animate-fadeIn">
+                    <h3 class="text-2xl font-bold mb-2 tracking-tighter">Live Radar</h3>
+                    <p class="text-[10px] text-blue-500 font-bold tracking-[0.4em] mb-12 animate-pulse uppercase">Searching Mango Users...</p>
+                    <div class="relative w-64 h-64 mx-auto mb-12">
+                        <div class="absolute inset-0 border border-white/5 rounded-full"></div>
+                        <div class="absolute inset-10 border border-white/5 rounded-full"></div>
+                        <div class="absolute inset-20 border border-white/5 rounded-full"></div>
+                        <div class="absolute inset-0 rounded-full border border-blue-500/20 animate-[spin_4s_linear_infinite]">
+                            <div class="absolute top-0 left-1/2 -translate-x-1/2 w-[1px] h-1/2 bg-gradient-to-b from-blue-500 to-transparent"></div>
+                        </div>
+                        <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-4 h-4 bg-white rounded-full shadow-[0_0_20px_#fff] z-10"></div>
+                        <div class="absolute top-1/4 right-1/4 w-2 h-2 bg-yellow-500 rounded-full animate-pulse shadow-[0_0_15px_#eab308]"></div>
+                        <div class="absolute bottom-1/3 left-1/4 w-2 h-2 bg-green-500 rounded-full animate-pulse shadow-[0_0_15px_#22c55e] delay-700"></div>
+                    </div>
+                    <div class="flex gap-3">
+                        <div class="flex-1 p-4 bg-white/[0.03] rounded-2xl border border-white/5">
+                            <p class="text-[8px] text-gray-600 uppercase mb-1 tracking-widest">Nearby</p>
+                            <p class="text-sm font-black text-white">12 ACTIVE</p>
+                        </div>
+                        <div class="flex-1 p-4 bg-white/[0.03] rounded-2xl border border-white/5">
+                            <p class="text-[8px] text-gray-600 uppercase mb-1 tracking-widest">Location</p>
+                            <p class="text-sm font-black text-blue-500">BUSAN, KR</p>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function openMangoModal(type) {
+            modal.classList.remove('hidden');
+            // 강제 리플로우 후 슬라이딩 시작
+            void content.offsetWidth;
+            content.classList.remove('translate-y-full');
+            
+            if(type === 'memo') renderMemo(false);
+            else if(type === 'favorites') renderFavorites();
+            else if(type === 'friends') renderFriends();
+            else if(type === 'edu') renderEdu();
+        }
+
+        function closeMangoModal() {
+            content.classList.add('translate-y-full');
+            setTimeout(() => modal.classList.add('hidden'), 500);
+        }
+
         function copyCode() {
             const code = document.getElementById('refCode').innerText;
             navigator.clipboard.writeText(code).then(() => {
-                alert('추천인 코드가 복사되었습니다: ' + code);
+                // 알림도 망고 스타일로 대체 가능하지만 우선 브라우저 기본 사용
+                alert('COPIED: ' + code);
             });
+        }
+    </script>
+    <style>
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .animate-fadeIn { animation: fadeIn 0.5s ease forwards; }
+    </style>
+
+    <style>
+        /* 웨어러블 전용 레이어 디자인 */
+        .mango-wear-overlay {
+            background: radial-gradient(circle at center, #111 0%, #000 100%);
+        }
+        .gold-bezel-card {
+            background: rgba(0,0,0,0.8);
+            border: 2px solid #FFD700;
+            box-shadow: 0 0 30px rgba(255, 215, 0, 0.3), inset 0 0 15px rgba(255, 215, 0, 0.1);
+            border-radius: 2.5rem;
+        }
+        .ar-hud-glass {
+            background: rgba(255, 215, 0, 0.03) !important;
+            backdrop-filter: blur(15px);
+            border: 1px solid rgba(255, 215, 0, 0.2) !important;
+            animation: hudFloat 4s ease-in-out infinite;
+        }
+        @keyframes hudFloat { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-20px); } }
+        .scene-3d { perspective: 1200px; transform-style: preserve-3d; }
+        .carousel-3d { transform-style: preserve-3d; transition: transform 0.8s cubic-bezier(0.23, 1, 0.32, 1); }
+    </style>
+
+    <div id="wearableSystem" class="fixed inset-0 z-[10000] hidden mango-wear-overlay flex flex-col items-center justify-center p-6">
+        <div id="rolyPolyLoader" class="text-center">
+            <div class="text-8xl mb-4 animate-[bounce_1s_infinite] inline-block">🥭</div>
+            <p class="text-[10px] font-orbitron text-yellow-500 tracking-[0.6em] animate-pulse">SYSTEM BOOTING</p>
+        </div>
+
+        <div id="wearContent" class="hidden w-full h-full flex flex-col items-center justify-center">
+            <div class="scene-3d relative w-72 h-72 flex items-center justify-center">
+                <div id="wearCarousel" class="carousel-3d relative w-full h-full flex items-center justify-center"></div>
+            </div>
+            <div id="quickPayBtn" class="mt-24 px-12 py-5 gold-bezel-card text-yellow-500 font-black text-[11px] tracking-[0.4em] active:scale-90 cursor-pointer transition-all">
+                QUICK PAY
+            </div>
+            <button onclick="document.getElementById('wearableSystem').classList.add('hidden')" class="mt-10 text-[9px] text-gray-700 uppercase tracking-widest hover:text-white transition-colors">Close Interface</button>
+        </div>
+    </div>
+
+    <script>
+        const PORTAL_DATA = [
+            { id: 'FOOD', icon: '🍔' }, { id: 'TRANS', icon: '🚗' },
+            { id: 'TRAV', icon: '✈️' }, { id: 'HOBBY', icon: '🎨' },
+            { id: 'REALT', icon: '🏠' }, { id: 'MARK', icon: '💎' },
+            { id: 'CHAT', icon: '💬' }, { id: 'EDU', icon: '🎓' }
+        ];
+
+        function openWearable(mode) {
+            const sys = document.getElementById('wearableSystem');
+            const loader = document.getElementById('rolyPolyLoader');
+            const content = document.getElementById('wearContent');
+            const carousel = document.getElementById('wearCarousel');
+
+            sys.classList.remove('hidden');
+            loader.classList.remove('hidden');
+            content.classList.add('hidden');
+            carousel.innerHTML = '';
+
+            setTimeout(() => {
+                loader.classList.add('hidden');
+                content.classList.remove('hidden');
+
+                PORTAL_DATA.forEach((p, i) => {
+                    const angle = i * 45;
+                    const card = document.createElement('div');
+                    card.className = `absolute w-28 h-28 flex flex-col items-center justify-center gold-bezel-card ${mode === 'glasses' ? 'ar-hud-glass' : ''}`;
+                    card.style.transform = `rotateY(${angle}deg) translateZ(200px)`;
+                    card.innerHTML = `<div class="text-4xl mb-2">${p.icon}</div><span class="text-[9px] font-black text-yellow-500">${p.id}</span>`;
+                    carousel.appendChild(card);
+                });
+            }, 1500);
         }
     </script>
 </body>

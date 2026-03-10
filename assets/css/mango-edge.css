@@ -1,0 +1,34 @@
+/* 엣지 핸들 (숨겨진 바) */
+.mango-edge-handle {
+    position: fixed;
+    right: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 6px;
+    height: 60px;
+    background: rgba(255, 193, 7, 0.5); /* 망고 골드 투명 */
+    border-radius: 10px 0 0 10px;
+    cursor: pointer;
+    z-index: 1000;
+    transition: width 0.3s;
+}
+
+.mango-edge-handle:hover { width: 12px; }
+
+/* 실제 사이드바 패널 */
+.mango-edge-panel {
+    position: fixed;
+    right: -320px; /* 처음엔 숨김 */
+    top: 0;
+    width: 300px;
+    height: 100vh;
+    background: rgba(0, 0, 0, 0.85);
+    backdrop-filter: blur(15px);
+    border-left: 1px solid rgba(255, 193, 7, 0.3);
+    z-index: 999;
+    transition: right 0.4s cubic-bezier(0.075, 0.82, 0.165, 1);
+    padding: 20px;
+    color: white;
+}
+
+.mango-edge-panel.active { right: 0; }
