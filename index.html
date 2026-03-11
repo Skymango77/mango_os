@@ -1484,17 +1484,22 @@ function cancelPress() {
     <div class="mango-container carousel-view" id="swipe-area">
         <div class="carousel-pivot" id="pivot"></div>
     </div>
-    <div class="flex justify-end mb-[-2px] pr-4 relative z-20">
-    <div class="relative flex-shrink-0">
-        <div class="w-10 h-12 border border-yellow-500/30 flex items-center justify-center text-xl hex-diamond-profile bg-black/50 backdrop-blur-sm">
+    <div class="flex justify-end pr-4 relative z-30" style="margin-top: -28px; margin-bottom: 2px;">
+    <a href="#profile" class="relative flex-shrink-0 transition-transform active:scale-90" style="display: block;">
+        <div class="fixed z-[9999]" style="right: 20px; bottom: 185px;">
+    <a href="#profile" class="relative block transition-transform active:scale-95" title="마이페이지">
+        <div class="w-11 h-12 border border-yellow-500/40 flex items-center justify-center text-xl hex-diamond-profile bg-black/70 backdrop-blur-md shadow-[0_0_20px_rgba(255,215,0,0.2)]">
             💎
         </div>
-        <div class="absolute -bottom-0.5 -right-0.5 level-badge text-[6px] font-black px-1 py-0.5 rounded-full text-black bg-yellow-500">LV.4</div>
-    </div>
+        <div class="absolute -bottom-1 -right-1 level-badge text-[7px] font-black px-1.5 py-0.5 rounded-full text-black bg-yellow-500 shadow-md">
+            LV.4
+        </div>
+    </a>
 </div>
         <p class="text-[8px] text-yellow-500/80 tracking-[0.3em] font-bold uppercase mt-0.5">Global System Active</p>
     </div>
 </div>
+
 <div class="mango-container mb-6">
     <div class="glass p-4 border-2 border-orange-500/50 relative overflow-hidden group">
         <div class="absolute top-0 right-0 p-2">
