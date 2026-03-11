@@ -45,18 +45,23 @@
         width: 100px;
         height: 115px;
         background: rgba(255, 215, 0, 0.05);
-        /* 육각형을 물리적으로 깎아내는 좌표 */
         clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
-        border: 1px solid rgba(255, 215, 0, 0.3);
+        filter: drop-shadow(0 0 3px rgba(255, 215, 0, 0.4));
         display: flex;
         flex-direction: column;
         align-items: center;
         justify-content: center;
-        transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1);
+        transition: all 0.4s ease;
         cursor: pointer;
         z-index: 10;
     }
 
+    /* 마우스 올렸을 때 (PC) */
+    .hex-item:hover {
+        filter: drop-shadow(0 0 10px rgba(255, 215, 0, 0.6));
+        background: rgba(255, 215, 0, 0.12);
+        transform: translateY(-5px);
+    }
     .hex-item:active {
         transform: scale(0.9) translateZ(-20px);
         background: rgba(255, 215, 0, 0.15);
@@ -107,6 +112,10 @@
         <button onclick="history.back()" class="w-10 h-10 flex items-center justify-center glass-panel active:scale-90 transition-all">
             <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
         </button>
+
+
+
+
         <h1 class="text-xl font-orbitron font-black italic gold-gradient">MANGO PROFILE</h1>
         <div class="flex items-center gap-2">
             <div class="lang-badge">
@@ -129,66 +138,67 @@
                 <p class="text-[10px] text-yellow-500 tracking-[0.3em] font-bold uppercase mt-1">Global Operator</p>
             </div>
         </div>
-<div class="pt-10 border-t border-white/5">
-            <div class="flex justify-between items-center mb-8 px-2">
-                <h4 class="text-[9px] font-black text-gray-600 uppercase tracking-[0.4em]">Integrated Core</h4>
-                <span class="text-[8px] text-yellow-500 font-bold animate-pulse">HEXA-SYNC ON</span>
-            </div>
-            
-            <div class="hex-grid">
-                <div class="hex-item">
-                    <span class="hex-icon">📝</span>
-                    <span class="hex-text">MEMO</span>
-                </div>
-                <div class="hex-item">
-                    <span class="hex-icon">⭐</span>
-                    <span class="hex-text">STARS</span>
-                </div>
-                <div class="hex-item">
-                    <span class="hex-icon">🎓</span>
-                    <span class="hex-text">EDU</span>
-                </div>
-            </div>
-        </div>
-        <div class="space-y-4 mb-8">
-            <div class="flex justify-between items-end">
-                <div>
-                    <p class="text-[9px] text-gray-500 uppercase tracking-widest mb-1">Mango Trust Score</p>
-                    <p class="text-xs font-bold text-white">골드 망고 (Premium)</p>
-                </div>
-                <div class="text-right">
-                    <p class="text-[18px] font-orbitron font-black text-yellow-500">98.5<span class="text-xs">°C</span></p>
-                </div>
-            </div>
-            <div class="trust-track"><div class="trust-bar" style="width: 98.5%;"></div></div>
-            <p class="text-[9px] text-gray-600 leading-relaxed text-center">결제 데이터 공유 중 · 모든 포털 관리 권한 활성화됨</p>
-        </div>
+
 
         <div class="pt-10 border-t border-white/5">
             <div class="flex justify-between items-center mb-8 px-2">
                 <h4 class="text-[9px] font-black text-gray-600 uppercase tracking-[0.4em]">Integrated Core</h4>
                 <span class="text-[8px] text-yellow-500 font-bold animate-pulse">HEXA-SYNC ON</span>
             </div>
-            
-            <div class="hex-grid">
+
+            <div class="hex-grid mb-10">
+                <div class="hex-item" onclick="openModule('bio')">
+                    <div class="hex-icon">🧬</div>
+                    <div class="hex-text">Bio</div>
+                </div>
+                <div class="hex-item" onclick="openModule('core')">
+                    <div class="hex-icon">⚡</div>
+                    <div class="hex-text">Core</div>
+                </div>
+                <div class="hex-item" onclick="openModule('sync')">
+                    <div class="hex-icon">📡</div>
+                    <div class="hex-text">Sync</div>
+                </div>
+            </div>
+
+            <div class="hex-grid mb-10">
                 <div onclick="openMangoModal('memo')" class="hex-item group">
                     <span class="hex-icon">📝</span>
                     <span class="hex-text">Memo</span>
-                    <div class="absolute inset-0 border border-yellow-500/20 opacity-0 group-hover:opacity-100 transition-opacity"></div>
                 </div>
-
                 <div onclick="openMangoModal('favorites')" class="hex-item group">
                     <span class="hex-icon">⭐</span>
                     <span class="hex-text">Stars</span>
                 </div>
-
                 <div onclick="openMangoModal('edu')" class="hex-item group">
                     <span class="hex-icon">🎓</span>
                     <span class="hex-text">Edu</span>
                 </div>
             </div>
+
+            <div class="glass-panel p-5 border-white/5 bg-black/20 mb-10">
+                <h4 class="text-[9px] font-black text-gray-600 uppercase tracking-[0.4em] text-center mb-5">Device Ecosystem</h4>
+                <div class="grid grid-cols-2 gap-3">
+                    <div onclick="openWearable('watch')" class="device-status p-4 rounded-xl text-center group cursor-pointer active:scale-95 transition-all bg-white/[0.03] border border-white/5">
+                        <div class="text-2xl mb-2 group-hover:scale-110 transition-transform">⌚</div>
+                        <p class="text-[9px] font-bold text-gray-500 uppercase tracking-widest mb-1">Watch</p>
+                        <div class="flex items-center justify-center gap-1.5">
+                            <div class="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse shadow-[0_0_5px_#22c55e]"></div>
+                            <p class="text-[11px] text-green-500 font-bold italic">Connected</p>
+                        </div>
+                    </div>
+                    <div onclick="openWearable('glasses')" class="device-status p-4 rounded-xl text-center group cursor-pointer active:scale-95 transition-all bg-white/[0.03] border border-white/5">
+                        <div class="text-2xl mb-2 group-hover:scale-110 transition-transform">👓</div>
+                        <p class="text-[9px] font-bold text-gray-500 uppercase tracking-widest mb-1">Glass</p>
+                        <div class="flex items-center justify-center gap-1.5">
+                            <div class="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse shadow-[0_0_5px_#22c55e]"></div>
+                            <p class="text-[11px] text-green-500 font-bold italic">Active</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
             
-            <p class="text-[8px] text-gray-700 mt-10 text-center tracking-widest uppercase">Select an core module to activate</p>
+            <p class="text-[8px] text-gray-700 mt-5 text-center tracking-widest uppercase italic">Select a core module to activate</p>
         </div>
 
     <div class="glass-panel p-6 mb-6 bg-yellow-500/[0.03] border-yellow-500/10 active:scale-[0.99] transition-all">
@@ -208,35 +218,10 @@
     </div>
 
     <div class="grid grid-cols-1 gap-4 mb-6">
-        <div class="glass-panel p-5 text-center active:scale-95 transition-all border-white/5 active:scale-[0.98]">
+        <div class="glass-panel p-5 text-center transition-all border-white/5 active:scale-[0.98]">
             <div class="text-2xl mb-2">💳</div>
             <p class="text-[10px] font-bold text-gray-500 uppercase mb-1">QR PAY</p>
             <p class="text-xs font-mono text-yellow-500 font-bold">₩ 4,520,000</p>
-        </div>
-
-        <div class="glass-panel p-5 border-white/5">
-            <h4 class="text-[9px] font-black text-gray-600 uppercase tracking-[0.4em] text-center mb-5">Device Ecosystem</h4>
-            <div class="grid grid-cols-2 gap-3">
-                
-                <div class="device-status p-4 rounded-xl text-center group">
-                    <div class="text-2xl mb-2">⌚</div>
-                    <p class="text-[9px] font-bold text-gray-500 uppercase tracking-widest mb-1">Watch</p>
-                    <div class="flex items-center justify-center gap-1.5">
-                        <div class="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse shadow-[0_0_5px_#22c55e]"></div>
-                        <p class="text-[11px] text-green-500 font-bold italic tracking-tighter">Connected</p>
-                    </div>
-                </div>
-
-                <div class="device-status p-4 rounded-xl text-center group">
-                    <div class="text-2xl mb-2">👓</div>
-                    <p class="text-[9px] font-bold text-gray-500 uppercase tracking-widest mb-1">Glass</p>
-                    <div class="flex items-center justify-center gap-1.5">
-                        <div class="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse shadow-[0_0_5px_#22c55e]"></div>
-                        <p class="text-[11px] text-green-500 font-bold italic tracking-tighter">Active</p>
-                    </div>
-                </div>
-
-            </div>
         </div>
     </div>
 
@@ -494,6 +479,23 @@
                 });
             }, 1500);
         }
+        // 이 함수가 실행되면 진짜 GPS 좌표가 화면에 박힙니다.
+function activateRealLocation() {
+    if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition((position) => {
+            const lat = position.coords.latitude.toFixed(4);
+            const lng = position.coords.longitude.toFixed(4);
+            
+            // BUSAN, KR 텍스트를 찾아 좌표로 교체
+            const target = document.querySelector(".text-sm.font-black.text-blue-500");
+            if (target) target.innerText = `${lat}°N, ${lng}°E`;
+        });
+    }
+}
+
+// 페이지 로드 시 즉시 실행
+window.addEventListener('load', activateRealLocation);
     </script>
+    
 </body>
 </html>
