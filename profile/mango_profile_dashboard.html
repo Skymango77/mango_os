@@ -210,12 +210,13 @@
     </div>
 
     <div class="grid grid-cols-1 gap-4 mb-6">
-        <div class="glass-panel p-5 text-center transition-all border-white/5 active:scale-[0.98]">
-            <div class="text-2xl mb-2">💳</div>
-            <p class="text-[10px] font-bold text-gray-500 uppercase mb-1">QR PAY</p>
-            <p class="text-xs font-mono text-yellow-500 font-bold">₩ 4,520,000</p>
-        </div>
+    <div onclick="handleMangoTestPayment()" 
+         class="glass-panel p-5 text-center transition-all border-white/5 active:scale-[0.95] cursor-pointer hover:bg-white/10 group">
+        <div class="text-2xl mb-2 group-hover:scale-110 transition-transform">💳</div>
+        <p class="text-[10px] font-bold text-gray-500 uppercase mb-1 tracking-widest">QR PAY</p>
+        <p class="text-xs font-mono text-yellow-500 font-bold">₩ 4,520,000</p>
     </div>
+</div>
 
     <div class="space-y-3">
         <h4 class="text-[9px] font-black text-gray-600 uppercase tracking-[0.4em] ml-2">Control Tower</h4>
@@ -641,6 +642,30 @@ function activateRealLocation() {
 // 페이지 로드 시 즉시 실행
 window.addEventListener('load', activateRealLocation);
     </script>
-    
+    <script src="https://sdk.minepi.com/pi-sdk.js"></script>
+<script>
+    const Pi = window.Pi;
+    Pi.init({ version: "2.0", sandbox: true });
+
+    async function handleMangoTestPayment() {
+        try {
+            const payment = await Pi.createPayment({
+                amount: 0.01,
+                memo: "Mango App Step 10 Verification",
+                metadata: { step: 10 }
+            }, {
+                onReadyForServerApproval: (id) => console.log("Approval:", id),
+                onReadyForServerCompletion: (id, txid) => {
+                    alert("결제 성공! 10단계 완료입니다.");
+                    location.reload();
+                },
+                onCancel: (id) => alert("결제가 취소되었습니다."),
+                onError: (error) => alert("오류 발생: " + error.message)
+            });
+        } catch (err) {
+            alert("파이 브라우저에서 실행해주세요.");
+        }
+    }
+</script>
 </body>
 </html>
