@@ -825,6 +825,45 @@ button, .confirm-btn, [class*="confirm"] {
     transform-origin: bottom center !important;
 }
     </style>
+
+<script>// 1. Pi SDK 초기화 (좌표: 스크립트 시작 부분)
+Pi.init({ version: "2.0" });
+
+// 2. 결제 실행 함수 (좌표: 기능 정의 부분)
+async function handleMangoTestPayment() {
+    try {
+        console.log("결제 프로세스 시작...");
+        
+        const payment = await Pi.createPayment({
+            amount: 0.01,
+            memo: "Mango App Step 10 Verification", // 10단계 통과용 메모
+            metadata: { 
+                orderId: "mango-final-check-" + Date.now(), 
+                type: "developer-step-10" 
+            }
+        }, {
+            // [중요] 서버 승인 대기 단계
+            onReadyForServerApproval: function(paymentId) {
+                console.log("서버 승인 대기 중 (ID):", paymentId);
+                // 여기에 서버로 paymentId를 보내 승인 요청하는 로직이 들어갑니다.
+            },
+            // [중요] 최종 완료 단계
+            onReadyForServerCompletion: function(paymentId, txid) {
+                console.log("결제 완료! 트랜잭션 ID:", txid);
+                alert("결제가 성공했습니다! 이제 Developer Portal 10단계가 완료됩니다.");
+            },
+            onCancel: function(paymentId) {
+                console.log("사용자가 결제를 취소했습니다.");
+            },
+            onError: function(error, payment) {
+                console.error("결제 중 에러 발생:", error);
+            }
+        });
+    } catch (err) {
+        console.error("SDK 실행 오류:", err);
+    }
+}</script>
+
 </head>
 
 <body id="main-body" class="bg-black text-white min-h-screen overflow-x-hidden flex flex-col items-center py-6 space-y-6">
@@ -1349,7 +1388,7 @@ function openRealty() {
             </div>
         </div>
     `;
-
+    }
     // 부드러운 줌인 애니메이션
     setTimeout(() => {
         const modal = document.getElementById('realty-modal');
@@ -1359,7 +1398,7 @@ function openRealty() {
             content.classList.add('scale-100', 'opacity-100');
         }
     }, 10);
-}
+
 
 // 3. Realty 포털 닫기 함수
 function closeRealty() {
@@ -1474,7 +1513,8 @@ function cancelPress() {
 
 <div class="mango-container mb-8">
     <div class="swiper main-banner"></div>
-</div>            </p>
+</div>           
+ </p>
     </div>
 
     <div id="main-banner" class="mango-container glass h-28 relative overflow-hidden hide-on-watch mb-4">
@@ -1485,18 +1525,21 @@ function cancelPress() {
         <div class="carousel-pivot" id="pivot"></div>
     </div>
     <div class="flex justify-end pr-4 relative z-30" style="margin-top: -28px; margin-bottom: 2px;">
-    <a href="#profile" class="relative flex-shrink-0 transition-transform active:scale-90" style="display: block;">
-        <div class="fixed z-[9999]" style="right: 20px; bottom: 185px;">
-    <a href="#profile" class="relative block transition-transform active:scale-95" title="마이페이지">
-        <div class="w-11 h-12 border border-yellow-500/40 flex items-center justify-center text-xl hex-diamond-profile bg-black/70 backdrop-blur-md shadow-[0_0_20px_rgba(255,215,0,0.2)]">
-            💎
-        </div>
-        <div class="absolute -bottom-1 -right-1 level-badge text-[7px] font-black px-1.5 py-0.5 rounded-full text-black bg-yellow-500 shadow-md">
-            LV.4
-        </div>
-    </a>
-</div>
-        <p class="text-[8px] text-yellow-500/80 tracking-[0.3em] font-bold uppercase mt-0.5">Global System Active</p>
+    <div class="fixed z-[9999] flex flex-col items-end" style="right: 20px; bottom: 185px;">
+        
+        <a href="javascript:void(0);" onclick="openDashboard()" class="relative block transition-transform active:scale-95 group" title="대시보드 열기">
+            <div class="w-11 h-12 border border-yellow-500/40 flex items-center justify-center text-xl hex-diamond-profile bg-black/70 backdrop-blur-md shadow-[0_0_20px_rgba(255,215,0,0.2)] group-hover:shadow-[0_0_25px_rgba(255,215,0,0.4)] transition-all">
+                💎
+            </div>
+            <div class="absolute -bottom-1 -right-1 level-badge text-[7px] font-black px-1.5 py-0.5 rounded-full text-black bg-yellow-500 shadow-md">
+                LV.4
+            </div>
+        </a>
+    </div>
+        <p class="text-[8px] text-yellow-500/80 tracking-[0.3em] font-bold uppercase mt-2 text-right pointer-events-none">
+            Global System Active
+        </p>
+
     </div>
 </div>
 
@@ -3217,5 +3260,90 @@ window.addEventListener('load', () => setTimeout(triggerMango9Shake, 2000));</sc
 /* ... 기존 애니메이션 코드 ... */
 
 </style>
+<script>
+   function openDashboard() {
+    // [방법 1] 클릭하자마자 바로 페이지 이동을 원하실 경우 (가장 확실한 경로)
+    // window.location.href = 'mango_profile_dashboard.html';
+    // return; 
+
+    // [방법 2] 세련된 모달 창을 띄운 후, 버튼을 눌러 이동하게 할 경우 (권장)
+    const existingDashboard = document.getElementById('user-dashboard');
+    if (existingDashboard) existingDashboard.remove();
+
+    const dashboardHTML = `
+        <div id="user-dashboard" class="fixed inset-0 z-[10000] flex items-center justify-center p-4 bg-black/90 backdrop-blur-2xl animate-in fade-in zoom-in duration-300">
+            <div class="mango-container glass border-yellow-500/30 p-0 overflow-hidden flex flex-col" style="width: 100%; max-width: 400px;">
+                <div class="p-4 border-b border-white/10 flex justify-between items-center bg-yellow-500/5 text-yellow-500 font-black italic">
+                    <span>CEO DASHBOARD GATE</span>
+                    <button onclick="closeDashboard()" class="text-white/50 text-2xl">✕</button>
+                </div>
+                <div class="p-8 text-center">
+                    <div class="text-5xl mb-6 animate-pulse">💎</div>
+                    <h2 class="text-white text-lg font-bold mb-2">관리자 프로필 진입</h2>
+                    <p class="text-white/50 text-xs mb-8">Mango App의 핵심 설정을 관리하는 대시보드로 이동합니다.</p>
+                    
+                    <div class="flex flex-col gap-3">
+                        <button onclick="location.href='mango_profile_dashboard.html'" class="w-full py-4 bg-yellow-500 text-black font-black rounded-2xl shadow-[0_0_20px_rgba(255,215,0,0.3)] active:scale-95 transition-all">
+                            대시보드 접속하기
+                        </button>
+                        <button onclick="closeDashboard()" class="w-full py-3 text-white/30 text-[10px] font-bold uppercase tracking-widest">
+                            Cancel
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    `;
+    document.body.insertAdjacentHTML('beforeend', dashboardHTML);
+    document.body.style.overflow = 'hidden';
+}
+
+    function closeDashboard() {
+        const dashboard = document.getElementById('user-dashboard');
+        if (dashboard) {
+            dashboard.classList.add('animate-out', 'fade-out', 'zoom-out', 'duration-200');
+            setTimeout(() => {
+                dashboard.remove();
+                document.body.style.overflow = 'auto';
+            }, 200);
+        }
+    }
+
+    // 모달 제어 함수들
+    function openMangoDashboard() {
+        const modal = document.getElementById('mango-dashboard-modal');
+        if(modal) modal.classList.remove('hidden');
+    }
+
+    function closeMangoDashboard() {
+        const modal = document.getElementById('mango-dashboard-modal');
+        if(modal) modal.classList.add('hidden');
+    }
+
+    function openMemo() { alert("메모장을 엽니다."); }
+    function openFavorites() { alert("즐겨찾기를 확인합니다."); }
+    function openFriends() { alert("친구 목록을 불러옵니다."); }
+    function openPayment() { alert("결제 시스템을 연결합니다."); }
+    </script>
+
+    <div id="mango-dashboard-modal" class="fixed inset-0 z-[10000] hidden bg-black/95 backdrop-blur-xl flex items-center justify-center p-4">
+        <div class="mango-container glass border-yellow-500/30 p-0 overflow-hidden flex flex-col" style="width: 100%; max-width: 430px;">
+            <div class="p-4 border-b border-white/10 flex justify-between items-center bg-yellow-500/5 text-yellow-500 font-black italic">
+                <span>CEO DASHBOARD</span>
+                <button onclick="closeMangoDashboard()" class="text-white/50 text-2xl">✕</button>
+            </div>
+            <div class="p-6 text-center">
+                <div class="glass border-yellow-500/50 bg-gradient-to-br from-yellow-600/10 to-transparent p-5 rounded-2xl mb-4">
+                    <p class="text-[10px] text-yellow-500 font-bold mb-2 uppercase">Step 10 Verification</p>
+                    <p class="text-white text-sm mb-4">테스트 결제 (0.01 π)를 진행합니다.</p>
+                    <button onclick="handleMangoTestPayment()" class="w-full py-3 bg-yellow-500 text-black font-black rounded-xl shadow-lg active:scale-95 transition-all">
+                        결제 승인하기
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <a href="javascript:void(0);" onclick="openDashboard()" class="relative flex-shrink-0" style="display: none;"></a>
 </body>
 </html>
