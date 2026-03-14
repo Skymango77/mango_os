@@ -626,18 +626,23 @@ window.addEventListener('load', activateRealLocation);
     <script>
         // 2. 초기화
         const Pi = window.Pi;
-        Pi.init({ version: "2.0", sandbox: true });
 
-        // [통합본: 597행부터 시작] --------------------------------------------------
 async function authPi() {
     try {
-        const scopes = ['username', 'payments', 'wallet_address'];
-        
-        function onIncompletePaymentFound(payment) {
-            console.log("미완료 결제 확인:", payment);
-        }
+        // [중요] await를 추가하여 초기화가 끝날 때까지 기다립니다.
+        await Pi.init({ version: "2.0", sandbox: false });
+        console.log("✅ Mango Dashboard SDK Initialized (Mainnet Mode)");
 
+        const scopes = ['username', 'payments'];
+        
+        // 미완료 결제 처리 함수
+        const onIncompletePaymentFound = (payment) => {
+            console.log("⚠️ 미완료 결제 발견:", payment);
+        };
+
+        // 유저 인증 및 권한 획득
         const auth = await Pi.authenticate(scopes, onIncompletePaymentFound);
+        console.log("👤 인증 성공:", auth.user.username);
         
         const username = auth.user.username;
         const isAdmin = (username === 'KHankyul'); 
@@ -677,24 +682,34 @@ function showAdminFeatures() {
     }
 }
 
-// [647행 부근: showAdminFeatures 종료 직후 삽입]
+// 1. 권한 기반 메뉴 필터링 (명칭: TOP_SUPER_ADMIN 확정)
 function renderMenuByRole(role) {
-    console.log("Mango OS 권한 기반 메뉴 필터링:", role);
+    console.log("🚀 Mango OS 가동 모드:", role);
     
-    // 1. REPORTER(활동가) 전용 메뉴 제어
-    const reporterBtn = document.getElementById('reporter-btn');
-    if (reporterBtn) {
-        reporterBtn.style.display = (role === 'REPORTER' || role === 'SUPER_ADMIN') ? 'block' : 'none';
-    }
+    // 'admin-only' 클래스가 붙은 모든 관리자 요소를 찾습니다.
+    const adminOnlyElements = document.querySelectorAll('.admin-only');
 
-    // 2. PARTNER(가맹점주) 전용 메뉴 제어
-    const partnerBtn = document.getElementById('partner-btn');
-    if (partnerBtn) {
-        partnerBtn.style.display = (role === 'PARTNER' || role === 'SUPER_ADMIN') ? 'block' : 'none';
+    // [정밀 검사] 단어 하나도 틀리면 안 됩니다: 'TOP_SUPER_ADMIN'
+    if (role === 'TOP_SUPER_ADMIN') {
+        adminOnlyElements.forEach(el => {
+            el.classList.remove('hidden');
+            el.style.display = 'block'; // 확실하게 노출
+        });
+        console.log("👑 최고 관리자(TOP_SUPER_ADMIN) 인증 성공. 모든 제어판을 개방합니다.");
+    } else {
+        adminOnlyElements.forEach(el => {
+            el.classList.add('hidden');
+            el.style.display = 'none';
+        });
+        console.log("👤 일반 사용자 모드로 실행됩니다.");
     }
 }
 
-authPi(); // 인증 실행
+// 2. 엔진 시동 (페이지 로드 완료 시 자동 실행)
+window.onload = function() {
+    console.log("⚙️ Mango Dashboard System Booting...");
+    authPi(); 
+};
 // -------------------------------------------------------------------------
 // [최종 통합] Mango Pi Network 실결제 및 서버 연동 엔진
 async function handleMangoTestPayment() {
