@@ -105,8 +105,23 @@
             <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
         </button>
 
-
-
+        <div class="flex items-center gap-6 mb-8">
+    <div class="relative">
+        <div class="w-20 h-20 rounded-full bg-gray-900 border-2 border-yellow-500 flex items-center justify-center text-3xl shadow-[0_0_25px_rgba(255,215,0,0.3)]">👑</div>
+        <div class="absolute -bottom-1 -right-1 level-badge text-[8px] font-black px-2 py-1 rounded-full text-black bg-yellow-500 shadow-md">TOP</div>
+    </div>
+    <div>
+        <h2 class="text-2xl font-bold flex items-center gap-3">
+            <span id="user-name-display" class="gold-gradient text-transparent bg-clip-text font-black">권한결</span> 
+            <span id="admin-badge" class="px-2 py-0.5 rounded-sm border border-yellow-500/50 text-[9px] font-black text-yellow-500 tracking-tighter bg-yellow-500/10 uppercase italic hidden">
+                Top Super Admin
+            </span>
+        </h2>
+        <p id="user-pi-id" class="text-[10px] text-yellow-500/60 tracking-[0.4em] font-bold uppercase mt-1">
+            @KHANKYUL
+        </p>
+    </div>
+</div>
 
         <h1 class="text-xl font-orbitron font-black italic gold-gradient">MANGO PROFILE</h1>
         <div class="flex items-center gap-2">
@@ -124,11 +139,12 @@
                 <div class="absolute -bottom-1 -right-1 level-badge text-[8px] font-black px-2 py-1 rounded-full text-black">LV.4</div>
             </div>
             <div>
-                <h2 class="text-2xl font-bold flex items-center gap-2">
-                    김망고 <span class="text-xs font-light text-gray-500 uppercase">CEO</span>
-                </h2>
-                <p class="text-[10px] text-yellow-500 tracking-[0.3em] font-bold uppercase mt-1">Global Operator</p>
-            </div>
+               <h2 class="text-2xl font-bold flex items-center gap-2">
+               <span id="user-name-display">권한결</span> <span class="text-xs font-light text-gray-500 uppercase italic">CEO</span>
+           </h2>
+           <p id="user-pi-id" class="text-[10px] text-yellow-500 tracking-[0.3em] font-bold uppercase mt-1">
+        @KHankyul </p>
+         </div>
         </div>
 
 
@@ -583,6 +599,7 @@ function activateRealLocation() {
     }
 }
 
+
 // 페이지 로드 시 즉시 실행
 window.addEventListener('load', activateRealLocation);
     </script>
@@ -592,43 +609,77 @@ window.addEventListener('load', activateRealLocation);
         const Pi = window.Pi;
         Pi.init({ version: "2.0", sandbox: true });
 
-        // 3. 인증 함수 (로그인 확인)
-        async function authPi() {
-            try {
-                const scopes = ['payments'];
-                function onIncompletePaymentFound(payment) { /* 미완료 결제 건 처리 로직 */ }
-                
-                // 여기서 실제로 인증창을 띄웁니다.
-                const auth = await Pi.authenticate(scopes, onIncompletePaymentFound);
-                console.log("인증 성공: ", auth.user.username);
-            } catch (err) {
-                console.error("인증 실패 또는 파이 브라우저 아님:", err);
-            }
+        // [통합본: 597행부터 시작] --------------------------------------------------
+async function authPi() {
+    try {
+        const scopes = ['username', 'payments', 'wallet_address'];
+        
+        function onIncompletePaymentFound(payment) {
+            console.log("미완료 결제 확인:", payment);
         }
 
-        // [중요] 페이지 로드 시 즉시 인증 시도
-        authPi();
+        const auth = await Pi.authenticate(scopes, onIncompletePaymentFound);
+        
+        const username = auth.user.username;
+        const isAdmin = (username === 'KHankyul'); 
 
-        // 4. 결제 함수
-        async function handleMangoTestPayment() {
-            try {
-                const payment = await Pi.createPayment({
-                    amount: 0.01,
-                    memo: "Mango App Step 10 Verification",
-                    metadata: { step: 10 }
-                }, {
-                    onReadyForServerApproval: (id) => console.log("Approval ID:", id),
-                    onReadyForServerCompletion: (id, txid) => {
-                        alert("결제 성공! 10단계 완료입니다.");
-                        location.reload();
-                    },
-                    onCancel: (id) => console.log("결제 취소"),
-                    onError: (error) => alert("오류 발생: " + error.message)
-                });
-            } catch (err) {
-                alert("결제 호출 실패. 파이 브라우저에서 인증 후 시도해주세요.");
-            }
+        const nameDisplay = document.getElementById('user-name-display');
+        const piIdDisplay = document.getElementById('user-pi-id');
+        const adminBadge = document.getElementById('admin-badge');
+
+        if (isAdmin) {
+            if (nameDisplay) nameDisplay.innerText = "권한결";
+            if (piIdDisplay) piIdDisplay.innerText = `@${username.toUpperCase()}`;
+            if (adminBadge) adminBadge.classList.remove('hidden'); 
+            showAdminFeatures(); 
+        } else {
+            if (nameDisplay) nameDisplay.innerText = username;
+            if (piIdDisplay) piIdDisplay.innerText = `@${username.toUpperCase()}`;
+            if (adminBadge) adminBadge.classList.add('hidden');
         }
+    } catch (err) {
+        console.error("인증 실패:", err);
+        const nameDisplay = document.getElementById('user-name-display');
+        if (nameDisplay) nameDisplay.innerText = "권한결";
+    }
+}
+
+function showAdminFeatures() {
+    const adminPortal = document.getElementById('admin-portal-btn');
+    if (adminPortal) {
+        adminPortal.style.display = 'block';
+    }
+}
+
+authPi(); // 인증 실행
+// -------------------------------------------------------------------------
+
+// 4. 결제 함수
+async function handleMangoTestPayment() {
+    try {
+        if (!window.Pi) throw new Error("Pi SDK not found");
+
+        const payment = await Pi.createPayment({
+            amount: 0.01,
+            memo: "Mango App Step 10 Verification",
+            metadata: { step: 10 }
+        }, {
+            onReadyForServerApproval: (id) => {
+                console.log("서버 승인 대기중: ", id);
+                // 여기에 서버 approve API 연동 필요
+            },
+            onReadyForServerCompletion: (id, txid) => {
+                alert("결제 성공! 권한결 대표님의 10단계 인증이 완료되었습니다.");
+                location.reload();
+            },
+            onCancel: (id) => console.log("결제 취소"),
+            onError: (error) => alert("결제 에러: " + error.message)
+        });
+    } catch (err) {
+        alert("결제 호출 실패. Pi Browser 내부에서 @KHankyul 계정으로 로그인되어 있는지 확인하세요.");
+    }
+}
+// [좌표: 645행 끝]
     </script>
 </body>
 </html>
