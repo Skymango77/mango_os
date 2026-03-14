@@ -1231,8 +1231,8 @@ style="width: 140px; height: 140px; aspect-ratio: 1/1; object-fit: cover; z-inde
     // 1. SDK 초기화 및 유저 인증
 async function initPi() {
     try {
-        await Pi.init({ version: "2.0", sandbox: true });
-        console.log("✅ Pi SDK 초기화 성공");
+        await Pi.init({ version: "2.0", sandbox: false });
+        console.log("✅ Mango Mainnet Engine Loaded");
 
         const scopes = ['username', 'payments'];
         
