@@ -127,7 +127,26 @@
 .feed-img-box img { width: 100%; height: 100%; object-fit: cover; }  
         /* 1. 구글에서 '도톰하고 둥근' Kanit 폰트를 빌려오는 코드입니다. */
 
-
+/* 금가루 애니메이션 효과 */
+.mango-logo-dust {
+    font-size: 3rem;
+    font-weight: 900;
+    letter-spacing: 0.2em;
+    background: linear-gradient(
+        to right, 
+        #bf953f, #fcf6ba, #b38728, #fbf5b7, #aa771c
+    );
+    -webkit-background-clip: text;
+    background-clip: text; 
+    -webkit-text-fill-color: transparent;
+    background-size: 200% auto;
+    animation: shine 4s linear infinite;
+    /* 금가루 입자 느낌을 주는 드롭 쉐도우 */
+    filter: drop-shadow(0 0 5px rgba(255, 215, 0, 0.3));
+} /* <--- 괄호는 딱 여기서 한 번만 닫히면 됩니다! */
+@keyframes shine {
+    to { background-position: 200% center; }
+}
 /* 클래스 필요 없이 이 애니메이션만 있으면 됩니다 */
 @keyframes gold-shine {
     0% { background-position: -200% center; }
@@ -909,6 +928,24 @@ style="width: 140px; height: 140px; aspect-ratio: 1/1; object-fit: cover; z-inde
             @keyframes spin-fast { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
             @keyframes spin-reverse { 0% { transform: rotate(360deg); } 100% { transform: rotate(0deg); } }
             @keyframes splash-pulse { 0%, 100% { transform: scale(1) rotate(-3deg); } 50% { transform: scale(1.05) rotate(3deg); } }
+
+            /* [좌표: 913행~917행 교체] */
+.main-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding-top: 5rem; /* 로고가 너무 붙지 않게 상단 여백 확보 */
+    min-height: 100vh;
+    overflow-y: auto;
+    position: relative;
+    z-index: 10;
+}
+
+.logo-section {
+    margin-bottom: 4rem; /* 로고와 아래 버튼들 사이의 간격 (매우 중요) */
+    text-align: center;
+    width: 100%;
+}
         </style>
     </div>
     <div id="integrated-auth-modal" class="hidden fixed inset-0 z-[10001] flex items-center justify-center p-4 bg-black/90 backdrop-blur-xl">
@@ -3020,76 +3057,50 @@ function spawnHiddenTreasure() {
     `).join('');
     }
 // 🚨 핵심: 페이지가 로드되자마자 위 함수를 실행하라는 특급 명령입니다.
+// [3060행부터 3144행까지 이 내용으로 덮어쓰시면 방황이 끝납니다]
+window.addEventListener('load', () => {
+    // 1. 뉴스 업데이트 (기존 기능 유지)
+    if (typeof updateLegacyNews === 'function') updateLegacyNews();
+    
+    const logo = document.getElementById('mango-charging-logo');
+    const splash = document.getElementById('mango-splash');
+    
+    // 2. 🚨 [오뚜기 부활] 로딩 시작 시 애니메이션 가동
+    if (logo) {
+        logo.classList.add('animate-mango-otogi');
+    }
 
-    window.addEventListener('load', updateLegacyNews);
-    // 2843행부터 수정 시작
-    window.addEventListener('load', () => {
+    // 3. 🏁 [결승점] 3.1초 뒤 로딩 종료 및 스플래시 제거
+    setTimeout(() => {
+        // 로고 애니메이션 중지
+        if (logo) logo.classList.remove('animate-mango-otogi');
 
-        if (typeof updateLegacyNews === 'function') updateLegacyNews();
-        const logo = document.getElementById('mango-charging-logo');
-        const splash = document.getElementById('mango-splash'); // 🌪️ 스플래시 요소 추가
-// 🚨 [부활] 로딩 시작하자마자 오뚜기 애니메이션 실행!
-        const chargingLogo = document.getElementById('mango-charging-logo');
-        if (chargingLogo) chargingLogo.classList.add('animate-mango-otogi');
-        // 1단계: 3.1초 뒤 로직 실행
-        setTimeout(() => {
-            // 로고 애니메이션 중지
-            if (logo) logo.classList.remove('animate-mango-otogi');
-
-            // 스플래시 화면 페이드아웃 및 제거 (이게 해결의 핵심!)
-            if (splash) {
-                splash.style.opacity = '0';
-                setTimeout(() => {
-                    splash.style.display = 'none';
-                    console.log("Mango Status: Splash Screen Cleanly Removed.");
-                }, 800); // 페이드아웃 애니메이션 시간
-            }
-            
-            console.log("Mango Performance: 3-step Otogi & Splash Complete.");
-        }, 3100); 
-    });
-    // [추가 제안] 스플래시가 걷히는 시점에 맞춰 사운드와 메인 오뚜기 시작!
-if (typeof bootMangoExperience === 'function') bootMangoExperience();
-
-
-    window.addEventListener('load', () => {
-        if (typeof updateLegacyNews === 'function') updateLegacyNews();
-        const logo = document.getElementById('mango-charging-logo');
-        const splash = document.getElementById('mango-splash'); 
-
-        // 🚨 여기부터 추가된 부분
-        if (logo) logo.classList.add('animate-mango-otogi'); 
-        // 여기까지
-
-        // 1단계: 3.1초 뒤 로직 실행
-        setTimeout(() => {
-            // 로고 애니메이션 중지
-            if (logo) logo.classList.remove('animate-mango-otogi');
-
-            // 스플래시 화면 페이드아웃 및 제거
-            if (splash) {
-                splash.style.opacity = '0';
-                setTimeout(() => {
-                    splash.style.display = 'none';
-                }, 800);
-            }
-        }, 3100); 
-    });
-
-// 🎵 Mango Signature Sound Logic (2026 Busan OS Update)
-const mangoAudio = new Audio('assets/sounds/mangomangodaldalhe.mp3'); //
-let isMangoBooted = false;
+        // 스플래시 화면을 물리적으로 제거 (이게 없으면 화면이 파괴된 것처럼 느껴집니다)
+        if (splash) {
+            splash.style.opacity = '0'; // 부드럽게 투명해짐
+            setTimeout(() => {
+                splash.style.display = 'none'; // 완전히 치워버림 (클릭 방해 금지)
+                console.log("Mango Status: 10-Step UI Integration Successful.");
+            }, 800);
+        }
+        
+        // 메인 경험(사운드 등) 시작
+        if (typeof bootMangoExperience === 'function') {
+            bootMangoExperience();
+        }
+    }, 3100); 
+});
 
 // 🎵 Mango Signature Audio Engine (2026 Update)
-const mangoSweetSound = new Audio('assets/sounds/mangomangodaldalhe.mp3');
+const mangoAudio = new Audio('assets/sounds/mangomangodaldalhe.mp3');
 
 /**
  * 망고 사운드 재생 함수
  * 브라우저 정책 대응: 첫 사용자 상호작용 후 오디오 컨텍스트 활성화
  */
 function playMangoSignature() {
-    mangoSweetSound.volume = 0.6; // 디자이너님의 귀를 즐겁게 할 최적의 볼륨
-    mangoSweetSound.play().catch(err => {
+    mangoAudio.volume = 0.6; // 디자이너님의 귀를 즐겁게 할 최적의 볼륨
+    mangoAudio.play().catch(err => {
         console.warn("[Mango OS] 사용자 상호작용 전 자동 재생이 제한되었습니다. 첫 클릭 시 활성화됩니다.");
     });
 }
@@ -3241,6 +3252,23 @@ function triggerMango9Shake() {
         logo.classList.add('animate-mango-otogi-9');
     }
 }
+// 4. 실행 시점 컨트롤
+// [시점 A] 페이지 로드 1.5초 후 자동 시도
+window.addEventListener('load', () => {
+    setTimeout(bootMangoExperience, 1500);
+    setTimeout(triggerMango9Shake, 2000);
+});
+
+// [시점 B] 브라우저 차단 대비 - 화면 첫 클릭 시 즉시 해제
+document.addEventListener('pointerdown', () => {
+    if (!isMangoBooted) bootMangoExperience();
+}, { once: true });
+
+// [시점 C] 10분 주기 리마인드 (600,000ms)
+setInterval(() => {
+    isMangoBooted = false; // 주기 재생을 위해 플래그 리셋
+    bootMangoExperience();
+}, 600000);
 setInterval(triggerMango9Shake, 60000);
 
 // 첫 로드 후 2초 뒤에 첫 퍼포먼스 시작
@@ -3350,6 +3378,7 @@ window.addEventListener('load', () => setTimeout(triggerMango9Shake, 2000));</sc
     function openFavorites() { alert("즐겨찾기를 확인합니다."); }
     function openFriends() { alert("친구 목록을 불러옵니다."); }
     function openPayment() { alert("결제 시스템을 연결합니다."); }
+
     </script>
 
     <div id="mango-dashboard-modal" class="fixed inset-0 z-[10000] hidden bg-black/95 backdrop-blur-xl flex items-center justify-center p-4">
