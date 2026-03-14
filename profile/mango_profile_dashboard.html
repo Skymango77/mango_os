@@ -695,33 +695,57 @@ function renderMenuByRole(role) {
 
 authPi(); // 인증 실행
 // -------------------------------------------------------------------------
-
-// 4. 결제 함수
+// [최종 통합] Mango Pi Network 실결제 및 서버 연동 엔진
 async function handleMangoTestPayment() {
     try {
-        if (!window.Pi) throw new Error("Pi SDK not found");
+        if (!window.Pi) {
+            alert("Pi Browser 내부에서 실행해 주세요.");
+            return;
+        }
 
+        console.log("Mango 결제 엔진 가동...");
+        
         const payment = await Pi.createPayment({
             amount: 0.01,
-            memo: "Mango App Step 10 Verification",
-            metadata: { step: 10 }
+            memo: "Mango App Premium Authentication",
+            metadata: { step: "final-auth" }
         }, {
-            onReadyForServerApproval: (id) => {
-                console.log("서버 승인 대기중: ", id);
-                // 여기에 서버 approve API 연동 필요
+            // [Step 1] 서버 승인 요청 (Vercel의 /api/approve.js 호출)
+            onReadyForServerApproval: async (paymentId) => {
+                console.log("서버 승인 대기 중: ", paymentId);
+                const response = await fetch("/api/approve", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ paymentId })
+                });
+                if (response.ok) {
+                    console.log("서버 승인 완료. 블록체인 전송을 기다립니다.");
+                }
             },
-            onReadyForServerCompletion: (id, txid) => {
-                alert("결제 성공! 권한결 대표님의 10단계 인증이 완료되었습니다.");
-                location.reload();
+            
+            // [Step 2] 결제 완료 처리 (Vercel의 /api/complete.js 호출)
+            onReadyForServerCompletion: async (paymentId, txid) => {
+                console.log("블록체인 확인 완료. 최종 권한 부여 중...");
+                const response = await fetch("/api/complete", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ paymentId, txid })
+                });
+
+                if (response.ok) {
+                    alert("결제 성공! 대표님의 프리미엄 권한이 활성화되었습니다.");
+                    location.reload(); // 성공 시 화면 새로고침으로 권한 반영
+                }
             },
-            onCancel: (id) => console.log("결제 취소"),
-            onError: (error) => alert("결제 에러: " + error.message)
+            
+            onCancel: (paymentId) => { console.log("사용자가 결제를 취소했습니다."); },
+            onError: (error, payment) => { alert("결제 에러: " + error.message); }
         });
     } catch (err) {
-        alert("결제 호출 실패. Pi Browser 내부에서 @KHankyul 계정으로 로그인되어 있는지 확인하세요.");
+        alert("결제 호출 실패: " + err.message);
     }
 }
-// [좌표: 645행 끝]
+
     </script>
 </body>
 </html>
