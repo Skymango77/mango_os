@@ -913,6 +913,8 @@ async function handleMangoTestPayment() {
 
 <body id="main-body" class="bg-black text-white min-h-screen overflow-x-hidden flex flex-col items-center py-6 space-y-6">
 
+<div id="main-content-wrapper"></div>
+
     <div id="mango-splash" style="position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background-color: #ffffff; z-index: 999999; display: flex; flex-direction: column; align-items: center; justify-content: center; transition: opacity 0.8s ease-in-out;">
         <div class="mango-wind-container" style="position: relative; width: 320px; height: 320px; display: flex; align-items: center; justify-content: center;">
             <div class="wind-layer" style="border: 12px solid transparent; border-top-color: #4DBCE9; border-bottom-color: #4DBCE9; border-radius: 50%; position: absolute; inset: 0; animation: spin-fast 1.5s linear infinite;"></div>
@@ -948,7 +950,7 @@ style="width: 140px; height: 140px; aspect-ratio: 1/1; object-fit: cover; z-inde
 }
         </style>
     </div>
-    <div id="integrated-auth-modal" class="hidden fixed inset-0 z-[10001] flex items-center justify-center p-4 bg-black/90 backdrop-blur-xl">
+<div id="integrated-auth-modal" class="hidden fixed inset-0 z-[10001] flex items-center justify-center bg-[#000000] transition-all duration-300">            <div class="w-full max-w-[480px] bg-[#121212] border-t border-yellow-500/30 rounded-t-[3rem] rounded-b-none overflow-hidden shadow-[0_-20px_50px_rgba(0,0,0,0.8)] pb-6 mt-20">
         <div class="w-full max-w-[480px] bg-zinc-900 border border-yellow-500/30 rounded-[2.5rem] overflow-hidden shadow-[0_0_50px_rgba(234,179,8,0.2)]">
             
             <div class="flex bg-white/5 border-b border-white/10">
@@ -977,7 +979,9 @@ style="width: 140px; height: 140px; aspect-ratio: 1/1; object-fit: cover; z-inde
                         <button class="w-10 h-10 bg-white rounded-full flex items-center justify-center hover:scale-110 transition-transform"><img src="https://upload.wikimedia.org/wikipedia/commons/f/fa/Apple_logo_black.svg" alt="Apple" class="w-5 h-5"></button>
                         <button class="w-10 h-10 bg-[#0088cc] rounded-full flex items-center justify-center text-white hover:scale-110 transition-transform"><i data-lucide="send" class="w-5 h-5 ml-0.5 mt-0.5"></i></button>
                         <button class="w-10 h-10 bg-[#25D366] rounded-full flex items-center justify-center hover:scale-110 transition-transform"><img src="https://upload.wikimedia.org/wikipedia/commons/6/6b/WhatsApp.svg" alt="WhatsApp" class="w-6 h-6"></button>
-                        <button class="w-10 h-10 bg-white border border-gray-100 rounded-full flex items-center justify-center hover:scale-110 transition-transform overflow-hidden p-1 shadow-sm"><img src="assets/img/pinetwork.png" alt="Pi Network" class="w-full h-full object-contain"></button>
+                        <button class="w-10 h-10 bg-white border border-gray-100 rounded-full overflow-hidden p-1 shadow-sm">
+                            <img src="assets/img/pinetwork.png" alt="Pi Network" class="w-full h-full object-contain">
+</button>
                     </div>
                 </div>
                 <!-- 2. My QR 섹션 -->
@@ -1003,9 +1007,39 @@ style="width: 140px; height: 140px; aspect-ratio: 1/1; object-fit: cover; z-inde
                         <div class="absolute top-0 left-0 w-full h-1 bg-yellow-500 shadow-[0_0_20px_#eab308] animate-scan"></div>
                     </div>
                     <p class="text-center text-[10px] text-white/60 mt-4">상대방의 QR 코드를 사각형 안에 맞춰주세요.</p>
-                </div>
+                  </div>
+<div id="auth-reset-section" class="px-4 animate-fade-in ">
+    <div class="space-y-4 py-2">
+        <p class="text-[10px] text-yellow-500 font-bold uppercase tracking-[0.2em] text-center mb-4">
+            Security Recovery
+        </p>
+        
+        <input type="password" id="new-password" placeholder="New Access Key" 
+               class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white text-sm outline-none focus:border-yellow-500/50">
+        
+        <button onclick="updatePassword()" class="w-full bg-yellow-500 text-black font-black py-3 rounded-xl text-xs active:scale-95 transition-transform">
+            SET NEW PASSWORD
+        </button>
 
-                <button class="w-full py-4 bg-yellow-500 text-black font-black rounded-2xl mt-8 transition-transform active:scale-95 hover:bg-yellow-400" onclick="closeAuth()">DONE</button>
+        <div class="flex items-center gap-3 py-2 opacity-30">
+            <div class="h-[1px] flex-1 bg-white"></div>
+            <span class="text-[8px]">OR</span>
+            <div class="h-[1px] flex-1 bg-white"></div>
+        </div>
+
+        <input type="email" id="recovery-email" placeholder="CEO Email Address" 
+               class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white text-sm outline-none">
+        
+        <button onclick="sendRecoveryEmail()" class="w-full border border-yellow-500/30 text-yellow-500 py-3 rounded-xl text-xs">
+            SEND RESET LINK
+        </button>
+
+        <p onclick="switchTab('login')" class="text-[9px] text-white/40 text-center mt-4 cursor-pointer hover:text-yellow-500">
+            Return to Login
+        </p>
+    </div>
+</div>     
+    <button class="w-full py-4 bg-yellow-500 text-black font-black rounded-2xl mt-8 transition-transform active:scale-95 hover:bg-yellow-400" onclick="closeAuth()">DONE</button>
             </div>
         </div>
     </div>
@@ -1041,26 +1075,25 @@ style="width: 140px; height: 140px; aspect-ratio: 1/1; object-fit: cover; z-inde
         </div>
         
         <div class="flex flex-col">
-            <div class="relative inline-block cursor-pointer" onclick="adminAccess()">
-                <h1 id="mango-text" 
-                    class="mango-gold-power text-[34px] font-[900] tracking-tighter leading-none drop-shadow-md pr-2" 
-                    style="color: #f97316; font-style: italic; margin: 0; position: relative; z-index: 10;">
-                    MANGO
-                </h1>
+            <div class="relative inline-block cursor-pointer" onclick="document.getElementById('integrated-auth-modal').classList.remove('hidden'); switchTab('reset');">
+    <h1 id="mango-text" 
+        class="mango-gold-power text-[34px] font-[900] tracking-tighter leading-none drop-shadow-md pr-2" 
+        style="color: #f97316; font-style: italic; margin: 0; position: relative; z-index: 10;">
+        MANGO
+    </h1>
                 
                 <div id="gold-dust-container" 
                      class="absolute top-0 left-0 w-full h-full pointer-events-none" 
                      style="z-index: 20; overflow: hidden;"></div>
             </div>
             
-            <span class="text-[8px] text-white/40 font-bold tracking-[1px] uppercase ml-1">
-                .PI / ECO-SYSTEM
+            <span id="main-mango-logo" class="text-[8px] text-white/40 font-bold tracking-[1px] uppercase ml-1 cursor-pointer">  
+                     .PI / ECO-SYSTEM
             </span>
         </div>
     </div>
    <div class="flex items-center gap-3">
-        <a href="profile/mango_profile_dashboard.html" class="relative group">
-            <div class="absolute -inset-1 bg-orange-500/20 rounded-full blur group-hover:bg-orange-500/40 transition duration-300"></div>
+<a href="javascript:void(0);" onclick="document.getElementById('integrated-auth-modal').classList.remove('hidden')" class="relative group">            <div class="absolute -inset-1 bg-orange-500/20 rounded-full blur group-hover:bg-orange-500/40 transition duration-300"></div>
             <div class="relative w-12 h-12 bg-zinc-900 border border-white/10 rounded-full flex items-center justify-center hover:border-orange-500/50 transition-all shadow-lg">
                 <i data-lucide="user" class="w-6 h-6 text-orange-500"></i>
                 <span class="absolute top-0 right-0 w-3 h-3 bg-red-600 border-2 border-black rounded-full"></span>
@@ -3400,5 +3433,138 @@ window.addEventListener('load', () => setTimeout(triggerMango9Shake, 2000));</sc
     </div>
 
     <a href="javascript:void(0);" onclick="openDashboard()" class="relative flex-shrink-0" style="display: none;"></a>
+
+    <script src="assets/js/social-engine.js"></script>
+    <script src="assets/js/share-link.js"></script>
+    <script src="assets/js/security-gate.js"></script>
+    <script src="assets/js/auth-engine.js"></script>
+
+    <script>
+function onLoginSuccess() {
+    // 1. 로그인 모달 내부를 미니홈피(개인 프로필) 스타일로 즉시 교체
+    const modalContent = document.querySelector('#integrated-auth-modal > div');
+    if(!modalContent) return;
+
+    modalContent.innerHTML = `
+        <div class="p-8 text-center animate-fade-in">
+            <div class="w-24 h-24 bg-gradient-to-tr from-yellow-500 to-orange-500 rounded-full mx-auto mb-4 p-1 shadow-[0_0_20px_rgba(234,179,8,0.5)]">
+                <img src="assets/img/mango.jpg" class="w-full h-full rounded-full object-cover border-2 border-black">
+            </div>
+            <h2 class="text-2xl font-black text-white mb-1">SkyMango 님</h2>
+            <p class="text-yellow-500 text-[10px] mb-6 font-bold tracking-[0.3em] uppercase">Mango Ecosystem CEO</p>
+            
+            <div class="grid grid-cols-2 gap-3 mb-8">
+                <div class="bg-white/5 p-4 rounded-2xl border border-white/10 backdrop-blur-sm">
+                    <p class="text-[9px] text-white/40 uppercase tracking-tighter">My Pi Balance</p>
+                    <p class="text-lg font-black text-yellow-500">3,141.59 π</p>
+                </div>
+                <div class="bg-white/5 p-4 rounded-2xl border border-white/10 backdrop-blur-sm">
+                    <p class="text-[9px] text-white/40 uppercase tracking-tighter">Activity Points</p>
+                    <p class="text-lg font-black text-white">12,500 P</p>
+                </div>
+            </div>
+
+            <button onclick="enterMainSystem()" class="w-full py-4 bg-yellow-500 text-black font-black rounded-2xl shadow-[0_10px_30px_rgba(234,179,8,0.4)] active:scale-95 transition-all duration-300">
+                MANGO 시스템 입장하기
+            </button>
+        </div>
+    `;
+}
+
+function enterMainSystem() {
+    // 2. 모달 닫기
+    const modal = document.getElementById('integrated-auth-modal');
+    if(modal) modal.classList.add('hidden');
+    
+    // 3. 8개 포털(Portal) 강조 애니메이션 시작
+    const portals = document.querySelectorAll('.portal-card'); // 포털 카드들의 공통 클래스라고 가정
+    portals.forEach((el, index) => {
+        setTimeout(() => {
+            el.classList.add('animate-bounce-subtle'); // 살짝 들썩이는 효과
+            el.style.boxShadow = "0 0 25px rgba(234, 179, 8, 0.6)"; // 황금빛 광채
+            
+            // 2초 뒤에 다시 원래대로
+            setTimeout(() => {
+                el.style.boxShadow = "";
+                el.classList.remove('animate-bounce-subtle');
+            }, 2000);
+        }, index * 100); // 순차적으로 반짝임
+    });
+
+    if (window.showMangoToast) showMangoToast("Welcome Back, CEO!");
+}
+</script>
+<script src="assets/js/auth-engine.js"></script>
+
+    <script>
+// [1] 전역 엔진 가동
+let currentUserID = "";
+
+// 토스트 에러 방지용 정의
+window.showMangoToast = function(msg) {
+    const toast = document.createElement('div');
+    toast.style = "fixed; bottom:50px; left:50%; transform:translateX(-50%); z-index:10000; background:#EAB308; color:black; padding:12px 24px; border-radius:50px; font-weight:900; box-shadow:0 0 20px rgba(234,179,8,0.5);";
+    toast.className = "fixed animate-bounce";
+    toast.innerText = msg;
+    document.body.appendChild(toast);
+    setTimeout(() => toast.remove(), 2500);
+};
+
+// [2] 로그인 성공 시 (미니홈피 프로필 생성)
+function onLoginSuccess() {
+    const input = document.querySelector('#auth-login-section input[type="text"]');
+    currentUserID = input && input.value ? input.value.split('@')[0] : "User";
+
+    const content = document.querySelector('#integrated-auth-modal > div');
+    if(!content) return;
+
+    const isCEO = currentUserID.toLowerCase().includes('ceo');
+    const name = isCEO ? "SkyMango" : currentUserID;
+
+    content.innerHTML = `
+        <div class="p-8 text-center animate-in fade-in zoom-in duration-500">
+            <div class="w-24 h-24 bg-gradient-to-tr from-yellow-500 to-orange-500 rounded-full mx-auto mb-4 p-1 shadow-[0_0_30px_rgba(234,179,8,0.6)]">
+                <img src="assets/img/mango.jpg" class="w-full h-full rounded-full object-cover border-2 border-black" onerror="this.src='https://via.placeholder.com/100'">
+            </div>
+            <h2 class="text-2xl font-black text-white mb-1">\${name} 님</h2>
+            <p class="text-yellow-500 text-[10px] mb-6 font-bold tracking-widest uppercase">Mango OS Authorized</p>
+            <div class="grid grid-cols-2 gap-3 mb-8">
+                <div class="bg-white/5 p-4 rounded-2xl border border-white/10 backdrop-blur-md">
+                    <p class="text-[9px] text-white/40 uppercase">Balance</p>
+                    <p class="text-lg font-black text-yellow-500">3,141 π</p>
+                </div>
+                <div class="bg-white/5 p-4 rounded-2xl border border-white/10 backdrop-blur-md">
+                    <p class="text-[9px] text-white/40 uppercase">Status</p>
+                    <p class="text-lg font-black text-white">VIP</p>
+                </div>
+            </div>
+            <button onclick="enterMainSystem()" class="w-full py-4 bg-yellow-500 text-black font-black rounded-2xl shadow-xl hover:scale-105 transition-all">
+                시스템 입장하기
+            </button>
+        </div>
+    `;
+}
+
+// [3] 최종 입장 (포털 애니메이션 작동)
+function enterMainSystem() {
+    document.getElementById('integrated-auth-modal').style.display = 'none';
+    document.getElementById('main-content-wrapper').style.display = 'flex';
+
+    // 8개 포털 카드 광채 효과
+    document.querySelectorAll('.portal-card').forEach((el, i) => {
+        setTimeout(() => {
+            el.style.boxShadow = "0 0 40px rgba(234, 179, 8, 0.9)";
+            el.style.border = "2px solid #EAB308";
+            setTimeout(() => {
+                el.style.boxShadow = "";
+                el.style.border = "";
+            }, 1200);
+        }, i * 80);
+    });
+
+    const msg = currentUserID.toLowerCase().includes('ceo') ? "👑 Welcome Back, SkyMango CEO!" : "Welcome to Mango Ecosystem!";
+    showMangoToast(msg);
+}
+</script>
 </body>
 </html>
