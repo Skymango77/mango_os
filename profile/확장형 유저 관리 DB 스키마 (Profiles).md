@@ -146,7 +146,7 @@ const scopes = ['username', 'payments', 'wallet_address'];
         const piIdDisplay = document.getElementById('user-pi-id');
         const adminBadge = document.getElementById('admin-badge');
 
-        if (isAdmin) {
+         if (isAdmin) {
             // [Top Super Admin 권한 부여]
             if (nameDisplay) nameDisplay.innerText = "권한결";
             if (piIdDisplay) piIdDisplay.innerText = `@${username.toUpperCase()}`;
@@ -161,8 +161,14 @@ const scopes = ['username', 'payments', 'wallet_address'];
             if (adminBadge) adminBadge.classList.add('hidden');
         }
 
-        // [다음 단계] 백엔드 DB 연동 로직이 들어갈 자리
-        // syncUserWithDB(auth.user, isAdmin ? 'SUPER_ADMIN' : 'USER');
+        // [핵심 연동] 백엔드 DB와 동기화하고 프로필 정보를 가져옵니다.
+        const userRole = isAdmin ? 'SUPER_ADMIN' : 'USER';
+        const userProfile = await syncUserWithDB(auth.user, userRole);
+
+        // 가져온 프로필 정보로 대시보드 UI를 업데이트합니다.
+        if (userProfile) {
+            updateDashboardUI(userProfile);
+        }
 
     } catch (err) {
         console.error("인증 실패 또는 파이 브라우저 아님:", err);
@@ -170,6 +176,34 @@ const scopes = ['username', 'payments', 'wallet_address'];
         const nameDisplay = document.getElementById('user-name-display');
         if (nameDisplay) nameDisplay.innerText = "권한결";
     }
+
+}
+
+// [신규] 대시보드 UI를 실시간 데이터로 업데이트하는 함수
+function updateDashboardUI(profile) {
+const levelDisplay = document.getElementById('user-level-display');
+const balanceDisplay = document.getElementById('user-balance-display');
+
+    if (levelDisplay) {
+        levelDisplay.innerText = profile.level;
+    }
+    if (balanceDisplay) {
+        // 숫자가 카운트업되는 애니메이션 효과
+        const finalBalance = parseFloat(profile.pi_balance);
+        let currentBalance = 0;
+        const increment = finalBalance / 100; // 100단계로 애니메이션 분할
+
+        const counter = setInterval(() => {
+            currentBalance += increment;
+            if (currentBalance >= finalBalance) {
+                balanceDisplay.innerText = finalBalance.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+                clearInterval(counter);
+            } else {
+                balanceDisplay.innerText = currentBalance.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+            }
+        }, 20); // 20ms 간격으로 부드러운 애니메이션
+    }
+    console.log("Dashboard UI updated with live data.");
 
 }
 
@@ -396,22 +430,45 @@ authPi();
 // ---------------------------------------------------------
 // [신규] 유저 데이터를 DB와 동기화하는 함수
 // ---------------------------------------------------------
-async function syncUserWithDB(userData, role) {
-try {
-const response = await fetch('/api/login', {
-method: 'POST',
-headers: { 'Content-Type': 'application/json' },
-body: JSON.stringify({
-uid: userData.uid,
-username: userData.username,
-role: role
-})
-});
-const result = await response.json();
-console.log("DB Sync 완료:", result.message);
-} catch (err) {
-console.error("DB Sync 실패:", err);
-}
+async function syncUserWithDB(userData) {
+console.log("Attempting to sync user with backend:", userData.username);
+// 실제 환경에서는 이 부분이 백엔드 API를 호출하는 로직이 됩니다.
+// const response = await fetch('/api/login', {
+// method: 'POST',
+// headers: { 'Content-Type': 'application/json' },
+// body: JSON.stringify({ uid: userData.uid, username: userData.username })
+// });
+// const profile = await response.json();
+// return profile;
+
+    // 지금은 API 응답을 시뮬레이션하여 즉시 테스트합니다.
+    return new Promise(resolve => {
+        setTimeout(() => {
+            let mockProfile;
+            if (userData.username === 'KHankyul') {
+                mockProfile = {
+                    pi_uid: userData.uid,
+                    username: userData.username,
+                    role: 'SUPER_ADMIN',
+                    level: 99,
+                    is_active: true,
+                    pi_balance: 12345.67 // CEO님 계정 시뮬레이션 잔액
+                };
+            } else {
+                mockProfile = {
+                    pi_uid: userData.uid,
+                    username: userData.username,
+                    role: 'USER',
+                    level: Math.floor(Math.random() * 10) + 1, // 일반 유저: 1~10 랜덤 레벨
+                    is_active: true,
+                    pi_balance: (Math.random() * 100).toFixed(2) // 일반 유저: 0~100 랜덤 잔액
+                };
+            }
+            console.log("DB Sync Complete. Profile data fetched:", mockProfile);
+            resolve(mockProfile);
+        }, 500); // 0.5초의 네트워크 지연 시뮬레이션
+    });
+
 }
 
 // [기존 코드 유지]
