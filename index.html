@@ -21,6 +21,40 @@
     <script src="https://unpkg.com/lucide@latest"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
+/* [추가] 1. MANGO 로고 하단 금 가루 선 정밀 좌표 */
+.glow-line {
+    position: absolute;
+    top: 85%; /* 대표님이 확인하신 정상 위치 */
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 100%;
+    height: 4px;
+    background: linear-gradient(90deg, transparent, #ffaa00, transparent);
+    box-shadow: 0 0 15px #ffaa00;
+    animation: glow-move 2s infinite ease-in-out;
+    z-index: 5;
+}
+
+@keyframes glow-move {
+    0%, 100% { opacity: 0.3; transform: translate(-50%, -50%) scaleX(0.8); }
+    50% { opacity: 1; transform: translate(-50%, -50%) scaleX(1.1); }
+}
+
+/* [추가] 2. Pi Browser 전용 반응형 레이아웃 (style 태그 닫히기 직전에 추가) */
+@media (max-width: 768px) {
+   /* 1. 모바일에서만 선을 95% 위치(글자 아랫선)로 내립니다 */
+    .glow-line { top: 95% !important; }
+    .main-container, .mango-container, .glass {
+        margin-bottom: 180px !important; 
+    }
+    
+    /* 포털이 회전하는 영역의 높이를 모바일 환경에 맞춰 최적화 */
+    .carousel-view {
+        height: 350px !important;
+        margin-top: 20px;
+    }
+}
+
         /* 폰트 로드 최상단 배치 */
         @import url('https://fonts.googleapis.com/css2?family=Kanit:ital,wght@1,900&display=swap');
         
@@ -202,6 +236,7 @@
 .mango-gold-power {
     position: relative;
     display: inline-block;
+    
     
     /* 1. 폰트 및 두께 설정 */
     font-family: 'Kanit', sans-serif !important;
