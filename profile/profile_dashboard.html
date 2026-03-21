@@ -94,6 +94,30 @@
             alert("시스템 오류: " + err.message);
         }
     }
+    // 공유하기 기능을 활성화하는 함수
+function shareMango() {
+    if (navigator.share) {
+        // 모바일 기기 자체 공유 창 호출
+        navigator.share({
+            title: 'Mango Pi Ecosystem',
+            text: '망고 생태계 5인 테스트에 동참해 주세요!',
+            url: window.location.href // 현재 페이지 주소 (profile_dashboard.html)
+        }).then(() => {
+            console.log('공유 성공');
+        }).catch((error) => {
+            console.log('공유 실패:', error);
+        });
+    } else {
+        // PC 브라우저 등 navigator.share가 지원되지 않을 때 클립보드 복사
+        const tempInput = document.createElement("input");
+        tempInput.value = window.location.href;
+        document.body.appendChild(tempInput);
+        tempInput.select();
+        document.execCommand("copy");
+        document.body.removeChild(tempInput);
+        alert("링크가 복사되었습니다. 지인에게 전달해 주세요!");
+    }
+}
 </script>
 </body>
 </html>
