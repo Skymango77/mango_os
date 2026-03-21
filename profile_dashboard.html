@@ -95,23 +95,18 @@ async function payWithPi() {
 }
 </script>
 <script>
-    // 1. SDK 로드 확인 및 초기화
+    // 1. SDK 초기화
     document.addEventListener('DOMContentLoaded', function() {
         if (typeof Pi !== 'undefined') {
             Pi.init({ version: "2.0", sandbox: true });
-            console.log("Pi SDK Initialized");
+            console.log("Pi SDK 준비 완료");
         }
     });
 
-    // 토스트 메시지 대용 함수
-    function showMangoToast(msg) {
-        console.log(msg);
-    }
-
-    // 2. 통합 결제 함수 (중복 제거됨)
     async function payWithPi() {
+        // SDK 로드 확인
         if (typeof Pi === 'undefined') {
-            alert("파이 SDK를 불러오지 못했습니다. 잠시 후 다시 시도해주세요.");
+            alert("SDK 로딩 실패: 네트워크 연결을 확인하세요.");
             return;
         }
 
@@ -121,51 +116,27 @@ async function payWithPi() {
                 memo: "Mango Ecosystem 5-User Test",
                 metadata: { test_type: "ceo_final_check" }
             }, {
-                // [A] 서버 승인 요청
                 onReadyForServerApproval: async (paymentId) => {
-                    console.log("서버 승인 중...", paymentId);
                     await fetch('https://mango-os-6xu2.vercel.app/api/approve', {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify({ paymentId })
                     });
                 },
-                // [B] 결제 완료 검증
                 onReadyForServerCompletion: async (paymentId, txid) => {
-                    console.log("결제 완료! 검증 시작...");
                     const response = await fetch('https://mango-os-6xu2.vercel.app/api/complete', {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify({ paymentId, txid })
                     });
-                    if (response.ok) {
-                        alert("✅ 검증 완료! 0.01 π 입금이 확인되었습니다.");
-                    }
+                    if (response.ok) alert("✅ 검증 완료!");
                 },
-                onCancel: (paymentId) => { 
-                    console.log("결제 취소"); 
-                },
-                onError: (error) => { 
-                    console.error("결제 에러:", error);
-                    alert("결제 처리 중 오류가 발생했습니다.");
-                }
+                onCancel: (paymentId) => { console.log("취소됨"); },
+                onError: (error) => { alert("결제 엔진 에러: " + error.message); }
             });
         } catch (err) {
-            console.error(err);
-            alert("연결 오류: 반드시 '파이 브라우저' 앱에서 접속해야 결제가 가능합니다.");
-        }
-    }
-
-    // 공유하기 기능
-    function shareMango() {
-        if (navigator.share) {
-            navigator.share({
-                title: 'Mango Pi Ecosystem',
-                text: '망고 생태계 테스트에 동참하세요!',
-                url: window.location.href
-            });
-        } else {
-            alert("링크가 복사되었습니다!");
+            // [중요] 단순 문구가 아니라 실제 에러 내용을 팝업으로 띄웁니다.
+            alert("실제 에러 내용: " + err.message + "\n(이 메시지를 알려주세요!)");
         }
     }
 </script>
