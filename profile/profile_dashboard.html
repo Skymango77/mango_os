@@ -19,7 +19,11 @@
             <img id="user-avatar" src="../assets/img/mango.jpg" class="w-24 h-24 rounded-full border-4 border-yellow-500 shadow-2xl mx-auto">
             <span class="absolute bottom-0 right-0 bg-green-500 w-6 h-6 rounded-full border-2 border-[#0f172a]"></span>
         </div>
-        <h1 class="text-2xl font-black mt-4">SkyMango <span class="text-yellow-500">CEO</span></h1>
+
+<h1 class="text-2xl font-black mt-4">
+    <span id="user-name-display">Loading...</span> 
+    <span id="user-level-badge" class="text-yellow-500 text-sm ml-2 bg-yellow-500/10 px-2 py-1 rounded-full border border-yellow-500/20 italic">Lv.1</span>
+</h1>        
         <p class="text-gray-400 text-sm">Mango Ecosystem Verified</p>
     </header>
 
@@ -62,34 +66,43 @@
 </div>
 
 <script>
-    // 1. SDK 초기화
-    document.addEventListener('DOMContentLoaded', function() {
+    // 1. SDK 초기화 및 사용자 자동 인증
+    document.addEventListener('DOMContentLoaded', async function() {
         if (typeof Pi !== 'undefined') {
             Pi.init({ version: "2.0", sandbox: true });
+            
+            try {
+                // 접속한 사용자의 username 권한을 요청합니다.
+                const auth = await Pi.authenticate(['payments', 'username'], onIncompletePaymentFound);
+                
+                // 화면의 "Loading..." 부분을 실제 파이 아이디로 교체
+                const username = auth.user.username;
+                document.getElementById('user-name-display').innerText = username;
+                
+                // 레벨 표시 (예: 아이디 길이에 따라 재미로 레벨 부여, 실전엔 데이터베이스 연동)
+                const userLevel = (username.length % 10) + 1;
+                document.getElementById('user-level-badge').innerText = "Lv." + userLevel;
+                
+                console.log("인증 성공: " + username);
+            } catch (err) {
+                console.error("인증 실패:", err);
+                document.getElementById('user-name-display').innerText = "Guest User";
+            }
         }
     });
 
-    // 2. 미완료 결제 처리 함수 (파이 결제 필수 요구사항)
+    // 2. 미완료 결제 처리 (필수)
     function onIncompletePaymentFound(payment) {
-        console.log("미완료 결제 내역 확인:", payment);
+        console.log("미완료 결제 발견:", payment);
     }
 
-    // 3. 결제 함수
+    // 3. 결제 함수 (이미 인증된 권한 활용)
     async function payWithPi() {
-        if (typeof Pi === 'undefined') {
-            alert("SDK 로드 실패: 파이 브라우저에서 실행해주세요.");
-            return;
-        }
-
         try {
-            // ★ 핵심 해결책: 결제창을 띄우기 전 'payments' 권한을 먼저 요청합니다! ★
-            await Pi.authenticate(['payments'], onIncompletePaymentFound);
-
-            // 권한 획득 후 파이 결제창 호출
             const payment = await Pi.createPayment({
                 amount: 0.01,
                 memo: "Mango Ecosystem 5-User Test",
-                metadata: { test_type: "ceo_final_check" }
+                metadata: { test_type: "production_check" }
             }, {
                 onReadyForServerApproval: async (paymentId) => {
                     await fetch('https://mango-os-6xu2.vercel.app/api/approve', {
@@ -104,9 +117,9 @@
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify({ paymentId, txid })
                     });
-                    if (response.ok) alert("✅ 검증 완료! 0.01 π 테스트 결제 성공!");
+                    if (response.ok) alert("✅ 결제 및 검증 완료!");
                 },
-                onCancel: (paymentId) => { console.log("결제가 취소되었습니다."); },
+                onCancel: (paymentId) => { console.log("취소됨"); },
                 onError: (error) => { alert("결제 에러: " + error.message); }
             });
         } catch (err) {
@@ -116,20 +129,16 @@
 
     // 4. 공유하기 함수
     function shareMango() {
+        const shareData = {
+            title: 'Mango Pi Ecosystem',
+            text: '망고 생태계 테스트에 동참해 주세요!',
+            url: window.location.origin // 메인 주소 공유
+        };
         if (navigator.share) {
-            navigator.share({
-                title: 'Mango Pi Ecosystem',
-                text: '망고 생태계 5인 테스트에 동참해 주세요!',
-                url: window.location.href
-            }).catch((error) => console.log('공유 실패:', error));
+            navigator.share(shareData).catch(err => console.log(err));
         } else {
-            const tempInput = document.createElement("input");
-            tempInput.value = window.location.href;
-            document.body.appendChild(tempInput);
-            tempInput.select();
-            document.execCommand("copy");
-            document.body.removeChild(tempInput);
-            alert("링크가 복사되었습니다. 지인에게 전달해 주세요!");
+            navigator.clipboard.writeText(shareData.url);
+            alert("링크가 복사되었습니다!");
         }
     }
 </script>
