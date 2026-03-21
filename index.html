@@ -1658,8 +1658,7 @@ function cancelPress() {
     <div class="flex justify-end pr-4 relative z-30" style="margin-top: -28px; margin-bottom: 2px;">
     <div class="fixed z-[9999] flex flex-col items-end" style="right: 20px; bottom: 185px;">
         
-        <a href="javascript:void(0);" onclick="openDashboard()" class="relative block transition-transform active:scale-95 group" title="대시보드 열기">
-            <div class="w-11 h-12 border border-yellow-500/40 flex items-center justify-center text-xl hex-diamond-profile bg-black/70 backdrop-blur-md shadow-[0_0_20px_rgba(255,215,0,0.2)] group-hover:shadow-[0_0_25px_rgba(255,215,0,0.4)] transition-all">
+<a href="profile_dashboard.html" onclick="event.stopPropagation();" class="relative block transition-transform active:scale-95 group">                <div class="w-11 h-12 border border-yellow-500/40 flex items-center justify-center text-xl hex-diamond-profile bg-black/70 backdrop-blur-md shadow-[0_0_20px_rgba(255,215,0,0.2)] group-hover:shadow-[0_0_25px_rgba(255,215,0,0.4)] transition-all">
                 💎
             </div>
             <div class="absolute -bottom-1 -right-1 level-badge text-[7px] font-black px-1.5 py-0.5 rounded-full text-black bg-yellow-500 shadow-md">
@@ -3470,32 +3469,59 @@ window.addEventListener('load', () => setTimeout(triggerMango9Shake, 2000));</sc
     <a href="javascript:void(0);" onclick="openDashboard()" class="relative flex-shrink-0" style="display: none;"></a>
 
     <script src="assets/js/social-engine.js"></script>
-    <script src="assets/js/share-link.js"></script>
-    <script src="assets/js/security-gate.js"></script>
-    <script src="assets/js/auth-engine.js"></script>
+<script src="assets/js/share-link.js"></script>
+<script src="assets/js/security-gate.js"></script>
+<script src="assets/js/auth-engine.js"></script>
+<script src="assets/js/mango-hompy.js"></script>
 
-    <script>
-function onLoginSuccess() {
-    // 1. 로그인 모달 내부를 미니홈피(개인 프로필) 스타일로 즉시 교체
+<script>
+// [1] 시스템 변수 정의
+let currentUserID = "";
+
+// [2] 토스트 알림 시스템
+window.showMangoToast = function(msg) {
+    const toast = document.createElement('div');
+    toast.style = "position:fixed; bottom:50px; left:50%; transform:translateX(-50%); z-index:10000; background:#EAB308; color:black; padding:12px 24px; border-radius:50px; font-weight:900; box-shadow:0 0 20px rgba(234,179,8,0.5); font-family:sans-serif;";
+    toast.className = "fixed animate-bounce";
+    toast.innerText = msg;
+    document.body.appendChild(toast);
+    setTimeout(() => toast.remove(), 2500);
+};
+
+// [3] 로그인 성공 시: 개인화 미니홈피 생성
+function onLoginSuccess(user) {
+    // 1. 메인 배경 숨기기
+    const mainContainer = document.getElementById('main-container');
+    if (mainContainer) mainContainer.style.display = 'none';
+
+    // 2. 접속 유저 정보 추출
+    const input = document.querySelector('#auth-login-section input[type="text"]');
+    currentUserID = (user && user.username) ? user.username : (input && input.value ? input.value.split('@')[0] : "New User");
+
+    let userLevel = "Lv.1 Beginner"; 
+    const isCEO = currentUserID.toLowerCase().includes('mango') || currentUserID.toLowerCase().includes('ceo');
+    if (isCEO) userLevel = "Lv.99 CEO";
+
+    // 3. 모달 내부를 미니홈피 스타일로 즉시 교체
     const modalContent = document.querySelector('#integrated-auth-modal > div');
     if(!modalContent) return;
 
     modalContent.innerHTML = `
         <div class="p-8 text-center animate-fade-in">
             <div class="w-24 h-24 bg-gradient-to-tr from-yellow-500 to-orange-500 rounded-full mx-auto mb-4 p-1 shadow-[0_0_20px_rgba(234,179,8,0.5)]">
-                <img src="assets/img/mango.jpg" class="w-full h-full rounded-full object-cover border-2 border-black">
+                <img src="assets/img/mango.jpg" class="w-full h-full rounded-full object-cover border-2 border-black" onerror="this.src='https://via.placeholder.com/100'">
             </div>
-            <h2 class="text-2xl font-black text-white mb-1">SkyMango 님</h2>
-            <p class="text-yellow-500 text-[10px] mb-6 font-bold tracking-[0.3em] uppercase">Mango Ecosystem CEO</p>
+            <h2 class="text-2xl font-black text-white mb-1">\${currentUserID} 님</h2>
+            <p class="text-yellow-500 text-[10px] mb-6 font-bold tracking-[0.3em] uppercase">\${userLevel} | Mango Ecosystem</p>
             
             <div class="grid grid-cols-2 gap-3 mb-8">
                 <div class="bg-white/5 p-4 rounded-2xl border border-white/10 backdrop-blur-sm">
                     <p class="text-[9px] text-white/40 uppercase tracking-tighter">My Pi Balance</p>
-                    <p class="text-lg font-black text-yellow-500">3,141.59 π</p>
+                    <p class="text-lg font-black text-yellow-500">\${isCEO ? "3,141.59" : "0.00"} π</p>
                 </div>
                 <div class="bg-white/5 p-4 rounded-2xl border border-white/10 backdrop-blur-sm">
                     <p class="text-[9px] text-white/40 uppercase tracking-tighter">Activity Points</p>
-                    <p class="text-lg font-black text-white">12,500 P</p>
+                    <p class="text-lg font-black text-white">\${isCEO ? "12,500" : "100"} P</p>
                 </div>
             </div>
 
@@ -3504,88 +3530,19 @@ function onLoginSuccess() {
             </button>
         </div>
     `;
+
+    if (typeof refreshMiniHompy === 'function') refreshMiniHompy(user);
 }
 
+// [4] 시스템 입장 함수
 function enterMainSystem() {
-    // 2. 모달 닫기
     const modal = document.getElementById('integrated-auth-modal');
-    if(modal) modal.classList.add('hidden');
-    
-    // 3. 8개 포털(Portal) 강조 애니메이션 시작
-    const portals = document.querySelectorAll('.portal-card'); // 포털 카드들의 공통 클래스라고 가정
-    portals.forEach((el, index) => {
-        setTimeout(() => {
-            el.classList.add('animate-bounce-subtle'); // 살짝 들썩이는 효과
-            el.style.boxShadow = "0 0 25px rgba(234, 179, 8, 0.6)"; // 황금빛 광채
-            
-            // 2초 뒤에 다시 원래대로
-            setTimeout(() => {
-                el.style.boxShadow = "";
-                el.classList.remove('animate-bounce-subtle');
-            }, 2000);
-        }, index * 100); // 순차적으로 반짝임
-    });
+    if(modal) modal.style.display = 'none';
 
-    if (window.showMangoToast) showMangoToast("Welcome Back, CEO!");
-}
-</script>
-<script src="assets/js/auth-engine.js"></script>
+    const mainContainer = document.getElementById('main-container');
+    if (mainContainer) mainContainer.style.display = 'block';
 
-    <script>
-// [1] 전역 엔진 가동
-let currentUserID = "";
-
-// 토스트 에러 방지용 정의
-window.showMangoToast = function(msg) {
-    const toast = document.createElement('div');
-    toast.style = "fixed; bottom:50px; left:50%; transform:translateX(-50%); z-index:10000; background:#EAB308; color:black; padding:12px 24px; border-radius:50px; font-weight:900; box-shadow:0 0 20px rgba(234,179,8,0.5);";
-    toast.className = "fixed animate-bounce";
-    toast.innerText = msg;
-    document.body.appendChild(toast);
-    setTimeout(() => toast.remove(), 2500);
-};
-
-// [2] 로그인 성공 시 (미니홈피 프로필 생성)
-function onLoginSuccess() {
-    const input = document.querySelector('#auth-login-section input[type="text"]');
-    currentUserID = input && input.value ? input.value.split('@')[0] : "User";
-
-    const content = document.querySelector('#integrated-auth-modal > div');
-    if(!content) return;
-
-    const isCEO = currentUserID.toLowerCase().includes('ceo');
-    const name = isCEO ? "SkyMango" : currentUserID;
-
-    content.innerHTML = `
-        <div class="p-8 text-center animate-in fade-in zoom-in duration-500">
-            <div class="w-24 h-24 bg-gradient-to-tr from-yellow-500 to-orange-500 rounded-full mx-auto mb-4 p-1 shadow-[0_0_30px_rgba(234,179,8,0.6)]">
-                <img src="assets/img/mango.jpg" class="w-full h-full rounded-full object-cover border-2 border-black" onerror="this.src='https://via.placeholder.com/100'">
-            </div>
-            <h2 class="text-2xl font-black text-white mb-1">\${name} 님</h2>
-            <p class="text-yellow-500 text-[10px] mb-6 font-bold tracking-widest uppercase">Mango OS Authorized</p>
-            <div class="grid grid-cols-2 gap-3 mb-8">
-                <div class="bg-white/5 p-4 rounded-2xl border border-white/10 backdrop-blur-md">
-                    <p class="text-[9px] text-white/40 uppercase">Balance</p>
-                    <p class="text-lg font-black text-yellow-500">3,141 π</p>
-                </div>
-                <div class="bg-white/5 p-4 rounded-2xl border border-white/10 backdrop-blur-md">
-                    <p class="text-[9px] text-white/40 uppercase">Status</p>
-                    <p class="text-lg font-black text-white">VIP</p>
-                </div>
-            </div>
-            <button onclick="enterMainSystem()" class="w-full py-4 bg-yellow-500 text-black font-black rounded-2xl shadow-xl hover:scale-105 transition-all">
-                시스템 입장하기
-            </button>
-        </div>
-    `;
-}
-
-// [3] 최종 입장 (포털 애니메이션 작동)
-function enterMainSystem() {
-    document.getElementById('integrated-auth-modal').style.display = 'none';
-    document.getElementById('main-content-wrapper').style.display = 'flex';
-
-    // 8개 포털 카드 광채 효과
+    // 포털 애니메이션
     document.querySelectorAll('.portal-card').forEach((el, i) => {
         setTimeout(() => {
             el.style.boxShadow = "0 0 40px rgba(234, 179, 8, 0.9)";
@@ -3599,6 +3556,21 @@ function enterMainSystem() {
 
     const msg = currentUserID.toLowerCase().includes('ceo') ? "👑 Welcome Back, SkyMango CEO!" : "Welcome to Mango Ecosystem!";
     showMangoToast(msg);
+}
+
+// [5] 프로필 아이콘 클릭 시 대시보드 열기
+function openDashboard() {
+    const dashboardHTML = `
+        <div id="user-dashboard" class="fixed inset-0 z-[10000] flex items-center justify-center p-4 bg-black/90 backdrop-blur-2xl">
+            <div class="mango-container glass border-yellow-500/30 p-8 text-center" style="max-width: 400px;">
+                <div class="text-5xl mb-6">💎</div>
+                <h2 class="text-white text-lg font-bold mb-2">CEO DASHBOARD</h2>
+                <p class="text-white/50 text-xs mb-8">관리자 전용 설정 페이지로 이동합니다.</p>
+                <button onclick="location.href='mango_profile_dashboard.html'" class="w-full py-4 bg-yellow-500 text-black font-black rounded-2xl mb-3">접속하기</button>
+                <button onclick="document.getElementById('user-dashboard').remove()" class="text-white/30 text-[10px] uppercase">Cancel</button>
+            </div>
+        </div>`;
+    document.body.insertAdjacentHTML('beforeend', dashboardHTML);
 }
 </script>
 </body>
