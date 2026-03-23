@@ -1293,80 +1293,64 @@ style="width: 140px; height: 140px; aspect-ratio: 1/1; object-fit: cover; z-inde
 
 
 <script>
-    // [MANGO GLOBAL ENGINE - FINAL FIX]
     const Pi = window.Pi;
     let piUser = null;
 
-    // 1. 초기화 및 권한 강제 획득
+    // [1] 앱 시작 시 권한 강제 획득
     async function initPi() {
         try {
             await Pi.init({ version: "2.0", sandbox: true });
-            
-            // 결제(payments) 권한을 반드시 첫 번째로 요청
-            const auth = await Pi.authenticate(['payments', 'username'], (payment) => {
-                console.log("Incomplete payment found:", payment);
-            });
-            
+            // 일반인 유저에게 결제 권한을 확실히 물어봅니다.
+            const auth = await Pi.authenticate(['payments', 'username'], (p) => {});
             piUser = auth.user;
-            console.log("✅ Mango System Online:", piUser.username);
-            
-            if(document.getElementById('pi-id')) {
-                document.getElementById('pi-id').value = piUser.username;
+            console.log("Mango Engine Ready:", piUser.username);
+        } catch (e) {
+            console.error(e);
+            // 에러 시 안내 (지갑 권한 문제 해결용)
+            if(e.message && e.message.includes('scope')) {
+                alert("결제 승인이 거절되었습니다. 앱을 재실행하여 '허용'을 눌러주세요.");
             }
-        } catch (err) {
-            console.error("❌ Pi Auth Error:", err);
-            // 권한 에러 시 알림
-            alert("결제 권한이 거부되었습니다. 파이 브라우저를 완전히 껐다가 다시 실행하여 '허용'을 눌러주세요!");
         }
     }
 
-    // 2. 결제 실행 (버튼 onclick="startPayment()" 확인)
+    // [2] 결제 실행 (받기 버튼 연결)
     async function startPayment() {
-        if (!piUser) {
-            alert("인증 로딩 중입니다. 잠시만 기다려주세요!");
-            return;
-        }
+        if(!piUser) return alert("Pi 인증 중입니다...");
         try {
             await Pi.createPayment({
                 amount: 0.01,
                 memo: "Mango 테스트 결제",
-                metadata: { itemId: "mango_test_v2" }
+                metadata: { itemId: "mango_001" }
             }, {
                 onReadyForServerApproval: (id) => console.log("Approval:", id),
-                onReadyForServerCompletion: (id, tx) => alert("✅ 결제 성공!"),
+                onReadyForServerCompletion: (id, tx) => alert("✅ 테스트 결제 성공!"),
                 onCancel: (id) => console.log("Cancel"),
                 onError: (err) => alert("결제 실패: " + err.message)
             });
-        } catch (e) {
-            alert("결제창을 실행할 수 없습니다. 파이 브라우저 전용 기능입니다.");
-        }
+        } catch (e) { alert("결제창을 열 수 없습니다."); }
     }
 
-    // 3. 공유하기 (버튼 onclick="shareMango()" 확인)
+    // [3] 공유하기 (파이 브라우저 최적화 - 강제 복사 방식)
     function shareMango() {
-        const url = window.location.href;
+        const shareUrl = "https://mango-os-6xu2.vercel.app/profile_dashboard.html";
         
-        // 파이 브라우저는 navigator.share가 불안정하므로 복사를 기본으로 실행
-        try {
-            const el = document.createElement('textarea');
-            el.value = url;
-            document.body.appendChild(el);
-            el.select();
-            document.execCommand('copy');
-            document.body.removeChild(el);
-            alert("🔗 링크가 복사되었습니다!\n친구에게 공유해 보세요. 🥭");
-            
-            // 지원한다면 공유 창도 띄움
-            if (navigator.share) {
-                navigator.share({ title: 'Mango Pi', url: url });
-            }
-        } catch (e) {
-            alert("주소창의 링크를 복사해 주세요!");
+        // 보이지 않는 입력창을 만들어 주소를 복사합니다.
+        const t = document.createElement("textarea");
+        document.body.appendChild(t);
+        t.value = shareUrl;
+        t.select();
+        document.execCommand('copy');
+        document.body.removeChild(t);
+
+        alert("🔗 공유 링크가 복사되었습니다!\n카톡이나 파이 채팅창에 붙여넣기 해주세요. 🥭");
+        
+        // 브라우저가 지원한다면 공유창도 띄워줌
+        if (navigator.share) {
+            navigator.share({ title: 'Mango Dashboard', url: shareUrl }).catch(e => {});
         }
     }
 
     window.addEventListener('load', initPi);
-
    // [MANGO LEGAL DATA SYSTEM]
 const MANGO_LEGAL_DATA = {
     terms: "<h3>이용약관</h3><p>망고 글로벌 서비스 이용 규칙...</p>",
