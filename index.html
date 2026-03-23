@@ -1293,47 +1293,80 @@ style="width: 140px; height: 140px; aspect-ratio: 1/1; object-fit: cover; z-inde
 
 
 <script>
-    // [Pi Network 연동 설정]
+    // [Pi Network 통합 엔진 - 결제 & 공유 복구 버전]
     const Pi = window.Pi;
     let piUser = null;
 
     async function initPi() {
         try {
-            // 지인 테스트를 위해 sandbox: true 필수
+            // 1. SDK 초기화 (반드시 sandbox: true)
             await Pi.init({ version: "2.0", sandbox: true });
-            const scopes = ['username', 'payments'];
-            const onIncompletePaymentFound = (payment) => { console.warn("미완료 결제:", payment); };
-
-            const auth = await Pi.authenticate(scopes, onIncompletePaymentFound);
-            piUser = auth.user;
-            console.log(`🚀 파이 유저 접속: ${piUser.username}`);
             
-            if(document.getElementById('pi-id')) {
-                document.getElementById('pi-id').value = piUser.username;
+            // 2. 권한 요청 (핵심: 'payments'를 명시적으로 요청)
+            const scopes = ['username', 'payments']; 
+            
+            // 인증 실행 (지인 테스트 시 팝업이 뜨면 모두 [허용]해야 합니다)
+            const auth = await Pi.authenticate(scopes, (payment) => {
+                console.log("미완료 결제 발견:", payment);
+            });
+            
+            piUser = auth.user;
+            console.log("✅ 인증 성공:", piUser.username);
+
+        } catch (err) {
+            console.error("❌ Pi 인증 에러:", err);
+            // 권한 부족 에러 발생 시 사용자 안내
+            if(err.message && err.message.includes('scope')) {
+                alert("결제 권한 승인이 필요합니다. 앱을 완전히 종료했다가 다시 켜주세요.");
             }
-        } catch (err) { console.error("Pi 로드 에러:", err); }
+        }
     }
 
-    // [중요] 파리바게뜨 "받기" 버튼과 연결되는 결제 함수
+    // [결제 실행] 파리바게뜨 '받기' 버튼에 연결 (onclick="startPayment()")
     async function startPayment() {
-        if(!piUser) return alert("Pi Network 인증 중입니다. 잠시 후 다시 시도해 주세요.");
+        if (!piUser) {
+            alert("인증 로딩 중입니다. 잠시만 기다려주세요!");
+            return;
+        }
         try {
             await Pi.createPayment({
-                amount: 0.01, // 테스트 결제 금액
-                memo: "Mango 쿠폰 구매 테스트",
-                metadata: { itemId: "mango_coupon_001" },
+                amount: 0.01,
+                memo: "Mango Ecosystem Test Payment",
+                metadata: { itemId: "test_coupon_001" }
             }, {
-                onReadyForServerApproval: (id) => console.log("승인대기:", id),
-                onReadyForServerCompletion: (id, tx) => alert("✅ 결제 성공! 쿠폰이 발급되었습니다."),
-                onCancel: (id) => console.log("취소"),
-                onError: (err) => alert("결제 에러: " + err.message)
+                onReadyForServerApproval: (id) => console.log("승인 대기 중:", id),
+                onReadyForServerCompletion: (id, tx) => alert("🎉 테스트 결제 성공! 쿠폰이 발급되었습니다."),
+                onCancel: (id) => console.log("결제 취소"),
+                onError: (err) => alert("결제 실패: " + err.message)
             });
-        } catch (err) { console.error("결제 실패:", err); }
+        } catch (e) {
+            alert("결제 시스템에 접근할 수 없습니다.");
+        }
     }
 
-// 3. 실행 트리거 등록
-window.addEventListener('load', initPi);
+    // [공유하기] 공유 버튼에 연결 (onclick="shareMango()")
+    function shareMango() {
+        const shareData = {
+            title: 'Mango Pi Ecosystem',
+            text: '망고 생태계 테스트에 동참하세요!',
+            url: window.location.href
+        };
 
+        if (navigator.share) {
+            navigator.share(shareData).catch(err => console.log("공유 취소됨"));
+        } else {
+            // 복사 로직 (Pi Browser 등 미지원 환경용)
+            const tempInput = document.createElement("input");
+            document.body.appendChild(tempInput);
+            tempInput.value = window.location.href;
+            tempInput.select();
+            document.execCommand("copy");
+            document.body.removeChild(tempInput);
+            alert("링크가 복사되었습니다! 친구에게 전달해 주세요. 🥭");
+        }
+    }
+
+    window.addEventListener('load', initPi);
     
 
 
