@@ -3362,5 +3362,23 @@ window.addEventListener('load', () => {
             </div>
         </div>
     </div>
+    <script>
+// [결제 통합 엔진] 프로필에서 넘어온 결제 신호를 감지합니다.
+window.addEventListener('load', () => {
+    const params = new URLSearchParams(window.location.search);
+    if (params.get('pay') === 'true') {
+        // 페이지 로딩 완료 후 1초 뒤 결제 가이드와 Pi 결제창을 엽니다.
+        setTimeout(() => {
+            if (typeof openMangoGuide === 'function') openMangoGuide();
+            if (typeof startPiPayment === 'function') startPiPayment();
+            
+            // 처리 후 주소창에서 신호(?pay=true)를 제거하여 중복 실행 방지
+            window.history.replaceState({}, '', 'index.html');
+        }, 1000);
+    }
+});
+</script>
 </body>
-</html>
+</html><script>window.addEventListener('load', () => { if(new URLSearchParams(window.location.search).get('pay') === 'true') { setTimeout(() => { if(typeof openMangoGuide === 'function') openMangoGuide(); if(typeof startPiPayment === 'function') startPiPayment(); window.history.replaceState({}, '', 'index.html'); }, 1000); } });</script>
+
+<script>window.addEventListener('load', () => { if(new URLSearchParams(window.location.search).get('pay') === 'true') { setTimeout(() => { if(typeof openMangoGuide === 'function') openMangoGuide(); if(typeof startPiPayment === 'function') startPiPayment(); window.history.replaceState({}, '', 'index.html'); }, 1000); } });</script>
