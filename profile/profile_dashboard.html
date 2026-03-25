@@ -2,149 +2,766 @@
 <html lang="ko">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mango Pi Ecosystem - Dashboard</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Mango Profile | Global Identity</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://sdk.minepi.com/pi-sdk.js"></script>
     <style>
-        .glass { background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.1); }
-        .mango-gradient { background: linear-gradient(135deg, #f59e0b 0%, #ea580c 100%); }
-    </style>
+    @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@700;900&family=Outfit:wght@300;400;700&display=swap');
+    
+    body { 
+        background: #050505; 
+        color: #fff; 
+        font-family: 'Outfit', sans-serif;
+        min-height: 100vh;
+        margin: 0; 
+        padding-bottom: 140px; 
+    }
+
+    .gold-gradient {
+        background: linear-gradient(135deg, #FFF 0%, #FFD700 60%, #B8860B 100%);
+        -webkit-background-clip: text; 
+        background-clip: text;
+        -webkit-text-fill-color: transparent;
+    }
+
+    .glass-panel {
+        background: rgba(255, 255, 255, 0.02);
+        backdrop-filter: blur(30px);
+        border: 1px solid rgba(255, 255, 255, 0.05);
+        border-radius: 2.5rem;
+    }
+
+    /* --- [핵심] 육각형 물리 엔진 통합본 --- */
+    .hex-grid {
+        display: flex;
+        justify-content: center;
+        gap: 15px;
+        margin-top: 25px;
+        perspective: 1000px;
+    }
+
+    .hex-item {
+        position: relative;
+        width: 100px;
+        height: 115px;
+        background: rgba(255, 215, 0, 0.05);
+        clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
+        filter: drop-shadow(0 0 3px rgba(255, 215, 0, 0.4));
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.4s ease;
+        cursor: pointer;
+        z-index: 10;
+    }
+
+    /* 마우스 올렸을 때 (PC) */
+    .hex-item:hover {
+        filter: drop-shadow(0 0 10px rgba(255, 215, 0, 0.6));
+        background: rgba(255, 215, 0, 0.12);
+        transform: translateY(-5px);
+    }
+    .hex-item:active {
+        transform: scale(0.9) translateZ(-20px);
+    }
+
+    .hex-icon { font-size: 1.8rem; margin-bottom: 5px; }
+    .hex-text {
+        font-family: 'Orbitron', sans-serif;
+        font-size: 8px; font-weight: 900;
+        color: #FFD700; letter-spacing: 0.1em;
+        text-transform: uppercase;
+    }
+
+    /* --- 기타 UI 요소 --- */
+    .level-badge {
+        background: linear-gradient(145deg, #FFD700, #b45309);
+        box-shadow: 0 0 15px rgba(255, 215, 0, 0.3);
+    }
+
+    .trust-track { height: 8px; background: #111; border-radius: 10px; overflow: hidden; margin: 15px 0; }
+    .trust-bar {
+        height: 100%; 
+        background: linear-gradient(90deg, #FFD700, #fff);
+        box-shadow: 0 0 10px #FFD700;
+    }
+
+    .lang-badge {
+        background: rgba(255, 215, 0, 0.05);
+        border: 1px solid rgba(255, 215, 0, 0.1);
+        border-radius: 8px;
+        padding: 4px 10px;
+        display: flex;
+        align-items: center;
+        gap: 5px;
+    }
+</style>
 </head>
-<body class="bg-[#0f172a] text-white min-h-screen font-sans">
-
-<div id="mango-app" class="max-w-md mx-auto p-6 space-y-6">
-    <header class="text-center py-8">
-        <div class="relative inline-block">
-            <img id="user-avatar" src="../assets/img/mango.jpg" class="w-24 h-24 rounded-full border-4 border-yellow-500 shadow-2xl mx-auto">
-            <span class="absolute bottom-0 right-0 bg-green-500 w-6 h-6 rounded-full border-2 border-[#0f172a]"></span>
-        </div>
-
-<h1 class="text-2xl font-black mt-4">
-    <span id="user-name-display">Loading...</span> 
-    <span id="user-level-badge" class="text-yellow-500 text-sm ml-2 bg-yellow-500/10 px-2 py-1 rounded-full border border-yellow-500/20 italic">Lv.1</span>
-</h1>        
-        <p class="text-gray-400 text-sm">Mango Ecosystem Verified</p>
-    </header>
-
-    <div class="glass p-6 rounded-[2rem] space-y-4">
-        <div class="flex justify-between items-center">
-            <h2 class="font-bold text-lg">Pi Ecosystem Status</h2>
-            <span class="text-[10px] bg-yellow-500/20 text-yellow-500 px-2 py-1 rounded-full font-bold">ACTIVE</span>
-        </div>
-        
-        <div id="status-guide" class="text-sm text-gray-300 leading-relaxed">
-            파이 생태계에 오신 것을 환영합니다! 아직 파이 코인이 없으신가요? 
-            아래 버튼을 눌러 채굴을 시작하고 망고의 미래에 동참하세요.
-        </div>
-
-        <div class="grid grid-cols-2 gap-3">
-            <button onclick="window.open('https://minepi.com/')" class="bg-white/10 hover:bg-white/20 p-3 rounded-xl text-xs transition-all">
-                ⛏️ 파이 가입하기
-            </button>
-            <button onclick="shareMango()" class="bg-white/10 hover:bg-white/20 p-3 rounded-xl text-xs transition-all">
-                🔗 공유하기
-            </button>
-        </div>
-    </div>
-
-    <div class="mango-gradient p-6 rounded-[2rem] shadow-[0_20px_50px_rgba(234,179,8,0.3)]">
-        <div class="text-center space-y-2">
-            <p class="text-xs font-bold text-yellow-100 uppercase tracking-widest">Test Payment</p>
-            <p class="text-4xl font-black">0.01 <span class="text-2xl">π</span></p>
-            <p class="text-[10px] text-yellow-100 opacity-70 italic">KYC 통과자 전용 망고 생태계 테스트</p>
-        </div>
-        
-        <button onclick="payWithPi()" class="w-full mt-6 bg-black text-white py-4 rounded-2xl font-black text-lg hover:scale-105 transition-all shadow-xl">
-            PAY WITH PI
+<body class="p-6">
+    <div class="flex justify-between items-center mb-8">
+        <button onclick="history.back()" class="w-10 h-10 flex items-center justify-center glass-panel active:scale-90 transition-all">
+            <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
+            </svg>
         </button>
+
+        <h1 class="text-xl font-orbitron font-black italic gold-gradient tracking-tighter">MANGO PROFILE</h1>
+
+        <div class="flex items-center gap-2">
+            <div class="lang-badge">
+                <span class="text-[9px] font-orbitron font-black text-yellow-500 tracking-tighter">🌐 GLOBAL 18</span>
+            </div>
+            <div class="w-2 h-2 rounded-full bg-green-500 animate-pulse shadow-[0_0_8px_#22c55e]"></div>
+        </div>
     </div>
 
-    <footer class="text-center text-[10px] text-gray-500 uppercase tracking-tighter">
-        © 2026 Mango Glass Platform | Powered by Pi Network
-    </footer>
+    <div class="glass-panel p-8 mb-6 border-yellow-500/10">
+        <div class="flex items-center gap-6">
+            <div class="relative">
+                <div class="w-20 h-20 rounded-full bg-gray-900 border-2 border-yellow-500 flex items-center justify-center text-3xl shadow-[0_0_25px_rgba(255,215,0,0.3)]">👑</div>
+                <div class="absolute -bottom-1 -right-1 level-badge text-[8px] font-black px-2 py-1 rounded-full text-black bg-yellow-500 shadow-md">LV.4</div>
+            </div>
+            
+            <div>
+                <h2 class="text-2xl font-bold flex flex-col gap-1">
+                    <div class="flex items-center gap-2">
+                        <span id="user-name-display" class="gold-gradient font-black">권한결</span>
+                        <span class="text-[10px] px-2 py-0.5 rounded-sm border border-yellow-500/30 text-yellow-500 font-black italic uppercase">CEO</span>
+                    </div>
+                    <span id="admin-badge" class="w-fit px-2 py-0.5 rounded-sm border border-red-500/50 text-[8px] font-black text-red-500 tracking-tighter bg-red-500/10 uppercase italic hidden">
+                        Top Super Admin
+                    </span>
+                </h2>
+                <p id="user-pi-id" class="text-[10px] text-yellow-500/60 tracking-[0.4em] font-bold uppercase mt-2">
+                    @KHANKYUL
+                </p>
+            </div>
+        </div>
+    </div>
+
+
+        <div class="pt-10 border-t border-white/5">
+            <div class="flex justify-between items-center mb-8 px-2">
+                <h4 class="text-[9px] font-black text-gray-600 uppercase tracking-[0.4em]">Integrated Core</h4>
+                <span class="text-[8px] text-yellow-500 font-bold animate-pulse">HEXA-SYNC ON</span>
+            </div>
+<div class="flex justify-center w-full mt-6 mb-12">
+    <div class="grid grid-cols-3 gap-4 sm:gap-8 justify-items-center items-center">
+        
+        <div onclick="openMangoModal('memo')" class="hex-item group">
+            <span class="hex-icon">📝</span>
+            <span class="hex-text">Memo</span>
+            <div class="absolute inset-0 bg-yellow-500/5 blur-xl rounded-full opacity-0 group-hover:opacity-100 transition-opacity"></div>
+        </div>
+
+        <div onclick="openMangoModal('favorites')" class="hex-item group">
+            <span class="hex-icon">⭐</span>
+            <span class="hex-text">Stars</span>
+            <div class="absolute inset-0 bg-yellow-500/5 blur-xl rounded-full opacity-0 group-hover:opacity-100 transition-opacity"></div>
+        </div>
+
+        <div onclick="openMangoModal('edu')" class="hex-item group">
+            <span class="hex-icon">🎓</span>
+            <span class="hex-text">Edu</span>
+            <div class="absolute inset-0 bg-yellow-500/5 blur-xl rounded-full opacity-0 group-hover:opacity-100 transition-opacity"></div>
+        </div>
+
+    </div>
 </div>
 
-<script>
-    // 1. 페이지 로드 시 즉시 실행
-    document.addEventListener('DOMContentLoaded', async function() {
-        if (typeof Pi !== 'undefined') {
-            // SDK 초기화 (테스트 모드 유지)
-            Pi.init({ version: "2.0", sandbox: true });
+<p class="text-[8px] text-gray-700 text-center tracking-[0.5em] uppercase italic opacity-50 mb-10">
+    Select a core module to activate
+</p>
+            <div class="hex-grid mb-10">
+                <div class="hex-item" onclick="openModule('bio')">
+                    <div class="hex-icon">🧬</div>
+                    <div class="hex-text">Bio</div>
+                </div>
+                <div class="hex-item" onclick="openModule('core')">
+                    <div class="hex-icon">⚡</div>
+                    <div class="hex-text">Core</div>
+                </div>
+                <div class="hex-item" onclick="openModule('sync')">
+                    <div class="hex-icon">📡</div>
+                    <div class="hex-text">Sync</div>
+                </div>
+            </div>
+
+
+            <div class="glass-panel p-5 border-white/5 bg-black/20 mb-10">
+                <h4 class="text-[9px] font-black text-gray-600 uppercase tracking-[0.4em] text-center mb-5">Device Ecosystem</h4>
+                <div class="grid grid-cols-2 gap-3">
+                    <div onclick="openWearable('watch')" class="device-status p-4 rounded-xl text-center group cursor-pointer active:scale-95 transition-all bg-white/[0.03] border border-white/5">
+                        <div class="text-2xl mb-2 group-hover:scale-110 transition-transform">⌚</div>
+                        <p class="text-[9px] font-bold text-gray-500 uppercase tracking-widest mb-1">Watch</p>
+                        <div class="flex items-center justify-center gap-1.5">
+                            <div class="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse shadow-[0_0_5px_#22c55e]"></div>
+                            <p class="text-[11px] text-green-500 font-bold italic">Connected</p>
+                        </div>
+                    </div>
+                    <div onclick="openWearable('glasses')" class="device-status p-4 rounded-xl text-center group cursor-pointer active:scale-95 transition-all bg-white/[0.03] border border-white/5">
+                        <div class="text-2xl mb-2 group-hover:scale-110 transition-transform">👓</div>
+                        <p class="text-[9px] font-bold text-gray-500 uppercase tracking-widest mb-1">Glass</p>
+                        <div class="flex items-center justify-center gap-1.5">
+                            <div class="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse shadow-[0_0_5px_#22c55e]"></div>
+                            <p class="text-[11px] text-green-500 font-bold italic">Active</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
             
-            try {
-                // [핵심 좌표] 여기서 'payments'와 'username' 권한을 동시에 요청합니다.
-                // 이 코드가 실행되면 포털 설정 여부와 상관없이 브라우저가 권한 허용 팝업을 띄웁니다.
-                const auth = await Pi.authenticate(['payments', 'username'], onIncompletePaymentFound);
-                
-                // 접속한 사용자의 실제 아이디를 화면에 반영 (23행 근처 id="user-name-display" 필요)
-                const username = auth.user.username;
-                const nameElement = document.getElementById('user-name-display');
-                if (nameElement) nameElement.innerText = username;
-                
-                // 아이디 길이에 따른 자동 레벨 부여 (Lv.1 ~ Lv.10)
-                const levelElement = document.getElementById('user-level-badge');
-                if (levelElement) {
-                    const level = (username.length % 10) + 1;
-                    levelElement.innerText = "Lv." + level;
-                }
-                
-                console.log("인증 및 권한 획득 성공:", username);
-            } catch (err) {
-                console.error("인증 실패:", err);
+            <p class="text-[8px] text-gray-700 mt-5 text-center tracking-widest uppercase italic">Select a core module to activate</p>
+        </div>
+
+    <div class="glass-panel p-6 mb-6 bg-yellow-500/[0.03] border-yellow-500/10 active:scale-[0.99] transition-all">
+        <div class="flex justify-between items-center mb-4">
+            <h3 class="text-xs font-bold text-yellow-500 uppercase tracking-widest">Referral Code</h3>
+            <span class="text-[9px] bg-yellow-500/20 px-2 py-0.5 rounded text-yellow-500 font-bold italic">Reward 3%</span>
+        </div>
+        <div class="flex gap-2">
+            <div class="flex-1 bg-black/40 border border-white/5 rounded-xl px-4 py-3 font-mono text-sm text-center tracking-widest text-gray-300" id="refCode">
+                MANGO-CEO-777
+            </div>
+            <button onclick="copyCode()" class="bg-yellow-500 text-black px-5 rounded-xl font-black text-[10px] active:scale-95 transition-all">
+                COPY
+            </button>
+        </div>
+        <p class="text-[9px] text-gray-600 mt-3 text-center">지인이 가입 시 코드 입력 시 평생 결제액의 일부가 적립됩니다.</p>
+    </div>
+
+    <div class="grid grid-cols-1 gap-4 mb-6">
+    <div onclick="handleMangoTestPayment()" 
+
+class="relative z-[9999] glass-panel p-5 text-center transition-all border-white/5 active:scale-[0.95] cursor-pointer hover:bg-white/10 group">     
+        <div class="text-2xl mb-2 group-hover:scale-110 transition-transform">💳</div>
+        <p class="text-[10px] font-bold text-gray-500 uppercase mb-1 tracking-widest">QR PAY</p>
+        <p class="text-xs font-mono text-yellow-500 font-bold">₩ 4,520,000</p>
+    </div>
+</div>
+
+<div class="grid grid-cols-1 gap-4 mb-6">
+    <button id="reporter-btn" 
+        style="display: none;" 
+        onclick="openMangoModal('report')" 
+        class="w-full py-5 bg-gradient-to-r from-amber-900/40 to-yellow-600/20 border border-yellow-500/30 rounded-[2rem] text-yellow-500 font-black text-[11px] tracking-[0.3em] active:scale-95 transition-all shadow-[0_10px_30px_rgba(0,0,0,0.3)]">
+    📢 REGION REPORTER ACCESS
+</button>
+
+    <button id="partner-btn" style="display: none;" 
+            class="w-full py-5 bg-gradient-to-r from-gray-900 to-stone-800 border border-white/5 rounded-[2rem] text-gray-400 font-black text-[11px] tracking-[0.3em] active:scale-95 transition-all shadow-xl">
+        🏪 PARTNER DASHBOARD
+    </button>
+</div>
+    <div class="space-y-3">
+        <h4 class="text-[9px] font-black text-gray-600 uppercase tracking-[0.4em] ml-2">Control Tower</h4>
+        
+        <div class="glass-panel p-5 flex items-center justify-between border-white/5 active:scale-[0.98] transition-all cursor-pointer">
+            <div class="flex items-center gap-4">
+                <div class="w-10 h-10 bg-blue-500/10 rounded-2xl flex items-center justify-center text-lg">🏬</div>
+                <div>
+                    <p class="text-xs font-bold">Store Management</p>
+                    <p class="text-[9px] text-gray-500">가게 정산 및 재고 관리</p>
+                </div>
+            </div>
+            <span class="bg-blue-500/20 text-blue-400 text-[8px] px-2 py-1 rounded-full font-bold">Owner</span>
+        </div>
+
+        <div class="glass-panel p-5 flex items-center justify-between border-white/5 active:scale-[0.98] transition-all cursor-pointer">
+            <div class="flex items-center gap-4">
+                <div class="w-10 h-10 bg-purple-500/10 rounded-2xl flex items-center justify-center text-lg">🌐</div>
+                <div>
+                    <p class="text-xs font-bold">Portal Moderator</p>
+                    <p class="text-[9px] text-gray-500">Food/Travel 포털 승인 권한</p>
+                </div>
+            </div>
+            <span class="bg-purple-500/20 text-purple-400 text-[8px] px-2 py-1 rounded-full font-bold">Operator</span>
+        </div>
+    </div>
+
+    <div id="mangoModal" class="fixed inset-0 z-[100] hidden flex items-end justify-center px-4 pb-10 transition-all duration-500">
+        <div onclick="closeMangoModal()" class="absolute inset-0 bg-black/80 backdrop-blur-xl"></div>
+        
+        <div class="relative w-full max-w-md bg-white/[0.03] backdrop-blur-2xl p-8 border border-white/10 rounded-[3rem] shadow-[0_-20px_80px_rgba(0,0,0,0.8)] transform translate-y-full transition-transform duration-500 ease-[cubic-bezier(0.23,1,0.32,1)]" id="modalContent">
+            <div class="w-16 h-1.5 bg-white/10 rounded-full mx-auto mb-10 shadow-inner"></div>
+            
+            <div id="modalBody" class="min-h-[350px]">
+                </div>
+
+            <button onclick="closeMangoModal()" class="w-full mt-10 py-5 rounded-3xl bg-white/5 border border-white/10 text-[10px] font-black tracking-[0.5em] text-gray-500 active:scale-95 transition-all hover:text-white uppercase">
+                Exit System
+            </button>
+        </div>
+    </div>
+
+    <script>
+        const modal = document.getElementById('mangoModal');
+        const content = document.getElementById('modalContent');
+        const body = document.getElementById('modalBody');
+
+        // [초고도화 1] 메모 잠금 및 보안 저장소
+        // [초고도화 1] 10,000자 대응 메모 잠금 및 보안 저장소
+function renderMemo(isAuth = false) {
+    // 1. 미인증 상태 (잠금 화면)
+    if(!isAuth) {
+        body.innerHTML = `
+            <div class="text-center py-12 animate-fadeIn">
+                <div class="text-6xl mb-6 filter drop-shadow-[0_0_15px_rgba(255,255,255,0.3)] text-white">🔐</div>
+                <h3 class="text-2xl font-bold mb-3 tracking-tight">Private Storage</h3>
+                <p class="text-[10px] text-gray-500 mb-8 uppercase tracking-[0.3em] font-medium leading-loose">망고 보안 엔진에 의해 보호됨<br>접근을 위해 패스워드가 필요합니다</p>
+                <button onclick="checkAuth()" class="px-10 py-4 rounded-full bg-yellow-500 text-black text-[11px] font-black shadow-[0_10px_30px_rgba(255,215,0,0.2)] active:scale-90 transition-all">UNLOCK SYSTEM</button>
+            </div>`;
+        return;
+    }
+
+    // 2. 인증 완료 상태 (10,000자 메모장 + Step 10 결제 버튼)
+    const savedMemo = localStorage.getItem('mango_private_memo') || '';
+    body.innerHTML = `
+        <div class="flex justify-between items-center mb-6">
+            <h3 class="text-2xl font-bold tracking-tighter text-white">Secure Memo</h3>
+            <div class="flex items-center gap-3">
+                <span id="charCount" class="text-[10px] font-mono text-yellow-500/70 bg-yellow-500/5 px-2 py-1 rounded-md">0 / 10,000</span>
+                <div class="flex items-center gap-2 px-3 py-1.5 bg-green-500/10 border border-green-500/20 rounded-full">
+                    <div class="w-1.5 h-1.5 bg-green-500 rounded-full animate-pulse"></div>
+                    <span class="text-[8px] font-black text-green-500 uppercase font-mono">Encrypted</span>
+                </div>
+            </div>
+        </div>
+        <textarea id="memoInput" maxlength="10000" oninput="updateCount()" 
+            class="w-full h-64 bg-black/40 border border-white/5 rounded-[2rem] p-6 text-sm text-gray-300 focus:outline-none focus:ring-1 focus:ring-yellow-500/30 transition-all placeholder-gray-700 leading-relaxed shadow-inner" 
+            placeholder="망고 프로젝트의 핵심 아이디어를 10,000자까지 기록하세요...">${savedMemo}</textarea>
+        
+        <div class="flex flex-col gap-3 mt-6">
+            <button onclick="savePrivateMemo()" class="w-full py-5 rounded-[1.5rem] bg-gradient-to-r from-yellow-500 to-yellow-600 text-black font-black text-xs shadow-[0_20px_40px_rgba(255,215,0,0.15)] active:scale-95 transition-all uppercase">
+                Secure Save
+            </button>
+            
+            <button onclick="startStep10Test()" class="w-full py-4 rounded-[1.5rem] border border-yellow-500/30 bg-black text-yellow-500 font-bold text-[10px] active:scale-95 transition-all uppercase tracking-widest">
+                ⚡ Start Step 10 Pi Payment Test
+            </button>
+        </div>
+    `;
+    
+    // 초기 글자수 동기화
+    updateCount();
+}
+
+// [초고도화 2] Pi Network Step 10 통과를 위한 결제 엔진
+// Pi SDK 초기화 (반드시 호출 필요)
+if (window.Pi) {
+    Pi.init({ version: "2.0" });
+}
+
+// [최종 통합] Mango Pi Network Step 10 서버 연동 엔진
+async function startStep10Test() {
+    const logId = "payment-log";
+    const logger = (msg) => {
+        const el = document.getElementById(logId);
+        if(el) el.innerHTML += `> ${msg}<br>`;
+        if(el) el.scrollTop = el.scrollHeight; 
+        console.log(msg);
+    };
+
+    try {
+        if (!window.Pi) {
+            alert("Pi Browser에서 실행해 주세요.");
+            return;
+        }
+
+        renderPaymentUI(); // 로그 화면 전환
+        logger("Mango 결제 엔진 초기화...");
+        
+        const payment = await Pi.createPayment({
+            amount: 0.01,
+            memo: "Mango App Mainnet Step 10 Test",
+            metadata: { type: "step-10-verification" }
+        }, {
+            // 1. 서버 승인 (Vercel Backend 연동)
+            onReadyForServerApproval: async (paymentId) => {
+                logger("서버 승인 요청 중: " + paymentId);
+                await fetch("/api/approve", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ paymentId })
+                });
+                logger("<span class='text-yellow-500'>[Success] 서버 승인 완료.</span>");
+            },
+            // 2. 결제 완료 (최종 장부 기록)
+            onReadyForServerCompletion: async (paymentId, txid) => {
+                logger("블록체인 전송 확인. 최종 처리 중...");
+                await fetch("/api/complete", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ paymentId, txid })
+                });
+                logger("<span class='text-green-500 font-bold'>Step 10 결제 완벽 성공!</span>");
+                alert("축하합니다! 망고 프리미엄 인증이 완료되었습니다.");
+            },
+            onCancel: (paymentId) => logger("결제가 취소되었습니다."),
+            onError: (error, payment) => logger("<span class='text-red-500'>에러: " + error.message + "</span>")
+        });
+    } catch (err) {
+        alert("결제 엔진 오류: " + err.message);
+    }
+}
+
+// 결제 로그 화면 렌더링 함수
+function renderPaymentUI() {
+    const body = document.getElementById('modalBody');
+    body.innerHTML = `
+        <div class="animate-fadeIn">
+            <h3 class="text-xl font-black text-yellow-500 mb-4 tracking-tighter">STEP 10 VERIFICATION</h3>
+            <div id="payment-log" class="w-full h-48 bg-black/60 border border-white/10 rounded-2xl p-4 font-mono text-[10px] text-gray-400 overflow-y-auto mb-6 leading-relaxed">
+                > 시스템 결제 엔진 대기 중...<br>
+            </div>
+            <p class="text-[9px] text-gray-600 mb-4">* 실제 0.01 Pi가 테스트용으로 차감될 수 있습니다.</p>
+        </div>
+    `;
+}
+        // [글자수 엔진] 실시간 카운팅 업데이트
+        function updateCount() {
+            const input = document.getElementById('memoInput');
+            const display = document.getElementById('charCount');
+            if (input && display) {
+            const currentLength = input.value.length;
+            display.innerText = `${currentLength.toLocaleString()} / 10,000`;
             }
         }
-    });
+        // [초고도화 4] 교육 포털 (신규)
+        function renderEdu() {
+            body.innerHTML = `
+                <div class="text-center py-12 animate-fadeIn">
+                    <div class="text-6xl mb-6 filter drop-shadow-[0_0_15px_rgba(255,215,0,0.3)] text-yellow-400">🎓</div>
+                    <h3 class="text-2xl font-bold mb-3 tracking-tight">Mango Education</h3>
+                    <p class="text-[10px] text-gray-500 mb-8 uppercase tracking-[0.3em] font-medium leading-loose">글로벌 지식 네트워크에 연결합니다.<br>학습 모듈을 선택하세요.</p>
+                    <button onclick="alert('AI Tutor 연결...')" class="px-10 py-4 rounded-full bg-yellow-500 text-black text-[11px] font-black shadow-[0_10px_30px_rgba(255,215,0,0.2)] active:scale-90 transition-all">AI TUTOR</button>
+                </div>`;
+        }
 
-    // 2. 미완료 결제 처리 (SDK 필수)
-    function onIncompletePaymentFound(payment) {
-        console.log("미완료 결제 건 확인 중...", payment);
-    }
+        // [즐겨찾기] 큐레이션 렌더링
+function renderFavorites() {
+    const items = [
+        { id: 'FOOD', icon: '🍔', label: '맛집 포털', desc: 'Verified Tasty' },
+        { id: 'TRANS', icon: '🚗', label: '교통 포털', desc: 'Smart Moving' },
+        { id: 'TRAV', icon: '✈️', label: '여행 포털', desc: 'Global Trip' },
+        { id: 'REALT', icon: '💎', label: '부동산 포털', desc: 'Premium Real' }
+    ];
+    body.innerHTML = `
+        <h3 class="text-2xl font-bold mb-8 tracking-tighter text-white">Quick Portals</h3>
+        <div class="grid grid-cols-2 gap-4">
+            ${items.map(i => `
+                <div class="group relative p-6 bg-white/[0.02] border border-white/5 rounded-[2.5rem] active:scale-95 transition-all cursor-pointer overflow-hidden">
+                    <div class="absolute inset-0 bg-yellow-500 opacity-0 group-hover:opacity-[0.03] transition-opacity"></div>
+                    <div class="text-4xl mb-4 transform group-hover:scale-110 transition-transform duration-500">${i.icon}</div>
+                    <p class="text-[11px] font-black text-white group-hover:text-yellow-500 transition-colors uppercase">${i.label}</p>
+                    <p class="text-[8px] text-gray-600 font-medium mt-1 uppercase tracking-widest">${i.desc}</p>
+                </div>
+            `).join('')}
+        </div>`;
+}
+        // [실시간 레이더] 애니메이션 렌더링
+function renderFriends() {
+    body.innerHTML = `
+        <div class="text-center animate-fadeIn">
+            <h3 class="text-2xl font-bold mb-2 tracking-tighter text-white">Live Radar</h3>
+            <p class="text-[10px] text-blue-500 font-bold tracking-[0.4em] mb-12 animate-pulse uppercase">Searching Mango Users...</p>
+            <div class="relative w-64 h-64 mx-auto mb-12">
+                <div class="absolute inset-0 border border-white/5 rounded-full"></div>
+                <div class="absolute inset-10 border border-white/5 rounded-full"></div>
+                <div class="absolute inset-20 border border-white/5 rounded-full"></div>
+                <div class="absolute inset-0 rounded-full border border-blue-500/20 animate-[spin_4s_linear_infinite]">
+                    <div class="absolute top-0 left-1/2 -translate-x-1/2 w-[1px] h-1/2 bg-gradient-to-b from-blue-500 to-transparent"></div>
+                </div>
+                <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-4 h-4 bg-white rounded-full shadow-[0_0_20px_#fff] z-10"></div>
+                <div class="absolute top-1/4 right-1/4 w-2 h-2 bg-yellow-500 rounded-full animate-pulse shadow-[0_0_15px_#eab308]"></div>
+                <div class="absolute bottom-1/3 left-1/4 w-2 h-2 bg-green-500 rounded-full animate-pulse shadow-[0_0_15px_#22c55e] delay-700"></div>
+            </div>
+            <div class="flex gap-3">
+                <div class="flex-1 p-4 bg-white/[0.03] rounded-2xl border border-white/5">
+                    <p class="text-[8px] text-gray-600 uppercase mb-1 tracking-widest">Nearby</p>
+                    <p class="text-sm font-black text-white">12 ACTIVE</p>
+                </div>
+                <div class="flex-1 p-4 bg-white/[0.03] rounded-2xl border border-white/5">
+                    <p class="text-[8px] text-gray-600 uppercase mb-1 tracking-widest">Location</p>
+                    <p id="radar-loc" class="text-sm font-black text-blue-500 uppercase">Detecting...</p>
+                </div>
+            </div>
+        </div>`;
+    activateRealLocation(); // 레이더 켤 때 위치 정보 즉시 로드
+}
 
-    // 3. 결제 실행 함수
-    async function payWithPi() {
-        try {
-            const payment = await Pi.createPayment({
-                amount: 0.01,
-                memo: "Mango Ecosystem 5-User Test Payment",
-                metadata: { order_id: "mango_test_" + Date.now() }
-            }, {
-                onReadyForServerApproval: async (paymentId) => {
-                    await fetch('https://mango-os-6xu2.vercel.app/api/approve', {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ paymentId })
-                    });
-                },
-                onReadyForServerCompletion: async (paymentId, txid) => {
-                    await fetch('https://mango-os-6xu2.vercel.app/api/complete', {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ paymentId, txid })
-                    });
-                    alert("✅ 테스트 결제가 성공적으로 완료되었습니다!");
-                },
-                onCancel: (paymentId) => { console.log("결제 취소"); },
-                onError: (error) => { alert("결제 오류: " + error.message); }
+        function openMangoModal(type) {
+            modal.classList.remove('hidden');
+            // 강제 리플로우 후 슬라이딩 시작
+            void content.offsetWidth;
+            content.classList.remove('translate-y-full');
+            
+            if(type === 'memo') renderMemo(false);
+            else if(type === 'favorites') renderFavorites();
+            else if(type === 'friends') renderFriends();
+            else if(type === 'edu') renderEdu();
+        }
+
+        function closeMangoModal() {
+            content.classList.add('translate-y-full');
+            setTimeout(() => modal.classList.add('hidden'), 500);
+        }
+
+        function copyCode() {
+            const code = document.getElementById('refCode').innerText;
+            navigator.clipboard.writeText(code).then(() => {
+                // 알림도 망고 스타일로 대체 가능하지만 우선 브라우저 기본 사용
+                alert('COPIED: ' + code);
             });
-        } catch (err) {
-            alert("시스템 오류: " + err.message);
+        }
+    </script>
+    <style>
+        @keyframes fadeIn {
+        from { 
+            opacity: 0; 
+            transform: translateY(15px); /* 시작 위치를 조금 더 아래로 내려서 부드럽게 */
+        }
+        to { 
+            opacity: 1; 
+            transform: translateY(0); 
         }
     }
+    /* forwards를 넣어 애니메이션이 끝난 후 사라지지 않게 고정합니다 */
+    .animate-fadeIn { 
+        animation: fadeIn 0.6s cubic-bezier(0.23, 1, 0.32, 1) forwards; 
+    }
+    </style>
 
-    // 4. 공유하기 함수
-    function shareMango() {
-        if (navigator.share) {
-            navigator.share({
-                title: 'Mango Pi Ecosystem',
-                text: '망고 생태계 테스트에 참여하세요!',
-                url: window.location.href
-            });
+    <style>
+        /* 웨어러블 전용 레이어 디자인 */
+        .mango-wear-overlay {
+            background: radial-gradient(circle at center, #111 0%, #000 100%);
+        }
+        .gold-bezel-card {
+            background: rgba(0,0,0,0.8);
+            border: 2px solid #FFD700;
+            box-shadow: 0 0 30px rgba(255, 215, 0, 0.3), inset 0 0 15px rgba(255, 215, 0, 0.1);
+            border-radius: 2.5rem;
+        }
+        .ar-hud-glass {
+            background: rgba(255, 215, 0, 0.03) !important;
+            backdrop-filter: blur(15px);
+            border: 1px solid rgba(255, 215, 0, 0.2) !important;
+            animation: hudFloat 4s ease-in-out infinite;
+        }
+        @keyframes hudFloat { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-20px); } }
+        .scene-3d { perspective: 1200px; transform-style: preserve-3d; }
+        .carousel-3d { transform-style: preserve-3d; transition: transform 0.8s cubic-bezier(0.23, 1, 0.32, 1); }
+    </style>
+
+    <div id="wearableSystem" class="fixed inset-0 z-[10000] hidden mango-wear-overlay flex flex-col items-center justify-center p-6">
+        <div id="rolyPolyLoader" class="text-center">
+            <div class="text-8xl mb-4 animate-[bounce_1s_infinite] inline-block">🥭</div>
+            <p class="text-[10px] font-orbitron text-yellow-500 tracking-[0.6em] animate-pulse">SYSTEM BOOTING</p>
+        </div>
+
+        <div id="wearContent" class="hidden w-full h-full flex flex-col items-center justify-center">
+            <div class="scene-3d relative w-72 h-72 flex items-center justify-center">
+                <div id="wearCarousel" class="carousel-3d relative w-full h-full flex items-center justify-center"></div>
+            </div>
+            <div id="quickPayBtn" class="mt-24 px-12 py-5 gold-bezel-card text-yellow-500 font-black text-[11px] tracking-[0.4em] active:scale-90 cursor-pointer transition-all">
+                QUICK PAY
+            </div>
+            <button onclick="document.getElementById('wearableSystem').classList.add('hidden')" class="mt-10 text-[9px] text-gray-700 uppercase tracking-widest hover:text-white transition-colors">Close Interface</button>
+        </div>
+    </div>
+
+    <script>
+        const PORTAL_DATA = [
+            { id: 'FOOD', icon: '🍔' }, { id: 'TRANS', icon: '🚗' },
+            { id: 'TRAV', icon: '✈️' }, { id: 'HOBBY', icon: '🎨' },
+            { id: 'REALT', icon: '🏠' }, { id: 'MARK', icon: '💎' },
+            { id: 'CHAT', icon: '💬' }, { id: 'EDU', icon: '🎓' }
+        ];
+
+        function openWearable(mode) {
+            const sys = document.getElementById('wearableSystem');
+            const loader = document.getElementById('rolyPolyLoader');
+            const content = document.getElementById('wearContent');
+            const carousel = document.getElementById('wearCarousel');
+
+            sys.classList.remove('hidden');
+            loader.classList.remove('hidden');
+            content.classList.add('hidden');
+            carousel.innerHTML = '';
+
+            setTimeout(() => {
+                loader.classList.add('hidden');
+                content.classList.remove('hidden');
+
+                PORTAL_DATA.forEach((p, i) => {
+                    const angle = i * 45;
+                    const card = document.createElement('div');
+                    card.className = `absolute w-28 h-28 flex flex-col items-center justify-center gold-bezel-card ${mode === 'glasses' ? 'ar-hud-glass' : ''}`;
+                    card.style.transform = `rotateY(${angle}deg) translateZ(200px)`;
+                    card.innerHTML = `<div class="text-4xl mb-2">${p.icon}</div><span class="text-[9px] font-black text-yellow-500">${p.id}</span>`;
+                    carousel.appendChild(card);
+                });
+            }, 1500);
+        }
+        // 이 함수가 실행되면 진짜 GPS 좌표가 화면에 박힙니다.
+function activateRealLocation() {
+    if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition((position) => {
+            const lat = position.coords.latitude.toFixed(4);
+            const lng = position.coords.longitude.toFixed(4);
+            
+            // BUSAN, KR 텍스트를 찾아 좌표로 교체
+            const target = document.querySelector(".text-sm.font-black.text-blue-500");
+            if (target) target.innerText = `${lat}°N, ${lng}°E`;
+        });
+    }
+}
+
+
+// 페이지 로드 시 즉시 실행
+window.addEventListener('load', activateRealLocation);
+    </script>
+    <script src="https://sdk.minepi.com/pi-sdk.js"></script>
+    <script>
+        // 2. 초기화
+        const Pi = window.Pi;
+
+async function authPi() {
+    try {
+        // [중요] await를 추가하여 초기화가 끝날 때까지 기다립니다.
+        await Pi.init({ version: "2.0", sandbox: false });
+        console.log("✅ Mango Dashboard SDK Initialized (Mainnet Mode)");
+
+        const scopes = ['username', 'payments'];
+        
+        // 미완료 결제 처리 함수
+        const onIncompletePaymentFound = (payment) => {
+            console.log("⚠️ 미완료 결제 발견:", payment);
+        };
+
+        // 유저 인증 및 권한 획득
+        const auth = await Pi.authenticate(scopes, onIncompletePaymentFound);
+        console.log("👤 인증 성공:", auth.user.username);
+        
+        const username = auth.user.username;
+        const isAdmin = (username === 'KHankyul'); 
+
+        const nameDisplay = document.getElementById('user-name-display');
+        const piIdDisplay = document.getElementById('user-pi-id');
+        const adminBadge = document.getElementById('admin-badge');
+
+        if (isAdmin) {
+            if (nameDisplay) nameDisplay.innerText = "권한결";
+            if (piIdDisplay) piIdDisplay.innerText = `@${username.toUpperCase()}`;
+            if (adminBadge) adminBadge.classList.remove('hidden'); 
+            
+            // [정밀 교정] 관리자라면 두 함수를 여기서 실행하고 마무리합니다.
+            showAdminFeatures(); 
+            renderMenuByRole('SUPER_ADMIN'); 
         } else {
-            navigator.clipboard.writeText(window.location.href);
-            alert("링크가 복사되었습니다!");
+            if (nameDisplay) nameDisplay.innerText = username;
+            if (piIdDisplay) piIdDisplay.innerText = `@${username.toUpperCase()}`;
+            if (adminBadge) adminBadge.classList.add('hidden');
+            
+            // [추가] 일반 유저라면 일반 권한으로 렌더링
+            renderMenuByRole('USER');
         }
+
+    } catch (err) {
+        console.error("인증 실패:", err);
+        const nameDisplay = document.getElementById('user-name-display');
+        if (nameDisplay) nameDisplay.innerText = "권한결";
     }
-</script>
+}
+
+function showAdminFeatures() {
+    const adminPortal = document.getElementById('admin-portal-btn');
+    if (adminPortal) {
+        adminPortal.style.display = 'block';
+    }
+}
+
+// 1. 권한 기반 메뉴 필터링 (명칭: TOP_SUPER_ADMIN 확정)
+function renderMenuByRole(role) {
+    console.log("🚀 Mango OS 가동 모드:", role);
+    
+    // 'admin-only' 클래스가 붙은 모든 관리자 요소를 찾습니다.
+    const adminOnlyElements = document.querySelectorAll('.admin-only');
+
+    // [정밀 검사] 단어 하나도 틀리면 안 됩니다: 'TOP_SUPER_ADMIN'
+    if (role === 'TOP_SUPER_ADMIN') {
+        adminOnlyElements.forEach(el => {
+            el.classList.remove('hidden');
+            el.style.display = 'block'; // 확실하게 노출
+        });
+        console.log("👑 최고 관리자(TOP_SUPER_ADMIN) 인증 성공. 모든 제어판을 개방합니다.");
+    } else {
+        adminOnlyElements.forEach(el => {
+            el.classList.add('hidden');
+            el.style.display = 'none';
+        });
+        console.log("👤 일반 사용자 모드로 실행됩니다.");
+    }
+}
+
+// 2. 엔진 시동 (페이지 로드 완료 시 자동 실행)
+window.onload = function() {
+    console.log("⚙️ Mango Dashboard System Booting...");
+    authPi(); 
+};
+// -------------------------------------------------------------------------
+// [최종 통합] Mango Pi Network 실결제 및 서버 연동 엔진
+async function handleMangoTestPayment() {
+    try {
+        if (!window.Pi) {
+            alert("Pi Browser 내부에서 실행해 주세요.");
+            return;
+        }
+
+        console.log("Mango 결제 엔진 가동...");
+        
+        const payment = await Pi.createPayment({
+            amount: 0.01,
+            memo: "Mango App Premium Authentication",
+            metadata: { step: "final-auth" }
+        }, {
+            // [Step 1] 서버 승인 요청 (Vercel의 /api/approve.js 호출)
+            onReadyForServerApproval: async (paymentId) => {
+                console.log("서버 승인 대기 중: ", paymentId);
+                const response = await fetch("/api/approve", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ paymentId })
+                });
+                if (response.ok) {
+                    console.log("서버 승인 완료. 블록체인 전송을 기다립니다.");
+                }
+            },
+            
+            // [Step 2] 결제 완료 처리 (Vercel의 /api/complete.js 호출)
+            onReadyForServerCompletion: async (paymentId, txid) => {
+                console.log("블록체인 확인 완료. 최종 권한 부여 중...");
+                const response = await fetch("/api/complete", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ paymentId, txid })
+                });
+
+                if (response.ok) {
+                    alert("결제 성공! 대표님의 프리미엄 권한이 활성화되었습니다.");
+                    location.reload(); // 성공 시 화면 새로고침으로 권한 반영
+                }
+            },
+            
+            onCancel: (paymentId) => { console.log("사용자가 결제를 취소했습니다."); },
+            onError: (error, payment) => { alert("결제 에러: " + error.message); }
+        });
+    } catch (err) {
+        alert("결제 호출 실패: " + err.message);
+    }
+}
+
+    </script>
 </body>
 </html>

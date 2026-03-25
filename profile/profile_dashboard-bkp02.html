@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mango Pi Ecosystem - Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://sdk.minepi.com/pi-sdk.js"></script>
+    <style>
+        .glass { background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.1); }
+        .mango-gradient { background: linear-gradient(135deg, #f59e0b 0%, #ea580c 100%); }
+    </style>
+</head>
+<body class="bg-[#0f172a] text-white min-h-screen font-sans">
+
+<div id="mango-app" class="max-w-md mx-auto p-6 space-y-6">
+    <header class="text-center py-8">
+        <div class="relative inline-block">
+            <img id="user-avatar" src="../assets/img/mango.jpg" class="w-24 h-24 rounded-full border-4 border-yellow-500 shadow-2xl mx-auto">
+            <span class="absolute bottom-0 right-0 bg-green-500 w-6 h-6 rounded-full border-2 border-[#0f172a]"></span>
+        </div>
+
+<h1 class="text-2xl font-black mt-4">
+    <span id="user-name-display">Loading...</span> 
+    <span id="user-level-badge" class="text-yellow-500 text-sm ml-2 bg-yellow-500/10 px-2 py-1 rounded-full border border-yellow-500/20 italic">Lv.1</span>
+</h1>        
+        <p class="text-gray-400 text-sm">Mango Ecosystem Verified</p>
+    </header>
+
+    <div class="glass p-6 rounded-[2rem] space-y-4">
+        <div class="flex justify-between items-center">
+            <h2 class="font-bold text-lg">Pi Ecosystem Status</h2>
+            <span class="text-[10px] bg-yellow-500/20 text-yellow-500 px-2 py-1 rounded-full font-bold">ACTIVE</span>
+        </div>
+        
+        <div id="status-guide" class="text-sm text-gray-300 leading-relaxed">
+            파이 생태계에 오신 것을 환영합니다! 아직 파이 코인이 없으신가요? 
+            아래 버튼을 눌러 채굴을 시작하고 망고의 미래에 동참하세요.
+        </div>
+
+        <div class="grid grid-cols-2 gap-3">
+            <button onclick="window.open('https://minepi.com/')" class="bg-white/10 hover:bg-white/20 p-3 rounded-xl text-xs transition-all">
+                ⛏️ 파이 가입하기
+            </button>
+            <button onclick="shareMango()" class="bg-white/10 hover:bg-white/20 p-3 rounded-xl text-xs transition-all">
+                🔗 공유하기
+            </button>
+        </div>
+    </div>
+
+    <div class="mango-gradient p-6 rounded-[2rem] shadow-[0_20px_50px_rgba(234,179,8,0.3)]">
+        <div class="text-center space-y-2">
+            <p class="text-xs font-bold text-yellow-100 uppercase tracking-widest">Test Payment</p>
+            <p class="text-4xl font-black">0.01 <span class="text-2xl">π</span></p>
+            <p class="text-[10px] text-yellow-100 opacity-70 italic">KYC 통과자 전용 망고 생태계 테스트</p>
+        </div>
+        
+        <button onclick="payWithPi()" class="w-full mt-6 bg-black text-white py-4 rounded-2xl font-black text-lg hover:scale-105 transition-all shadow-xl">
+            PAY WITH PI
+        </button>
+    </div>
+
+    <footer class="text-center text-[10px] text-gray-500 uppercase tracking-tighter">
+        © 2026 Mango Glass Platform | Powered by Pi Network
+    </footer>
+</div>
+
+<script>
+    // 1. 페이지 로드 시 즉시 실행
+    document.addEventListener('DOMContentLoaded', async function() {
+        if (typeof Pi !== 'undefined') {
+            // SDK 초기화 (테스트 모드 유지)
+            Pi.init({ version: "2.0", sandbox: true });
+            
+            try {
+                // [핵심 좌표] 여기서 'payments'와 'username' 권한을 동시에 요청합니다.
+                // 이 코드가 실행되면 포털 설정 여부와 상관없이 브라우저가 권한 허용 팝업을 띄웁니다.
+                const auth = await Pi.authenticate(['payments', 'username'], onIncompletePaymentFound);
+                
+                // 접속한 사용자의 실제 아이디를 화면에 반영 (23행 근처 id="user-name-display" 필요)
+                const username = auth.user.username;
+                const nameElement = document.getElementById('user-name-display');
+                if (nameElement) nameElement.innerText = username;
+                
+                // 아이디 길이에 따른 자동 레벨 부여 (Lv.1 ~ Lv.10)
+                const levelElement = document.getElementById('user-level-badge');
+                if (levelElement) {
+                    const level = (username.length % 10) + 1;
+                    levelElement.innerText = "Lv." + level;
+                }
+                
+                console.log("인증 및 권한 획득 성공:", username);
+            } catch (err) {
+                console.error("인증 실패:", err);
+            }
+        }
+    });
+
+    // 2. 미완료 결제 처리 (SDK 필수)
+    function onIncompletePaymentFound(payment) {
+        console.log("미완료 결제 건 확인 중...", payment);
+    }
+
+    // 3. 결제 실행 함수
+    async function payWithPi() {
+        try {
+            const payment = await Pi.createPayment({
+                amount: 0.01,
+                memo: "Mango Ecosystem 5-User Test Payment",
+                metadata: { order_id: "mango_test_" + Date.now() }
+            }, {
+                onReadyForServerApproval: async (paymentId) => {
+                    await fetch('https://mango-os-6xu2.vercel.app/api/approve', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ paymentId })
+                    });
+                },
+                onReadyForServerCompletion: async (paymentId, txid) => {
+                    await fetch('https://mango-os-6xu2.vercel.app/api/complete', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ paymentId, txid })
+                    });
+                    alert("✅ 테스트 결제가 성공적으로 완료되었습니다!");
+                },
+                onCancel: (paymentId) => { console.log("결제 취소"); },
+                onError: (error) => { alert("결제 오류: " + error.message); }
+            });
+        } catch (err) {
+            alert("시스템 오류: " + err.message);
+        }
+    }
+
+    // 4. 공유하기 함수
+    function shareMango() {
+        if (navigator.share) {
+            navigator.share({
+                title: 'Mango Pi Ecosystem',
+                text: '망고 생태계 테스트에 참여하세요!',
+                url: window.location.href
+            });
+        } else {
+            navigator.clipboard.writeText(window.location.href);
+            alert("링크가 복사되었습니다!");
+        }
+    }
+</script>
+</body>
+</html>
