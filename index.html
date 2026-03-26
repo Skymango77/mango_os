@@ -1499,16 +1499,23 @@ function cancelPress() {
     </div>
     <div class="flex justify-end pr-4 relative z-30" style="margin-top: -28px; margin-bottom: 2px;">
 
-    <a href="#profile" onclick="startGlobalPiPayment()" class="relative flex-shrink-0 transition-transform active:scale-90" style="display: block;">
     <div class="fixed z-[9999]" style="right: 20px; bottom: 185px;">
+
+    <a href="#profile"
+       onclick="startGlobalPiPayment()"
+       class="relative block transition-transform active:scale-95"
+       title="마이페이지">
+
         <div class="w-11 h-12 border border-yellow-500/40 flex items-center justify-center text-xl hex-diamond-profile bg-black/70 backdrop-blur-md shadow-[0_0_20px_rgba(255,215,0,0.2)]">
             💎
         </div>
+
         <div class="absolute -bottom-1 -right-1 level-badge text-[7px] font-black px-1.5 py-0.5 rounded-full text-black bg-yellow-500 shadow-md">
             LV.1
         </div>
-    </div>
-</a>
+
+    </a>
+
 </div>
         <p class="text-[8px] text-yellow-500/80 tracking-[0.3em] font-bold uppercase mt-0.5">Global System Active</p>
     </div>
@@ -3335,50 +3342,65 @@ window.addEventListener('load', () => {
 });
     </script>
     
-    <div id="mango-dashboard-modal" style="display: none; position: fixed; inset: 0; z-index: 99999; background: rgba(0,0,0,0.95); backdrop-filter: blur(20px); align-items: center; justify-content: center; padding: 20px;">
-        <div style="background: #111; border: 2px solid #f97316; border-radius: 32px; padding: 40px 24px; max-width: 420px; width: 100%; text-align: center; box-shadow: 0 0 50px rgba(249,115,22,0.3);">
-            <div style="width: 80px; height: 80px; background: #f97316; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 20px; font-size: 40px;">🥭</div>
-            <h2 style="color: white; font-size: 26px; font-weight: 900; letter-spacing: -0.05em; margin-bottom: 10px;">MANGO GLOBAL GATE</h2>
-            <p style="color: #666; font-size: 14px; margin-bottom: 30px;">2026 망고 생태계 공식 파트너 가입</p>
+    <div id="mango-payment-modal" style="position: fixed; inset: 0; z-index: 9999; display: none; align-items: center; justify-content: center; background: rgba(0,0,0,0.8); backdrop-filter: blur(10px); padding: 20px;">
+        <div style="width: 100%; max-width: 400px; background: #0f0f0f; border-radius: 32px; padding: 35px; border: 1px solid rgba(255,215,0,0.2); box-shadow: 0 25px 50px rgba(0,0,0,1);">
+            <div style="text-align: center; margin-bottom: 25px;">
+                <div style="font-size: 40px; margin-bottom: 10px;">🥭</div>
+                <p style="color: #f97316; font-size: 13px; font-weight: 900; letter-spacing: 0.1em; text-transform: uppercase;">Mango Global Gate</p>
+                <p style="color: #666; font-size: 11px;">2026 망고 생태계 공식 파트너 가입</p>
+            </div>
 
-            <div style="background: #1a1a1a; border-radius: 24px; padding: 24px; margin-bottom: 30px; border: 1px solid #333;">
-                <div style="display: flex; justify-content: space-between; margin-bottom: 12px;">
-                    <span style="color: #999;">결제 항목</span>
-                    <span style="color: white; font-weight: bold;">Eco-Supporter Tier 1</span>
+            <div style="background: rgba(255,255,255,0.03); border-radius: 24px; padding: 24px; margin-bottom: 25px; border: 1px solid rgba(255,255,255,0.05);">
+                <div style="display: flex; justify-content: space-between; margin-bottom: 12px; font-size: 13px;">
+                    <span style="color: #888;">결제 항목</span>
+                    <span style="color: #eee; font-weight: bold;">Eco-Supporter Tier 1</span>
                 </div>
-                <div style="display: flex; justify-content: space-between;">
-                    <span style="color: #999;">결제 금액</span>
-                    <span style="color: #fbbf24; font-size: 20px; font-weight: 900;">0.01 π</span>
+                <div style="display: flex; justify-content: space-between; align-items: baseline;">
+                    <span style="color: #888; font-size: 13px;">결제 금액</span>
+                    <span style="color: #fbbf24; font-size: 24px; font-weight: 900;">0.01 π</span>
                 </div>
             </div>
 
-            <div style="display: flex; flex-direction: column; gap: 14px;">
-                <button onclick="startPiPayment()" style="background: #f97316; color: white; border: none; padding: 20px; border-radius: 20px; font-size: 18px; font-weight: 900; cursor: pointer; transition: transform 0.1s;" onmousedown="this.style.transform='scale(0.98)'" onmouseup="this.style.transform='scale(1)'">
-                    지금 결제하고 가입하기
-                </button>
-                <button onclick="closePaymentModal()" style="background: transparent; color: #444; border: none; padding: 10px; font-size: 14px; cursor: pointer;">
-                    Cancel
-                </button>
-            </div>
+            <button onclick="startPiPayment()" style="width: 100%; background: linear-gradient(135deg, #f97316, #ea580c); color: white; border: none; padding: 22px; border-radius: 20px; font-size: 16px; font-weight: 900; cursor: pointer; transition: all 0.2s; box-shadow: 0 10px 20px rgba(249,115,22,0.2);" onmouseover="this.style.transform='scale(1.02)'" onmouseout="this.style.transform='scale(1)'">
+                지금 결제하고 가입하기
+            </button>
+            
+            <button onclick="closeMangoPaymentModal()" style="width: 100%; background: transparent; color: #444; border: none; padding: 15px; margin-top: 10px; font-size: 11px; font-weight: bold; cursor: pointer; text-transform: uppercase; letter-spacing: 0.2em;">
+                CANCEL
+            </button>
         </div>
     </div>
-    <script>
-// [결제 통합 엔진] 프로필에서 넘어온 결제 신호를 감지합니다.
-window.addEventListener('load', () => {
-    const params = new URLSearchParams(window.location.search);
-    if (params.get('pay') === 'true') {
-        // 페이지 로딩 완료 후 1초 뒤 결제 가이드와 Pi 결제창을 엽니다.
-        setTimeout(() => {
-            if (typeof openMangoGuide === 'function') openMangoGuide();
-            if (typeof startPiPayment === 'function') startPiPayment();
-            
-            // 처리 후 주소창에서 신호(?pay=true)를 제거하여 중복 실행 방지
-            window.history.replaceState({}, '', 'index.html');
-        }, 1000);
-    }
-});
-</script>
-</body>
-</html><script>window.addEventListener('load', () => { if(new URLSearchParams(window.location.search).get('pay') === 'true') { setTimeout(() => { if(typeof openMangoGuide === 'function') openMangoGuide(); if(typeof startPiPayment === 'function') startPiPayment(); window.history.replaceState({}, '', 'index.html'); }, 1000); } });</script>
 
-<script>window.addEventListener('load', () => { if(new URLSearchParams(window.location.search).get('pay') === 'true') { setTimeout(() => { if(typeof openMangoGuide === 'function') openMangoGuide(); if(typeof startPiPayment === 'function') startPiPayment(); window.history.replaceState({}, '', 'index.html'); }, 1000); } });</script>
+    <script>
+        // [통합 결제 엔진]
+        function openMangoPaymentModal() {
+            const modal = document.getElementById('mango-payment-modal');
+            if (modal) modal.style.display = 'flex';
+        }
+
+        function closeMangoPaymentModal() {
+            const modal = document.getElementById('mango-payment-modal');
+            if (modal) modal.style.display = 'none';
+        }
+
+        window.startGlobalPiPayment = function () {
+            if (typeof startPiPayment === 'function') startPiPayment();
+        };
+
+        window.addEventListener('load', () => {
+            const params = new URLSearchParams(window.location.search);
+            if (params.get('pay') === 'true') {
+                // 신호 확인 후 주소창 깨끗하게 청소
+                window.history.replaceState({}, '', 'index.html');
+                
+                setTimeout(() => {
+                    openMangoPaymentModal(); // 중앙 모달 띄우기
+                    if (typeof startPiPayment === 'function') {
+                        startPiPayment(); // Pi SDK 결제창 호출
+                    }
+                }, 1000);
+            }
+        });
+    </script>
+</body>
+</html>
