@@ -3237,39 +3237,39 @@ window.addEventListener('load', () => setTimeout(triggerMango9Shake, 2000));</sc
 </style>
 <script src="https://sdk.minepi.com/pi-sdk.js"></script>
     <script>
-    // [MANGO PAYMENT ENGINE v2.2 - Final Integrated]
+    // [MANGO OS: PAYMENT ENGINE v2.2]
     let currentPiUser = null;
     let isPiSdkInitialized = false;
 
-    // 1. SDK 초기화 및 사용자 인증
+    // 1. SDK 초기화
     document.addEventListener('DOMContentLoaded', async function() {
         try {
             if (typeof window.Pi !== 'undefined') {
                 await window.Pi.init({ version: "2.0", sandbox: true });
                 isPiSdkInitialized = true;
-                console.log("🚀 Mango OS: Payment Engine Ready.");
+                console.log("🚀 Mango OS Ready.");
                 await authenticatePiUser();
             }
-        } catch (e) { 
-            console.error("SDK 로드 실패", e); 
+        } catch (e) {
+            console.error("SDK Load Error:", e);
         }
     });
 
+    // 2. 인증 로직
     async function authenticatePiUser() {
         if (!isPiSdkInitialized) return;
         try {
             const auth = await window.Pi.authenticate(['username', 'payments'], (payment) => {
-                console.warn("⚠️ 미완료 결제 발견:", payment);
+                console.warn("Incomplete payment:", payment);
             });
             currentPiUser = auth.user.username;
             window.currentUserID = currentPiUser;
-            console.log("✅ 지갑 연동 완료:", currentPiUser);
-        } catch (err) { 
-            console.warn("인증 대기 중이거나 Pi 브라우저가 아닙니다."); 
+        } catch (err) {
+            console.warn("Authentication pending...");
         }
     }
 
-    // 2. 모달 제어 함수
+    // 3. 모달 제어
     function openMangoPaymentModal() {
         const modal = document.getElementById('mango-payment-modal');
         if (modal) modal.style.display = 'flex';
@@ -3280,10 +3280,10 @@ window.addEventListener('load', () => setTimeout(triggerMango9Shake, 2000));</sc
         if (modal) modal.style.display = 'none';
     }
 
-    // 3. 결제 실행 함수
+    // 4. 결제 실행
     function startPiPayment() {
         if (!currentPiUser) {
-            alert("지갑 연동 중입니다. 잠시 후 다시 시도해 주세요.");
+            alert("지갑 연동 중입니다. 잠시 후 다시 클릭해 주세요.");
             authenticatePiUser();
             return;
         }
@@ -3292,36 +3292,32 @@ window.addEventListener('load', () => setTimeout(triggerMango9Shake, 2000));</sc
 
     async function executePiPayment() {
         try {
-            const payment = await window.Pi.createPayment({
+            await window.Pi.createPayment({
                 amount: 0.01,
                 memo: "Mango Supporter Registration",
                 metadata: { userId: currentPiUser, type: "launch_test" }
             }, {
-                onReadyForServerApproval: (paymentId) => {
-                    console.log("서버 승인 대기 중 (정상):", paymentId);
-                },
+                onReadyForServerApproval: (paymentId) => { console.log("Pending Approval:", paymentId); },
                 onReadyForServerCompletion: (paymentId, txid) => {
-                    alert(`가입 및 결제 성공!\n환영합니다, ${currentPiUser}님.`);
+                    alert("가입 성공! 환영합니다.");
                     closeMangoPaymentModal();
                 },
-                onCancel: (paymentId) => { console.log("결제 취소"); },
-                onError: (error) => { console.error("결제 에러:", error); }
+                onCancel: (paymentId) => { console.log("Cancelled"); },
+                onError: (error) => { console.error("Payment Error:", error); }
             });
         } catch (err) {
-            console.error("결제창 호출 실패:", err);
+            console.error("Payment Call Failed:", err);
         }
     }
 
-    // 4. 자동 실행 엔진 (URL 파라미터 감지)
+    // 5. 자동 실행 (URL 감지)
     window.addEventListener('load', () => {
         const params = new URLSearchParams(window.location.search);
         if (params.get('pay') === 'true') {
-            // 주소창 깨끗하게 정리 (새로고침 시 중복 결제 방지)
             window.history.replaceState({}, '', window.location.pathname);
-            
             setTimeout(() => {
-                openMangoPaymentModal(); // 중앙 모달 띄우기
-                startPiPayment();      // Pi 지갑 결제창 호출
+                openMangoPaymentModal();
+                startPiPayment();
             }, 1200);
         }
     });
