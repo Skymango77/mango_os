@@ -3235,96 +3235,8 @@ window.addEventListener('load', () => setTimeout(triggerMango9Shake, 2000));</sc
 /* ... 기존 애니메이션 코드 ... */
 
 </style>
-<script src="https://sdk.minepi.com/pi-sdk.js"></script>
-    <script>
-    // [MANGO OS: PAYMENT ENGINE v2.2]
-    let currentPiUser = null;
-    let isPiSdkInitialized = false;
-
-    // 1. SDK 초기화
-    document.addEventListener('DOMContentLoaded', async function() {
-        try {
-            if (typeof window.Pi !== 'undefined') {
-                await window.Pi.init({ version: "2.0", sandbox: true });
-                isPiSdkInitialized = true;
-                console.log("🚀 Mango OS Ready.");
-                await authenticatePiUser();
-            }
-        } catch (e) {
-            console.error("SDK Load Error:", e);
-        }
-    });
-
-    // 2. 인증 로직
-    async function authenticatePiUser() {
-        if (!isPiSdkInitialized) return;
-        try {
-            const auth = await window.Pi.authenticate(['username', 'payments'], (payment) => {
-                console.warn("Incomplete payment:", payment);
-            });
-            currentPiUser = auth.user.username;
-            window.currentUserID = currentPiUser;
-        } catch (err) {
-            console.warn("Authentication pending...");
-        }
-    }
-
-    // 3. 모달 제어
-    function openMangoPaymentModal() {
-        const modal = document.getElementById('mango-payment-modal');
-        if (modal) modal.style.display = 'flex';
-    }
-
-    function closeMangoPaymentModal() {
-        const modal = document.getElementById('mango-payment-modal');
-        if (modal) modal.style.display = 'none';
-    }
-
-    // 4. 결제 실행
-    function startPiPayment() {
-        if (!currentPiUser) {
-            alert("지갑 연동 중입니다. 잠시 후 다시 클릭해 주세요.");
-            authenticatePiUser();
-            return;
-        }
-        executePiPayment();
-    }
-
-    async function executePiPayment() {
-        try {
-            await window.Pi.createPayment({
-                amount: 0.01,
-                memo: "Mango Supporter Registration",
-                metadata: { userId: currentPiUser, type: "launch_test" }
-            }, {
-                onReadyForServerApproval: (paymentId) => { console.log("Pending Approval:", paymentId); },
-                onReadyForServerCompletion: (paymentId, txid) => {
-                    alert("가입 성공! 환영합니다.");
-                    closeMangoPaymentModal();
-                },
-                onCancel: (paymentId) => { console.log("Cancelled"); },
-                onError: (error) => { console.error("Payment Error:", error); }
-            });
-        } catch (err) {
-            console.error("Payment Call Failed:", err);
-        }
-    }
-
-    // 5. 자동 실행 (URL 감지)
-    window.addEventListener('load', () => {
-        const params = new URLSearchParams(window.location.search);
-        if (params.get('pay') === 'true') {
-            window.history.replaceState({}, '', window.location.pathname);
-            setTimeout(() => {
-                openMangoPaymentModal();
-                startPiPayment();
-            }, 1200);
-        }
-    });
-</script>
-    
-    <div id="mango-payment-modal" style="position: fixed; inset: 0; z-index: 9999; display: none; align-items: center; justify-content: center; background: rgba(0,0,0,0.85); backdrop-filter: blur(12px); padding: 20px;">
-        <div style="width: 100%; max-width: 380px; background: #0a0a0a; border-radius: 32px; padding: 35px; border: 1px solid rgba(255,215,0,0.25); box-shadow: 0 30px 60px rgba(0,0,0,1);">
+<div id="mango-payment-modal" style="position: fixed; inset: 0; z-index: 9999; display: none; align-items: center; justify-content: center; background: rgba(0,0,0,0.85); backdrop-filter: blur(12px); padding: 20px;">
+        <div class="animate-mango-otogi-9" style="width: 100%; max-width: 380px; background: #0a0a0a; border-radius: 32px; padding: 35px; border: 1px solid rgba(255,215,0,0.25); box-shadow: 0 30px 60px rgba(0,0,0,1);">
             <div style="text-align: center; margin-bottom: 25px;">
                 <div style="font-size: 45px; margin-bottom: 15px; filter: drop-shadow(0 0 10px rgba(249,115,22,0.5));">🥭</div>
                 <p style="color: #f97316; font-size: 14px; font-weight: 900; letter-spacing: 0.15em; text-transform: uppercase;">Mango Global Gate</p>
@@ -3342,7 +3254,7 @@ window.addEventListener('load', () => setTimeout(triggerMango9Shake, 2000));</sc
                 </div>
             </div>
 
-            <button onclick="startPiPayment()" style="width: 100%; background: linear-gradient(135deg, #f97316, #ea580c); color: white; border: none; padding: 20px; border-radius: 20px; font-size: 17px; font-weight: 900; cursor: pointer; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); box-shadow: 0 12px 24px rgba(249,115,22,0.3);">
+            <button onclick="startPiPayment()" style="width: 100%; background: linear-gradient(135deg, #f97316, #ea580c); color: white; border: none; padding: 20px; border-radius: 20px; font-size: 17px; font-weight: 900; cursor: pointer; transition: all 0.3s; box-shadow: 0 12px 24px rgba(249,115,22,0.3);">
                 지금 결제하고 가입하기
             </button>
             
@@ -3352,61 +3264,90 @@ window.addEventListener('load', () => setTimeout(triggerMango9Shake, 2000));</sc
         </div>
     </div>
 
+    <script src="https://sdk.minepi.com/pi-sdk.js"></script>
     <script>
-        // [통합 결제 엔진 v2.1]
+        let currentPiUser = null;
+        let isPiSdkInitialized = false;
+
+        // 초기화 및 인증
+        document.addEventListener('DOMContentLoaded', async function() {
+            try {
+                if (typeof window.Pi !== 'undefined') {
+                    await window.Pi.init({ version: "2.0", sandbox: true });
+                    isPiSdkInitialized = true;
+                    console.log("🚀 Mango OS Ready.");
+                    authenticatePiUser();
+                }
+            } catch (e) { console.error("SDK Error", e); }
+        });
+
+        async function authenticatePiUser() {
+            if (!isPiSdkInitialized) return;
+            try {
+                const auth = await window.Pi.authenticate(['username', 'payments'], (payment) => {
+                    console.warn("미완료 결제:", payment);
+                });
+                currentPiUser = auth.user.username;
+                window.currentUserID = currentPiUser;
+            } catch (err) { console.warn("Pi 인증 대기 중..."); }
+        }
+
+        // 모달 제어
         function openMangoPaymentModal() {
             const modal = document.getElementById('mango-payment-modal');
-            if (modal) modal.style.display = 'flex';
+            if (modal) {
+                modal.style.display = 'flex';
+                document.body.style.overflow = 'hidden';
+            }
         }
 
         function closeMangoPaymentModal() {
             const modal = document.getElementById('mango-payment-modal');
-            if (modal) modal.style.display = 'none';
+            if (modal) {
+                modal.style.display = 'none';
+                document.body.style.overflow = 'auto';
+            }
         }
 
+        // 결제 실행
+        function startPiPayment() {
+            if (!currentPiUser) {
+                alert("Pi 지갑 연동 확인 중입니다. 잠시 후 다시 시도해 주세요.");
+                authenticatePiUser();
+                return;
+            }
+            executePiPayment();
+        }
+
+        async function executePiPayment() {
+            try {
+                await window.Pi.createPayment({
+                    amount: 0.01,
+                    memo: "Mango Supporter Registration",
+                    metadata: { userId: currentPiUser, type: "launch_test" }
+                }, {
+                    onReadyForServerApproval: (paymentId) => { console.log("Pending:", paymentId); },
+                    onReadyForServerCompletion: (paymentId, txid) => {
+                        alert("가입 성공!");
+                        closeMangoPaymentModal();
+                    },
+                    onCancel: (paymentId) => { console.log("Cancelled"); },
+                    onError: (error) => { console.error("Error:", error); }
+                });
+            } catch (err) { console.error("Payment Failed", err); }
+        }
+
+        // 자동 실행 (URL 파라미터 감지)
         window.addEventListener('load', () => {
             const params = new URLSearchParams(window.location.search);
             if (params.get('pay') === 'true') {
-                // 파라미터 즉시 제거하여 무한 루프 방지
-                const newUrl = window.location.pathname;
-                window.history.replaceState({}, '', newUrl);
-                
-                // SDK 연동 안정화를 위해 1.2초 후 실행
+                window.history.replaceState({}, '', window.location.pathname);
                 setTimeout(() => {
-                    openMangoPaymentModal(); 
-                    if (typeof startPiPayment === 'function') {
-                        startPiPayment(); 
-                    }
-                }, 1200);
+                    openMangoPaymentModal();
+                    startPiPayment();
+                }, 1500); // 넉넉하게 1.5초 대기
             }
         });
-
-        async function executePiPayment() {
-    try {
-        const payment = await window.Pi.createPayment({
-            amount: 0.01,
-            memo: "Mango Supporter Registration",
-            metadata: { userId: currentPiUser, type: "launch_test" }
-        }, {
-            // 1단계: 사용자가 지갑에서 결제를 승인했을 때
-            onReadyForServerApproval: (paymentId) => {
-                console.log("결제 ID 생성됨. 서버 승인 대기 중:", paymentId);
-                // 여기에 나중에 서버로 paymentId를 보내는 코드가 들어갑니다.
-            },
-            // 2단계: 결제가 완전히 완료되었을 때
-            onReadyForServerCompletion: (paymentId, txid) => {
-                console.log("결제 완료!", txid);
-            },
-            onCancel: (paymentId) => { console.log("사용자가 결제를 취소함"); },
-            onError: (error, payment) => { 
-                console.error("결제 에러 발생:", error);
-                // 여기서 '개발자 승인 실패' 에러가 찍히는 게 지금은 정상입니다!
-            }
-        });
-    } catch (err) {
-        console.error("결제창 호출 실패:", err);
-    }
-}
     </script>
 </body>
 </html>
