@@ -3237,108 +3237,95 @@ window.addEventListener('load', () => setTimeout(triggerMango9Shake, 2000));</sc
 </style>
 <script src="https://sdk.minepi.com/pi-sdk.js"></script>
     <script>
-        // --- [MANGO PAYMENT ENGINE v2.0] ---
-        let currentPiUser = null;
-        let isPiSdkInitialized = false;
+    // [MANGO PAYMENT ENGINE v2.2 - Final Integrated]
+    let currentPiUser = null;
+    let isPiSdkInitialized = false;
 
-        document.addEventListener('DOMContentLoaded', async function() {
-            try {
-                // 중복 초기화 방지: Pi 객체가 있을 때만 단 한 번 실행
-                if (typeof window.Pi !== 'undefined') {
-                    await window.Pi.init({ version: "2.0", sandbox: true });
-                    isPiSdkInitialized = true;
-                    console.log("🚀 Mango OS: Payment Engine Ready.");
-                    await authenticatePiUser();
-                }
-            } catch (e) { 
-                console.error("SDK 로드 실패", e); 
+    // 1. SDK 초기화 및 사용자 인증
+    document.addEventListener('DOMContentLoaded', async function() {
+        try {
+            if (typeof window.Pi !== 'undefined') {
+                await window.Pi.init({ version: "2.0", sandbox: true });
+                isPiSdkInitialized = true;
+                console.log("🚀 Mango OS: Payment Engine Ready.");
+                await authenticatePiUser();
             }
-        });
-
-        // 미완료 결제건 처리 (이전 결제 실패로 인한 락 해제용)
-        function onIncompletePaymentFound(payment) {
-            console.warn("⚠️ 미완료 결제 발견 (서버 동기화 필요):", payment);
+        } catch (e) { 
+            console.error("SDK 로드 실패", e); 
         }
+    });
 
-        async function authenticatePiUser() {
-            if (!isPiSdkInitialized) return;
-            try {
-                // payments 권한을 명확히 요청하고, 미완료 결제 핸들러를 부착
-                const auth = await window.Pi.authenticate(['username', 'payments'], onIncompletePaymentFound);
-                currentPiUser = auth.user.username;
-                window.currentUserID = currentPiUser;
-                console.log("✅ 지갑 연동 완료:", currentPiUser);
-            } catch (err) { 
-                console.warn("인증 대기 중이거나 Pi 브라우저가 아닙니다."); 
-            }
+    async function authenticatePiUser() {
+        if (!isPiSdkInitialized) return;
+        try {
+            const auth = await window.Pi.authenticate(['username', 'payments'], (payment) => {
+                console.warn("⚠️ 미완료 결제 발견:", payment);
+            });
+            currentPiUser = auth.user.username;
+            window.currentUserID = currentPiUser;
+            console.log("✅ 지갑 연동 완료:", currentPiUser);
+        } catch (err) { 
+            console.warn("인증 대기 중이거나 Pi 브라우저가 아닙니다."); 
         }
+    }
 
-        function openMangoGuide() {
-            const modal = document.getElementById('mango-dashboard-modal');
-            if (modal) {
-                modal.style.setProperty('display', 'flex', 'important');
-                document.body.style.overflow = 'hidden';
-            }
+    // 2. 모달 제어 함수
+    function openMangoPaymentModal() {
+        const modal = document.getElementById('mango-payment-modal');
+        if (modal) modal.style.display = 'flex';
+    }
+
+    function closeMangoPaymentModal() {
+        const modal = document.getElementById('mango-payment-modal');
+        if (modal) modal.style.display = 'none';
+    }
+
+    // 3. 결제 실행 함수
+    function startPiPayment() {
+        if (!currentPiUser) {
+            alert("지갑 연동 중입니다. 잠시 후 다시 시도해 주세요.");
+            authenticatePiUser();
+            return;
         }
+        executePiPayment();
+    }
 
-        function closePaymentModal() {
-            const modal = document.getElementById('mango-dashboard-modal');
-            if (modal) {
-                modal.style.display = 'none';
-                document.body.style.overflow = 'auto';
-            }
-        }
-
-        function startPiPayment() {
-            // 방어 로직: 지갑 연동이 덜 끝났을 경우 강제 재시도
-            if (!currentPiUser) {
-                alert("결제 연동을 위해 Pi 계정을 확인하고 있습니다. 잠시 후 팝업이 뜨면 승인해주세요.");
-                authenticatePiUser().then(() => {
-                    if(currentPiUser) executePiPayment();
-                });
-                return;
-            }
-            executePiPayment();
-        }
-
-        // 실제 결제창 호출 함수
-        function executePiPayment() {
-            window.Pi.createPayment({
+    async function executePiPayment() {
+        try {
+            const payment = await window.Pi.createPayment({
                 amount: 0.01,
                 memo: "Mango Supporter Registration",
                 metadata: { userId: currentPiUser, type: "launch_test" }
             }, {
                 onReadyForServerApproval: (paymentId) => {
-                    console.log("Approval Pending (서버 승인 대기중):", paymentId);
-                    // 샌드박스 테스트 중에는 여기서 멈추는 것이 정상입니다. (백엔드 연결 전)
+                    console.log("서버 승인 대기 중 (정상):", paymentId);
                 },
                 onReadyForServerCompletion: (paymentId, txid) => {
-                    alert(`가입 및 결제 성공!\n환영합니다, ${currentPiUser}님.\n영수증: ${txid}`);
-                    closePaymentModal();
+                    alert(`가입 및 결제 성공!\n환영합니다, ${currentPiUser}님.`);
+                    closeMangoPaymentModal();
                 },
-                onCancel: (paymentId) => {
-                    console.log("결제 취소:", paymentId);
-                },
-                onError: (error, payment) => {
-                    console.error("결제 네트워크 오류:", error);
-                    alert("결제 호출 실패. Pi Browser 내부에서 계정 연결을 다시 확인하세요.");
-                }
+                onCancel: (paymentId) => { console.log("결제 취소"); },
+                onError: (error) => { console.error("결제 에러:", error); }
             });
+        } catch (err) {
+            console.error("결제창 호출 실패:", err);
         }
-        // ✅ 이걸 추가
-window.startGlobalPiPayment = function () {
-    startPiPayment();
-};
-window.addEventListener('load', () => {
-    const params = new URLSearchParams(window.location.search);
-    if (params.get("pay") === "true") {
-        openMangoGuide();   // 결제 모달 열기
-        setTimeout(() => {
-            startPiPayment(); // 자동 결제 실행
-        }, 1000);
     }
-});
-    </script>
+
+    // 4. 자동 실행 엔진 (URL 파라미터 감지)
+    window.addEventListener('load', () => {
+        const params = new URLSearchParams(window.location.search);
+        if (params.get('pay') === 'true') {
+            // 주소창 깨끗하게 정리 (새로고침 시 중복 결제 방지)
+            window.history.replaceState({}, '', window.location.pathname);
+            
+            setTimeout(() => {
+                openMangoPaymentModal(); // 중앙 모달 띄우기
+                startPiPayment();      // Pi 지갑 결제창 호출
+            }, 1200);
+        }
+    });
+</script>
     
     <div id="mango-payment-modal" style="position: fixed; inset: 0; z-index: 9999; display: none; align-items: center; justify-content: center; background: rgba(0,0,0,0.85); backdrop-filter: blur(12px); padding: 20px;">
         <div style="width: 100%; max-width: 380px; background: #0a0a0a; border-radius: 32px; padding: 35px; border: 1px solid rgba(255,215,0,0.25); box-shadow: 0 30px 60px rgba(0,0,0,1);">
@@ -3397,6 +3384,33 @@ window.addEventListener('load', () => {
                 }, 1200);
             }
         });
+
+        async function executePiPayment() {
+    try {
+        const payment = await window.Pi.createPayment({
+            amount: 0.01,
+            memo: "Mango Supporter Registration",
+            metadata: { userId: currentPiUser, type: "launch_test" }
+        }, {
+            // 1단계: 사용자가 지갑에서 결제를 승인했을 때
+            onReadyForServerApproval: (paymentId) => {
+                console.log("결제 ID 생성됨. 서버 승인 대기 중:", paymentId);
+                // 여기에 나중에 서버로 paymentId를 보내는 코드가 들어갑니다.
+            },
+            // 2단계: 결제가 완전히 완료되었을 때
+            onReadyForServerCompletion: (paymentId, txid) => {
+                console.log("결제 완료!", txid);
+            },
+            onCancel: (paymentId) => { console.log("사용자가 결제를 취소함"); },
+            onError: (error, payment) => { 
+                console.error("결제 에러 발생:", error);
+                // 여기서 '개발자 승인 실패' 에러가 찍히는 게 지금은 정상입니다!
+            }
+        });
+    } catch (err) {
+        console.error("결제창 호출 실패:", err);
+    }
+}
     </script>
 </body>
 </html>
