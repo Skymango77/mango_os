@@ -969,7 +969,10 @@ style="width: 140px; height: 140px; aspect-ratio: 1/1; object-fit: cover; z-inde
         </div>
     </div>
    <div class="flex items-center gap-3">
-    <div onclick="openMangoGuide()" class="relative group cursor-pointer">
+<div onclick="location.
+
+href='profile_dashboard.html'" class="relative group cursor-pointer">
+    
     <div class="absolute -inset-1 bg-orange-500/20 rounded-full blur group-hover:bg-orange-500/40 transition duration-300"></div>
     <div class="relative w-12 h-12 bg-zinc-900 border border-white/10 rounded-full flex items-center justify-center hover:border-orange-500/50 transition-all shadow-lg">
         <i data-lucide="user" class="w-6 h-6 text-orange-500"></i>
@@ -977,8 +980,7 @@ style="width: 140px; height: 140px; aspect-ratio: 1/1; object-fit: cover; z-inde
     </div>
 </div>
 </div>
-    </div>
-</div> 
+</div>
 <div class="mango-container glass px-6 py-4 mt-2 mx-auto" style="width: 92%; max-width: 430px;">
     <div class="news-ticker h-[120px] overflow-hidden text-[15px] text-yellow-400 font-bold italic tracking-tight">
         <div id="realtime-news-track" class="news-track">
@@ -1498,12 +1500,10 @@ function cancelPress() {
     <div class="flex justify-end pr-4 relative z-30" style="margin-top: -28px; margin-bottom: 2px;">
 
     <div class="fixed z-[9999]" style="right: 20px; bottom: 185px;">
-
-    <a href="#profile"
-       onclick="startGlobalPiPayment()"
-       class="relative block transition-transform active:scale-95"
-       title="마이페이지">
-
+    <div onclick="location.href='profile_dashboard.html'" 
+         class="relative block transition-transform active:scale-95 cursor-pointer" 
+         title="마이페이지">
+        
         <div class="w-11 h-12 border border-yellow-500/40 flex items-center justify-center text-xl hex-diamond-profile bg-black/70 backdrop-blur-md shadow-[0_0_20px_rgba(255,215,0,0.2)]">
             💎
         </div>
@@ -1511,9 +1511,7 @@ function cancelPress() {
         <div class="absolute -bottom-1 -right-1 level-badge text-[7px] font-black px-1.5 py-0.5 rounded-full text-black bg-yellow-500 shadow-md">
             LV.1
         </div>
-
-    </a>
-
+    </div>
 </div>
         <p class="text-[8px] text-yellow-500/80 tracking-[0.3em] font-bold uppercase mt-0.5">Global System Active</p>
     </div>
