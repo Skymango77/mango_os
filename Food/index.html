@@ -600,32 +600,107 @@
             document.getElementById('depositAmount').textContent = amount.toLocaleString() + '원';
         }
 
-        // 제출 핸들러
-        function handleSubmit() {
-            if (state.cart.length === 0 && state.currentMode !== 'reservation') {
-                showToast("⚠️ 주문할 메뉴를 먼저 담아주세요.");
-                return;
+        // 1. Pi SDK 초기화
+const Pi = window.Pi;
+Pi.init({ version: "2.0" });
+
+// 2. 새로운 결제 프로세스 함수 정의
+async function processMangoPayment() {
+    let finalAmount = 0;
+    let memo = "";
+    
+    if (state.currentMode === 'reservation') {
+        finalAmount = 0.01; 
+        memo = `Mango Reservation: ${state.selectedSeat} seat`;
+    } else {
+        if (state.cart.length === 0) {
+            showToast("⚠️ 장바구니가 비어 있습니다.");
+            return;
+        }
+        finalAmount = 0.05; 
+        memo = `Mango Order: ${state.cart[0].title} 외`;
+    }
+
+    try {
+        showToast("🚀 파이 결제창을 여는 중...");
+        const payment = await Pi.createPayment({
+            amount: finalAmount,
+            memo: memo,
+            metadata: { 
+                mode: state.currentMode,
+                items: state.cart.map(i => i.title).join(',') 
             }
+        }, {
+            onReadyForServerApproval: async (paymentId) => {
+                await fetch('https://mango-os-6xu2.vercel.app/api/approve', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ paymentId })
+                });
+            },
+            onReadyForServerCompletion: async (paymentId, txid) => {
+                const response = await fetch('https://mango-os-6xu2.vercel.app/api/complete', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ paymentId, txid })
+                });
+                if (response.ok) {
+                    showToast("✅ 결제가 완료되었습니다! 즐거운 식사 되세요.");
+                    state.cart = []; 
+                    updateCartUI();
+                }
+            },
+            onCancel: (paymentId) => { showToast("❌ 결제가 취소되었습니다."); },
+            onError: (error) => { showToast("⚠️ 에러 발생: " + error.message); }
+        });
+    } catch (err) {
+        showToast("실행 에러: " + err.message);
+    }
+}
 
-            const modeNames = { delivery: '배달', takeout: '포장', reservation: '예약' };
-            const msg = state.currentMode === 'reservation' 
-                ? `📅 ${document.getElementById('res_date').value} / ${document.getElementById('res_people').value}인 예약이 접수되었습니다.`
-                : `🚀 Mango Heaven ${modeNames[state.currentMode]} 주문이 완료되었습니다.`;
-            
-            showToast(msg);
-            
-            // 초기화
-            if (state.currentMode !== 'reservation') state.cart = [];
-            updateCartUI();
-        }
+// 3. 버튼 클릭 시 결제 함수가 실행되도록 연결
+// 611번 라인부터 시작
 
-        // 토스트 알림
-        function showToast(msg) {
-            const toast = document.getElementById("toast");
-            toast.textContent = msg;
-            toast.className = "show";
-            setTimeout(() => { toast.className = toast.className.replace("show", ""); }, 3000);
-        }
-    </script>
+// 1. 버튼 클릭 시 결제 함수 호출
+function handleSubmit() {
+    // 장바구니가 비어있는지 먼저 체크
+    if (state.cart.length === 0 && state.currentMode !== 'reservation') {
+        showToast("⚠️ 주문할 메뉴를 담아주세요.");
+        return;
+    }
+    
+    // Pi 결제 함수 실행
+    processMangoPayment();
+}
+
+// 2. 결제 성공 후 UI 업데이트 및 알림을 담당하는 별도 함수
+function handleSuccessUI() {
+    const modeNames = { delivery: '배달', takeout: '포장', reservation: '예약' };
+    const msg = state.currentMode === 'reservation' 
+        ? `📅 ${document.getElementById('res_date').value} / ${document.getElementById('res_people').value}인 예약이 접수되었습니다.`
+        : `🚀 Mango Heaven ${modeNames[state.currentMode]} 주문이 완료되었습니다.`;
+    
+    showToast(msg);
+    
+    // 장바구니 초기화 및 UI 갱신
+    if (state.currentMode !== 'reservation') {
+        state.cart = [];
+    }
+    updateCartUI();
+}
+
+// 3. 토스트 알림 함수
+function showToast(msg) {
+    const toast = document.getElementById("toast");
+    if (!toast) return; // toast 엘리먼트가 없을 경우 대비
+    toast.textContent = msg;
+    toast.className = "show";
+    setTimeout(() => { 
+        toast.className = toast.className.replace("show", ""); 
+    }, 3000);
+}
+
+// 스크립트 종료
+</script>
 </body>
 </html>
