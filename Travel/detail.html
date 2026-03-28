@@ -287,17 +287,19 @@
                 return;
             }
 
-            btn.disabled = true;
-            text.innerText = "TRANSFERRING...";
+            // [수정] 테스트 편의를 위해 버튼을 활성 상태(false)로 유지
+            btn.disabled = false; 
+            text.innerText = "PROCESSING...";
             icon.className = "w-4 h-4 animate-spin";
             icon.innerHTML = `<i data-lucide="loader-2"></i>`;
             lucide.createIcons();
 
-            await new Promise(resolve => setTimeout(resolve, 2000));
-
-            closePaymentModal();
-            alert(`${amount} Pi 전송이 완료되었습니다!`);
-            window.location.href = 'mypage.html';
+            // 실제 전송 로직 시뮬레이션 (1.5초 후 실행)
+            setTimeout(() => {
+                closePaymentModal();
+                alert(`${amount} Pi 전송이 완료되었습니다!`);
+                window.location.href = 'mypage.html';
+            }, 1500);
         }
     </script>
 </body>
