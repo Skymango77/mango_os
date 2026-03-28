@@ -2,8 +2,6 @@
 <html lang="ko">
 
 <head>
-<meta http-equiv="Content-Security-Policy" content="default-src * 'unsafe-inline' 'unsafe-eval'; img-src * data: blob:; connect-src *;">
-
     <meta name="theme-color" content="#f97316"> 
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="mobile-web-app-capable" content="yes">
@@ -1139,32 +1137,36 @@ href='profile_dashboard.html'" class="relative group cursor-pointer">
     const Pi = window.Pi;
     let piUser = null;
 
-    async function initApp() {
-        try {
-            // 1. SDK 초기화는 기다립니다.
-            await Pi.init({ version: "2.0", sandbox: true });
-            console.log("✅ Pi SDK 초기화 성공");
+    // 1. SDK 초기화 및 유저 인증 (1141행 시작)
+async function initPi() {
+    try {
+        // 초기화는 await로 확실히 끝냅니다.
+        await Pi.init({ version: "2.0", sandbox: true });
+        console.log("✅ Pi SDK 초기화 성공");
 
-            // 2. [핵심] 인증을 '기다리지 않고' 실행합니다.
-            // 이렇게 해야 지인 폰에서 인증 창이 뜨는 동안 메인 UI가 멈추지 않고 나타납니다.
-            Pi.authenticate(['username', 'payments'], (payment) => {
-                console.warn("⚠️ 미완료 결제 발견:", payment);
-            }).then((auth) => {
-                piUser = auth.user;
-                console.log(`🚀 파이 유저 접속: ${piUser.username}`);
-                
-                // 유저 이름이 표시될 곳이 있다면 자동 삽입
-                if(document.getElementById('user-name-display')) {
-                    document.getElementById('user-name-display').innerText = piUser.username;
-                }
-            }).catch((err) => {
-                console.error("❌ 인증 실패 또는 취소:", err);
-            });
+        const scopes = ['username', 'payments'];
+        
+        // 미완료 결제 처리
+        const onIncompletePaymentFound = (payment) => {
+            console.warn("⚠️ 미완료 결제 발견:", payment);
+        };
 
-        } catch (err) {
-            console.error("❌ 시스템 초기화 에러:", err);
-        }
+        // [핵심 수정] await를 삭제하고 .then()으로 실행하여 로딩 멈춤 방지
+        Pi.authenticate(scopes, onIncompletePaymentFound).then((auth) => {
+            piUser = auth.user;
+            console.log(`🚀 파이 유저 접속: ${piUser.username}`);
+            
+            if(document.getElementById('pi-id')) {
+                document.getElementById('pi-id').value = piUser.username;
+            }
+        }).catch((err) => {
+            console.error("❌ 인증 실패 또는 건너뜀:", err);
+        });
+
+    } catch (err) {
+        console.error("❌ Pi SDK 로드 에러:", err);
     }
+}
 
     // 결제 함수는 기존 로직을 유지하되 piUser 체크를 포함합니다.
     async function startPayment() {
