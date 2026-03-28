@@ -3244,15 +3244,18 @@ window.addEventListener('load', () => setTimeout(triggerMango9Shake, 2000));</sc
 
         // SDK 초기화
         document.addEventListener('DOMContentLoaded', async function() {
-            try {
-                if (typeof window.Pi !== 'undefined') {
-                    await window.Pi.init({ version: "2.0", sandbox: true });
-                    isPiSdkInitialized = true;
-                    const auth = await window.Pi.authenticate(['username', 'payments'], (p) => console.log(p));
-                    currentPiUser = auth.user.username;
-                }
-            } catch (e) { console.error(e); }
-        });
+    try {
+        if (typeof window.Pi !== 'undefined') {
+            await window.Pi.init({ version: "2.0", sandbox: true });
+            isPiSdkInitialized = true;
+            console.log("🚀 Mango OS: Payment Engine Ready.");
+        } else {
+            console.warn("❌ Pi SDK 없음 (일반 브라우저)");
+        }
+    } catch (e) { 
+        console.error("SDK 로드 실패", e); 
+    }
+});
 
         function openMangoPaymentModal() {
             document.getElementById('mango-payment-modal').style.display = 'flex';
@@ -3263,21 +3266,48 @@ window.addEventListener('load', () => setTimeout(triggerMango9Shake, 2000));</sc
         }
 
         async function startPiPayment() {
-            if (!currentPiUser) return alert("Pi 인증 대기 중...");
-            try {
-                await window.Pi.createPayment({
-                    amount: 0.01,
-                    memo: "Mango Registration",
-                    metadata: { userId: currentPiUser }
-                }, {
-                    onReadyForServerApproval: (id) => console.log("Approval:", id),
-                    onReadyForServerCompletion: (id, tx) => { alert("성공!"); closeMangoPaymentModal(); },
-                    onCancel: (id) => console.log("Cancel"),
-                    onError: (e) => console.error(e)
-                });
-            } catch (err) { console.error(err); }
-        }
 
+    // 🔒 SDK 체크
+    if (!isPiSdkInitialized) {
+        alert("Pi Browser에서 다시 접속해주세요.");
+        return;
+    }
+
+    // 🔐 로그인 안됐으면 여기서 인증
+    if (!currentPiUser) {
+        try {
+            const auth = await window.Pi.authenticate(['username', 'payments'], onIncompletePaymentFound);
+            currentPiUser = auth.user.username;
+            window.currentUserID = currentPiUser;
+            console.log("✅ 지갑 연동 완료:", currentPiUser);
+        } catch (err) {
+            alert("Pi 인증 실패 또는 취소됨");
+            return;
+        }
+    }
+
+    // 💰 결제 실행
+    try {
+        await window.Pi.createPayment({
+            amount: 0.01,
+            memo: "Mango Registration",
+            metadata: { userId: currentPiUser }
+        }, {
+            onReadyForServerApproval: (id) => console.log("Approval:", id),
+            onReadyForServerCompletion: (id, tx) => { 
+                alert("성공!"); 
+                closeMangoPaymentModal(); 
+            },
+            onCancel: (id) => console.log("Cancel"),
+            onError: (e) => console.error(e)
+        });
+    } catch (err) { 
+        console.error(err); 
+    }
+}
+function onIncompletePaymentFound(payment) {
+    console.warn("⚠️ 미완료 결제:", payment);
+}
         // 자동 실행 (URL 감지)
         window.addEventListener('load', () => {
             const params = new URLSearchParams(window.location.search);
