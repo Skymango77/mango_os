@@ -3244,19 +3244,31 @@ window.addEventListener('load', () => setTimeout(triggerMango9Shake, 2000));</sc
         let currentPiUser = null;
         let isPiSdkInitialized = false;
 
-        // SDK 초기화
-        document.addEventListener('DOMContentLoaded', async function() {
-    try {
-        if (typeof window.Pi !== 'undefined') {
-            await window.Pi.init({ version: "2.0", sandbox: true });
-            isPiSdkInitialized = true;
-            console.log("🚀 Mango OS: Payment Engine Ready.");
-        } else {
-            console.warn("❌ Pi SDK 없음 (일반 브라우저)");
+        // ✅ SDK 안전 초기화 (중요)
+document.addEventListener('DOMContentLoaded', async function() {
+
+    let tries = 0;
+
+    const waitForPi = setInterval(async () => {
+
+        if (window.Pi) {
+            try {
+                await window.Pi.init({ version: "2.0", sandbox: true });
+                isPiSdkInitialized = true;
+                console.log("✅ Pi SDK 준비 완료");
+            } catch (e) {
+                console.error("❌ Pi init 실패", e);
+            }
+            clearInterval(waitForPi);
         }
-    } catch (e) { 
-        console.error("SDK 로드 실패", e); 
-    }
+
+        tries++;
+        if (tries > 10) {
+            console.warn("❌ Pi SDK 끝까지 못 불러옴");
+            clearInterval(waitForPi);
+        }
+
+    }, 500);
 });
 
         function openMangoPaymentModal() {
@@ -3268,6 +3280,14 @@ window.addEventListener('load', () => setTimeout(triggerMango9Shake, 2000));</sc
         }
 
         async function startPiPayment() {
+            // ✅ 핵심 추가 (이 줄!)
+
+if (typeof window.Pi === 'undefined') {
+    alert("❌ Pi Browser에서 접속해야 결제가 가능합니다.");
+    return;
+}
+
+    
 
     // 🔒 SDK 체크
     if (!isPiSdkInitialized) {
@@ -3312,15 +3332,25 @@ function onIncompletePaymentFound(payment) {
 }
         // 자동 실행 (URL 감지)
         window.addEventListener('load', () => {
-            const params = new URLSearchParams(window.location.search);
-            if (params.get('pay') === 'true') {
-                window.history.replaceState({}, '', window.location.pathname);
-                setTimeout(() => {
-                    openMangoPaymentModal();
-                    startPiPayment();
-                }, 1500);
+    const params = new URLSearchParams(window.location.search);
+
+    if (params.get('pay') === 'true') {
+        window.history.replaceState({}, '', window.location.pathname);
+
+        setTimeout(() => {
+
+            openMangoPaymentModal();
+
+            // ✅ 여기 추가 (핵심!)
+            if (typeof window.Pi !== 'undefined') {
+                startPiPayment();
+            } else {
+                console.warn("❌ Pi SDK 없음 → 자동결제 실행 안함");
             }
-        });
+
+        }, 1500);
+    }
+});
 
         if (window.matchMedia('(display-mode: standalone)').matches) {
     alert("❌ 현재 홈화면 앱 모드입니다.\nPi Browser에서 직접 접속해주세요.");
