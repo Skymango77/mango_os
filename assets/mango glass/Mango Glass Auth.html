@@ -1,0 +1,163 @@
+import React, { useState, useEffect, useCallback } from 'react';
+import { Fingerprint, Mic, Eye, UserCheck, Languages, ShieldCheck, ChevronRight } from 'lucide-react';
+
+const TRANSLATIONS = {
+  ko: {
+    welcome: "MANGO 시스템에 오신 것을 환영합니다",
+    instruction: "인증 방법을 선택하세요",
+    face: "얼굴 인식",
+    voice: "목소리 인식",
+    eye: "홍채 인식",
+    finger: "지문 인식",
+    verifying: "신원 확인 중...",
+    success: "인증 성공!",
+    systemActive: "시스템 활성",
+    hint: "바라보거나 명령하세요"
+  },
+  en: {
+    welcome: "Welcome to MANGO System",
+    instruction: "Select Authentication Method",
+    face: "Face ID",
+    voice: "Voice Print",
+    eye: "Iris Scan",
+    finger: "Touch ID",
+    verifying: "Verifying Identity...",
+    success: "Auth Success!",
+    systemActive: "SYSTEM ACTIVE",
+    hint: "Look or Speak Command"
+  },
+  ja: {
+    welcome: "MANGO システムへようこそ",
+    instruction: "認証方法を選択してください",
+    face: "顔認証",
+    voice: "音声認証",
+    eye: "虹彩認証",
+    finger: "指紋認証",
+    verifying: "本人 확인 중...",
+    success: "認証成功！",
+    systemActive: "システム稼働中",
+    hint: "視선 또는 음성으로 조작"
+  }
+};
+
+const App = () => {
+  const [lang, setLang] = useState('ko');
+  const [isAuthenticating, setIsAuthenticating] = useState(false);
+  const [authState, setAuthState] = useState('idle'); // idle, loading, success
+  const [selectedMethod, setSelectedMethod] = useState(null);
+
+  const t = TRANSLATIONS[lang];
+
+  const handleAuth = (method) => {
+    setSelectedMethod(method);
+    setIsAuthenticating(true);
+    setAuthState('loading');
+
+    // 생체 인식 시뮬레이션 (실제로는 WebAuthn API 호출)
+    setTimeout(() => {
+      setAuthState('success');
+      setTimeout(() => {
+        // 인증 성공 후 메인 포털로 이동하는 로직이 들어갈 자리
+        window.dispatchEvent(new CustomEvent('mango_auth_success'));
+      }, 1500);
+    }, 2500);
+  };
+
+  const toggleLang = () => {
+    const langs = Object.keys(TRANSLATIONS);
+    const nextIndex = (langs.indexOf(lang) + 1) % langs.length;
+    setLang(langs[nextIndex]);
+  };
+
+  return (
+    <div className="min-h-screen bg-black text-white font-sans overflow-hidden flex flex-col items-center justify-center relative p-6">
+      {/* HUD Background Elements */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-yellow-500/50 to-transparent animate-pulse" />
+        <div className="absolute bottom-0 left-0 w-full h-32 bg-gradient-to-t from-yellow-500/10 to-transparent" />
+      </div>
+
+      {/* Header Info */}
+      <div className="fixed top-8 left-8 right-8 flex justify-between items-center z-50">
+        <div className="flex items-center gap-3">
+          <div className="w-10 h-10 border-2 border-yellow-500 rounded-lg flex items-center justify-center shadow-[0_0_15px_rgba(251,191,36,0.5)]">
+            <span className="text-yellow-500 font-black italic">M</span>
+          </div>
+          <div>
+            <h1 className="text-yellow-500 font-black tracking-tighter text-xl">MANGO GLASS</h1>
+            <p className="text-[10px] text-yellow-500/50 tracking-[0.3em] uppercase">{t.systemActive}</p>
+          </div>
+        </div>
+        
+        <button 
+          onClick={toggleLang}
+          className="flex items-center gap-2 px-4 py-2 bg-white/5 border border-white/10 rounded-full hover:bg-white/10 transition-all"
+        >
+          <Languages size={14} className="text-yellow-500" />
+          <span className="text-xs font-bold uppercase">{lang}</span>
+        </button>
+      </div>
+
+      {/* Main Content */}
+      <div className={`transition-all duration-700 transform ${isAuthenticating ? 'scale-90 opacity-50 blur-sm' : 'scale-100'}`}>
+        <div className="text-center mb-12">
+          <h2 className="text-2xl font-light tracking-tight text-white/90 mb-2">{t.welcome}</h2>
+          <p className="text-sm text-white/40">{t.instruction}</p>
+        </div>
+
+        <div className="grid grid-cols-2 gap-4 w-full max-w-sm">
+          {[
+            { id: 'face', icon: UserCheck, label: t.face, color: 'border-blue-500/50' },
+            { id: 'voice', icon: Mic, label: t.voice, color: 'border-purple-500/50' },
+            { id: 'eye', icon: Eye, label: t.eye, color: 'border-emerald-500/50' },
+            { id: 'finger', icon: Fingerprint, label: t.finger, color: 'border-orange-500/50' }
+          ].map((item) => (
+            <button
+              key={item.id}
+              onClick={() => handleAuth(item.id)}
+              className={`group flex flex-col items-center justify-center p-6 bg-white/5 border ${item.color} rounded-3xl hover:bg-white/10 transition-all duration-300 backdrop-blur-md`}
+            >
+              <item.icon size={32} className="text-white/80 group-hover:scale-110 group-hover:text-white transition-transform mb-3" />
+              <span className="text-xs font-bold tracking-wider opacity-60 group-hover:opacity-100">{item.label}</span>
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {/* Authentication Overlay */}
+      {isAuthenticating && (
+        <div className="absolute inset-0 z-[100] flex flex-col items-center justify-center bg-black/60 backdrop-blur-xl transition-all animate-in fade-in zoom-in duration-500">
+          <div className="relative w-48 h-48 flex items-center justify-center">
+             {/* Scanning Animation */}
+             <div className={`absolute inset-0 border-2 rounded-full ${authState === 'success' ? 'border-emerald-500 animate-none' : 'border-yellow-500 animate-ping'} opacity-20`} />
+             <div className={`absolute inset-4 border-2 rounded-full ${authState === 'success' ? 'border-emerald-500' : 'border-yellow-500'} opacity-40 animate-pulse`} />
+             
+             {authState === 'loading' && (
+               <div className="flex flex-col items-center">
+                 <ShieldCheck size={64} className="text-yellow-500 animate-bounce" />
+                 <p className="mt-8 text-yellow-500 font-mono text-sm tracking-widest">{t.verifying}</p>
+               </div>
+             )}
+
+             {authState === 'success' && (
+               <div className="flex flex-col items-center animate-in zoom-in duration-300">
+                 <div className="w-20 h-20 bg-emerald-500 rounded-full flex items-center justify-center shadow-[0_0_30px_rgba(16,185,129,0.5)]">
+                    <ShieldCheck size={40} className="text-white" />
+                 </div>
+                 <p className="mt-8 text-emerald-500 font-bold text-lg tracking-widest">{t.success}</p>
+               </div>
+             )}
+          </div>
+        </div>
+      )}
+
+      {/* Bottom Hint */}
+      <div className="fixed bottom-12 flex flex-col items-center gap-2">
+        <p className="text-[10px] text-white/20 tracking-[0.5em]">{t.hint}</p>
+        <div className="w-1 h-8 bg-gradient-to-b from-yellow-500 to-transparent opacity-30" />
+      </div>
+    </div>
+  );
+};
+
+export default App;

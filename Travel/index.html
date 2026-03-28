@@ -2,7 +2,7 @@
 <html lang="ko">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Mango UI - Busan Haeundae</title>
     
     <script src="https://cdn.tailwindcss.com"></script>
@@ -11,7 +11,9 @@
     
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@500;700&family=Noto+Sans+KR:wght@300;400;700;900&display=swap" rel="stylesheet">
 
+    <script src="https://sdk.minepi.com/pi-sdk.js"></script>
     <style>
+        
     /* 1. 이미지에서 누락되었던 Shimmer 및 핵심 애니메이션 추가 */
     @keyframes shimmer {
         0% { background-position: -200% 0; }
@@ -51,11 +53,31 @@
 </style>
 <style>
     :root {
-        --portal-width: 480px;
-        /* 채도를 낮춘 안정적인 다크 컬러칩 */
+        --portal-width: 450px; /* 480px에서 450px로 정밀 수정 */
         --m-teal: rgba(0, 136, 145, 0.5); 
         --m-blue: rgba(37, 99, 235, 0.4);
         --m-yellow: rgba(202, 138, 4, 0.5);
+    }
+
+    /* 아코디언 기능 활성화 코드 추가 */
+    .accordion-toggle { display: none; }
+    .accordion-content {
+        max-height: 0;
+        overflow: hidden;
+        transition: max-height 0.3s ease-out;
+    }
+    .accordion-toggle:checked ~ div .accordion-content {
+        max-height: 200px;
+    }
+    .accordion-toggle:checked ~ div .chevron {
+        transform: rotate(180deg);
+    }
+    
+    /* 모든 섹션의 너비를 450px로 강제 고정 */
+    section, .portal-window {
+        width: var(--portal-width) !important;
+        margin-left: auto !important;
+        margin-right: auto !important;
     }
 
     /* 전체 배경을 더 깊은 블랙으로 */
@@ -87,21 +109,32 @@
     .text-muted { color: rgba(255, 255, 255, 0.6); }
     .text-title { color: rgba(255, 255, 255, 0.85); }
 </style>
-</head>
-<body class="pb-24"> <header class="flex justify-between items-center p-5 pt-8 sticky top-0 z-50 bg-gradient-to-b from-[#0a0a0a] to-transparent">
-        <div class="flex items-center gap-2">
-            <div class="w-2 h-2 bg-teal-400 rounded-full animate-pulse"></div>
-            <h1 class="font-orb text-xl font-black tracking-widest text-transparent bg-clip-text bg-gradient-to-r from-teal-400 to-blue-500">MANGO<span class="text-[10px] text-gray-500 align-top ml-1">OS</span></h1>
-        </div>
-        <div class="flex gap-4">
-            <i data-lucide="bell" class="w-6 h-6 text-gray-400 hover:text-white transition-colors cursor-pointer relative">
-                <span class="absolute top-0 right-0 w-2 h-2 bg-red-500 rounded-full"></span>
-            </i>
-            <i data-lucide="scan-eye" class="w-6 h-6 text-orange-500 hover:text-white transition-colors cursor-pointer hover:animate-spin-slow" id="ar-toggle-btn"></i>
-        </div>
-    </header>
 
-    <main class="px-4 space-y-6 max-w-md mx-auto w-full"> 
+</head>
+<body class="pb-32"> 
+    
+    <header class="w-[450px] mx-auto pt-8 pb-4 px-6 sticky top-0 z-50 bg-[#030303]/80 backdrop-blur-xl">
+    <div class="flex items-center justify-between">
+        <div class="flex items-center gap-4">
+<div class="w-14 h-14 rounded-2xl bg-[#111] shadow-[0_5px_15px_rgba(251,146,60,0.15)] flex items-center justify-center border border-white/10 overflow-hidden group">                <img src="/assets/img/mango.jpg" 
+        alt="Mango"              class="w-full h-full object-cover transition-transform group-hover:scale-110"
+         onerror="this.src='https://ui-avatars.com/api/?name=M&background=fb923c&color=fff&rounded=false'"> 
+</div>
+            <div>
+                <h1 class="text-2xl font-black text-white tracking-tighter leading-tight font-orbitron">
+                    MANGO <span class="text-orange-500">PORTAL</span>
+                </h1>
+                <p class="text-[9px] text-white/40 font-mono tracking-[0.3em] uppercase">Intelligence OS v2.0</p>
+            </div>
+        </div>
+        <div class="text-right font-rajdhani">
+            <span class="text-[11px] text-orange-400 font-bold block tracking-widest">BUSAN_HAEUNDAE</span>
+            <span class="text-[9px] text-white/30 tracking-tighter">35.1595° N, 129.1604° E</span>
+        </div>
+    </div>
+</header>
+
+    <main class="px-4 space-y-6 max-w-[450px] mx-auto w-full"> 
 
         <section class="space-y-3">
             <div class="flex justify-between items-end px-2">
@@ -279,259 +312,370 @@
             </div>
         </section>
 
-        <section id="travel_intelligence_section" class="space-y-3 pt-2">
+        <section id="travel_intelligence_section" class="w-[450px] mx-auto space-y-3 pt-6 px-4">
     <div class="flex justify-between items-center px-1">
         <div class="flex items-center gap-2">
-            <div class="w-1.5 h-3.5 bg-blue-500 rounded-full shadow-[0_0_8px_rgba(59,130,246,0.5)]"></div>
-            <h3 class="font-orb text-[11px] text-white/80 tracking-[0.15em] uppercase font-black">Travel_Intelligence</h3>
+            <div class="w-1.5 h-3.5 bg-orange-500 rounded-full shadow-[0_0_8px_rgba(249,115,22,0.5)]"></div>
+            <h3 class="font-orb text-[11px] text-white/80 tracking-[0.15em] uppercase font-black">Core_8_Intelligence_Portals</h3>
         </div>
-        <span class="text-[8px] text-blue-400/60 font-mono tracking-tighter">OS_SYNC_v1.4</span>
+        <span class="text-[8px] text-orange-500/60 font-mono animate-pulse">SYSTEM_ACTIVE</span>
     </div>
     
     <div class="grid grid-cols-2 gap-3">
-    
-    <div class="premium-glass aspect-square p-3 flex flex-col justify-between border-l-2 border-orange-500/40 relative overflow-hidden group active:scale-95 transition-all">
-        <div class="flex justify-between items-start relative z-10">
-            <div class="p-1.5 bg-orange-500/10 rounded text-orange-400">
-                <i data-lucide="utensils" class="w-4 h-4"></i>
+        
+        <div class="premium-glass travel-card cursor-pointer p-3 flex flex-col justify-between border-l-2 border-orange-500/40 h-[100px] active:scale-95 transition-all group" data-city-id="food">
+            <div class="flex justify-between items-start"><i data-lucide="utensils" class="w-4 h-4 text-orange-400"></i><span class="text-[7px] text-orange-500 font-bold uppercase tracking-widest">Food</span></div>
+            <div class="flex items-end justify-between">
+                <p class="text-[10px] font-bold text-white leading-tight">해운대 맛집 인텔<br><span class="text-orange-400 text-[8px]">인기순 실시간 추천</span></p>
+                <div class="w-8 h-8 rounded-lg bg-orange-500/10 border border-orange-500/20 flex items-center justify-center shadow-inner">
+                    <i data-lucide="flame" class="w-4 h-4 text-orange-500 group-hover:scale-110 transition-transform"></i>
+                </div>
             </div>
-            <span class="text-[8px] text-orange-500 font-bold border border-orange-500/20 px-1 rounded">LIVE</span>
         </div>
-        <div class="relative z-10">
-            <h4 class="text-[9px] font-black text-white/30 uppercase font-orb">Food_Portal</h4>
-            <p class="text-[11px] font-bold text-white mt-1 leading-tight tracking-tighter">해운대 암소갈비<br><span class="text-orange-400 text-[9px]">대기 12팀</span></p>
-        </div>
-    </div>
 
-    <div class="premium-glass aspect-square p-3 flex flex-col justify-between border-l-2 border-blue-500/40 relative overflow-hidden group active:scale-95 transition-all">
-        <div class="flex justify-between items-start relative z-10">
-            <div class="p-1.5 bg-blue-500/10 rounded text-blue-400">
-                <i data-lucide="bus" class="w-4 h-4"></i>
+        <div class="premium-glass travel-card cursor-pointer p-3 flex flex-col justify-between border-l-2 border-blue-500/40 h-[100px] active:scale-95 transition-all group" data-city-id="transfer">
+            <div class="flex justify-between items-start"><i data-lucide="navigation" class="w-4 h-4 text-blue-400"></i><span class="text-[7px] text-blue-500 font-bold uppercase tracking-widest">Transfer</span></div>
+            <div class="flex items-end justify-between">
+                <p class="text-[10px] font-bold text-white leading-tight">모빌리티 호출<br><span class="text-blue-400 text-[8px]">Model_Z 3분 내 도착</span></p>
+                <div class="w-8 h-8 rounded-lg bg-blue-500/10 border border-blue-500/20 flex items-center justify-center shadow-inner">
+                    <i data-lucide="car" class="w-4 h-4 text-blue-500 group-hover:scale-110 transition-transform"></i>
+                </div>
             </div>
-            <span class="text-[8px] text-blue-400 font-bold border border-blue-500/20 px-1 rounded">NEAR</span>
         </div>
-        <div class="relative z-10">
-            <h4 class="text-[9px] font-black text-white/30 uppercase font-orb">Transfer_Portal</h4>
-            <p class="text-[11px] font-bold text-white mt-1 leading-tight tracking-tighter">공항 리무진<br><span class="text-blue-400 text-[9px]">8분 후 도착</span></p>
-        </div>
-    </div>
 
-    <div class="premium-glass aspect-square p-3 flex flex-col justify-between border-l-2 border-purple-500/40 relative overflow-hidden group active:scale-95 transition-all">
-        <div class="flex justify-between items-start relative z-10">
-            <div class="p-1.5 bg-purple-500/10 rounded text-purple-400">
-                <i data-lucide="map" class="w-4 h-4"></i>
+        <div class="premium-glass travel-card cursor-pointer p-3 flex flex-col justify-between border-l-2 border-purple-500/40 h-[100px] active:scale-95 transition-all group" data-city-id="travel">
+            <div class="flex justify-between items-start"><i data-lucide="map-pin" class="w-4 h-4 text-purple-400"></i><span class="text-[7px] text-purple-500 font-bold uppercase tracking-widest">Travel</span></div>
+            <div class="flex items-end justify-between">
+                <p class="text-[10px] font-bold text-white leading-tight">관광 POI 탐색<br><span class="text-purple-400 text-[8px]">AR 가이드 활성화</span></p>
+                <div class="w-8 h-8 rounded-lg bg-purple-500/10 border border-purple-500/20 flex items-center justify-center shadow-inner">
+                    <i data-lucide="camera" class="w-4 h-4 text-purple-500 group-hover:scale-110 transition-transform"></i>
+                </div>
             </div>
-            <span class="text-[8px] text-purple-400 font-bold border border-purple-500/20 px-1 rounded">POI</span>
         </div>
-        <div class="relative z-10">
-            <h4 class="text-[9px] font-black text-white/30 uppercase font-orb">Travel_Portal</h4>
-            <p class="text-[10px] font-black text-white mt-1 leading-none tracking-tighter uppercase font-orb break-all">
-                HAEUNDAE_BEACH
-            </p>
-            <p class="text-purple-400 text-[8px] mt-1 font-bold">900M DISTANCE</p>
-        </div>
-    </div>
 
-    <div class="premium-glass aspect-square p-3 flex flex-col justify-between border-l-2 border-teal-500/40 relative overflow-hidden group active:scale-95 transition-all">
-        <div class="flex justify-between items-start relative z-10">
-            <div class="p-1.5 bg-teal-500/10 rounded text-teal-400">
-                <i data-lucide="share-2" class="w-4 h-4"></i>
+        <div class="premium-glass travel-card cursor-pointer p-3 flex flex-col justify-between border-l-2 border-pink-500/40 h-[100px] active:scale-95 transition-all group" data-city-id="hobby">
+            <div class="flex justify-between items-start"><i data-lucide="heart" class="w-4 h-4 text-pink-400"></i><span class="text-[7px] text-pink-500 font-bold uppercase tracking-widest">Hobby</span></div>
+            <div class="flex items-end justify-between">
+                <p class="text-[10px] font-bold text-white leading-tight">취미 액티비티<br><span class="text-pink-400 text-[8px]">서핑 & 해양 레저</span></p>
+                <div class="w-8 h-8 rounded-lg bg-pink-500/10 border border-pink-500/20 flex items-center justify-center shadow-inner">
+                    <i data-lucide="compass" class="w-4 h-4 text-pink-500 group-hover:scale-110 transition-transform"></i>
+                </div>
             </div>
-            <span class="text-[8px] text-teal-400 font-bold border border-teal-500/20 px-1 rounded">SYNC</span>
         </div>
-        <div class="relative z-10">
-            <h4 class="text-[9px] font-black text-white/30 uppercase font-orb">Share_Portal</h4>
-            <p class="text-[11px] font-bold text-white mt-1 leading-tight tracking-tighter">현재 경로 공유<br><span class="text-teal-400 text-[9px]">Active (2인)</span></p>
+
+        <div class="premium-glass travel-card cursor-pointer p-3 flex flex-col justify-between border-l-2 border-emerald-500/40 h-[100px] active:scale-95 transition-all group" data-city-id="realty">
+            <div class="flex justify-between items-start"><i data-lucide="home" class="w-4 h-4 text-emerald-400"></i><span class="text-[7px] text-emerald-500 font-bold uppercase tracking-widest">Realty</span></div>
+            <div class="flex items-end justify-between">
+                <p class="text-[10px] font-bold text-white leading-tight">부동산 DEX<br><span class="text-emerald-400 text-[8px]">Pi 결제 실시간 매물</span></p>
+                <div class="w-8 h-8 rounded-lg bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center shadow-inner">
+                    <i data-lucide="trending-up" class="w-4 h-4 text-emerald-500 group-hover:scale-110 transition-transform"></i>
+                </div>
+            </div>
         </div>
+
+        <div class="premium-glass travel-card cursor-pointer p-3 flex flex-col justify-between border-l-2 border-yellow-500/40 h-[100px] active:scale-95 transition-all group" data-city-id="market">
+            <div class="flex justify-between items-start"><i data-lucide="shopping-cart" class="w-4 h-4 text-yellow-400"></i><span class="text-[7px] text-yellow-500 font-bold uppercase tracking-widest">Market</span></div>
+            <div class="flex items-end justify-between">
+                <p class="text-[10px] font-bold text-white leading-tight">망고 직거래 마켓<br><span class="text-yellow-400 text-[8px]">Pi Network 스토어</span></p>
+                <div class="w-8 h-8 rounded-lg bg-yellow-500/10 border border-yellow-500/20 flex items-center justify-center shadow-inner">
+                    <i data-lucide="coins" class="w-4 h-4 text-yellow-500 group-hover:scale-110 transition-transform"></i>
+                </div>
+            </div>
+        </div>
+
+        <div class="premium-glass travel-card cursor-pointer p-3 flex flex-col justify-between border-l-2 border-cyan-500/40 h-[100px] active:scale-95 transition-all group" data-city-id="chat">
+            <div class="flex justify-between items-start"><i data-lucide="messages-square" class="w-4 h-4 text-cyan-400"></i><span class="text-[7px] text-cyan-500 font-bold uppercase tracking-widest">Chat</span></div>
+            <div class="flex items-end justify-between">
+                <p class="text-[10px] font-bold text-white leading-tight">커뮤니티 채널<br><span class="text-cyan-400 text-[8px]">실시간 정보 공유</span></p>
+                <div class="w-8 h-8 rounded-lg bg-cyan-500/10 border border-cyan-500/20 flex items-center justify-center shadow-inner">
+                    <i data-lucide="users" class="w-4 h-4 text-cyan-500 group-hover:scale-110 transition-transform"></i>
+                </div>
+            </div>
+        </div>
+
+        <div class="premium-glass travel-card cursor-pointer p-3 flex flex-col justify-between border-l-2 border-indigo-500/40 h-[100px] active:scale-95 transition-all group" data-city-id="stay">
+            <div class="flex justify-between items-start"><i data-lucide="bed" class="w-4 h-4 text-indigo-400"></i><span class="text-[7px] text-indigo-500 font-bold uppercase tracking-widest">Stay</span></div>
+            <div class="flex items-end justify-between">
+                <p class="text-[10px] font-bold text-white leading-tight">숙박 인텔리전스<br><span class="text-indigo-400 text-[8px]">LCT & 특급 호텔</span></p>
+                <div class="w-8 h-8 rounded-lg bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-center shadow-inner">
+                    <i data-lucide="key-round" class="w-4 h-4 text-indigo-500 group-hover:scale-110 transition-transform"></i>
+                </div>
+            </div>
+        </div>
+
     </div>
-</div>
 </section>
+
 
 <section class="w-full space-y-4 px-2">
     <div class="flex justify-between items-center px-3 mb-2">
-        <h3 class="text-[12px] font-black text-white/90 tracking-widest uppercase">Global_Hot_Spot</h3>
-        <span class="text-[9px] text-teal-400 font-bold">LIVE UPDATE</span>
+        <div class="flex items-center gap-2">
+            <div class="w-2 h-2 bg-red-600 rounded-full animate-ping"></div>
+            <h3 class="text-[12px] font-black text-white/90 tracking-widest uppercase font-orb">Global_Hot_Spot</h3>
+        </div>
+        <div class="flex items-center gap-2">
+            <span class="text-[9px] text-teal-400 font-bold tracking-tighter">4K_LIVE_HAEUNDAE</span>
+            <i data-lucide="cast" class="w-3 h-3 text-teal-400"></i>
+        </div>
     </div>
 
-    <div class="w-full premium-glass aspect-[16/10] relative overflow-hidden group cursor-pointer transition-all duration-500 hover:scale-[1.02]">
-        <img src="https://images.unsplash.com/photo-1578310344722-da649646487e?q=80&w=800&auto=format&fit=crop" 
-             class="absolute inset-0 w-full h-full object-cover opacity-60 group-hover:opacity-80 transition-opacity" alt="Busan">
+    <div class="w-full premium-glass aspect-[16/9] relative overflow-hidden group border border-white/5 bg-black shadow-2xl">
+        <iframe 
+            class="absolute inset-0 w-full h-full scale-[1.3] pointer-events-none opacity-70"
+            src="https://www.youtube.com/embed/uHdl_9hsHqw?autoplay=1&mute=1&controls=0&loop=1&playlist=uHdl_9hsHqw&showinfo=0&rel=0&modestbranding=1&iv_load_policy=3" 
+            title="Haeundae 4K Live" 
+            frameborder="0" 
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+            allowfullscreen>
+        </iframe>
         
-        <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent"></div>
+        <div class="absolute inset-0 bg-gradient-to-t from-[#0a0a0a] via-transparent to-transparent opacity-90"></div>
+        <div class="absolute inset-0 shadow-[inset_0_0_100px_rgba(0,0,0,0.8)]"></div>
 
-        <div class="absolute bottom-0 left-0 right-0 p-5 z-10">
+        <div class="absolute inset-0 p-6 flex flex-col justify-end z-10">
             <div class="flex justify-between items-end">
                 <div class="space-y-1">
                     <div class="flex items-center gap-2 text-teal-400">
-                        <i data-lucide="map-pin" class="w-3 h-3"></i>
-                        <span class="text-[10px] font-black uppercase tracking-tighter">Busan, South Korea</span>
+                        <i data-lucide="map-pin" class="w-3.5 h-3.5"></i>
+                        <span class="text-[10px] font-black uppercase tracking-widest font-rajdhani">Busan, Haeundae Beach</span>
                     </div>
-                    <h4 class="text-2xl font-black font-orb text-white leading-none">HAEUNDAE_BEACH</h4>
+
+                    <h4 class="text-3xl font-black font-orb text-white leading-none tracking-tighter drop-shadow-2xl">
+                        HAEUNDAE_REALTIME
+                    </h4>
                 </div>
+                
                 <div class="text-right">
-                    <div class="flex items-center gap-1 text-orange-500 mb-1">
-                        <i data-lucide="cloud" class="w-3 h-3"></i>
-                        <span class="text-[12px] font-black">12°C</span>
+                    <div class="flex items-center gap-1.5 text-orange-500 mb-2 justify-end drop-shadow-lg font-rajdhani">
+                        <i data-lucide="thermometer-sun" class="w-4 h-4 animate-pulse"></i>
+                        <span class="text-[16px] font-black">12.5°C</span>
                     </div>
-                    <button class="bg-white/10 hover:bg-white/20 backdrop-blur-md border border-white/20 px-3 py-1.5 rounded-full flex items-center gap-2 transition-all">
-                        <i data-lucide="play-circle" class="w-3 h-3 text-red-500"></i>
-                        <span class="text-[9px] font-black text-white uppercase tracking-tighter">Watch Vlog</span>
+                    <button onclick="window.open('https://www.youtube.com/watch?v=uHdl_9hsHqw')" 
+                            class="bg-white/5 hover:bg-white/10 backdrop-blur-xl border border-white/20 px-4 py-2 rounded-full flex items-center gap-2 transition-all">
+                        <i data-lucide="maximize" class="w-3 h-3 text-white"></i>
+                        <span class="text-[9px] font-black text-white uppercase tracking-tighter">Full Screen</span>
                     </button>
                 </div>
             </div>
+        </div>   
+    </div> 
+<section class="px-2 mt-4 mb-6 max-w-[450px] mx-auto">
+    <div class="grid grid-cols-2 gap-3">
+        <div class="premium-glass p-4 border-b-2 border-orange-500/50 bg-gradient-to-br from-orange-500/5 to-transparent cursor-pointer active:scale-95 transition-all" onclick="openSupporterModal()">
+            <div class="flex items-center gap-2 mb-2">
+                <i data-lucide="users" class="w-4 h-4 text-orange-500"></i>
+                <span class="text-[10px] font-black text-white uppercase tracking-widest font-orb">Supporters</span>
+            </div>
+            <p class="text-[8px] text-gray-500 font-bold leading-tight">내 지역 핫스팟 공유<br><span class="text-orange-500">1.0 MGO REWARD</span></p>
+        </div>
+
+        <div class="premium-glass p-4 border-b-2 border-teal-500/50 bg-gradient-to-br from-teal-500/5 to-transparent cursor-pointer active:scale-95 transition-all" onclick="openPartnerModal()">
+            <div class="flex items-center gap-2 mb-2">
+                <i data-lucide="briefcase" class="w-4 h-4 text-teal-500"></i>
+                <span class="text-[10px] font-black text-white uppercase tracking-widest font-orb">Partners</span>
+            </div>
+            <p class="text-[8px] text-gray-500 font-bold leading-tight">비즈니스 노드 등록<br><span class="text-teal-500">GLOBAL ADS</span></p>
         </div>
     </div>
-</section>
-<div class="app-container portal-window">
-    
-    <section class="space-y-3 mt-6">
-    <h3 class="font-orb text-[10px] text-gray-600 px-2 tracking-[0.2em]">01_POST_TRIP_FEEDBACK</h3>
-    
-    <div class="premium-glass border-t-2 border-yellow-900/40 p-6 flex flex-col items-center shadow-lg">
-        <h4 class="text-lg font-black text-white/80 mb-1 italic">즐거운 동행이었나요?</h4>
-        <p class="text-[11px] text-gray-500 mb-6">Mango_Captain님과의 이동을 평가해주세요.</p>
-
-        <div class="flex justify-center gap-4 mb-8">
-            <i data-lucide="star" class="fill-yellow-800/30 text-yellow-800/50 w-8 h-8 cursor-pointer hover:scale-110 transition-transform"></i>
-            <i data-lucide="star" class="fill-yellow-800/30 text-yellow-800/50 w-8 h-8 cursor-pointer hover:scale-110 transition-transform"></i>
-            <i data-lucide="star" class="fill-yellow-800/30 text-yellow-800/50 w-8 h-8 cursor-pointer hover:scale-110 transition-transform"></i>
-            <i data-lucide="star" class="fill-yellow-800/30 text-yellow-800/50 w-8 h-8 cursor-pointer hover:scale-110 transition-transform"></i>
-            <i data-lucide="star" class="text-white/5 w-8 h-8 cursor-pointer hover:scale-110 transition-transform"></i>
+    <section class="space-y-4 mt-8 px-2 pb-24 max-w-[450px] mx-auto">
+        <div class="flex justify-between items-center px-3 mb-2">
+            <h3 class="font-orb text-[10px] text-gray-600 tracking-[0.2em] uppercase">01_POST_TRIP_FEEDBACK</h3>
+            <span class="text-[9px] text-amber-500/50 font-bold italic">REWARD: 0.1 TOKEN</span>
         </div>
+        
+        <div class="premium-glass border-t-2 border-amber-500/30 p-8 flex flex-col items-center shadow-2xl bg-gradient-to-b from-white/5 to-transparent relative overflow-hidden">
+            <div class="absolute top-0 right-0 p-2 opacity-10"><i data-lucide="quote" class="w-12 h-12 text-white"></i></div>
+            
+            <h4 class="text-xl font-black text-white mb-2 italic tracking-tight">즐거운 동행이었나요?</h4>
+            <p class="text-[11px] text-gray-400 mb-8 font-medium">Mango_Captain님과의 여정을 평가해주세요.</p>
+            
+            <div class="flex gap-4 mb-10">
+                <button class="group hover:scale-125 transition-transform"><i data-lucide="star" class="w-9 h-9 text-gray-800 fill-gray-800 group-hover:text-amber-400 group-hover:fill-amber-500 group-hover:drop-shadow-[0_0_15px_rgba(245,158,11,0.6)] transition-all duration-300"></i></button>
+                <button class="group hover:scale-125 transition-transform"><i data-lucide="star" class="w-9 h-9 text-gray-800 fill-gray-800 group-hover:text-amber-400 group-hover:fill-amber-500 transition-all"></i></button>
+                <button class="group hover:scale-125 transition-transform"><i data-lucide="star" class="w-9 h-9 text-gray-800 fill-gray-800 group-hover:text-amber-400 group-hover:fill-amber-500 transition-all"></i></button>
+                <button class="group hover:scale-125 transition-transform"><i data-lucide="star" class="w-9 h-9 text-gray-800 fill-gray-800 group-hover:text-amber-400 group-hover:fill-amber-500 transition-all"></i></button>
+                <button class="group hover:scale-125 transition-transform"><i data-lucide="star" class="w-9 h-9 text-gray-800 fill-gray-800 group-hover:text-amber-400 group-hover:fill-amber-500 transition-all"></i></button>
+            </div>
 
-        <div class="grid grid-cols-2 gap-2 mb-8 w-full">
-            <div class="flex items-center gap-2 border border-white/5 bg-white/5 rounded-xl p-3 text-[10px] text-gray-400 group cursor-pointer hover:border-yellow-900/50 transition-all">
-                <i data-lucide="smile" class="w-3.5 h-3.5 text-yellow-800"></i> <span class="font-bold">매너가 훌륭해요</span>
-            </div>
-            <div class="flex items-center gap-2 border border-white/5 bg-white/5 rounded-xl p-3 text-[10px] text-gray-400 group cursor-pointer hover:border-yellow-900/50 transition-all">
-                <i data-lucide="clock" class="w-3.5 h-3.5 text-yellow-800"></i> <span class="font-bold">약속을 잘 지켜요</span>
-            </div>
+
+            <button onclick="showMangoToast('0.1 Token이 적립되었습니다!')" 
+                class="w-full py-5 rounded-2xl bg-gradient-to-r from-orange-500 to-amber-600 text-black font-black text-sm uppercase tracking-widest hover:scale-[1.02] transition-all active:scale-95 shadow-[0_15px_30px_rgba(249,115,22,0.3)] border border-white/20">
+                SUBMIT & CLAIM TOKEN
+            </button>
         </div>
+    </section>
 
-        <button onclick="showMangoToast('0.1 Token이 적립되었습니다!')" 
-            class="w-full py-4 bg-yellow-900/20 hover:bg-yellow-800/30 text-yellow-700 border border-yellow-900/30 font-black font-orb rounded-2xl active:scale-[0.98] transition-all animate-shimmer uppercase italic tracking-widest shadow-inner">
-            SUBMIT & CLAIM TOKEN
-        </button>
-    </div>
-</section>
-</div>
     </main>
 
-    <div class="fixed bottom-0 left-0 right-0 z-40 bg-black/90 border-t border-white/10 h-[48px] overflow-hidden flex items-center">
-        <div class="absolute left-0 top-0 bottom-0 px-4 bg-orange-500 text-black z-20 flex items-center justify-center">
-            <span class="text-[10px] font-black italic uppercase">Flash</span>
+    <div class="fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-[450px] z-[90] bg-[#030303]/95 border-t border-white/10 h-[42px] overflow-hidden flex items-center shadow-[0_-10px_30px_rgba(0,0,0,0.8)]">
+        <div class="absolute left-0 top-0 bottom-0 px-4 bg-gradient-to-r from-orange-600 to-amber-500 text-black z-20 flex items-center justify-center shadow-[5px_0_15px_rgba(0,0,0,0.5)]">
+            <span class="text-[9px] font-black italic uppercase tracking-tighter">Mango_Live</span>
         </div>
-        <div class="flex items-center whitespace-nowrap overflow-hidden relative z-10 w-full ml-16">
-            <div class="flex animate-marquee hover:pause-animation">
-                <div class="flex items-center gap-3 px-4 border-r border-white/10">
-                    <span class="text-[8px] bg-orange-500/20 text-orange-500 px-1.5 py-0.5 rounded font-black">PI</span>
-                    <p class="text-[11px] font-bold text-white italic">Pi Network 메인넷 마이그레이션 가속화 로직 가동 중...</p>
+        
+        <div class="flex items-center whitespace-nowrap overflow-hidden relative z-10 w-full ml-20">
+            <div class="flex animate-marquee py-1">
+                <div class="flex items-center gap-4 px-6 border-r border-white/5">
+                    <span class="text-[8px] bg-white/10 text-orange-400 px-1.5 py-0.5 rounded border border-orange-500/20 font-bold">PI_NET</span>
+                    <p class="text-[10px] font-medium text-white/80 italic">Pi Mainnet Migration: Status Active (98%)</p>
                 </div>
-                <div class="flex items-center gap-3 px-4 border-r border-white/10">
-                    <span class="text-[8px] bg-teal-500 text-black px-1.5 py-0.5 rounded font-black">MANGO</span>
-                    <p class="text-[11px] font-bold text-teal-400 italic">망고 토큰(MGO) 발행 로드맵 1단계 승인 완료</p>
+                <div class="flex items-center gap-4 px-6 border-r border-white/5">
+                    <span class="text-[8px] bg-teal-500/20 text-teal-400 px-1.5 py-0.5 rounded border border-teal-500/20 font-bold">PORTAL</span>
+                    <p class="text-[10px] font-medium text-white/80 italic">Haeundae 4K Cam: Night Vision Mode Ready</p>
                 </div>
-                 <div class="flex items-center gap-3 px-4 border-r border-white/10">
-                    <span class="text-[8px] bg-purple-500 text-white px-1.5 py-0.5 rounded font-black">SYSTEM</span>
-                    <p class="text-[11px] font-bold text-gray-300 italic">웨어러블 디바이스 3대 동기화 완료 (Watch, Glass, Ring)</p>
+                <div class="flex items-center gap-4 px-6 border-r border-white/5">
+                    <span class="text-[8px] bg-purple-500/20 text-purple-400 px-1.5 py-0.5 rounded border border-purple-500/20 font-bold">ECO</span>
+                    <p class="text-[10px] font-medium text-white/80 italic">Mango Token (MGO) Airdrop Event for Top Reviewers</p>
                 </div>
             </div>
         </div>
     </div>
 
-    <div id="ar-hud" class="fixed inset-0 z-[10000] pointer-events-none opacity-0 transition-opacity duration-700 bg-teal-900/5">
-        <div class="absolute inset-0 bg-[linear-gradient(rgba(18,16,16,0)_50%,rgba(0,255,255,0.05)_50%),linear-gradient(90deg,rgba(255,0,0,0.02),rgba(0,255,0,0.01),rgba(0,0,255,0.02))] bg-[length:100%_4px,3px_100%]"></div>
-        <div class="absolute top-20 left-6 text-teal-400 font-orb">
-            <p class="text-[8px] tracking-[0.3em] opacity-50 uppercase">Environment_Scan</p>
-            <p class="text-xs font-black italic">BUSAN_HAEUNDAE <span class="animate-pulse">●</span></p>
+    <div id="ar-hud" class="fixed inset-0 z-[10000] pointer-events-none opacity-0 transition-opacity duration-1000 bg-teal-900/5">
+        <div class="absolute inset-0 bg-[linear-gradient(rgba(18,16,16,0)_50%,rgba(0,255,255,0.03)_50%),linear-gradient(90deg,rgba(255,0,0,0.01),rgba(0,255,0,0.01),rgba(0,0,255,0.01))] bg-[length:100%_2px,2px_100%]"></div>
+        
+        <div class="absolute top-16 left-8 text-teal-400 font-orb drop-shadow-[0_0_5px_rgba(45,212,191,0.5)]">
+            <p class="text-[7px] tracking-[0.4em] opacity-60 uppercase">System_Scanning...</p>
+            <p class="text-[11px] font-black italic tracking-wider">HAEUNDAE_ZONE_V2</p>
         </div>
-        <div class="absolute top-20 right-6 text-right font-orb text-pink-500">
-            <p class="text-[10px] font-black italic tracking-widest">GLASS_MODE_V4.0</p>
-            <p class="text-[8px] text-white opacity-40">LAT: 35.1595° N / LON: 129.1611° E</p>
+
+        <div class="absolute top-16 right-8 text-right font-orb text-amber-500">
+            <p class="text-[9px] font-black italic tracking-widest opacity-80">HUD_ACTIVE</p>
+            <p class="text-[7px] text-white/40">SYNC: GLASS / WATCH / RING</p>
         </div>
-        <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-64 h-64 border border-teal-500/20 rounded-full flex items-center justify-center">
-            <div class="w-2 h-2 bg-teal-400 rounded-full animate-ping"></div>
-            <div class="absolute inset-0 border-t-2 border-b-2 border-teal-500/40 rounded-full animate-spin-slow"></div>
+
+        <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-72 h-72 border border-teal-500/10 rounded-full flex items-center justify-center">
+            <div class="w-1.5 h-1.5 bg-teal-400 rounded-full animate-ping"></div>
+            <div class="absolute inset-0 border-t-2 border-teal-500/30 rounded-full animate-spin-slow"></div>
+            <div class="absolute inset-4 border-b border-white/5 rounded-full animate-reverse-spin opacity-20"></div>
         </div>
     </div>
 
-    <div id="mango-toast" class="toast-notification">
-        <div class="w-10 h-10 bg-yellow-500/20 rounded-xl flex items-center justify-center text-yellow-500">
-            <i data-lucide="bell-ring" class="w-5 h-5"></i>
-        </div>
-        <div>
-            <h5 class="text-white text-[11px] font-black uppercase tracking-tight leading-none mb-1">System Message</h5>
-            <p id="toast-message" class="text-yellow-500 text-[12px] font-bold">환영합니다. Mango OS 가동.</p>
+    <div id="mango-toast" class="toast-notification fixed bottom-16 left-1/2 -translate-x-1/2 z-[101]">
+        <div class="flex items-center gap-4 bg-[#111]/90 backdrop-blur-xl border border-white/10 p-4 rounded-2xl shadow-2xl min-w-[280px]">
+            <div class="w-10 h-10 bg-gradient-to-br from-orange-500/20 to-amber-500/20 rounded-xl flex items-center justify-center text-orange-500 border border-orange-500/30">
+                <i data-lucide="shield-check" class="w-5 h-5"></i>
+            </div>
+            <div>
+                <h5 class="text-white text-[10px] font-black uppercase tracking-widest mb-0.5">Mango_Notice</h5>
+                <p id="toast-message" class="text-gray-400 text-[12px] font-bold">시스템이 정상 가동 중입니다.</p>
+            </div>
         </div>
     </div>
 
     <script>
+        // 0. Pi SDK 초기화
+        const Pi = window.Pi;
+        let isSandbox = true; 
+        if(Pi) { Pi.init({ version: "2.0", sandbox: isSandbox }); }
+
         // 1. Initialize Icons
         lucide.createIcons();
 
-        // 2. Toast System
+        // --- MANGO TRAVEL NAVIGATION ENGINE START ---
+        // 모든 여행 카드의 클릭을 감지하여 상세 페이지로 자동 라우팅함
+        document.addEventListener('click', (e) => {
+            // 클릭된 요소나 그 부모 중 'travel-card' 클래스를 가진 요소를 찾음
+            const card = e.target.closest('.travel-card');
+            if (card) {
+                const cityId = card.getAttribute('data-city-id');
+                if (cityId) {
+                    // 현재 폴더 구조상 detail.html이 같은 위치에 있을 때
+                    window.location.href = `detail.html?id=${cityId}`;
+                }
+            }
+        });
+        // --- MANGO TRAVEL NAVIGATION ENGINE END ---
+
+        // 2. Toast System (Sleek Design using HTML element)
         function showMangoToast(msg) {
             const toast = document.getElementById('mango-toast');
             const msgNode = document.getElementById('toast-message');
-            if(msg) msgNode.innerText = msg;
+            if (!toast || !msgNode) return;
             
+            if(msg) msgNode.innerText = msg;
             toast.classList.add('show');
             setTimeout(() => {
                 toast.classList.remove('show');
             }, 3000);
         }
 
-        // 3. Auto Pilot Logic
+        // 3. Auto Pilot (Model_Mango_Z 호출) - Unified logic
         function startSummon() {
             const car = document.getElementById('car-node');
             const pulse = document.getElementById('summon-pulse');
             
+            if(!car || !pulse) return;
+
             showMangoToast("Model_Mango_Z 호출 신호 전송...");
             pulse.classList.add('animate-ping');
-            car.style.transform = "translateX(100px) rotate(10deg)"; 
+            pulse.style.opacity = "1";
+            car.style.transform = "translateX(50px) scale(1.1)"; 
             
             setTimeout(() => {
                 pulse.classList.remove('animate-ping');
-                car.style.transform = "translateX(0) rotate(0)";
-                showMangoToast("차량이 3분 내 도착합니다.");
+                pulse.style.opacity = "0";
+                car.style.transform = "translateX(0) scale(1)";
+                showMangoToast("차량이 지정된 위치에 도착했습니다.");
             }, 3000);
         }
 
         // 4. AR HUD Logic
         const arBtn = document.getElementById('ar-toggle-btn');
-        let arActive = false;
-        
-        arBtn.addEventListener('click', () => {
-            arActive = !arActive;
-            const hud = document.getElementById('ar-hud');
-            hud.style.opacity = arActive ? '1' : '0';
-            showMangoToast(arActive ? "AR 글래스 모드 활성화" : "일반 모드 전환");
-        });
+        let arActive = false; 
 
-        
+        if (arBtn) {
+            arBtn.addEventListener('click', () => {
+                arActive = !arActive;
+                const hud = document.getElementById('ar-hud');
+                if (hud) {
+                    hud.style.opacity = arActive ? '1' : '0';
+                    showMangoToast(arActive ? "AR 글래스 모드 활성화" : "일반 모드 전환");
+                }
+            });
+        }
 
-        // 5. Initial Welcome
+        // 5. Supporters & Partners Logic
+        function openSupporterModal() {
+            const locationName = prompt("공유하고 싶은 핫스팟 명칭을 입력하세요 (예: 다낭 미케비치)");
+            if(locationName) {
+                showMangoToast(`${locationName} 데이터 분석 중...`);
+                setTimeout(() => {
+                    showMangoToast("검수 완료! 1.0 MGO가 지급되었습니다.");
+                }, 2000);
+            }
+        }
+
+        function openPartnerModal() {
+            showMangoToast("비즈니스 파트너 센터로 연결합니다...");
+        }
+
+        // 6. Initial Welcome
         window.addEventListener('load', () => {
             setTimeout(() => showMangoToast("부산 해운대 존에 진입했습니다."), 1000);
         });
-
-        // 6. Auto Pilot 실행 스크립트
-    function startSummon() {
-        const car = document.getElementById('car-node');
-        const pulse = document.getElementById('summon-pulse');
-        showMangoToast("Model_Mango_Z를 호출합니다...");
-        pulse.classList.add('animate-ping');
-        pulse.style.opacity = "1";
-        car.style.transform = "translateX(50px) scale(1.1)";
-        
-        setTimeout(() => {
-            pulse.classList.remove('animate-ping');
-            pulse.style.opacity = "0";
-            car.style.transform = "translateX(0) scale(1)";
-            showMangoToast("차량이 지정된 위치에 도착했습니다.");
-        }, 3000);
-    }
-
     </script>
+    <nav class="fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-[450px] bg-[#0a0a0a]/90 backdrop-blur-xl border-t border-white/5 px-6 py-4 z-[90] flex justify-between items-center">
+    <button onclick="location.href='index.html'" class="flex flex-col items-center gap-1 group">
+        <i data-lucide="home" class="w-5 h-5 text-gray-500 group-hover:text-orange-500 transition-colors"></i>
+        <span class="text-[8px] font-orb text-gray-500 group-hover:text-orange-500 uppercase">Home</span>
+    </button>
+    <button class="flex flex-col items-center gap-1 group">
+        <i data-lucide="search" class="w-5 h-5 text-gray-500 group-hover:text-orange-500 transition-colors"></i>
+        <span class="text-[8px] font-orb text-gray-500 group-hover:text-orange-500 uppercase">Explore</span>
+    </button>
+    <div class="relative -top-8">
+        <button class="w-14 h-14 bg-gradient-to-br from-orange-400 to-orange-600 rounded-2xl rotate-45 shadow-[0_0_20px_rgba(249,115,22,0.4)] flex items-center justify-center border-2 border-white/20 active:scale-90 transition-all">
+            <i data-lucide="layers" class="w-7 h-7 text-black -rotate-45"></i>
+        </button>
+    </div>
+    <button class="flex flex-col items-center gap-1 group">
+        <i data-lucide="heart" class="w-5 h-5 text-gray-500 group-hover:text-orange-500 transition-colors"></i>
+        <span class="text-[8px] font-orb text-gray-500 group-hover:text-orange-500 uppercase">Saved</span>
+    </button>
+    <button onclick="location.href='mypage.html'" class="flex flex-col items-center gap-1 group">
+        <i data-lucide="user" class="w-5 h-5 text-orange-500 transition-colors"></i>
+        <span class="text-[8px] font-orb text-orange-500 uppercase">My Page</span>
+    </button>
+</nav>
 </body>
 </html>

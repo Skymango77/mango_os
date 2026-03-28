@@ -1,13 +1,88 @@
 <!DOCTYPE html>
 <html lang="ko">
-  <head>
-    <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Mango Realty - Pi Network 부동산 DEX</title>
-  </head>
-  <body>
-    <div id="root"></div>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mango Realty - Pi Network Real Estate</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://sdk.minepi.com/pi-sdk.js"></script>
+    <style>
+        .glass { background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.1); }
+        .mango-realty-card { width: 450px; margin: 0 auto; border-radius: 2rem; overflow: hidden; } /* 폭 450px 준수 */
+        .gold-border { border: 2px solid #fbbf24; }
+    </style>
+</head>
+<body class="bg-[#0f172a] text-white min-h-screen p-4">
 
-<script type="module" src="./src/main.jsx"></script>  </body>
+    <div class="mango-realty-card glass p-6 space-y-6 shadow-2xl">
+        <header class="flex justify-between items-center">
+            <h1 class="text-2xl font-black text-yellow-500">Mango Realty</h1>
+            <span class="bg-green-500/20 text-green-400 px-3 py-1 rounded-full text-xs font-bold">KYC VERIFIED</span>
+        </header>
+
+        <div class="space-y-4">
+            <div class="bg-white/5 p-4 rounded-2xl gold-border">
+                <p class="text-xs text-gray-400">프리미엄 매물 열람 서비스</p>
+                <p class="text-lg font-bold">Busan Centum City Luxury Suite</p>
+                <div class="flex justify-between items-end mt-2">
+                    <p class="text-2xl font-black text-yellow-400">0.10 π</p>
+                    <button onclick="payForRealty()" class="bg-yellow-500 text-black px-6 py-2 rounded-xl font-bold hover:scale-105 transition-all">
+                        열람권 구매
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div id="toast" class="fixed bottom-10 left-1/2 -translate-x-1/2 bg-yellow-600 text-white px-6 py-3 rounded-full opacity-0 transition-opacity"></div>
+    </div>
+
+    <script>
+        const Pi = window.Pi;
+        Pi.init({ version: "2.0" });
+
+        async function payForRealty() {
+            try {
+                // [Safety] 결제 전 인증 재확인 (스크린샷 세션 만료 에러 방지용)
+                const scopes = ['payments'];
+                await Pi.authenticate(scopes, (p) => { console.log("미완료 결제:", p); });
+
+                showToast("🚀 부동산 매물 열람을 위해 Pi 결제를 진행합니다.");
+
+                await Pi.createPayment({
+                    amount: 0.10,
+                    memo: "Mango Realty: Premium Property Access",
+                    metadata: { type: "realty_access", portal: "busan_centum" }
+                }, {
+                    onReadyForServerApproval: (paymentId) => {
+                        return fetch('https://mango-os-6xu2.vercel.app/api/approve', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ paymentId })
+                        });
+                    },
+                    onReadyForServerCompletion: (paymentId, txid) => {
+                        return fetch('https://mango-os-6xu2.vercel.app/api/complete', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ paymentId, txid })
+                        }).then(() => {
+                            showToast("✅ 열람권 구매 성공! 매물 상세 정보를 공개합니다.");
+                        });
+                    },
+                    onCancel: (pId) => showToast("❌ 결제를 취소하셨습니다."),
+                    onError: (err) => showToast("⚠️ 오류: " + err.message)
+                });
+            } catch (err) {
+                showToast("⚠️ 인증 오류가 발생했습니다.");
+            }
+        }
+
+        function showToast(msg) {
+            const t = document.getElementById("toast");
+            t.textContent = msg;
+            t.style.opacity = "1";
+            setTimeout(() => { t.style.opacity = "0"; }, 3000);
+        }
+    </script>
+</body>
 </html>

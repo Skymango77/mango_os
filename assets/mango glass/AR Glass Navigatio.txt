@@ -1,0 +1,18 @@
+👓 Mango AR Glass: Navigation SDK Integration Guide
+
+1. 개요본 문서는 웨어러블 안경(AR Glass) 환경에서 맛집 및 숙소 길 안내를 시각화하기 위한 가이드라인입니다.
+
+2. 시각 요소 설계 (Visual Design)
+   ㄱ. Safe Zone Layout: 사용자 시야의 중앙(Foveated area)을 가리지 않도록 모든 UI는 Peripheral Vision(주변 시야) 영역에 배치.
+   ㄴ. Dynamic Distance UI:
+       10m 초과: 단순 화살표와 지명 표시.
+       10m 이하: 1m 단위 실시간 거리 감쇄 애니메이션 적용.
+         0m (도착): 체크마크 아이콘과 'Arrived' 텍스트 표시.
+
+3. 오디오 시그널 (Audio Feedback)
+    ㄱ. Turn Signal: 회전 지점 3m 전에서 800Hz 대역의 짧은 비프음 송출.
+    ㄴ. Proximity Tone: 거리가 가까워질수록 비프음의 간격이 짧아지는 도플러 효과 시뮬레이션.
+
+4. Pinet SDK 통합 방식
+     ㄱ. Location Sync: pinet.location.watchPosition()을 사용하여 위경도 데이터를 AR 레이어와 동기화.
+     ㄴ. POI Data: Mango API에서 받아온 숙소/맛집 정보를 ar_anchor 객체로 변환하여 투사.

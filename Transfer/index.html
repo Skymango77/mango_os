@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Mango Transfer Portal | Metallic Tech</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://sdk.minepi.com/pi-sdk.js"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Inter:wght@400;700;900&display=swap');
         body { 
@@ -183,7 +184,96 @@
             <p class="text-white text-xs font-bold text-center">중장비 배차</p>
         </div>
     </div>
+    <div class="mt-8 bg-black/60 p-5 rounded-[2rem] border border-orange-500/30 shadow-2xl">
+        <div class="flex justify-between items-center mb-4 px-2">
+            <span class="text-[10px] text-gray-400 font-black uppercase tracking-widest">Logistics Fee</span>
+            <div class="flex items-center gap-1">
+                <span class="text-2xl font-black text-metallic-gold">0.02</span>
+                <span class="text-sm font-bold text-yellow-500">π</span>
+            </div>
+        </div>
+
+        <div class="flex gap-2 mb-4">
+            <button id="btn-testnet" onclick="setPaymentMode(true)" class="flex-1 py-3 rounded-xl text-[10px] font-black transition-all bg-orange-500 text-black shadow-[0_0_15px_rgba(249,115,22,0.4)]">TESTNET</button>
+            <button id="btn-mainnet" onclick="setPaymentMode(false)" class="flex-1 py-3 rounded-xl text-[10px] font-black transition-all bg-gray-800 text-gray-500 border border-gray-700">MAINNET</button>
+        </div>
+
+        <button onclick="processMangoPayment()" class="w-full bg-gradient-to-r from-orange-500 to-yellow-600 text-black py-4 rounded-2xl font-black text-sm hover:scale-[1.02] active:scale-95 transition-all shadow-lg">
+            PROCEED PAYMENT
+        </button>
+    </div>
+
+    <div id="toast" class="absolute bottom-6 left-1/2 -translate-x-1/2 bg-orange-600/90 backdrop-blur-md text-white px-6 py-2 rounded-full opacity-0 pointer-events-none transition-opacity duration-300 z-50 text-[10px] font-bold whitespace-nowrap"></div>
+    </div>
         </div>
     </div>
+    <script>
+        const Pi = window.Pi;
+        let isSandbox = true; // 기본값은 테스트넷
+
+        // 1. 결제 모드 스위칭 함수
+        function setPaymentMode(mode) {
+            isSandbox = mode;
+            const testBtn = document.getElementById('btn-testnet');
+            const mainBtn = document.getElementById('btn-mainnet');
+
+            if(mode) {
+                testBtn.className = "flex-1 py-2 rounded-lg text-[10px] font-black transition-all bg-orange-500 text-black shadow-[0_0_10px_rgba(249,115,22,0.5)]";
+                mainBtn.className = "flex-1 py-2 rounded-lg text-[10px] font-black transition-all bg-gray-800 text-gray-400 border border-gray-700";
+            } else {
+                mainBtn.className = "flex-1 py-2 rounded-lg text-[10px] font-black transition-all bg-yellow-500 text-black shadow-[0_0_10px_rgba(234,179,8,0.5)]";
+                testBtn.className = "flex-1 py-2 rounded-lg text-[10px] font-black transition-all bg-gray-800 text-gray-400 border border-gray-700";
+            }
+            showToast(mode ? "테스트넷 결제 모드 활성" : "메인넷 결제 모드 활성");
+        }
+
+        // 2. 통합 결제 실행 함수
+        async function processMangoPayment() {
+            try {
+                // 초기화 (선택한 모드에 따라)
+                await Pi.init({ version: "2.0", sandbox: isSandbox });
+                
+                showToast("사용자 인증 확인 중...");
+                await Pi.authenticate(['payments'], (p) => { console.log("미완료 결제:", p); });
+
+                showToast("🚀 파이 결제창을 호출합니다...");
+                
+                await Pi.createPayment({
+                    amount: 0.02,
+                    memo: isSandbox ? "[TEST] Mango Logistics Fee" : "Mango Logistics Service Fee",
+                    metadata: { portal: "transfer", network: isSandbox ? "testnet" : "mainnet" }
+                }, {
+                    onReadyForServerApproval: (paymentId) => {
+                        return fetch('https://mango-os-6xu2.vercel.app/api/approve', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ paymentId })
+                        });
+                    },
+                    onReadyForServerCompletion: (paymentId, txid) => {
+                        return fetch('https://mango-os-6xu2.vercel.app/api/complete', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ paymentId, txid })
+                        }).then(() => {
+                            showToast("✅ 결제가 완료되었습니다!");
+                        });
+                    },
+                    onCancel: (pId) => showToast("❌ 결제 취소"),
+                    onError: (err) => showToast("⚠️ 에러: " + err.message)
+                });
+            } catch (err) {
+                showToast("⚠️ 인증/시스템 오류");
+            }
+        }
+
+        function showToast(msg) {
+            const t = document.getElementById("toast");
+            if(!t) return;
+            t.textContent = msg;
+            t.style.opacity = "1";
+            setTimeout(() => { t.style.opacity = "0"; }, 3000);
+        }
+    </script>
 </body>
 </html>

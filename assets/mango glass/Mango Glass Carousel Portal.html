@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MANGO GLASS - Carousel Portal</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,900;1,900&family=Noto+Sans+KR:wght@700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --mango-orange: #FF7F50;
+            --glass-white: rgba(255, 255, 255, 0.05);
+            --card-width: 450px;
+            --card-height: 600px;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            background: #050505;
+            color: white;
+            font-family: 'Inter', 'Noto Sans KR', sans-serif;
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        /* Carousel Container */
+        .carousel-container {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            perspective: 2000px;
+        }
+
+        .carousel-track {
+            position: relative;
+            width: var(--card-width);
+            height: var(--card-height);
+            transform-style: preserve-3d;
+            transition: transform 0.8s cubic-bezier(0.23, 1, 0.32, 1);
+        }
+
+        /* Large Window Frame Style */
+        .portal-window {
+            position: absolute;
+            width: var(--card-width);
+            height: var(--card-height);
+            background: rgba(15, 15, 15, 0.8);
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            border-radius: 40px;
+            backdrop-filter: blur(20px);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            padding: 40px;
+            box-sizing: border-box;
+            backface-visibility: hidden;
+            box-shadow: 0 50px 100px rgba(0,0,0,0.5);
+            transition: all 0.5s ease;
+            cursor: pointer;
+        }
+
+        .portal-window:hover {
+            border-color: var(--mango-orange);
+            box-shadow: 0 0 30px rgba(255, 127, 80, 0.3);
+        }
+
+        /* Large Icon/Image Frame */
+        .image-frame {
+            width: 100%;
+            height: 70%;
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 25px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            overflow: hidden;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .image-frame img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            opacity: 0.8;
+            transition: transform 0.5s ease;
+        }
+
+        .portal-window:hover .image-frame img {
+            transform: scale(1.1);
+            opacity: 1;
+        }
+
+        .icon-fallback {
+            font-size: 120px;
+            filter: drop-shadow(0 0 20px rgba(255,255,255,0.2));
+        }
+
+        .portal-info {
+            margin-top: 20px;
+        }
+
+        .portal-title {
+            font-size: 3rem;
+            font-weight: 900;
+            font-style: italic;
+            text-transform: uppercase;
+            letter-spacing: -2px;
+            margin: 0;
+            color: white;
+            line-height: 1;
+        }
+
+        .portal-desc {
+            font-size: 1rem;
+            color: #888;
+            margin-top: 10px;
+            font-weight: 300;
+        }
+
+        /* Navigation Buttons */
+        .nav-btn {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: white;
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            cursor: pointer;
+            z-index: 100;
+            font-size: 24px;
+            transition: all 0.3s ease;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .nav-btn:hover {
+            background: var(--mango-orange);
+            color: black;
+            box-shadow: 0 0 20px var(--mango-orange);
+        }
+
+        .btn-prev { left: 5%; }
+        .btn-next { right: 5%; }
+
+        /* Top Bar Branding */
+        .top-branding {
+            position: absolute;
+            top: 40px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 100;
+            text-align: center;
+        }
+
+        .mango-logo {
+            font-size: 1.5rem;
+            font-weight: 900;
+            font-style: italic;
+            color: var(--mango-orange);
+            text-shadow: 0 0 10px rgba(255,127,80,0.5);
+            letter-spacing: 2px;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            :root {
+                --card-width: 85vw;
+                --card-height: 70vh;
+            }
+            .portal-title { font-size: 2rem; }
+            .nav-btn { width: 60px; height: 60px; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="top-branding">
+        <div class="mango-logo">MANGO GLASS</div>
+        <div class="text-[10px] text-gray-500 tracking-[5px] uppercase mt-1">Premium Portal System</div>
+    </div>
+
+    <button class="nav-btn btn-prev" onclick="rotate(1)">←</button>
+    <button class="nav-btn btn-next" onclick="rotate(-1)">→</button>
+
+    <div class="carousel-container">
+        <div class="carousel-track" id="track">
+            <!-- Portals will be injected here -->
+        </div>
+    </div>
+
+    <script>
+        const portals = [
+            { id: 'food', name: 'Food', desc: 'Premium Dining & Curation', icon: '🍱', color: '#FFD700', img: '' },
+            { id: 'transfer', name: 'Transfer', desc: 'Smart Mobility Solutions', icon: '🚗', color: '#00BFFF', img: '' },
+            { id: 'travel', name: 'Travel', desc: 'World Class Exploration', icon: '✈️', color: '#32CD32', img: '' },
+            { id: 'share', name: 'Share', desc: 'Community Shared Economy', icon: '🤝', color: '#BA55D3', img: '' },
+            { id: 'realty', name: 'Realty', desc: 'Exclusive Spaces & Living', icon: '🏠', color: '#FF8C00', img: '' },
+            { id: 'market', name: 'Market', desc: 'Handpicked Premium Goods', icon: '🛒', color: '#FF69B4', img: '' },
+            { id: 'social', name: 'Social', desc: 'Meaningful Connections', icon: '💬', color: '#00CED1', img: '' },
+            { id: 'admin', name: 'Admin', desc: 'System Control Center', icon: '⚙️', color: '#FF4500', img: '' }
+        ];
+
+        const track = document.getElementById('track');
+        let currentRotation = 0;
+        const totalPortals = portals.length;
+        const angleStep = 360 / totalPortals;
+        const radius = Math.round((450 / 2) / Math.tan(Math.PI / totalPortals)) + 150; // Dynamic radius based on card width
+
+        function initCarousel() {
+            portals.forEach((p, i) => {
+                const angle = i * angleStep;
+                const windowEl = document.createElement('div');
+                windowEl.className = 'portal-window';
+                // Each card's position in 3D space
+                windowEl.style.transform = `rotateY(${angle}deg) translateZ(${radius}px)`;
+                
+                windowEl.innerHTML = `
+                    <div class="image-frame" style="box-shadow: inset 0 0 50px ${p.color}22">
+                        ${p.img ? `<img src="${p.img}" alt="${p.name}">` : `<span class="icon-fallback">${p.icon}</span>`}
+                        <div class="absolute bottom-4 right-4 text-[10px] font-bold opacity-30" style="color: ${p.color}">MNG-${p.id.toUpperCase()}</div>
+                    </div>
+                    <div class="portal-info">
+                        <h2 class="portal-title" style="text-shadow: 2px 2px 0px ${p.color}44">${p.name}</h2>
+                        <p class="portal-desc">${p.desc}</p>
+                        <div class="mt-6 flex items-center gap-2">
+                            <div class="w-8 h-1" style="background: ${p.color}"></div>
+                            <span class="text-[10px] uppercase tracking-widest text-gray-400">Enter Portal</span>
+                        </div>
+                    </div>
+                `;
+
+                windowEl.onclick = () => {
+                    // Logic for entering specific portal
+                    console.log(`Entering ${p.name} Portal...`);
+                    windowEl.style.borderColor = p.color;
+                };
+
+                track.appendChild(windowEl);
+            });
+        }
+
+        function rotate(direction) {
+            currentRotation += direction * angleStep;
+            track.style.transform = `rotateY(${currentRotation}deg)`;
+        }
+
+        // Swipe support
+        let startX = 0;
+        document.addEventListener('touchstart', e => startX = e.touches[0].clientX);
+        document.addEventListener('touchend', e => {
+            const endX = e.changedTouches[0].clientX;
+            if (startX - endX > 50) rotate(-1);
+            if (startX - endX < -50) rotate(1);
+        });
+
+        // Keyboard support
+        document.addEventListener('keydown', e => {
+            if (e.key === 'ArrowLeft') rotate(1);
+            if (e.key === 'ArrowRight') rotate(-1);
+        });
+
+        window.onload = initCarousel;
+    </script>
+</body>
+</html>

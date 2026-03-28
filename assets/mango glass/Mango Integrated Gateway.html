@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MANGO GLASS - Integrated Gateway</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,900;1,900&family=Noto+Sans+KR:wght@700&display=swap" rel="stylesheet">
+    <!-- Firebase SDK (Version 11) -->
+    <script src="https://www.gstatic.com/firebasejs/11.0.2/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/11.0.2/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/11.0.2/firebase-auth-compat.js"></script>
+    
+    <style>
+        :root {
+            --mango-orange: #FF7F50;
+            --card-width: 420px;
+            --card-height: 580px;
+        }
+
+        body {
+            margin: 0; padding: 0;
+            background: radial-gradient(circle at center, #111 0%, #000 100%);
+            color: white;
+            font-family: 'Inter', 'Noto Sans KR', sans-serif;
+            overflow: hidden;
+            display: flex; justify-content: center; align-items: center;
+            height: 100vh;
+        }
+
+        .carousel-container {
+            position: relative; width: 100%; height: 100%;
+            display: flex; justify-content: center; align-items: center;
+            perspective: 2500px;
+        }
+
+        .carousel-track {
+            position: relative; width: var(--card-width); height: var(--card-height);
+            transform-style: preserve-3d;
+            transition: transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .portal-window {
+            position: absolute;
+            width: var(--card-width); height: var(--card-height);
+            background: rgba(20, 20, 20, 0.85);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 30px;
+            backdrop-filter: blur(25px);
+            display: flex; flex-direction: column;
+            padding: 35px; box-sizing: border-box;
+            backface-visibility: hidden;
+            transition: all 0.4s ease;
+            cursor: pointer;
+        }
+
+        /* Active/Hover states */
+        .portal-window:hover {
+            border-color: var(--mango-orange);
+            transform: scale(1.02);
+            box-shadow: 0 0 40px rgba(255, 127, 80, 0.2);
+        }
+
+        .image-frame {
+            width: 100%; height: 65%;
+            background: rgba(0, 0, 0, 0.4);
+            border-radius: 20px;
+            display: flex; justify-content: center; align-items: center;
+            overflow: hidden;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            margin-bottom: 25px;
+        }
+
+        .icon-display { font-size: 100px; transition: transform 0.5s ease; }
+        .portal-window:hover .icon-display { transform: scale(1.1) rotate(5deg); }
+
+        .portal-title {
+            font-size: 2.8rem; font-weight: 900; font-style: italic;
+            text-transform: uppercase; line-height: 0.9; margin: 0;
+        }
+
+        .nav-btn {
+            position: absolute; top: 50%; transform: translateY(-50%);
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: white; width: 70px; height: 70px;
+            border-radius: 50%; cursor: pointer; z-index: 100;
+            transition: all 0.3s;
+        }
+        .nav-btn:hover { background: var(--mango-orange); color: black; }
+
+        .auth-status {
+            position: absolute; bottom: 30px; left: 30px;
+            font-size: 12px; color: #555; letter-spacing: 1px;
+        }
+
+        /* Ribbon for 'New' or 'Active' count */
+        .status-badge {
+            position: absolute; top: 20px; right: 20px;
+            background: var(--mango-orange); color: black;
+            padding: 4px 12px; border-radius: 20px; font-weight: 900; font-size: 12px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="absolute top-10 text-center w-full z-10">
+        <h1 class="text-mango-orange font-black italic text-2xl tracking-tighter" style="color:#FF7F50">MANGO GLASS PLATFORM</h1>
+        <p class="text-gray-500 text-[10px] tracking-[4px]">INTEGRATED PORTAL SYSTEM v2.0</p>
+    </div>
+
+    <button class="nav-btn left-10" onclick="rotate(1)">PREV</button>
+    <button class="nav-btn right-10" onclick="rotate(-1)">NEXT</button>
+
+    <div class="carousel-container">
+        <div class="carousel-track" id="track"></div>
+    </div>
+
+    <div class="auth-status" id="authStatus">SYSTEM: INITIALIZING...</div>
+
+    <script>
+        const portals = [
+            { id: 'food', name: 'Food', desc: 'Dining & Curation', icon: '🍱', color: '#FFD700', url: 'dining_guide.html' },
+            { id: 'transfer', name: 'Transfer', desc: 'Mobility Guide', icon: '🚗', color: '#00BFFF', url: '문화적 맥락을 고려한 망고 이동 수단 가이드.html' },
+            { id: 'travel', name: 'Travel', desc: 'World Exploration', icon: '✈️', color: '#32CD32', url: '#' },
+            { id: 'share', name: 'Share', desc: 'Shared Economy', icon: '🤝', color: '#BA55D3', url: '#' },
+            { id: 'realty', name: 'Realty', desc: 'Exclusive Living', icon: '🏠', color: '#FF8C00', url: '#' },
+            { id: 'market', name: 'Market', desc: 'Premium Goods', icon: '🛒', color: '#FF69B4', url: '#' },
+            { id: 'social', name: 'Social', desc: 'Connections', icon: '💬', color: '#00CED1', url: '#' },
+            { id: 'admin', name: 'Admin', desc: 'System Control', icon: '⚙️', color: '#FF4500', url: 'admin_portal.html' }
+        ];
+
+        let currentRotation = 0;
+        const angleStep = 360 / portals.length;
+        const radius = 600; // 정교하게 조정된 반지름
+
+        function init() {
+            const track = document.getElementById('track');
+            portals.forEach((p, i) => {
+                const angle = i * angleStep;
+                const card = document.createElement('div');
+                card.className = 'portal-window';
+                card.style.transform = `rotateY(${angle}deg) translateZ(${radius}px)`;
+                
+                card.innerHTML = `
+                    <div class="status-badge">LIVE</div>
+                    <div class="image-frame">
+                        <span class="icon-display">${p.icon}</span>
+                    </div>
+                    <div class="flex-1">
+                        <h2 class="portal-title" style="color:${p.color}">${p.name}</h2>
+                        <p class="text-gray-400 mt-2 text-sm">${p.desc}</p>
+                    </div>
+                    <div class="pt-5 border-t border-white/5 flex justify-between items-center">
+                        <span class="text-[10px] text-gray-500 font-mono">0${i+1} // MNGO-SYS</span>
+                        <div class="text-xs font-bold tracking-tighter" style="color:${p.color}">ACCESS PORTAL ↗</div>
+                    </div>
+                `;
+
+                card.onclick = () => {
+                    if(p.url !== '#') {
+                        location.href = p.url;
+                    } else {
+                        alert(`${p.name} 포털은 개발 중입니다.`);
+                    }
+                };
+
+                track.appendChild(card);
+            });
+
+            // 임시 Firebase 상태 표시
+            document.getElementById('authStatus').innerText = "SYSTEM ONLINE // USER: GUEST_MODE";
+        }
+
+        function rotate(direction) {
+            currentRotation += direction * angleStep;
+            document.getElementById('track').style.transform = `rotateY(${currentRotation}deg)`;
+        }
+
+        window.onload = init;
+    </script>
+</body>
+</html>

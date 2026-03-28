@@ -1,0 +1,41 @@
+[
+  {
+    "id": "haeundae",
+    "name": "HAEUNDAE",
+    "fullName": "Busan, South Korea",
+    "bgImage": "https://images.unsplash.com/photo-1578310344722-da649646487e?q=80&w=1200",
+    "weather": "12.5°C",
+    "itinerary": [
+      {"time": "10:00 AM", "task": "해변 산책", "desc": "해운대 백사장 시그니처 로드 걷기"},
+      {"time": "12:00 PM", "task": "해리단길 미식", "desc": "로컬 인텔리전스 추천 맛집 탐방"},
+      {"time": "03:00 PM", "task": "요트 투어", "desc": "수영만 요트경기장 탑승"}
+    ],
+    "piGuide": "해운대 제휴 가맹점에서 가계약금 및 이용료 0.1π ~ 1.0π 결제 지원"
+  },
+  {
+    "id": "paris",
+    "name": "PARIS",
+    "fullName": "France, Europe",
+    "bgImage": "https://images.unsplash.com/photo-1502602898657-3e91760cbb34?q=80&w=1200",
+    "weather": "18.2°C",
+    "itinerary": [
+      {"time": "09:30 AM", "task": "에펠탑 입장", "desc": "Skip-the-line 패스트 트랙 통과"},
+      {"time": "01:00 PM", "task": "몽마르뜨 언덕", "desc": "예술가 거리 및 성당 관람"},
+      {"time": "07:00 PM", "task": "세느강 크루즈", "desc": "파리 야경 및 디너 쇼"}
+    ],
+    "piGuide": "유럽 에코시스템 노드 연결을 통해 박물관 패스 π 결제 가능"
+  },
+  {
+    "id": "newyork",
+    "name": "NEW YORK",
+    "fullName": "USA, North America",
+    "bgImage": "https://images.unsplash.com/photo-1496442226666-8d4d0e62e6e9?q=80&w=1200",
+    "weather": "24.5°C",
+    "itinerary": [
+      {"time": "10:00 AM", "task": "타임스퀘어 브런치", "desc": "뉴욕의 중심에서 즐기는 아침"},
+      {"time": "02:00 PM", "task": "센트럴 파크", "desc": "도심 속 숲에서 자전거 투어"},
+      {"time": "08:00 PM", "task": "브로드웨이 공연", "desc": "최신 뮤지컬 관람"}
+    ],
+    "piGuide": "뉴욕 호텔 보증금 및 메트로 카드 2.0π 충전 시스템 연동"
+  }
+]

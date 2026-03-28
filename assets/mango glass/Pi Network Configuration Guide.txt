@@ -1,0 +1,21 @@
+Pi Network 연동 가이드
+
+1. 프론트엔드 (React / Client-side)
+a.사용 도구: Pi SDK (window.Pi)
+b.필요한 것: API Key (X), App URL (O)
+c.설정 내용: Pi.init({ version: "2.0", sandbox: true })
+d.주의: API Key를 여기에 적으면 누구나 여러분의 키를 훔쳐갈 수 있습니다. 절대 금지!
+
+2. 백엔드 (Node.js / Server-side)
+
+a.사용 도구: REST API (HTTPS 요청)
+b.필요한 것: API Key (O)
+c.설정 내용: .env 파일에 저장 후 서버 통신 시 Header에 포함
+d.예시:   PI_API_KEY=your_copied_api_key_here
+
+3. 연동 워크플로우 (Flow)
+
+ 1.Client: Pi.authenticate()를 호출하여 유저의 accessToken을 받습니다.
+ 2.Client -> Server: 받은 accessToken을 본인의 서버로 보냅니다.
+ 3.Server -> Pi Server: 서버가 API Key를 사용해 Pi 서버에 "이 토큰이 진짜 @user의 것이 맞나?"라고 물어봅니다.
+ 4.Pi Server -> Server: 유저 정보를 확정해서 보내줍니다.

@@ -1,0 +1,9 @@
+{
+  "cleanUrls": true,
+  "rewrites": [
+    {
+      "source": "/profile",
+      "destination": "/profile_dashboard.html"
+    }
+  ]
+}
