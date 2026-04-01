@@ -52,7 +52,10 @@
             <div class="px-8 py-4 space-y-4">
                 <div class="flex gap-2 bg-white/5 rounded-2xl p-2 border border-white/10 focus-within:border-yellow-500/50">
                     <i data-lucide="search" class="w-5 h-5 text-gray-400 ml-2 mt-2"></i>
-                    <input type="text" placeholder="부산 센텀시티 매물 검색..." class="bg-transparent flex-1 px-2 py-2 text-sm outline-none placeholder:text-gray-700">
+            <input type="text" 
+            oninput="searchRealty(this.value)" 
+       placeholder="지역 또는 매물명 검색..." 
+       class="w-full bg-transparent border-none focus:ring-0 text-white placeholder-gray-500 text-xs font-bold">
                 </div>
                 <div class="flex gap-3 overflow-x-auto no-scrollbar pb-2">
                     <button onclick="setActiveFilter(this)" class="whitespace-nowrap bg-yellow-500 text-black px-4 py-1.5 rounded-full text-[10px] font-black italic shadow-[0_0_15px_rgba(234,179,8,0.3)]">ALL LIST</button>
@@ -193,50 +196,55 @@ async function processSettlement(amount, agencyId) {
 
 // 1. 실제 매물 데이터 (리스트를 만들기 위한 데이터셋)
     const REALTY_DATA = [
-        
-        {
-            id: 1,
-            title: "CENTUM SKY SUITE 101",
-            location: "HAEUNDAE CENTUM",
-            price: "0.10",
-            oldPrice: "0.15",
-            desc: "파노라마 오션뷰 · 최고급 대리석 마감",
-            area: "124 SQM",
-            view: "Ocean",
-            safety: "A+ Grade",
-            tag: "AI VERIFIED",
-            img: "https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?q=80&w=1000",            isSold: false // 결제 상태 기본값 추가
-        },
+    // --- OCEAN VIEW 매물 (10개) ---
+    { id: 1, title: "LCT THE SHARP Ocean", price: "450,000", location: "Haeundae, Busan", view: "OCEAN VIEW", tag: "PREMIUM", desc: "파노라마 오션뷰 · 최고급 대리석 마감", area: "124 SQM", safety: "S Grade", img: "https://images.pexels.com/photos/1571460/pexels-photo-1571460.jpeg?auto=compress&cs=tinysrgb&w=800", isSold: false },
+    { id: 2, title: "Marine City Zenith", price: "380,000", location: "Haeundae, Busan", view: "OCEAN VIEW", tag: "AI VERIFIED", desc: "해운대 마천루 뷰 · 전용 엘리베이터", area: "156 SQM", safety: "A+ Grade", img: "https://images.pexels.com/photos/323780/pexels-photo-323780.jpeg?auto=compress&cs=tinysrgb&w=800", isSold: false },
+    { id: 3, title: "W-Palace Gwangalli", price: "320,000", location: "Suyeong, Busan", view: "OCEAN VIEW", tag: "HOT DEAL", desc: "광안대교 정면 뷰 · 테라스 하우스", area: "110 SQM", safety: "A Grade", img: "https://images.pexels.com/photos/1080721/pexels-photo-1080721.jpeg?auto=compress&cs=tinysrgb&w=800", isSold: false },
+    
+    // [수정 완료] 송도 매물 제목 수정
+    { id: 4, title: "송도 해수욕장과 영도 조망", price: "290,000", location: "Seo-gu, Busan", view: "OCEAN VIEW", tag: "PREMIUM", desc: "테라스에서 즐기는 더블 조망 · 신축", area: "98 SQM", safety: "A+ Grade", img: "https://images.pexels.com/photos/1454806/pexels-photo-1454806.jpeg?auto=compress&cs=tinysrgb&w=800", isSold: false },
+    
+    // [사진 교체 완료] 오시리아 풀빌라
+    { id: 5, title: "Osiria Terrace", price: "310,000", location: "Gijang, Busan", view: "OCEAN VIEW", tag: "AI VERIFIED", desc: "오시리아 관광단지 내 · 풀빌라 스타일", area: "145 SQM", safety: "S Grade", img: "https://images.pexels.com/photos/221540/pexels-photo-221540.jpeg?auto=compress&cs=tinysrgb&w=800", isSold: false },
+    { id: 6, title: "Haeundae IPARK", price: "410,000", location: "Haeundae, Busan", view: "OCEAN VIEW", tag: "PREMIUM", desc: "곡선미가 돋보이는 외관 · 명품 주거단지", area: "130 SQM", safety: "S Grade", img: "https://images.pexels.com/photos/271639/pexels-photo-271639.jpeg?auto=compress&cs=tinysrgb&w=800", isSold: false },
+    { id: 7, title: "Pebble Beach House", price: "270,000", location: "Yeongdo, Busan", view: "OCEAN VIEW", tag: "HOT DEAL", desc: "흰여울마을 인근 · 영도 바다 정면 조망", area: "82 SQM", safety: "B+ Grade", img: "https://images.pexels.com/photos/271624/pexels-photo-271624.jpeg?auto=compress&cs=tinysrgb&w=800", isSold: false },
+    
+    // [사진 교체 완료] 일광신도시
+    { id: 8, title: "Ilgwang Bay Res.", price: "240,000", location: "Gijang, Busan", view: "OCEAN VIEW", tag: "AI VERIFIED", desc: "일광신도시 바다 앞 · 조용한 주거환경", area: "105 SQM", safety: "A Grade", img: "https://images.pexels.com/photos/259962/pexels-photo-259962.jpeg?auto=compress&cs=tinysrgb&w=800", isSold: false },
+    
+    // [사진 교체 완료] 수영강 조망
+    { id: 9, title: "Centum River View", price: "330,000", location: "Centum, Busan", view: "OCEAN VIEW", tag: "PREMIUM", desc: "수영강과 바다가 만나는 조망 · 올수리", area: "115 SQM", safety: "A+ Grade", img: "https://images.pexels.com/photos/1643383/pexels-photo-1643383.jpeg?auto=compress&cs=tinysrgb&w=800", isSold: false },
+    { id: 10, title: "Diamond Bridge View", price: "350,000", location: "Nam-gu, Busan", view: "OCEAN VIEW", tag: "HOT DEAL", desc: "용호동 메트로시티 · 광안대교 야경 명당", area: "128 SQM", safety: "A Grade", img: "https://images.pexels.com/photos/271618/pexels-photo-271618.jpeg?auto=compress&cs=tinysrgb&w=800", isSold: false },
 
-        {
-            id: 2,
-            title: "MANGO TOWER PENTHOUSE",
-            location: "MARINE CITY",
-            price: "0.85",
-            oldPrice: "1.20",
-            desc: "복층 구조 · 개인 테라스 및 루프탑 수영장",
-            area: "256 SQM",
-            view: "City & Sea",
-            safety: "S Grade",
-            tag: "PREMIUM",
-            img: "https://images.unsplash.com/photo-1512917774080-9991f1c4c750?q=80&w=1000",            
-            isSold: false
-        },
-        {
-            id: 3,
-            title: "CENTUM B-CUBE OFFICE",
-            location: "CENTUM CITY",
-            price: "0.05",
-            oldPrice: "0.08",
-            desc: "스타트업 최적화 · 초고속 네트워크 완비",
-            area: "85 SQM",
-            view: "City View",
-            safety: "A Grade",
-            tag: "HOT DEAL",
-            img: "https://images.unsplash.com/photo-1497366216548-37526070297c?q=80&w=1000",
-        isSold: false
-        }
-    ];
+    // --- LOW PRICE 매물 (10개) ---
+    { id: 11, title: "Centum Studio A", price: "45,000", location: "Centum, Busan", view: "CITY VIEW", tag: "HOT DEAL", desc: "수익형 오피스텔 · 풀옵션 완비", area: "45 SQM", safety: "A Grade", img: "https://images.pexels.com/photos/271624/pexels-photo-271624.jpeg?auto=compress&cs=tinysrgb&w=800", isSold: false },
+    { id: 12, title: "Busan Station Loft", price: "38,000", location: "Dong-gu, Busan", view: "CITY VIEW", tag: "AI VERIFIED", desc: "역세권 소형 주거 · 교통 최적지", area: "38 SQM", safety: "B Grade", img: "https://images.pexels.com/photos/1571470/pexels-photo-1571470.jpeg?auto=compress&cs=tinysrgb&w=800", isSold: false },
+    { id: 13, title: "Seomyeon Urban", price: "42,000", location: "Busanjin, Busan", view: "CITY VIEW", tag: "HOT DEAL", desc: "서면 중심가 위치 · 젊은 층 선호 구조", area: "50 SQM", safety: "A Grade", img: "https://images.pexels.com/photos/1571471/pexels-photo-1571471.jpeg?auto=compress&cs=tinysrgb&w=800", isSold: false },
+    { id: 14, title: "Sasang Green Apt", price: "35,000", location: "Sasang, Busan", view: "PARK VIEW", tag: "AI VERIFIED", desc: "삼락공원 인접 · 조용하고 쾌적한 환경", area: "75 SQM", safety: "A Grade", img: "https://images.pexels.com/photos/1571463/pexels-photo-1571463.jpeg?auto=compress&cs=tinysrgb&w=800", isSold: false },
+    { id: 15, title: "Yeonsan Harmony", price: "47,000", location: "Yeonje, Busan", view: "CITY VIEW", tag: "HOT DEAL", desc: "연산 교차로 인근 · 편리한 생활권", area: "65 SQM", safety: "A Grade", img: "https://images.pexels.com/photos/1571467/pexels-photo-1571467.jpeg?auto=compress&cs=tinysrgb&w=800", isSold: false },
+    { id: 16, title: "Dadaepo Sunset B", price: "49,000", location: "Saha-gu, Busan", view: "SUNSET VIEW", tag: "PREMIUM", desc: "다대포 해변 도보 5분 · 낙조 감상 최적", area: "70 SQM", safety: "A Grade", img: "https://images.pexels.com/photos/1571468/pexels-photo-1571468.jpeg?auto=compress&cs=tinysrgb&w=800", isSold: false },
+    { id: 17, title: "Pusan Nat. Univ Villa", price: "31,000", location: "Geumjeong, Busan", view: "CITY VIEW", tag: "HOT DEAL", desc: "대학가 인근 소액 투자용 · 공실 걱정 없음", area: "32 SQM", safety: "B Grade", img: "https://images.pexels.com/photos/1571469/pexels-photo-1571469.jpeg?auto=compress&cs=tinysrgb&w=800", isSold: false },
+    { id: 18, title: "Oncheon-cheon Flat", price: "44,000", location: "Dongnae, Busan", view: "PARK VIEW", tag: "AI VERIFIED", desc: "온천천 카페거리 인접 · 산책로 이용 편리", area: "62 SQM", safety: "A Grade", img: "https://images.pexels.com/photos/1571461/pexels-photo-1571461.jpeg?auto=compress&cs=tinysrgb&w=800", isSold: false },
+    
+    // [사진 교체 완료] 구평 가구단지
+    { id: 19, title: "Gupyeong Smart House", price: "39,000", location: "Saha-gu, Busan", view: "CITY VIEW", tag: "HOT DEAL", desc: "구평 가구단지 인근 · 신축 빌라", area: "58 SQM", safety: "A Grade", img: "https://images.pexels.com/photos/1571462/pexels-photo-1571462.jpeg?auto=compress&cs=tinysrgb&w=800", isSold: false },
+    
+    // [사진 교체 완료] 북항 롯데캐슬 하버팰리스 시장
+{ 
+        id: 20, 
+        title: "북항 롯데캐슬 하버팰리스", 
+        price: "128,000", 
+        location: "Dong-gu, Busan", 
+        view: "OCEAN VIEW", 
+        tag: "럭셔리 신축", 
+        desc: "북항 재개발 핵심 수혜 단지 · 파노라마 하버뷰 · 하이엔드 커뮤니티", 
+        area: "84 SQM", 
+        safety: "A+ Grade", 
+        // 🚀 가장 안정적인 Unsplash 초고화질 링크 적용
+        img: "https://images.unsplash.com/photo-1582407947304-fd86f028f716?auto=format&fit=crop&w=1200&q=80", 
+        isSold: false 
+    }
+];
 
     // 초기화 및 아이콘 생성
     document.addEventListener('DOMContentLoaded', () => {
@@ -245,22 +253,49 @@ async function processSettlement(amount, agencyId) {
         console.log("Mango Realty System Online");
     });
     // 2. [함수] 매물 리스트 동적 생성 (Sold Out 로직 포함)
-function renderRealtyList() {
+// [시작점] 약 235행
+// [좌표: 약 235행] 전 세계 매물 실시간 검색 엔진
+function renderRealtyList(filter = 'ALL LIST', keyword = '') {
     const listView = document.getElementById('realty-list-view');
     if(!listView) return;
     listView.innerHTML = ''; 
 
-    REALTY_DATA.forEach(item => {
+    // 🔍 통합 검색 로직 (필터 + 키워드)
+    const filteredData = REALTY_DATA.filter(item => {
+        // 1. 카테고리 필터 체크
+        let matchFilter = true;
+        if(filter === 'LOW PRICE') {
+            matchFilter = parseFloat(item.price.replace(',', '')) < 100000;
+        } else if(filter === 'OCEAN VIEW') {
+            matchFilter = item.view.toUpperCase().includes('OCEAN');
+        }
+
+        // 2. 전 세계 키워드 검색 (제목, 위치, 상세설명 통합 검색)
+        const searchTarget = `${item.title} ${item.location} ${item.desc}`.toLowerCase();
+        let matchKeyword = searchTarget.includes(keyword.toLowerCase());
+
+        return matchFilter && matchKeyword;
+    });
+
+    // 검색 결과가 없을 때의 UX 처리
+    if(filteredData.length === 0) {
+        listView.innerHTML = `
+            <div class="flex flex-col items-center justify-center py-20 opacity-50">
+                <i data-lucide="search-x" class="w-12 h-12 mb-4 text-gray-600"></i>
+                <p class="text-xs font-bold text-gray-500 italic">" ${keyword} " 에 대한 검색 결과가 없습니다.</p>
+                <button onclick="location.reload()" class="mt-4 text-[10px] text-yellow-500 border border-yellow-500/30 px-4 py-2 rounded-full font-black">전체 매물 보기</button>
+            </div>`;
+        lucide.createIcons();
+        return;
+    }
+
+    // 결과 렌더링
+    filteredData.forEach(item => {
         const isSold = item.isSold;
         const soldOverlay = isSold ? 'grayscale opacity-60 pointer-events-none' : 'hover:border-yellow-500/50 cursor-pointer active:scale-[0.98]';
-        const soldBadge = isSold ? `
-            <div class="absolute inset-0 z-20 flex items-center justify-center bg-black/40">
-                <span class="border-4 border-red-500 text-red-500 font-black text-2xl rotate-[-15deg] px-4 py-2 rounded-xl bg-black/80 shadow-2xl">SOLD OUT</span>
-            </div>` : '';
-
-        const card = `
+        
+        listView.innerHTML += `
             <div onclick="${isSold ? '' : `openDetailById(${item.id})`}" class="group bg-white/5 rounded-[2.5rem] border border-white/5 transition-all duration-500 mb-8 overflow-hidden relative ${soldOverlay}">
-                ${soldBadge}
                 <div class="h-48 overflow-hidden relative">
                     <img src="${item.img}" class="w-full h-full object-cover transition-transform duration-700 ${isSold ? '' : 'group-hover:scale-110'}">
                     <div class="absolute inset-0 bg-gradient-to-t from-[#050505] to-transparent"></div>
@@ -273,45 +308,110 @@ function renderRealtyList() {
                     </div>
                     <p class="text-[11px] text-gray-400 mb-6 font-light leading-relaxed">${item.desc}</p>
                     <div class="flex justify-between items-end border-t border-white/5 pt-4">
-                        <div class="flex flex-col">
-                            <span class="text-[10px] text-gray-600 line-through">${item.oldPrice} π</span>
-                            <span class="text-2xl font-black text-yellow-400 italic">${item.price} <span class="text-xs font-normal not-italic opacity-50 ml-1">π</span></span>
-                        </div>
-                        <div class="bg-white/10 p-3 rounded-2xl ${isSold ? 'hidden' : 'group-hover:bg-yellow-500 group-hover:text-black'} transition-colors">
+                        <span class="text-2xl font-black text-yellow-400 italic">${item.price} <span class="text-xs font-normal not-italic opacity-50 ml-1">π</span></span>
+                        <div class="bg-white/10 p-3 rounded-2xl group-hover:bg-yellow-500 group-hover:text-black transition-all">
                             <i data-lucide="chevron-right" class="w-5 h-5"></i>
                         </div>
                     </div>
                 </div>
-            </div>
-        `;
-        listView.innerHTML += card;
+            </div>`;
     });
     lucide.createIcons(); 
 }
 
+// 돋보기 검색 실시간 트리거 함수
+let currentFilter = 'ALL LIST'; 
+function searchRealty(value) {
+    renderRealtyList(currentFilter, value);
+}
 // 3. [함수] 모달 제어
 function openDetailById(id) {
-    const item = REALTY_DATA.find(d => d.id === id);
-    if(!item || item.isSold) return;
+    const item = REALTY_DATA.find(realty => realty.id === id);
+    if(!item) return;
 
-    document.getElementById('modal-title').textContent = item.title;
-    const modal = document.getElementById('realty-detail-modal');
-    modal.querySelector('.text-2xl').textContent = `${item.price} π`;
+    // HTML에 정의된 오버레이와 컨텐츠 영역 (ID 확인 필수)
+    const detailOverlay = document.getElementById('realty-detail-overlay') || document.getElementById('realty-detail-modal');
+    const detailContent = document.getElementById('realty-detail-content') || detailOverlay;
     
-    const specs = modal.querySelectorAll('.bg-white/5 span');
-    if(specs.length >= 3) {
-        specs[0].textContent = item.area;
-        specs[1].textContent = item.view;
-        specs[2].textContent = item.safety;
-    }
-    modal.classList.remove('hidden');
+    detailContent.innerHTML = `
+        <div class="relative w-full h-72">
+            <img src="${item.img}" class="w-full h-full object-cover">
+            <div class="absolute inset-0 bg-gradient-to-t from-[#0a0a0a] to-transparent"></div>
+            <button onclick="closeRealtyDetail()" class="absolute top-6 right-6 bg-black/50 backdrop-blur-md p-3 rounded-full text-white z-50">
+                <i data-lucide="x" class="w-6 h-6"></i>
+            </button>
+        </div>
+        
+        <div class="p-8 -mt-10 relative bg-[#0a0a0a] rounded-t-[3rem] border-t border-white/10">
+            <div class="flex justify-between items-start mb-6">
+                <div>
+                    <span class="bg-yellow-500 text-black text-[10px] font-black px-4 py-1 rounded-full uppercase mb-3 inline-block">${item.tag}</span>
+                    <h2 class="text-3xl font-black italic text-white leading-none uppercase tracking-tighter">${item.title}</h2>
+                    <p class="text-gray-500 text-sm mt-2 font-bold"><i data-lucide="map-pin" class="w-3 h-3 inline mr-1"></i> ${item.location}</p>
+                </div>
+                <button onclick="toggleLike(${item.id}, this)" class="bg-white/5 p-4 rounded-2xl border border-white/10 transition-all active:scale-90">
+                    <i data-lucide="heart" class="w-6 h-6 text-gray-400"></i>
+                </button>
+            </div>
+
+            <div class="grid grid-cols-3 gap-4 mb-8">
+                <div class="bg-white/5 p-4 rounded-3xl border border-white/5 text-center">
+                    <span class="block text-[10px] text-gray-500 font-bold mb-1 uppercase">Area</span>
+                    <span class="text-sm font-black text-white italic">${item.area}</span>
+                </div>
+                <div class="bg-white/5 p-4 rounded-3xl border border-white/5 text-center">
+                    <span class="block text-[10px] text-gray-500 font-bold mb-1 uppercase">Safety</span>
+                    <span class="text-sm font-black text-yellow-500 italic">${item.safety}</span>
+                </div>
+                <div class="bg-white/5 p-4 rounded-3xl border border-white/5 text-center">
+                    <span class="block text-[10px] text-gray-500 font-bold mb-1 uppercase">View</span>
+                    <span class="text-[10px] font-black text-white italic truncate">${item.view}</span>
+                </div>
+            </div>
+
+            <p class="text-gray-400 text-[11px] leading-relaxed mb-10 font-medium">${item.desc}</p>
+
+            <div class="flex items-center justify-between bg-white/5 p-6 rounded-[2.5rem] border border-white/10">
+                <div>
+                    <span class="text-[10px] text-gray-500 font-black block uppercase mb-1">Total Price</span>
+                    <span class="text-3xl font-black text-yellow-400 italic">${item.price} <span class="text-sm not-italic font-normal opacity-50 ml-1">π</span></span>
+                </div>
+                <button onclick="startPiPayment('${item.price}', '${item.title}')" class="bg-yellow-500 text-black px-8 py-4 rounded-2xl font-black italic shadow-[0_10px_20px_rgba(234,179,8,0.3)]">
+                    BUY NOW
+                </button>
+            </div>
+        </div>
+    `;
+
+    detailOverlay.classList.remove('hidden');
+    detailOverlay.classList.add('flex');
+    lucide.createIcons();
 }
 
-function closeDetail() {
-    document.getElementById('realty-detail-modal').classList.add('hidden');
+function closeRealtyDetail() {
+    const detailOverlay = document.getElementById('realty-detail-overlay') || document.getElementById('realty-detail-modal');
+    detailOverlay.classList.add('hidden');
+    detailOverlay.classList.remove('flex');
 }
 
-// [네비게이션 및 필터]
+// 2. 검색 및 필터 상태 관리
+    currentFilter = 'ALL LIST'; 
+
+function searchRealty(value) {
+    renderRealtyList(currentFilter, value);
+}
+
+function setActiveFilter(btn, filterType) {
+    currentFilter = filterType;
+    btn.parentElement.querySelectorAll('button').forEach(f => {
+        f.className = "whitespace-nowrap bg-white/5 border border-white/10 text-gray-400 px-4 py-1.5 rounded-full text-[10px] font-bold";
+    });
+    btn.className = "whitespace-nowrap bg-yellow-500 text-black px-4 py-1.5 rounded-full text-[10px] font-black italic shadow-[0_0_15px_rgba(234,179,8,0.3)]";
+
+    renderRealtyList(filterType); 
+}
+
+// 3. 네비게이션 제어
 function updateNav(el, target) {
     document.querySelectorAll('.realty-nav-btn').forEach(btn => {
         btn.querySelector('.icon-box').className = "icon-box p-3 rounded-2xl transition-all duration-300 text-white/20";
@@ -321,22 +421,30 @@ function updateNav(el, target) {
     el.querySelector('.icon-box').className = "icon-box p-3 rounded-2xl transition-all duration-300 bg-yellow-500/20 text-yellow-500 shadow-[0_0_15px_rgba(234,179,8,0.2)]";
     el.querySelector('span').className = "text-[10px] font-black text-yellow-500 uppercase";
 
-    ['realty-list-view', 'realty-map-view', 'realty-profile-view'].forEach(id => document.getElementById(id).classList.add('hidden'));
-
-    if (target === 'map') document.getElementById('realty-map-view').classList.remove('hidden');
-    else if (target === 'profile') document.getElementById('realty-profile-view').classList.remove('hidden');
-    else {
-        document.getElementById('realty-list-view').classList.remove('hidden');
-        closeDetail();
-    }
-}
-
-function setActiveFilter(btn) {
-    btn.parentElement.querySelectorAll('button').forEach(f => {
-        f.className = "whitespace-nowrap bg-white/5 border border-white/10 text-gray-400 px-4 py-1.5 rounded-full text-[10px] font-bold hover:text-white transition-colors";
+    ['realty-list-view', 'realty-map-view', 'realty-profile-view'].forEach(id => {
+        const view = document.getElementById(id);
+        if(view) view.classList.add('hidden');
     });
-    btn.className = "whitespace-nowrap bg-yellow-500 text-black px-4 py-1.5 rounded-full text-[10px] font-black italic shadow-[0_0_15px_rgba(234,179,8,0.3)]";
+
+    const targetView = document.getElementById(`realty-${target}-view`);
+    if(targetView) targetView.classList.remove('hidden');
+    
+    closeRealtyDetail();
 }
+
+// 4. 기타 기능
+function toggleLike(id, btn) {
+    const icon = btn.querySelector('i');
+    icon.classList.toggle('fill-red-500');
+    icon.classList.toggle('text-red-500');
+}
+
+function startPiPayment(amount, title) {
+    alert(`[Pi Network 결제 요청]\n매물: ${title}\n금액: ${amount} π\n지갑을 연결합니다.`);
+}
+
+    // 2. [추가된 핵심 줄] 이 코드가 있어야 매물이 필터링됩니다.
+    renderRealtyList(filterType); 
 
 // [통합 로직] 결제 -> 에스크로 -> 정산 -> 영수증 발행
 async function payForRealty() {
@@ -472,6 +580,17 @@ function showToast(msg) {
             toast.className = "fixed bottom-24 left-1/2 -translate-x-1/2 bg-yellow-500 text-black px-6 py-3 rounded-full z-[500] text-xs font-bold opacity-0 transition-all pointer-events-none"; 
         }, 3000);
     }
+
+function startPiPayment(amount, title) {
+    // 실제 Pi SDK 연동 전, 사용자에게 확인창을 띄웁니다.
+    const confirmPay = confirm(`[Pi Network 결제]\n\n매물: ${title}\n금액: ${amount} π\n\n결제를 진행하시겠습니까?`);
+    
+    if(confirmPay) {
+        alert("Pi Wallet 연결 중... (SDK 가동)");
+        // 여기에 Pi.createPayment() 로직이 들어갈 자리입니다.
+    }
+}
+
 </script>
 </body>
 </html>
