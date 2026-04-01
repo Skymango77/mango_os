@@ -6,83 +6,472 @@
     <title>Mango Realty - Pi Network Real Estate</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://sdk.minepi.com/pi-sdk.js"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
     <style>
-        .glass { background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.1); }
-        .mango-realty-card { width: 450px; margin: 0 auto; border-radius: 2rem; overflow: hidden; } /* 폭 450px 준수 */
-        .gold-border { border: 2px solid #fbbf24; }
+        @import url('https://fonts.googleapis.com/css2?family=Kanit:ital,wght@0,400;0,900;1,900&display=swap');
+        body { font-family: 'Kanit', sans-serif; background-color: #050505; }
+        .glass { background: rgba(0, 0, 0, 0.75); backdrop-filter: blur(20px); border: 1px solid rgba(255, 255, 255, 0.1); }
+        .mango-realty-card { width: 450px; height: 800px; border-radius: 2.5rem; overflow: hidden; border: 1px solid rgba(251, 191, 36, 0.3); position: relative; } 
+        .gold-glow { box-shadow: 0 0 30px rgba(251, 191, 36, 0.15); }
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+
+        /* CSS: 뉴스 스크롤 애니메이션 */
+@keyframes scroll-up {
+    0% { transform: translateY(0); }
+    33% { transform: translateY(-40px); }
+    66% { transform: translateY(-80px); }
+    100% { transform: translateY(0); }
+}
+.animate-scroll-up {
+    animation: scroll-up 9s infinite ease-in-out;
+}
     </style>
 </head>
-<body class="bg-[#0f172a] text-white min-h-screen p-4">
+<body class="text-white min-h-screen flex items-center justify-center p-4">
 
-    <div class="mango-realty-card glass p-6 space-y-6 shadow-2xl">
-        <header class="flex justify-between items-center">
-            <h1 class="text-2xl font-black text-yellow-500">Mango Realty</h1>
-            <span class="bg-green-500/20 text-green-400 px-3 py-1 rounded-full text-xs font-bold">KYC VERIFIED</span>
-        </header>
+    <div id="realty-portal" class="fixed inset-0 z-[100] flex items-center justify-center bg-black/90 backdrop-blur-md">
+        <div class="mango-realty-card glass shadow-2xl flex flex-col animate-in fade-in zoom-in duration-300 gold-glow">
+            
+            <header class="p-8 border-b border-white/5 flex justify-between items-center bg-gradient-to-b from-yellow-500/10 to-transparent">
+                <div class="flex items-center gap-4">
+                    <div class="relative">
+                        <img src="../assets/img/mango.jpg" alt="Mango" class="w-14 h-14 rounded-2xl border-2 border-yellow-500/50 object-cover shadow-[0_0_20px_rgba(234,179,8,0.3)] animate-mango-otogi cursor-pointer" onclick="location.href='../index.html'" onerror="this.src='https://via.placeholder.com/100?text=MANGO'">
+                        <span class="absolute -top-1 -right-1 w-4 h-4 bg-green-500 border-2 border-black rounded-full shadow-lg"></span>
+                    </div>
+                    <div>
+                        <h1 class="text-3xl font-black italic tracking-tighter text-yellow-500 leading-none">REALTY APP</h1>
+                        <div class="flex items-center gap-2 mt-1.5">
+                            <span class="bg-yellow-500/10 text-yellow-500 text-[8px] px-2 py-0.5 rounded-full font-bold border border-yellow-500/20">PREMIUM</span>
+                            <p class="text-[9px] text-gray-500 uppercase tracking-[0.2em]">AI Property Ecosystem</p>
+                        </div>
+                    </div>
+                </div>
+                <button onclick="location.href='../index.html'" class="p-3 hover:bg-white/5 rounded-full text-white/40 transition-colors"><i data-lucide="x" class="w-6 h-6"></i></button>
+            </header>
 
-        <div class="space-y-4">
-            <div class="bg-white/5 p-4 rounded-2xl gold-border">
-                <p class="text-xs text-gray-400">프리미엄 매물 열람 서비스</p>
-                <p class="text-lg font-bold">Busan Centum City Luxury Suite</p>
-                <div class="flex justify-between items-end mt-2">
-                    <p class="text-2xl font-black text-yellow-400">0.10 π</p>
-                    <button onclick="payForRealty()" class="bg-yellow-500 text-black px-6 py-2 rounded-xl font-bold hover:scale-105 transition-all">
-                        열람권 구매
-                    </button>
+            <div class="px-8 py-4 space-y-4">
+                <div class="flex gap-2 bg-white/5 rounded-2xl p-2 border border-white/10 focus-within:border-yellow-500/50">
+                    <i data-lucide="search" class="w-5 h-5 text-gray-400 ml-2 mt-2"></i>
+                    <input type="text" placeholder="부산 센텀시티 매물 검색..." class="bg-transparent flex-1 px-2 py-2 text-sm outline-none placeholder:text-gray-700">
+                </div>
+                <div class="flex gap-3 overflow-x-auto no-scrollbar pb-2">
+                    <button onclick="setActiveFilter(this)" class="whitespace-nowrap bg-yellow-500 text-black px-4 py-1.5 rounded-full text-[10px] font-black italic shadow-[0_0_15px_rgba(234,179,8,0.3)]">ALL LIST</button>
+                    <button onclick="setActiveFilter(this)" class="whitespace-nowrap bg-white/5 border border-white/10 text-gray-400 px-4 py-1.5 rounded-full text-[10px] font-bold hover:text-white">LOW PRICE</button>
+                    <button onclick="setActiveFilter(this)" class="whitespace-nowrap bg-white/5 border border-white/10 text-gray-400 px-4 py-1.5 rounded-full text-[10px] font-bold hover:text-white">OCEAN VIEW</button>
                 </div>
             </div>
-        </div>
 
-        <div id="toast" class="fixed bottom-10 left-1/2 -translate-x-1/2 bg-yellow-600 text-white px-6 py-3 rounded-full opacity-0 transition-opacity"></div>
+            <div class="px-8 mb-4">
+                <div class="bg-yellow-500/5 border border-yellow-500/20 rounded-2xl p-3 h-10 overflow-hidden relative">
+                    <div class="absolute left-3 top-2.5 text-yellow-500 animate-pulse"><i data-lucide="bell" class="w-4 h-4"></i></div>
+                    <div class="flex flex-col animate-scroll-up ml-7">
+                        <p class="text-[10px] text-gray-300 h-10 flex items-center italic font-bold uppercase tracking-tighter">LATEST: 센텀 스카이 스위트 101 매물이 업데이트되었습니다.</p>
+                        <p class="text-[10px] text-gray-300 h-10 flex items-center italic font-bold uppercase tracking-tighter">NOTICE: 파이 네트워크 메인넷 결제가 활성화되었습니다.</p>
+                        <p class="text-[10px] text-gray-300 h-10 flex items-center italic font-bold uppercase tracking-tighter">INFO: AI 기반 부동산 가치 측정이 완료되었습니다.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="relative flex-1 overflow-hidden">
+                <div id="realty-list-view" class="px-8 pt-2 pb-20 space-y-6 overflow-y-auto h-full no-scrollbar">
+                    </div>
+
+                <div id="realty-map-view" class="hidden absolute inset-0 bg-[#050505] z-40">
+                    <div class="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1524661135-423995f22d0b?q=80&w=1000')] bg-cover opacity-40 grayscale"></div>
+
+                    
+                    <div class="absolute top-1/3 left-1/2 -translate-x-1/2 animate-bounce cursor-pointer" onclick="openDetailById(1)">
+                        <div class="bg-yellow-500 text-black p-2 rounded-full border-2 border-white shadow-xl"><i data-lucide="home" class="w-4 h-4"></i></div>
+                    </div>
+                </div>
+
+                <div id="realty-profile-view" class="hidden absolute inset-0 bg-[#050505] z-40 overflow-y-auto no-scrollbar p-8 pb-32">
+                    <div class="bg-gradient-to-br from-yellow-500 to-yellow-600 p-8 rounded-[2.5rem] text-black shadow-2xl mb-8">
+                        <p class="text-[10px] font-black uppercase opacity-70 mb-1">Total Revenue (Pi)</p>
+                        <h2 class="text-4xl font-black italic tracking-tighter mb-6">1,240.50 <span class="text-sm">π</span></h2>
+                        <div class="flex justify-between border-t border-black/20 pt-4">
+                            <div>
+                                <p class="text-[9px] font-bold opacity-60">Settled (정산완료)</p>
+                                <p class="text-sm font-black">1,100.00 π</p>
+                            </div>
+                            <div class="text-right">
+                                <p class="text-[9px] font-bold opacity-60">Pending (정산예정)</p>
+                                <p class="text-sm font-black">140.50 π</p>
+                            </div>
+                        </div>
+                    </div>
+                    <h4 class="text-[11px] font-black text-gray-500 uppercase tracking-widest ml-2 mb-4">Partner Agencies</h4>
+                    <div class="bg-white/5 border border-white/10 rounded-[2rem] p-5 flex justify-between items-center mb-4">
+                        <div class="flex items-center gap-4">
+                            <div class="w-12 h-12 bg-blue-500/20 rounded-2xl flex items-center justify-center text-blue-500"><i data-lucide="building-2"></i></div>
+                            <div>
+                                <p class="text-xs font-black uppercase">Centum Realty</p>
+                                <p class="text-[9px] text-gray-500 italic">Fee Rate: 3% (Mango Admin)</p>
+                            </div>
+                        </div>
+                        <div class="text-right">
+                            <p class="text-sm font-black text-yellow-500">845.20 π</p>
+                            <p class="text-[8px] text-gray-600 font-bold uppercase">Total Settled</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="realty-detail-modal" class="hidden absolute inset-0 z-[1000] bg-black/40 backdrop-blur-xl flex items-end animate-in slide-in-from-bottom duration-500">
+                    <div class="w-full bg-[#0a0a0a] rounded-t-[3rem] border-t border-yellow-500/30 p-10 pb-20 relative">
+                        <div class="absolute top-4 left-1/2 -translate-x-1/2 w-12 h-1 bg-white/10 rounded-full"></div>
+                        <button onclick="closeDetail()" class="absolute top-8 right-8 text-white/20 hover:text-white"><i data-lucide="x" class="w-6 h-6"></i></button>
+                        <div class="flex justify-between items-start mb-6 pt-4">
+                            <div>
+                                <span class="text-yellow-500 text-[10px] font-black tracking-widest uppercase">Premium Property</span>
+                                <h2 id="modal-title" class="text-3xl font-black italic text-white mt-1 uppercase">Luxury Suite 101</h2>
+                            </div>
+                            <div class="text-right">
+                                <span class="text-gray-500 text-[10px] block uppercase">Current Price</span>
+                                <span class="text-2xl font-black text-yellow-400 italic">0.10 π</span>
+                            </div>
+                        </div>
+                        <div class="grid grid-cols-3 gap-4 mb-8">
+                            <div class="bg-white/5 p-4 rounded-2xl border border-white/5 text-center"><i data-lucide="layout" class="w-4 h-4 mx-auto mb-2 text-gray-500"></i><span class="text-[9px] text-gray-500 block uppercase font-bold">124 SQM</span></div>
+                            <div class="bg-white/5 p-4 rounded-2xl border border-white/5 text-center"><i data-lucide="compass" class="w-4 h-4 mx-auto mb-2 text-gray-500"></i><span class="text-[9px] text-gray-500 block uppercase font-bold">Ocean</span></div>
+                            <div class="bg-white/5 p-4 rounded-2xl border border-white/5 text-center"><i data-lucide="shield-check" class="w-4 h-4 mx-auto mb-2 text-gray-500"></i><span class="text-[9px] text-green-500 block uppercase font-bold">A+ Grade</span></div>
+                        </div>
+                        <button onclick="payForRealty()" class="w-full bg-yellow-500 hover:bg-yellow-400 text-black py-5 rounded-[2rem] font-black text-sm shadow-xl active:scale-95 transition-all">이 매물 파이(π)로 즉시 결제하기</button>
+                    </div>
+                </div>
+            </div>
+<div id="receipt-modal" class="hidden absolute inset-0 z-[2000] bg-black/95 backdrop-blur-2xl flex items-center justify-center p-8">
+            <div class="w-full bg-white text-black rounded-[3rem] p-10 flex flex-col items-center shadow-2xl animate-in zoom-in duration-300">
+                <div class="w-20 h-20 bg-green-500 rounded-full flex items-center justify-center mb-6 text-white shadow-lg">
+                    <i data-lucide="check" class="w-10 h-10"></i>
+                </div>
+                <h2 class="text-2xl font-black italic uppercase mb-2">Payment Success</h2>
+                <p class="text-[10px] text-gray-400 font-bold tracking-widest mb-8 uppercase">Mango Escrow Protected</p>
+                <div class="w-full border-t border-b border-gray-100 py-6 mb-8 space-y-4">
+                    <div class="flex justify-between text-xs font-bold"><span class="text-gray-400 uppercase">Property</span><span id="receipt-title" class="truncate ml-4">-</span></div>
+                    <div class="flex justify-between text-xs font-bold"><span class="text-gray-400 uppercase">Amount</span><span id="receipt-price" class="text-yellow-600 font-black">-</span></div>
+                    <div class="flex justify-between text-[10px] font-bold"><span class="text-gray-400 uppercase">Tx Date</span><span id="receipt-date" class="text-gray-500">-</span></div>
+                </div>
+                <button onclick="goToMyPage()" class="w-full bg-black text-white py-5 rounded-2xl font-black text-sm active:scale-95 transition-all">MY ASSETS 확인하기</button>
+            </div>
+        </div>
+            <footer class="p-4 border-t border-white/5 flex justify-around items-center bg-[#0a0a0a]/90 relative z-[200]">
+                <button onclick="updateNav(this, 'home')" class="realty-nav-btn flex flex-col items-center gap-1">
+                    <div class="icon-box p-3 rounded-2xl transition-all duration-300 bg-yellow-500/20 text-yellow-500"><i data-lucide="home" class="w-6 h-6"></i></div>
+                    <span class="text-[10px] font-black text-yellow-500 uppercase">Home</span>
+                </button>
+                <button onclick="updateNav(this, 'map')" class="realty-nav-btn flex flex-col items-center gap-1">
+                    <div class="icon-box p-3 rounded-2xl transition-all duration-300 text-white/20"><i data-lucide="map-pin" class="w-6 h-6"></i></div>
+                    <span class="text-[10px] font-bold text-white/20 uppercase">Location</span>
+                </button>
+                <button onclick="updateNav(this, 'profile')" class="realty-nav-btn flex flex-col items-center gap-1">
+                    <div class="icon-box p-3 rounded-2xl transition-all duration-300 text-white/20"><i data-lucide="user" class="w-6 h-6"></i></div>
+                    <span class="text-[10px] font-bold text-white/20 uppercase">My Page</span>
+                </button>
+            </footer>
+
+        </div>
     </div>
 
+    <div id="toast" class="fixed bottom-10 left-1/2 -translate-x-1/2 bg-yellow-600 text-white px-6 py-3 rounded-full opacity-0 transition-all duration-300 z-[500] pointer-events-none text-xs font-bold"></div>
+
+    
     <script>
-        const Pi = window.Pi;
-        Pi.init({ version: "2.0" });
+        // 협력업체 정산용 기초 데이터
+const PARTNER_AGENCIES = {
+    "CENTUM_REALTY": { name: "센텀 제일 공인중개", fee_rate: 0.97 }
+};
 
-        async function payForRealty() {
-            try {
-                // [Safety] 결제 전 인증 재확인 (스크린샷 세션 만료 에러 방지용)
-                const scopes = ['payments'];
-                await Pi.authenticate(scopes, (p) => { console.log("미완료 결제:", p); });
+// [함수] 정산 프로세스
+async function processSettlement(amount, agencyId) {
+    const amountNum = parseFloat(amount);
+    const agency = PARTNER_AGENCIES[agencyId] || { fee_rate: 0.97 };
+    return { 
+        mangoFee: (amountNum * 0.03).toFixed(4), 
+        agencyNet: (amountNum * agency.fee_rate).toFixed(4) 
+    };
+}
 
-                showToast("🚀 부동산 매물 열람을 위해 Pi 결제를 진행합니다.");
+// 1. 실제 매물 데이터 (리스트를 만들기 위한 데이터셋)
+    const REALTY_DATA = [
+        
+        {
+            id: 1,
+            title: "CENTUM SKY SUITE 101",
+            location: "HAEUNDAE CENTUM",
+            price: "0.10",
+            oldPrice: "0.15",
+            desc: "파노라마 오션뷰 · 최고급 대리석 마감",
+            area: "124 SQM",
+            view: "Ocean",
+            safety: "A+ Grade",
+            tag: "AI VERIFIED",
+            img: "https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?q=80&w=1000",            isSold: false // 결제 상태 기본값 추가
+        },
 
-                await Pi.createPayment({
-                    amount: 0.10,
-                    memo: "Mango Realty: Premium Property Access",
-                    metadata: { type: "realty_access", portal: "busan_centum" }
-                }, {
-                    onReadyForServerApproval: (paymentId) => {
-                        return fetch('https://mango-os-6xu2.vercel.app/api/approve', {
-                            method: 'POST',
-                            headers: { 'Content-Type': 'application/json' },
-                            body: JSON.stringify({ paymentId })
-                        });
-                    },
-                    onReadyForServerCompletion: (paymentId, txid) => {
-                        return fetch('https://mango-os-6xu2.vercel.app/api/complete', {
-                            method: 'POST',
-                            headers: { 'Content-Type': 'application/json' },
-                            body: JSON.stringify({ paymentId, txid })
-                        }).then(() => {
-                            showToast("✅ 열람권 구매 성공! 매물 상세 정보를 공개합니다.");
-                        });
-                    },
-                    onCancel: (pId) => showToast("❌ 결제를 취소하셨습니다."),
-                    onError: (err) => showToast("⚠️ 오류: " + err.message)
-                });
-            } catch (err) {
-                showToast("⚠️ 인증 오류가 발생했습니다.");
-            }
+        {
+            id: 2,
+            title: "MANGO TOWER PENTHOUSE",
+            location: "MARINE CITY",
+            price: "0.85",
+            oldPrice: "1.20",
+            desc: "복층 구조 · 개인 테라스 및 루프탑 수영장",
+            area: "256 SQM",
+            view: "City & Sea",
+            safety: "S Grade",
+            tag: "PREMIUM",
+            img: "https://images.unsplash.com/photo-1512917774080-9991f1c4c750?q=80&w=1000",            
+            isSold: false
+        },
+        {
+            id: 3,
+            title: "CENTUM B-CUBE OFFICE",
+            location: "CENTUM CITY",
+            price: "0.05",
+            oldPrice: "0.08",
+            desc: "스타트업 최적화 · 초고속 네트워크 완비",
+            area: "85 SQM",
+            view: "City View",
+            safety: "A Grade",
+            tag: "HOT DEAL",
+            img: "https://images.unsplash.com/photo-1497366216548-37526070297c?q=80&w=1000",
+        isSold: false
         }
+    ];
 
-        function showToast(msg) {
-            const t = document.getElementById("toast");
-            t.textContent = msg;
-            t.style.opacity = "1";
-            setTimeout(() => { t.style.opacity = "0"; }, 3000);
+    // 초기화 및 아이콘 생성
+    document.addEventListener('DOMContentLoaded', () => {
+        lucide.createIcons();
+        renderRealtyList();
+        console.log("Mango Realty System Online");
+    });
+    // 2. [함수] 매물 리스트 동적 생성 (Sold Out 로직 포함)
+function renderRealtyList() {
+    const listView = document.getElementById('realty-list-view');
+    if(!listView) return;
+    listView.innerHTML = ''; 
+
+    REALTY_DATA.forEach(item => {
+        const isSold = item.isSold;
+        const soldOverlay = isSold ? 'grayscale opacity-60 pointer-events-none' : 'hover:border-yellow-500/50 cursor-pointer active:scale-[0.98]';
+        const soldBadge = isSold ? `
+            <div class="absolute inset-0 z-20 flex items-center justify-center bg-black/40">
+                <span class="border-4 border-red-500 text-red-500 font-black text-2xl rotate-[-15deg] px-4 py-2 rounded-xl bg-black/80 shadow-2xl">SOLD OUT</span>
+            </div>` : '';
+
+        const card = `
+            <div onclick="${isSold ? '' : `openDetailById(${item.id})`}" class="group bg-white/5 rounded-[2.5rem] border border-white/5 transition-all duration-500 mb-8 overflow-hidden relative ${soldOverlay}">
+                ${soldBadge}
+                <div class="h-48 overflow-hidden relative">
+                    <img src="${item.img}" class="w-full h-full object-cover transition-transform duration-700 ${isSold ? '' : 'group-hover:scale-110'}">
+                    <div class="absolute inset-0 bg-gradient-to-t from-[#050505] to-transparent"></div>
+                    <span class="absolute top-4 left-4 bg-yellow-500 text-black text-[9px] font-black px-3 py-1 rounded-full z-10">${item.tag}</span>
+                </div>
+                <div class="p-6 -mt-4 relative">
+                    <div class="flex justify-between items-center mb-2">
+                        <h3 class="text-xl font-black italic uppercase text-white tracking-tighter">${item.title}</h3>
+                        <span class="text-[9px] text-gray-500 font-bold tracking-widest">${item.location}</span>
+                    </div>
+                    <p class="text-[11px] text-gray-400 mb-6 font-light leading-relaxed">${item.desc}</p>
+                    <div class="flex justify-between items-end border-t border-white/5 pt-4">
+                        <div class="flex flex-col">
+                            <span class="text-[10px] text-gray-600 line-through">${item.oldPrice} π</span>
+                            <span class="text-2xl font-black text-yellow-400 italic">${item.price} <span class="text-xs font-normal not-italic opacity-50 ml-1">π</span></span>
+                        </div>
+                        <div class="bg-white/10 p-3 rounded-2xl ${isSold ? 'hidden' : 'group-hover:bg-yellow-500 group-hover:text-black'} transition-colors">
+                            <i data-lucide="chevron-right" class="w-5 h-5"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `;
+        listView.innerHTML += card;
+    });
+    lucide.createIcons(); 
+}
+
+// 3. [함수] 모달 제어
+function openDetailById(id) {
+    const item = REALTY_DATA.find(d => d.id === id);
+    if(!item || item.isSold) return;
+
+    document.getElementById('modal-title').textContent = item.title;
+    const modal = document.getElementById('realty-detail-modal');
+    modal.querySelector('.text-2xl').textContent = `${item.price} π`;
+    
+    const specs = modal.querySelectorAll('.bg-white/5 span');
+    if(specs.length >= 3) {
+        specs[0].textContent = item.area;
+        specs[1].textContent = item.view;
+        specs[2].textContent = item.safety;
+    }
+    modal.classList.remove('hidden');
+}
+
+function closeDetail() {
+    document.getElementById('realty-detail-modal').classList.add('hidden');
+}
+
+// [네비게이션 및 필터]
+function updateNav(el, target) {
+    document.querySelectorAll('.realty-nav-btn').forEach(btn => {
+        btn.querySelector('.icon-box').className = "icon-box p-3 rounded-2xl transition-all duration-300 text-white/20";
+        btn.querySelector('span').className = "text-[10px] font-bold text-white/20 uppercase";
+    });
+
+    el.querySelector('.icon-box').className = "icon-box p-3 rounded-2xl transition-all duration-300 bg-yellow-500/20 text-yellow-500 shadow-[0_0_15px_rgba(234,179,8,0.2)]";
+    el.querySelector('span').className = "text-[10px] font-black text-yellow-500 uppercase";
+
+    ['realty-list-view', 'realty-map-view', 'realty-profile-view'].forEach(id => document.getElementById(id).classList.add('hidden'));
+
+    if (target === 'map') document.getElementById('realty-map-view').classList.remove('hidden');
+    else if (target === 'profile') document.getElementById('realty-profile-view').classList.remove('hidden');
+    else {
+        document.getElementById('realty-list-view').classList.remove('hidden');
+        closeDetail();
+    }
+}
+
+function setActiveFilter(btn) {
+    btn.parentElement.querySelectorAll('button').forEach(f => {
+        f.className = "whitespace-nowrap bg-white/5 border border-white/10 text-gray-400 px-4 py-1.5 rounded-full text-[10px] font-bold hover:text-white transition-colors";
+    });
+    btn.className = "whitespace-nowrap bg-yellow-500 text-black px-4 py-1.5 rounded-full text-[10px] font-black italic shadow-[0_0_15px_rgba(234,179,8,0.3)]";
+}
+
+// [통합 로직] 결제 -> 에스크로 -> 정산 -> 영수증 발행
+async function payForRealty() {
+    const title = document.getElementById('modal-title').textContent;
+    const item = REALTY_DATA.find(d => d.title === title);
+    if(!item || item.isSold) return;
+
+    const modal = document.getElementById('realty-detail-modal');
+    const payBtn = modal.querySelector('button[onclick="payForRealty()"]');
+    
+    // 1. 초기화 및 요청
+    payBtn.disabled = true;
+    payBtn.innerHTML = `<i data-lucide="loader-2" class="w-4 h-4 animate-spin inline mr-2"></i> BLOCKCHAIN CONNECTING...`;
+    lucide.createIcons();
+    showToast("🔗 Pi Network 메인넷 결제 요청 중...");
+
+    // 2. 에스크로 체결 시뮬레이션 (3초)
+    await new Promise(resolve => setTimeout(resolve, 3000));
+    const settlement = await processSettlement(item.price, "CENTUM_REALTY");
+    payBtn.className = "w-full bg-blue-600 text-white py-5 rounded-[2rem] font-black text-sm shadow-xl animate-pulse";
+    payBtn.innerHTML = "🛡️ MANGO ESCROW PROTECTED";
+    showToast(`에스크로 체결 완료: ${settlement.agencyNet} π 보호 중`);
+
+    // 3. 최종 승인 및 영수증 처리 (3초 추가)
+    await new Promise(resolve => setTimeout(resolve, 3000));
+    item.isSold = true; 
+    renderRealtyList(); // 리스트에 SOLD OUT 표시
+    closeDetail();      // 상세 모달 닫기
+    
+    // 영수증 데이터 매핑 및 출력
+    document.getElementById('receipt-title').textContent = item.title;
+    document.getElementById('receipt-price').textContent = `${item.price} π`;
+    document.getElementById('receipt-date').textContent = new Date().toLocaleString();
+    document.getElementById('receipt-modal').classList.remove('hidden');
+    
+    updatePartnerRevenue(item.price); // 마이페이지 수익 갱신
+    lucide.createIcons();
+}
+
+function showToast(msg) {
+    const toast = document.getElementById('toast');
+    if(!toast) return;
+    toast.textContent = msg;
+    toast.className = "fixed bottom-24 left-1/2 -translate-x-1/2 bg-yellow-500 text-black px-6 py-3 rounded-full z-[500] text-xs font-bold shadow-2xl opacity-100 transition-all";
+    setTimeout(() => { toast.className = "fixed bottom-24 left-1/2 -translate-x-1/2 bg-yellow-500 text-black px-6 py-3 rounded-full z-[500] text-xs font-bold opacity-0 transition-all pointer-events-none"; }, 3000);
+}
+
+    // [결제/영수증/이동 통합 로직]
+// [1. 결제 통합 로직]
+    async function payForRealty() {
+        const modal = document.getElementById('realty-detail-modal');
+        const payBtn = modal.querySelector('button[onclick="payForRealty()"]');
+        const title = document.getElementById('modal-title').textContent;
+        
+        const item = REALTY_DATA.find(d => d.title === title);
+        if(!item) return;
+
+        payBtn.disabled = true;
+        payBtn.innerHTML = `<i data-lucide="loader-2" class="w-4 h-4 animate-spin inline mr-2"></i> 블록체인 통신 중...`;
+        lucide.createIcons();
+        showToast("🔗 Pi Network 메인넷 결제를 요청합니다.");
+
+        setTimeout(async () => {
+            const settlement = await processSettlement(item.price, "CENTUM_REALTY");
+            payBtn.className = "w-full bg-blue-600 text-white py-5 rounded-[2rem] font-black text-sm shadow-xl animate-pulse";
+            payBtn.innerHTML = "🛡️ MANGO ESCROW 보호 중...";
+            showToast(`에스크로 체결: 분배 예정 ${settlement.agencyNet} π`);
+        }, 3000);
+
+        setTimeout(() => {
+            item.isSold = true; 
+            updatePartnerRevenue(item.price); 
+            renderRealtyList(); 
+            closeDetail(); 
+            showReceipt(item); 
+            
+            payBtn.disabled = false;
+            payBtn.className = "w-full bg-yellow-500 hover:bg-yellow-400 text-black py-5 rounded-[2rem] font-black text-sm transition-all";
+            payBtn.textContent = "이 매물 파이(π)로 즉시 결제하기";
+        }, 6000);
+    }
+
+    // [2. 영수증 표시 함수]
+    function showReceipt(item) {
+        const receipt = document.getElementById('receipt-modal');
+        if(!receipt) return;
+        document.getElementById('receipt-title').textContent = item.title;
+        document.getElementById('receipt-price').textContent = `${item.price} π`;
+        document.getElementById('receipt-date').textContent = new Date().toLocaleString();
+        receipt.classList.remove('hidden');
+        lucide.createIcons(); 
+    }
+
+    // [3. 마이페이지 이동 함수]
+    function goToMyPage() {
+        const receipt = document.getElementById('receipt-modal');
+        if(receipt) receipt.classList.add('hidden');
+        
+        const profileBtn = document.querySelector('.realty-nav-btn[onclick*="profile"]');
+        if(profileBtn) {
+            updateNav(profileBtn, 'profile');
+            showToast("✅ 마이페이지로 이동했습니다.");
+            window.scrollTo({ top: 0, behavior: 'smooth' });
         }
-    </script>
+    }
+
+    // [4. 수익 실시간 업데이트 함수]
+    function updatePartnerRevenue(amount) {
+        const revenueEl = document.querySelector('#realty-profile-view h2');
+        if(revenueEl) {
+            let current = parseFloat(revenueEl.textContent.replace(',', '')) || 0;
+            let target = current + (parseFloat(amount) * 0.97); 
+            
+            let count = current;
+            let timer = setInterval(() => {
+                count += (target - current) / 10;
+                revenueEl.innerHTML = `${count.toFixed(2)} <span class="text-sm">π</span>`;
+                if(count >= target) {
+                    revenueEl.innerHTML = `${target.toFixed(2)} <span class="text-sm">π</span>`;
+                    clearInterval(timer);
+                }
+            }, 50);
+        }
+    }
+
+    // [5. 토스트 알림 함수]
+    function showToast(msg) {
+        const toast = document.getElementById('toast');
+        if(!toast) return;
+        toast.textContent = msg;
+        toast.className = "fixed bottom-24 left-1/2 -translate-x-1/2 bg-yellow-500 text-black px-6 py-3 rounded-full z-[500] text-xs font-bold shadow-2xl opacity-100 transition-all";
+        setTimeout(() => { 
+            toast.className = "fixed bottom-24 left-1/2 -translate-x-1/2 bg-yellow-500 text-black px-6 py-3 rounded-full z-[500] text-xs font-bold opacity-0 transition-all pointer-events-none"; 
+        }, 3000);
+    }
+</script>
 </body>
 </html>

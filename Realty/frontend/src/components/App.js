@@ -1,71 +1,61 @@
+// Mango OS: Grand Assembly App.js 시작
 import React, { useState, useEffect } from 'react';
-import RealtyMap from './components/RealtyMap';
-import RealtyCard from './components/RealtyCard';
-import axios from 'axios';
+import { motion, AnimatePresence } from 'framer-motion';
+import { RealtyPortalCard } from './RealtyPortalCard';
+import RealtyMapView from './RealtyMapView';
+import { RealtyDetailView } from './RealtyDetailView';
+import { RealtyDashboard } from './RealtyDashboard';
+import { RealtyAiChat } from './RealtyAiChat';
 
 function App() {
-    const [properties, setProperties] = useState([]);
+  const [view, setView] = useState('home'); // 'home', 'map', 'detail', 'dashboard', 'chat'
+  const [selectedProp, setSelectedProp] = useState(null);
 
-    useEffect(() => {
-        // 백엔드 API에서 매물 리스트 가져오기
-        const fetchProperties = async () => {
-            try {
-                const res = await axios.get('http://localhost:5000/api/realty/list');
-                setProperties(res.data);
-            } catch (err) {
-                console.error("데이터 로딩 실패", err);
-            }
-        };
-        fetchProperties();
-    }, []);
+  // Pi SDK 초기화
+  useEffect(() => {
+    if (window.Pi) {
+      window.Pi.init({ version: "2.0", sandbox: true });
+      console.log("Mango Realty: Pi SDK Initialized");
+    }
+  }, []);
 
-    return (
-        <div style={appContainer}>
-            {/* 1. 배너 광고 영역 (너비 92% 통일) */}
-            <div style={bannerWindow}>
-                <p>📢 Pi Network 부동산 DEX 런칭 기념 이벤트!</p>
-            </div>
+  const renderView = () => {
+    switch(view) {
+      case 'home': return <div className="space-y-6 p-4 pt-10"><RealtyPortalCard property={sampleData} onClick={() => setView('detail')} /></div>;
+      case 'map': return <RealtyMapView onSelect={(p) => { setSelectedProp(p); setView('detail'); }} />;
+      case 'detail': return <RealtyDetailView property={selectedProp} onBack={() => setView('home')} />;
+      case 'dashboard': return <RealtyDashboard />;
+      case 'chat': return <RealtyAiChat />;
+      default: return <RealtyDashboard />;
+    }
+  };
 
-            {/* 2. 지도 영역 */}
-            <RealtyMap properties={properties} />
+  return (
+    <div className="w-full max-w-[420px] mx-auto min-h-screen bg-[#0a0a0a] relative overflow-hidden font-sans">
+      <AnimatePresence mode="wait">
+        <motion.div key={view} initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.3 }}>
+          {renderView()}
+        </motion.div>
+      </AnimatePresence>
 
-            {/* 3. 매물 리스트 영역 */}
-            <div style={listContainer}>
-                {properties.map(item => (
-                    <RealtyCard key={item.property_id} property={item} />
-                ))}
-            </div>
-
-            {/* 4. Pi Network 뉴스 (상하 스크롤 윈도우) */}
-            <div style={newsWindow}>
-                <marquee direction="up" scrollamount="2" style={{ height: '40px' }}>
-                    🔥 실시간 뉴스: 가락동 롯데캐슬 30% Pi 결제 매물 등장! <br />
-                    🚀 DEX 유동성 풀 총 예치량 1,500,000 π 돌파!
-                </marquee>
-            </div>
-        </div>
-    );
+      {/* 하이엔드 하단 네비게이션 바 (Width 420px 준수) */}
+      <nav className="fixed bottom-0 w-full max-w-[420px] bg-black/80 backdrop-blur-2xl border-t border-white/10 px-6 py-4 flex justify-between items-center z-[100]">
+        <NavButton icon="🏠" active={view === 'home'} onClick={() => setView('home')} />
+        <NavButton icon="🗺️" active={view === 'map'} onClick={() => setView('map')} />
+        <NavButton icon="🧠" active={view === 'chat'} onClick={() => setView('chat')} />
+        <NavButton icon="👤" active={view === 'dashboard'} onClick={() => setView('dashboard')} />
+      </nav>
+    </div>
+  );
 }
 
-// --- 레이아웃 스타일 (사용자 지정 너비 규격 준수) ---
-const appContainer = {
-    backgroundColor: '#f5f5f5', minHeight: '100vh', paddingBottom: '50px'
-};
+const NavButton = ({ icon, active, onClick }) => (
+  <button onClick={onClick} className={`text-xl transition-all ${active ? 'scale-125 brightness-125' : 'opacity-40 grayscale'}`}>
+    {icon}
+  </button>
+);
 
-const bannerWindow = {
-    width: '92%', height: '80px', margin: '15px auto',
-    backgroundColor: '#2c3e50', color: '#fff', borderRadius: '12px',
-    display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 'bold'
-};
-
-const listContainer = {
-    marginTop: '10px'
-};
-
-const newsWindow = {
-    width: '92%', height: '60px', margin: '20px auto',
-    backgroundColor: '#fff', border: '1px solid #ddd', borderRadius: '12px',
-    padding: '10px', overflow: 'hidden', boxShadow: '0 -2px 10px rgba(0,0,0,0.05)'
-};
+const sampleData = { title: "Haeundae LCT Penthouse", price: 15000, images: ["/sample-lct.jpg"], city: "Busan", country: "Korea", investmentScore: 92 };
 
 export default App;
+// Mango OS: Grand Assembly App.js 끝
