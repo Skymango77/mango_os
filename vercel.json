@@ -5,5 +5,13 @@
       "source": "/profile",
       "destination": "/profile_dashboard.html"
     }
+  ],
+  "headers": [
+    {
+      "source": "/(.*)",
+      "headers": [
+        { "key": "X-Frame-Options", "value": "ALLOWALL" }
+      ]
+    }
   ]
 }

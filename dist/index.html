@@ -3,7 +3,7 @@
 
 <head>
         <script src="https://sdk.minepi.com/pi-sdk.js"></script>
-    <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
+
     <meta name="theme-color" content="#f97316"> 
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="mobile-web-app-capable" content="yes">
@@ -20,16 +20,15 @@
     <script src="https://unpkg.com/lucide@latest"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
-        /* 폰트 로드 최상단 배치 */
         @import url('https://fonts.googleapis.com/css2?family=Kanit:ital,wght@1,900&display=swap');
-        
+        /* 폰트 로드 최상단 배치 */
         :root {
         --mango-neon: #ffaa00;
         --unified-max-width: 430px;
         --bg-dark: #000000;
     }
         /* 1. 기본 레이아웃 및 PC 중앙 정렬 */
-    body {
+        body {
         background-color: var(--bg-dark);
         margin: 0;
         display: flex;
@@ -40,36 +39,32 @@
         font-family: 'Pretendard', sans-serif;
         overflow-x: hidden;
     }
-/* 2. 상단 헤더 및 로고 정렬 */
-    .header-area {
+        /* 2. 상단 헤더 및 로고 정렬 */
+        .header-area {
         display: flex;
         justify-content: center;
         align-items: center;
         padding: 20px 0;
         width: 100%;
     }
-
-    .logo-img {
+        .logo-img {
         width: 220px;
         height: auto;
     }
-        
-    /* 상단 헤더 및 로고 정렬 */
-    .header-area {
+        /* 상단 헤더 및 로고 정렬 */
+        .header-area {
         display: flex;
         justify-content: center;
         align-items: center;
         padding: 20px 0;
         width: 100%;
     }
-
-    .logo-img {
+        .logo-img {
         width: 220px;
         height: auto;
     }
-
-    /* 3. [중요] 모든 카드형 창 너비 92% 통일 규격 */
-    .main-container, 
+        /* 3. [중요] 모든 카드형 창 너비 92% 통일 규격 */
+        .main-container, 
     .mango-container, 
     .glass, 
     .banner-item,
@@ -80,42 +75,36 @@
         box-sizing: border-box;
         position: relative;
     }
-
-    /* 4. 사양별 렌더링 최적화 */
-    .high-spec .glass { backdrop-filter: blur(15px); }
-    .high-spec .animate-scan { animation: scan 2s infinite ease-in-out; }
-
-    .low-spec .glass { backdrop-filter: none !important; background: rgba(0, 0, 0, 0.8) !important; }
-    .low-spec .animate-scan { display: none; }
-    .low-spec * { transition-duration: 0.1s !important; }
-
-    /* 5. 스캔 애니메이션: 가시성 유지 구간 보정 */
-    @keyframes scan {
+        /* 4. 사양별 렌더링 최적화 */
+        .high-spec .glass { backdrop-filter: blur(15px); }
+        .high-spec .animate-scan { animation: scan 2s infinite ease-in-out; }
+        .low-spec .glass { backdrop-filter: none !important; background: rgba(0, 0, 0, 0.8) !important; }
+        .low-spec .animate-scan { display: none; }
+        .low-spec * { transition-duration: 0.1s !important; }
+        /* 5. 스캔 애니메이션: 가시성 유지 구간 보정 */
+        @keyframes scan {
         0% { top: 0%; opacity: 0; }
         15% { opacity: 1; }   /* 더 빠르게 선명해짐 */
         85% { opacity: 1; }   /* 하단 직전까지 선명함 유지 */
         100% { top: 100%; opacity: 0; }
     }
-        
-
-.animate-scan {
+        .animate-scan {
     animation: scan 2s infinite ease-in-out;
 }
-
-/* 스크롤바 숨기기 */
-    .no-scrollbar::-webkit-scrollbar { display: none; }
-    .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
-      /* 피드 창의 기본 디자인 : 너비는 mango-container가 92%로 잡아줍니다 */
-.glass { 
+        /* 스크롤바 숨기기 */
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        /* 피드 창의 기본 디자인 : 너비는 mango-container가 92%로 잡아줍니다 */
+        .glass { 
     background: rgba(255, 255, 255, 0.03); 
     backdrop-filter: blur(10px); 
     border: 1px solid rgba(255, 170, 0, 0.2); 
     border-radius: 20px; 
     transition: transform 0.2s;
 }
-.glass:active { transform: scale(0.98); } /* 클릭 시 눌리는 효과 */
-
-.feed-img-box { 
+        .glass:active { transform: scale(0.98); }
+        /* 클릭 시 눌리는 효과 */
+        .feed-img-box { 
     width: 80px; 
     height: 80px; 
     flex-shrink: 0; 
@@ -123,22 +112,20 @@
     border-radius: 20px; 
     border: 1px solid rgba(255,255,255,0.1);
 }
-.feed-img-box img { width: 100%; height: 100%; object-fit: cover; }  
+        .feed-img-box img { width: 100%; height: 100%; object-fit: cover; }
         /* 1. 구글에서 '도톰하고 둥근' Kanit 폰트를 빌려오는 코드입니다. */
-
-
-/* 클래스 필요 없이 이 애니메이션만 있으면 됩니다 */
-@keyframes gold-shine {
+        /* 클래스 필요 없이 이 애니메이션만 있으면 됩니다 */
+        @keyframes gold-shine {
     0% { background-position: -200% center; }
     100% { background-position: 200% center; }
 }
-/* 맥동 애니메이션 정의 추가 */
-@keyframes mango-pulse {
+        /* 맥동 애니메이션 정의 추가 */
+        @keyframes mango-pulse {
     0%, 100% { transform: scale(1); filter: drop-shadow(0 0 5px rgba(255, 170, 0, 0.4)); }
     50% { transform: scale(1.03); filter: drop-shadow(0 0 15px rgba(255, 170, 0, 0.7)); }
 }
-/* 글자 전용 금가루 스타일 */
-.text-gold-particle {
+        /* 글자 전용 금가루 스타일 */
+        .text-gold-particle {
     position: absolute;
     background: gold;
     border-radius: 50%;
@@ -147,14 +134,12 @@
     z-index: -1; /* 글자 뒤에서 생성되도록 설정 */
     animation: text-fall 2s linear forwards;
 }
-
-@keyframes text-fall {
+        @keyframes text-fall {
     0% { transform: translateY(0) scale(1); opacity: 1; }
     100% { transform: translateY(40px) scale(0.5); opacity: 0; }
 }
-/* 금가루 입자 스타일 추가 */
-
-.gold-particle {
+        /* 금가루 입자 스타일 추가 */
+        .gold-particle {
     position: absolute;
     background: radial-gradient(circle, #ffffff 0%, #ffcc00 60%, #ffaa00 100%);    border-radius: 50%;
     pointer-events: none;
@@ -162,8 +147,8 @@
     box-shadow: 0 0 5px rgba(255, 215, 0, 1); 
     filter: blur(0.5px);/* 자체 발광 추가 */
 }
-/* 341행 부근: 금가루 입자 애니메이션 수정 */
-@keyframes fall-and-stack {
+        /* 341행 부근: 금가루 입자 애니메이션 수정 */
+        @keyframes fall-and-stack {
     0% { 
         transform: translateY(-40px); /* 로고 안쪽에서 떨어지기 시작 */
         opacity: 0; 
@@ -175,8 +160,8 @@
         opacity: 0.8;
     }
 }
-/* 금가루가 생성될 기준 컨테이너 (로고 바로 아래에 붙여야 함) */
-#gold-dust-container {
+        /* 금가루가 생성될 기준 컨테이너 (로고 바로 아래에 붙여야 함) */
+        #gold-dust-container {
     position: absolute;
     top: 85%; /* 로고 이미지의 아래쪽 85% 지점부터 떨어지게 설정 */
     left: 0;
@@ -185,12 +170,12 @@
     pointer-events: none;
     z-index: 10;
 }
-/* 글자 영역을 감싸는 컨테이너 설정 */
-.logo-wrapper {
+        /* 글자 영역을 감싸는 컨테이너 설정 */
+        .logo-wrapper {
     position: relative; /* 금가루의 기준점 */
     display: inline-block;
 }
-.mango-gold-power {
+        .mango-gold-power {
     position: relative;
     display: inline-block;
     
@@ -224,16 +209,14 @@ animation: gold-shine 2s linear infinite, mango-pulse 2s infinite ease-in-out !i
     padding: 0 10px; /* 외곽선 때문에 글자가 잘리지 않도록 여백 확보 */
     filter: drop-shadow(0 0 8px rgba(255, 170, 0, 0.4));
 }
-/* 2. .logo-font라는 이름을 가진 글자들에게 이 폰트를 적용하라는 규칙입니다. */
-.logo-font {
+        /* 2. .logo-font라는 이름을 가진 글자들에게 이 폰트를 적용하라는 규칙입니다. */
+        .logo-font {
     font-family: 'Kanit', sans-serif !important;
     -webkit-font-smoothing: antialiased;
 }
         /* [2026-01-01] 지침: 모든 창 너비 92% 통일 및 높이 동기화 */
-
-
-/* 모든 카드형 창의 너비를 92%로 고정 */
-.mango-container, 
+        /* 모든 카드형 창의 너비를 92%로 고정 */
+        .mango-container, 
 #detail-modal, 
 .glass, 
 .banner-item {
@@ -242,40 +225,34 @@ animation: gold-shine 2s linear infinite, mango-pulse 2s infinite ease-in-out !i
     margin-left: auto;
     margin-right: auto;
 }
-
-/* 뉴스/배너 영역의 높이를 100px로 똑같이 맞춤 */
-#news-track-container, 
+        /* 뉴스/배너 영역의 높이를 100px로 똑같이 맞춤 */
+        #news-track-container, 
 .banner-window, 
 #banner-slots,
 .mango-container.glass {
     height: 100px !important;
 }
-
         /* --- 디바이스별 반응형 레이아웃 컨트롤 --- */
         /* [Watch 모드] */
         .device-watch .carousel-view { height: 200px; transform: scale(0.8); }
         .device-watch .mango-container { max-width: 300px; }
         .device-watch .hide-on-watch { display: none; }
-
         /* [Glass 모드] */
         .device-glass .glass { border-color: rgba(255, 170, 0, 0.5); background: rgba(0,0,0,0.2); backdrop-filter: blur(5px); }
-        
         /* --- 3D 회전 기구 수정 --- */
-.carousel-view {
+        .carousel-view {
     perspective: 2000px; /* 깊이감 증가 */
     height: 180px; /* 높이 확보 */
     display: flex; align-items: center; justify-content: center;
 }
-
-.carousel-pivot {
+        .carousel-pivot {
     width: 100%; height: 100%;
     position: relative;
     transform-style: preserve-3d;
     
 }
-
-/* --- 포털 기본 상태 (비활성) --- */
-.portal-door {
+        /* --- 포털 기본 상태 (비활성) --- */
+        .portal-door {
     position: absolute;
     width: 160px; height: 160px;
     left: calc(50% - 80px); top: calc(50% - 80px);
@@ -290,7 +267,6 @@ animation: gold-shine 2s linear infinite, mango-pulse 2s infinite ease-in-out !i
     filter: grayscale(40%) blur(1px);
     transition: all 0.5s cubic-bezier(0.2, 0.8, 0.2, 1);
 }
-
         /* --- 번쩍임 강조 (Active State) --- */
         .portal-door.active {
             opacity: 1;
@@ -301,7 +277,6 @@ animation: gold-shine 2s linear infinite, mango-pulse 2s infinite ease-in-out !i
             z-index: 10;
             animation: pulse 1.5s infinite alternate;
         }
-        
         .portal-door.active::after {
             content: '';
             position: absolute; inset: -4px;
@@ -313,8 +288,8 @@ animation: gold-shine 2s linear infinite, mango-pulse 2s infinite ease-in-out !i
             -webkit-mask-composite: xor;
             mask-composite: exclude; padding: 4px;
         }
-/* --- 🌟 중앙 포털 강조 (Active State) --- */
-.portal-door.active {
+        /* --- 🌟 중앙 포털 강조 (Active State) --- */
+        .portal-door.active {
     opacity: 1 !important;
     filter: grayscale(0%) blur(0) !important;
     border: 3px solid var(--mango-neon);
@@ -329,13 +304,11 @@ animation: gold-shine 2s linear infinite, mango-pulse 2s infinite ease-in-out !i
 }
         @keyframes rotateGlow { 100% { transform: rotate(360deg); } }
         @keyframes pulse { from { opacity: 0.8; } to { opacity: 1; } }
-
         .news-track { animation: scrollUp 10s linear infinite; }
         @keyframes scrollUp { 
             0% { transform: translateY(0); } 
             100% { transform: translateY(-100%); } }
         .logo-glow { filter: drop-shadow(0 0 10px rgba(255,170,0,0.5)); }
-        
         .glass {
             background: rgba(255, 255, 255, 0.03);
             backdrop-filter: blur(10px);
@@ -349,13 +322,11 @@ animation: gold-shine 2s linear infinite, mango-pulse 2s infinite ease-in-out !i
             border-radius: 20px;
         }
         /* --- 금가루 흐르는 애니메이션 엔진 --- */
-@keyframes mango-shine-text {
+        @keyframes mango-shine-text {
   0% { background-position: 0% }
   100% { background-position: 200% }
 }
-
-
-.text-metallic-gold {
+        .text-metallic-gold {
   background: var(--mango-gold);
   background-size: 200%;
   animation: mango-shine-text 4s linear infinite;
@@ -363,24 +334,22 @@ animation: gold-shine 2s linear infinite, mango-pulse 2s infinite ease-in-out !i
   background-clip: text;
   -webkit-text-fill-color: transparent;
 }
-
-
-.gold-dust-effect {
+        .gold-dust-effect {
     background-size: 200% auto;
     animation: gold-shine 3s linear infinite;
     position: relative;
     overflow: hidden;
 }
-/* 가로 스크롤바 숨기기 전용 */
-.no-scrollbar::-webkit-scrollbar {
+        /* 가로 스크롤바 숨기기 전용 */
+        .no-scrollbar::-webkit-scrollbar {
     display: none;
 }
-.no-scrollbar {
+        .no-scrollbar {
     -ms-overflow-style: none;
     scrollbar-width: none;
 }
-/* 반짝이는 입자 효과 */
-.gold-dust-effect::before {
+        /* 반짝이는 입자 효과 */
+        .gold-dust-effect::before {
     content: '';
     position: absolute;
     top: 0; left: -100%;
@@ -389,27 +358,25 @@ animation: gold-shine 2s linear infinite, mango-pulse 2s infinite ease-in-out !i
     transform: skewX(-25deg);
     animation: sweep 2s infinite;
 }
-.pi-news-container:hover .news-track {
+        .pi-news-container:hover .news-track {
     animation-play-state: paused; /* 마우스 올리면 정지 */
 }
-/* 1. 모달이 열렸을 때 배경 스크롤 간섭 방지 (오버스크롤 방지) */
-#login-modal {
+        /* 1. 모달이 열렸을 때 배경 스크롤 간섭 방지 (오버스크롤 방지) */
+        #login-modal {
     overscroll-behavior: contain; /* 모달 끝에서 스크롤해도 배경에 영향 주지 않음 */
 }
-
-/* 2. 모달 내부 스크롤바를 세련되게 수정 (선택 사항이지만 추천) */
-#login-modal::-webkit-scrollbar {
+        /* 2. 모달 내부 스크롤바를 세련되게 수정 (선택 사항이지만 추천) */
+        #login-modal::-webkit-scrollbar {
     width: 6px;
 }
-#login-modal::-webkit-scrollbar-thumb {
+        #login-modal::-webkit-scrollbar-thumb {
     background: rgba(249, 115, 22, 0.3); /* 망고 오렌지색 반투명 */
     border-radius: 10px;
 }
-#login-modal::-webkit-scrollbar-track {
+        #login-modal::-webkit-scrollbar-track {
     background: transparent;
 }
-
-  .social-btn {
+        .social-btn {
     padding: 14px;
     border-radius: 20px;
     background: rgba(255,255,255,0.06);
@@ -418,12 +385,12 @@ animation: gold-shine 2s linear infinite, mango-pulse 2s infinite ease-in-out !i
     font-weight: bold;
     transition: all 0.2s;
   }
-  .social-btn:hover {
+        .social-btn:hover {
     background: rgba(249,115,22,0.25);
     border-color: #f97316;
   }
-  /* 🚀 수정된 반사 및 바닥 효과 */
-.carousel-view {
+        /* 🚀 수정된 반사 및 바닥 효과 */
+        .carousel-view {
     perspective: 2000px;
     height: 320px; /* 높이를 더 확보하여 반사가 잘리지 않게 함 */
     display: flex;
@@ -432,8 +399,8 @@ animation: gold-shine 2s linear infinite, mango-pulse 2s infinite ease-in-out !i
     position: relative;
     /* overflow: hidden; 이 있다면 반드시 제거해야 반사가 보입니다 */
 }
-/* 중앙 포털 뒤 후광(Backlight) 추가 */
-.carousel-view::before {
+        /* 중앙 포털 뒤 후광(Backlight) 추가 */
+        .carousel-view::before {
     content: '';
     position: absolute;
     width: 300px; height: 300px;
@@ -441,7 +408,7 @@ animation: gold-shine 2s linear infinite, mango-pulse 2s infinite ease-in-out !i
     z-index: 0;
     pointer-events: none;
 }
-.carousel-pivot {
+        .carousel-pivot {
     width: 100%; 
     height: 180px; 
     position: relative;
@@ -449,9 +416,8 @@ animation: gold-shine 2s linear infinite, mango-pulse 2s infinite ease-in-out !i
     /* 반사 효과를 좀 더 선명하게 조정 */
     -webkit-box-reflect: below 2px linear-gradient(transparent 50%, rgba(255, 255, 255, 0.2));
 }
-
-/* 바닥면 후광(Glow) 위치 조정 */
-.carousel-view::after {
+        /* 바닥면 후광(Glow) 위치 조정 */
+        .carousel-view::after {
     content: '';
     position: absolute;
     bottom: 40px; /* 위치를 약간 위로 조정 */
@@ -461,8 +427,8 @@ animation: gold-shine 2s linear infinite, mango-pulse 2s infinite ease-in-out !i
     filter: blur(15px);
     z-index: -1;
 }
-/* 🌟 하이엔드 골드 텍스트 엔진 */
-.portal-door.active i, 
+        /* 🌟 하이엔드 골드 텍스트 엔진 */
+        .portal-door.active i, 
 .portal-door.active span {
     background: linear-gradient(
         -45deg, 
@@ -481,16 +447,14 @@ animation: gold-shine 2s linear infinite, mango-pulse 2s infinite ease-in-out !i
     filter: drop-shadow(0 0 12px rgba(255, 215, 0, 0.8));
     display: inline-block;
 }
-
-/* ✨ 번쩍이는 섬광 애니메이션 */
-@keyframes gold-glint {
+        /* ✨ 번쩍이는 섬광 애니메이션 */
+        @keyframes gold-glint {
     0% { background-position: 0% 50%; }
     50% { background-position: 100% 50%; }
     100% { background-position: 0% 50%; }
 }
-
-/* 🚀 아이콘 뒤의 강렬한 스포트라이트 */
-.portal-door.active::before {
+        /* 🚀 아이콘 뒤의 강렬한 스포트라이트 */
+        .portal-door.active::before {
     content: '';
     position: absolute;
     width: 100px;
@@ -499,26 +463,23 @@ animation: gold-shine 2s linear infinite, mango-pulse 2s infinite ease-in-out !i
     filter: blur(15px);
     animation: pulse-glow 1.5s infinite alternate;
 }
-
-/* 맥박이 뛰는 듯한 광채 */
-@keyframes pulse-glow {
+        /* 맥박이 뛰는 듯한 광채 */
+        @keyframes pulse-glow {
     from { transform: scale(0.8); opacity: 0.5; }
     to { transform: scale(1.3); opacity: 1; }
 }
-
-/* 튀어오르는 듯한 생동감 */
-@keyframes portal-bounce {
+        /* 튀어오르는 듯한 생동감 */
+        @keyframes portal-bounce {
     0%, 100% { transform: translateY(0) scale(1.1); }
     50% { transform: translateY(-12px) scale(1.15); }
 }
-body {
+        body {
     display: flex;
     justify-content: center;
     background-color:  #000000; /* PC 배경색 */
 }
-
-/* [초고도화] 오뚜기(Wobble) 애니메이션 - <style> 태그 안 최하단에 복사 */
-@keyframes mango-ottugi-swing {
+        /* [초고도화] 오뚜기(Wobble) 애니메이션 - <style> 태그 안 최하단에 복사 */
+        @keyframes mango-ottugi-swing {
     0% { transform: rotate(0deg) scale(1); }
     20% { transform: rotate(-15deg) scale(1.1); }
     40% { transform: rotate(12deg) scale(1.05); }
@@ -526,8 +487,7 @@ body {
     80% { transform: rotate(4deg) scale(1.02); }
     100% { transform: rotate(0deg) scale(1); }
 }
-
-.mango-ottugi-active {
+        .mango-ottugi-active {
     animation: mango-ottugi-swing 2s cubic-bezier(0.45, 0, 0.55, 1) both;
     transform-origin: bottom center !important; /* 아래를 축으로 흔들림 */
 }
@@ -844,7 +804,7 @@ button, .confirm-btn, [class*="confirm"] {
             <div class="wind-layer" style="border: 12px solid transparent; border-top-color: #4DBCE9; border-bottom-color: #4DBCE9; border-radius: 50%; position: absolute; inset: 0; animation: spin-fast 1.5s linear infinite;"></div>
             <div class="wind-layer" style="border: 16px solid transparent; border-left-color: #A0E4FF; border-right-color: #A0E4FF; border-radius: 50%; position: absolute; inset: 30px; animation: spin-reverse 2s linear infinite; opacity: 0.8;"></div>
             <div class="wind-layer" style="border: 8px solid transparent; border-top-color: #1E90FF; border-radius: 50%; position: absolute; inset: 60px; animation: spin-fast 1s linear infinite;"></div>
-            <img src="assets/img/mango.jpg" 
+            <img src="/assets/mango-u5NpegBa.jpg" 
      id="main-mango-logo" 
 class="mango-logo-core rounded-[2.8rem]"     alt="Mango" 
 style="width: 140px; height: 140px; aspect-ratio: 1/1; object-fit: cover; z-index: 10; box-shadow: 0 10px 30px rgba(0,0,0,0.15); display: block;">
@@ -886,7 +846,7 @@ style="width: 140px; height: 140px; aspect-ratio: 1/1; object-fit: cover; z-inde
                         <button class="w-10 h-10 bg-white rounded-full flex items-center justify-center hover:scale-110 transition-transform"><img src="https://upload.wikimedia.org/wikipedia/commons/f/fa/Apple_logo_black.svg" alt="Apple" class="w-5 h-5"></button>
                         <button class="w-10 h-10 bg-[#0088cc] rounded-full flex items-center justify-center text-white hover:scale-110 transition-transform"><i data-lucide="send" class="w-5 h-5 ml-0.5 mt-0.5"></i></button>
                         <button class="w-10 h-10 bg-[#25D366] rounded-full flex items-center justify-center hover:scale-110 transition-transform"><img src="https://upload.wikimedia.org/wikipedia/commons/6/6b/WhatsApp.svg" alt="WhatsApp" class="w-6 h-6"></button>
-                        <button class="w-10 h-10 bg-white border border-gray-100 rounded-full flex items-center justify-center hover:scale-110 transition-transform overflow-hidden p-1 shadow-sm"><img src="assets/img/pinetwork.png" alt="Pi Network" class="w-full h-full object-contain"></button>
+                        <button class="w-10 h-10 bg-white border border-gray-100 rounded-full flex items-center justify-center hover:scale-110 transition-transform overflow-hidden p-1 shadow-sm"><img src="/assets/pinetwork-B5dOonyY.png" alt="Pi Network" class="w-full h-full object-contain"></button>
                     </div>
                 </div>
                 <!-- 2. My QR 섹션 -->
@@ -940,7 +900,7 @@ style="width: 140px; height: 140px; aspect-ratio: 1/1; object-fit: cover; z-inde
 <div class="mango-container flex justify-between items-center px-4 pt-6">
     <div class="flex items-center gap-3">
         <div class="logo-container" onclick="location.reload()" style="cursor: pointer;">
-            <img id="mango-charging-logo" src="assets/img/mango.jpg" 
+            <img id="mango-charging-logo" src="/assets/mango-u5NpegBa.jpg" 
      class="w-14 h-14 rounded-2xl border border-white/10 object-cover animate-mango-otogi transition-all duration-1000" 
      alt="mango Logo">
         </div>
@@ -1008,7 +968,7 @@ href='profile_dashboard.html'" class="relative group cursor-pointer">
         
         <span class="absolute text-3xl opacity-50">🩺</span>
 
-        <img src="assets/img/dental.png" 
+        <img src="/assets/dental-CML0DwDd.png" 
              onerror="this.src='https://images.unsplash.com/photo-1629909613654-28e377c37b09?w=200'; this.onerror=function(){this.style.opacity='0'};" 
              alt="망고치과" 
              class="absolute inset-0 w-full h-full object-cover z-10"
@@ -1027,7 +987,7 @@ href='profile_dashboard.html'" class="relative group cursor-pointer">
 <div class="h-[100px] flex items-center gap-4 px-5 cursor-pointer hover:bg-white/5 transition-all" onclick="openAdVideo('bakery')">
     <div class="w-14 h-14 flex-shrink-0 rounded-2xl bg-gradient-to-br from-orange-400 to-orange-700 flex items-center justify-center border border-orange-400/50 shadow-lg relative overflow-hidden">
         <span class="absolute text-3xl">🥐</span>
-        <img src="assets/img/bread.png" 
+        <img src="/assets/bread-DcUn1wRs.png" 
              onerror="this.src='assets/img/bread.jpg'; this.onerror=function(){this.src='https://images.unsplash.com/photo-1608198093002-ad4e005484ec?w=200'; this.onerror=function(){this.style.opacity='0'};};" 
              alt="망고브레드" 
              class="absolute inset-0 w-full h-full object-cover z-10">
@@ -1057,7 +1017,7 @@ href='profile_dashboard.html'" class="relative group cursor-pointer">
 <div class="h-[100px] flex items-center gap-4 px-5 cursor-pointer hover:bg-white/5 transition-all" onclick="openAdVideo('mobile')">
     <div class="w-14 h-14 flex-shrink-0 rounded-2xl bg-gradient-to-br from-zinc-700 to-black flex items-center justify-center border border-white/20 shadow-lg relative overflow-hidden">
         <span class="absolute text-3xl">📱</span>
-        <img src="assets/img/phone.png" 
+        <img src="/assets/phone-B-eRum_v.png" 
              onerror="this.src='assets/img/phone.jpg'; this.onerror=function(){this.src='https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?w=200'; this.onerror=function(){this.style.opacity='0'};};" 
              alt="망고모바일" 
              class="absolute inset-0 w-full h-full object-cover z-10">
@@ -1076,7 +1036,7 @@ href='profile_dashboard.html'" class="relative group cursor-pointer">
 <div class="h-[100px] flex items-center gap-4 px-5 cursor-pointer hover:bg-white/5 transition-all">
     <div class="w-14 h-14 flex-shrink-0 rounded-2xl bg-gradient-to-br from-amber-400 to-amber-700 flex items-center justify-center border border-amber-400/50 shadow-lg relative overflow-hidden">
         <span class="absolute text-3xl">🍺</span>
-        <img src="assets/img/kirin.png" 
+        <img src="/assets/kirin-F5s_LnW4.png" 
              onerror="this.src='assets/img/kirin.jpg'; this.onerror=function(){this.src='https://images.unsplash.com/photo-1612528443702-f6741f70a049?w=200'; this.onerror=function(){this.style.opacity='0'};};" 
              alt="기린 맥주" 
              class="absolute inset-0 w-full h-full object-cover z-10">
@@ -1108,7 +1068,7 @@ href='profile_dashboard.html'" class="relative group cursor-pointer">
         
         <span class="absolute text-3xl">🥬</span>
 
-        <img src="assets/img/kimchi.png" 
+        <img src="/assets/kimchi-Cw_taDGb.png" 
              onerror="this.src='assets/img/kimchi.jpg'; this.onerror=function(){this.src='https://cdn.pixabay.com/photo/2014/01/09/10/39/kimchi-241047_1280.jpg'; this.onerror=function(){this.style.opacity='0'};};" 
              alt="종가집 김치" 
              class="absolute inset-0 w-full h-full object-cover z-10">
@@ -1197,26 +1157,22 @@ function closeAuth() {
     document.body.style.overflow = 'auto'; // 배경 스크롤 해제
 }
 
-// B: 전체 화면 전환 방식 (최종 적용 코드)
 function openRealtyPortal() {
-    console.log("OS에서 REALTY 전체 화면으로 전환합니다.");
-    // 메인 화면을 훼손하지 않고, 독립된 전체 화면으로 즉시 이동합니다.
-    location.href = 'Realty/index.html';
-}
-     
-function closeRealtyPortal() {
-    const overlay = document.getElementById('realty-overlay');
-    if (!overlay) return;
-
-    overlay.classList.remove('active');
-    setTimeout(() => {
-        const wrapper = document.getElementById('portal-wrapper');
-        if (wrapper) {
-            wrapper.classList.add('hidden');
-            wrapper.innerHTML = '';
-        }
-        document.body.style.overflow = 'auto'; 
-    }, 600);
+    const portalContainer = document.getElementById('portal-wrapper');
+    
+    // 가로 폭 420px, 세로 850px 규격 엄수 및 하이엔드 라운딩(30px) 적용
+    const portalHtml = `
+        <div id="realty-window" class="relative bg-[#050505] border border-yellow-500/30 shadow-2xl opacity-0 transition-opacity duration-500 pointer-events-auto" 
+             style="width: 420px; height: 850px; border-radius: 30px; overflow: hidden;">
+            <iframe src="./Realty/index.html" class="w-full h-full border-none"></iframe>
+            <button onclick="document.getElementById('realty-window').remove(); document.body.style.overflow='auto';" 
+                    class="absolute top-6 right-6 w-10 h-10 rounded-full bg-black/50 backdrop-blur-md flex items-center justify-center text-white hover:bg-red-500/50 transition-colors">✕</button>
+        </div>
+    `;
+    
+    portalContainer.innerHTML = portalHtml;
+    document.body.style.overflow = 'hidden'; // 포털 오픈 시 메인 스크롤 방지
+    setTimeout(() => { document.getElementById('realty-window').style.opacity = '1'; }, 100);
 }
 
 function switchTab(tab) {
@@ -1586,7 +1542,7 @@ function cancelPress() {
 
                 <!-- 샤브20 서면점 -->
                 <div class="group relative aspect-[4/5] rounded-[1.8rem] overflow-hidden border border-white/10 bg-gray-900">
-                    <img src="./assets/img/shabu.jpg" class="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-110 opacity-50 group-hover:opacity-70">
+                    <img src="/assets/shabu-DUqsdGbz.jpg" class="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-110 opacity-50 group-hover:opacity-70">
                     <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent z-10"></div>
                     <div class="absolute bottom-0 left-0 right-0 p-4 z-20">
                         <span class="text-[8px] bg-amber-500 text-white px-1.5 py-0.5 rounded font-black mb-1 inline-block">PREMIUM</span>
@@ -1852,6 +1808,7 @@ const portalData = [
     // 2. [핵심] 0.5초 회전 후 목적지 이동
                 setTimeout(() => {
                     if (data.id === 'REALTY') {
+                        window.location.href = './Realty/index.html';
                         openRealtyPortal();
                     } else if (data.url) {
                         window.location.href = data.url;
