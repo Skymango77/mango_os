@@ -29,12 +29,25 @@
             padding: 20px; /* 폰 하단 바를 고려한 넉넉한 여백 */
         }        
         .text-metallic-gold {
-            background-image: linear-gradient(to right, #FFD700, #FFA500, #FFD700);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            color: transparent;
-        }
+    background-image: linear-gradient(to right, #FFD700, #FFA500, #FFD700);
+
+    /* 표준 + 웹킷 둘 다 */
+    background-clip: text;
+    -webkit-background-clip: text;
+
+    /* 텍스트 색 투명 처리 */
+    color: transparent;
+    -webkit-text-fill-color: transparent;
+
+    /* (선택) 더 반짝이는 효과 */
+    background-size: 200% auto;
+    animation: goldShine 3s linear infinite;
+}
+
+@keyframes goldShine {
+    0% { background-position: 0% center; }
+    100% { background-position: 200% center; }
+}
 
         .service-icon {
             width: 100%;
@@ -54,13 +67,18 @@
             position: relative;
             overflow: visible;
             margin-bottom: 40px;   /* 추가 */
-            
+            position: relative;
+            z-index: 10;
         }
     </style>
 </head>
 <body class="m-0 p-0 overflow-y-auto">
 
-    <div class="fixed inset-0 bg-gradient-to-br from-gray-950 to-gray-800 -z-20"></div>
+<div class="text-xs text-yellow-400 font-bold">
+    POINT: <span id="point-balance">0 P</span>
+</div>
+
+<div class="fixed inset-0 bg-gradient-to-br from-gray-950 to-gray-800 -z-20 pointer-events-none"></div>
 
     <div class="center-wrapper">
         <div id="transfer_portal" class="mango-window">
@@ -170,15 +188,18 @@
 </style>
 
     <div class="grid grid-cols-2 gap-4">
-    
-    <a href="./mango_taxi_dashboard.html" class="group block bg-gray-800/40 p-4 rounded-2xl border border-gray-700 hover:border-orange-500 transition-all">
+             <!-- 망고 택시 서비스 -->
+
+    <a href="./mango_taxi_dashboard.html" class="group block bg-gray-800/40 p-4 rounded-2xl border border-gray-700 hover:border-orange-500 transition-all"
+    style="touch-action: manipulation;">
     <div class="w-24 h-24 mx-auto mb-2 flex items-center justify-center overflow-hidden">
         <img src="/assets/img/Mango-Taxi.png" alt="Taxi" class="w-full h-full object-contain group-hover:scale-110 transition-transform">
     </div>
     <p class="text-white text-xs font-bold text-center">망고택시</p>
 </a>
          <!-- 퀵서비스 -->
-    <a href="./mango_quick_dashboard.html" class="group block bg-gray-800/40 p-4 rounded-2xl border border-gray-700 hover:border-orange-500 transition-all">
+    <a href="./mango_quick_dashboard.html" class="group block bg-gray-800/40 p-4 rounded-2xl border border-gray-700 hover:border-orange-500 transition-all"
+    style="touch-action: manipulation;">
         <div class="w-24 h-24 mx-auto mb-2 flex items-center justify-center overflow-hidden">
             <img src="/assets/img/Quick-Service.png" class="w-full h-full object-contain group-hover:scale-110 transition-transform">
         </div>
@@ -187,7 +208,9 @@
 
 
     <!-- 포장이사 -->
-    <a href="./mango_moving_dashboard.html" class="group block bg-gray-800/40 p-4 rounded-2xl border border-gray-700 hover:border-orange-500 transition-all">
+    <a href="./mango_moving_dashboard.html" 
+    class="group block bg-gray-800/40 p-4 rounded-2xl border border-gray-700 hover:border-orange-500 transition-all"
+    style="touch-action: manipulation;">
         <div class="w-24 h-24 mx-auto mb-2 flex items-center justify-center overflow-hidden">
             <img src="/assets/img/packing_mover.png" class="w-full h-full object-contain group-hover:scale-110 transition-transform">
         </div>
@@ -195,7 +218,7 @@
     </a>
 
     <!-- 화물운송 -->
-    <a href="./mango_freight_dashboard.html" class="group block bg-gray-800/40 p-4 rounded-2xl border border-gray-700 hover:border-orange-500 transition-all">
+    <a href="./mango_freight_dashboard.html" class="group block bg-gray-800/40 p-4 rounded-2xl border border-gray-700 hover:border-orange-500 transition-all"style="touch-action: manipulation;">
         <div class="w-24 h-24 mx-auto mb-2 flex items-center justify-center overflow-hidden">
             <img src="/assets/img/Freight.png" class="w-full h-full object-contain group-hover:scale-110 transition-transform">
         </div>
@@ -203,7 +226,9 @@
     </a>
 
     <!-- 구매대행 -->
-    <a href="./mango_proxy_dashboard.html" class="group block bg-gray-800/40 p-4 rounded-2xl border border-gray-700 hover:border-orange-500 transition-all">
+    <a href="./mango_proxy_dashboard.html" 
+    class="group block bg-gray-800/40 p-4 rounded-2xl border border-gray-700 hover:border-orange-500 transition-all"
+    style="touch-action: manipulation;">
         <div class="w-24 h-24 mx-auto mb-2 flex items-center justify-center overflow-hidden">
             <img src="/assets/img/Proxy-Buy.png" class="w-full h-full object-contain group-hover:scale-110 transition-transform">
         </div>
@@ -211,7 +236,9 @@
     </a>
 
     <!-- 중장비 -->
-    <a href="./mango_heavy_dashboard.html" class="group block bg-gray-800/40 p-4 rounded-2xl border border-gray-700 hover:border-orange-500 transition-all">
+    <a href="./mango_heavy_dashboard.html" 
+    class="group block bg-gray-800/40 p-4 rounded-2xl border border-gray-700 hover:border-orange-500 transition-all"
+    style="touch-action: manipulation;">
         <div class="w-24 h-24 mx-auto mb-2 flex items-center justify-center overflow-hidden">
             <img src="/assets/img/Heavy-Equipment.png" class="w-full h-full object-contain group-hover:scale-110 transition-transform">
         </div>
@@ -229,11 +256,20 @@
         </div>
 
         <div class="flex gap-2 mb-4">
-            <button id="btn-testnet" onclick="setPaymentMode(true)" class="flex-1 py-3 rounded-xl text-[10px] font-black transition-all bg-orange-500 text-black shadow-[0_0_15px_rgba(249,115,22,0.4)]">TESTNET</button>
-            <button id="btn-mainnet" onclick="setPaymentMode(false)" class="flex-1 py-3 rounded-xl text-[10px] font-black transition-all bg-gray-800 text-gray-500 border border-gray-700">MAINNET</button>
-        </div>
+<button id="btn-testnet"
+        onclick="setMode('testnet')"
+        class="flex-1 py-3 rounded-xl text-[10px] font-black transition-all bg-orange-500 text-black shadow-[0_0_15px_rgba(249,115,22,0.4)]">
+        TESTNET
+    </button>
 
-        <button onclick="processMangoPayment()" class="w-full bg-gradient-to-r from-orange-500 to-yellow-600 text-black py-4 rounded-2xl font-black text-sm hover:scale-[1.02] active:scale-95 transition-all shadow-lg">
+    <button id="btn-mainnet"
+        onclick="setMode('mainnet')"
+        class="flex-1 py-3 rounded-xl text-[10px] font-black transition-all bg-gray-800 text-gray-500 border border-gray-700">
+        MAINNET
+    </button>
+</div>
+
+        <button onclick="goPayment()" class="w-full bg-gradient-to-r from-orange-500 to-yellow-600 text-black py-4 rounded-2xl font-black text-sm hover:scale-[1.02] active:scale-95 transition-all shadow-lg">
             PROCEED PAYMENT
         </button>
     </div>
@@ -318,14 +354,22 @@
                         });
                     },
                     onReadyForServerCompletion: (paymentId, txid) => {
-                        return fetch('https://mango-os-6xu2.vercel.app/api/complete', {
-                            method: 'POST',
-                            headers: { 'Content-Type': 'application/json' },
-                            body: JSON.stringify({ paymentId, txid })
-                        }).then(() => {
-                            showToast("✅ 결제가 완료되었습니다!");
-                        });
-                    },
+    return fetch('https://mango-os-6xu2.vercel.app/api/complete', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ paymentId, txid })
+    }).then(() => {
+
+        // 🔥 포인트 지급 UI 반영
+        let point = parseFloat(localStorage.getItem("mangoPoint") || "0");
+        point += 0.001;  // 👉 예: 0.001 포인트 지급
+        localStorage.setItem("mangoPoint", point);
+
+        updatePointUI();
+
+        showToast("✅ 결제 완료 + 0.001P 지급!");
+    });
+},
                     onCancel: (pId) => showToast("❌ 결제 취소"),
                     onError: (err) => showToast("⚠️ 에러: " + err.message)
                 });
@@ -379,5 +423,58 @@
         }
 // [끝점]
     </script>
+    <script>
+document.querySelectorAll('a').forEach(el => {
+    el.addEventListener('touchstart', function(){}, {passive:true});
+});
+</script>
+
+
+<script>
+let mode = "testnet";
+
+function setMode(selected) {
+    mode = selected;
+
+    const testBtn = document.getElementById("btn-testnet");
+    const mainBtn = document.getElementById("btn-mainnet");
+
+    if (selected === "testnet") {
+        testBtn.classList.add("bg-orange-500", "text-black");
+        testBtn.classList.remove("bg-gray-800", "text-gray-500");
+
+        mainBtn.classList.add("bg-gray-800", "text-gray-500");
+        mainBtn.classList.remove("bg-orange-500", "text-black");
+    } else {
+        mainBtn.classList.add("bg-orange-500", "text-black");
+        mainBtn.classList.remove("bg-gray-800", "text-gray-500");
+
+        testBtn.classList.add("bg-gray-800", "text-gray-500");
+        testBtn.classList.remove("bg-orange-500", "text-black");
+    }
+}
+</script>
+<script>
+function goPayment() {
+    alert("현재 모드: " + mode);
+
+    if (mode === "testnet") {
+        processMangoPayment();  // 👉 실제 Pi 결제 실행
+    } else {
+        processMangoPayment();  // 👉 동일 (sandbox false로 처리됨)
+    }
+}
+
+function updatePointUI() {
+    const el = document.getElementById("point-balance");
+    if(!el) return;
+
+    const point = localStorage.getItem("mangoPoint") || "0";
+    el.textContent = point + " P";
+}
+
+
+
+</script>
 </body>
 </html>
