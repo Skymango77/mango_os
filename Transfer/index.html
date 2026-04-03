@@ -16,14 +16,17 @@
             min-height: 100vh; 
             /* hidden을 auto로 변경하여 스크롤 허용 */
         }
-        body::-webkit-scrollbar { display: none; }
+        body::-webkit-scrollbar {
+    width: 0px;
+    height: 0px;
+}
         .center-wrapper { 
             display: flex; 
             justify-content: center; 
             align-items: flex-start; /* 내용이 길면 위에서부터 시작 */
             min-height: 100vh; 
             width: 100vw; 
-            padding: 20px 15px 100px 15px; /* 폰 하단 바를 고려한 넉넉한 여백 */
+            padding: 20px; /* 폰 하단 바를 고려한 넉넉한 여백 */
         }        
         .text-metallic-gold {
             background-image: linear-gradient(to right, #FFD700, #FFA500, #FFD700);
@@ -49,10 +52,13 @@
             padding: 2rem 1.5rem;            padding-bottom: 5rem; /* 하단 버튼 뒤 여유 공간 확보 */
             box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
             position: relative;
-            overflow: visible; /* 내부 내용이 잘리지 않도록 visible 설정 */        }
+            overflow: visible;
+            margin-bottom: 40px;   /* 추가 */
+            
+        }
     </style>
 </head>
-<body class="m-0 p-0 overflow-hidden">
+<body class="m-0 p-0 overflow-y-auto">
 
     <div class="fixed inset-0 bg-gradient-to-br from-gray-950 to-gray-800 -z-20"></div>
 
@@ -165,47 +171,52 @@
 
     <div class="grid grid-cols-2 gap-4">
     
-    <div onclick="location.href='./mango_taxi_dashboard.html'" 
-     class="group bg-gray-800/40 p-4 rounded-2xl border border-gray-700 hover:border-orange-500 transition-all cursor-pointer">
+    <a href="./mango_taxi_dashboard.html" class="group block bg-gray-800/40 p-4 rounded-2xl border border-gray-700 hover:border-orange-500 transition-all">
     <div class="w-24 h-24 mx-auto mb-2 flex items-center justify-center overflow-hidden">
         <img src="/assets/img/Mango-Taxi.png" alt="Taxi" class="w-full h-full object-contain group-hover:scale-110 transition-transform">
     </div>
     <p class="text-white text-xs font-bold text-center">망고택시</p>
-</div>
-        <div onclick="location.href='mango_quick_dashboard.html'" class="group bg-gray-800/40 p-4 rounded-2xl border border-gray-700 hover:border-orange-500 transition-all cursor-pointer">
-        <div class="w-20 h-20 mx-auto mb-2 flex items-center justify-center overflow-hidden">
-            <img src="../assets/img/Quick-Service.png" alt="Quick" class="w-full h-full object-contain group-hover:scale-110 transition-transform">
+</a>
+         <!-- 퀵서비스 -->
+    <a href="./mango_quick_dashboard.html" class="group block bg-gray-800/40 p-4 rounded-2xl border border-gray-700 hover:border-orange-500 transition-all">
+        <div class="w-24 h-24 mx-auto mb-2 flex items-center justify-center overflow-hidden">
+            <img src="/assets/img/Quick-Service.png" class="w-full h-full object-contain group-hover:scale-110 transition-transform">
         </div>
         <p class="text-white text-xs font-bold text-center">퀵서비스</p>
-    </div>
+    </a>
 
-    <div onclick="location.href='mango_moving_dashboard.html'" class="group bg-gray-800/40 p-4 rounded-2xl border border-gray-700 hover:border-orange-500 transition-all cursor-pointer">
-        <div class="w-20 h-20 mx-auto mb-2 flex items-center justify-center overflow-hidden">
-            <img src="../assets/img/packing_mover.png" alt="Moving" class="w-full h-full object-contain group-hover:scale-110 transition-transform">
+
+    <!-- 포장이사 -->
+    <a href="./mango_moving_dashboard.html" class="group block bg-gray-800/40 p-4 rounded-2xl border border-gray-700 hover:border-orange-500 transition-all">
+        <div class="w-24 h-24 mx-auto mb-2 flex items-center justify-center overflow-hidden">
+            <img src="/assets/img/packing_mover.png" class="w-full h-full object-contain group-hover:scale-110 transition-transform">
         </div>
         <p class="text-white text-xs font-bold text-center">포장이사</p>
-    </div>
+    </a>
 
-    <div onclick="location.href='mango_freight_dashboard.html'" class="group bg-gray-800/40 p-4 rounded-2xl border border-gray-700 hover:border-orange-500 transition-all cursor-pointer">
-        <div class="w-20 h-20 mx-auto mb-2 flex items-center justify-center overflow-hidden">
-            <img src="../assets/img/Freight.png" alt="Freight" class="w-full h-full object-contain group-hover:scale-110 transition-transform">
+    <!-- 화물운송 -->
+    <a href="./mango_freight_dashboard.html" class="group block bg-gray-800/40 p-4 rounded-2xl border border-gray-700 hover:border-orange-500 transition-all">
+        <div class="w-24 h-24 mx-auto mb-2 flex items-center justify-center overflow-hidden">
+            <img src="/assets/img/Freight.png" class="w-full h-full object-contain group-hover:scale-110 transition-transform">
         </div>
         <p class="text-white text-xs font-bold text-center">화물운송</p>
-    </div>
+    </a>
 
-    <div onclick="location.href='mango_proxy_dashboard.html'" class="group bg-gray-800/40 p-4 rounded-2xl border border-gray-700 hover:border-orange-500 transition-all cursor-pointer">
-        <div class="w-20 h-20 mx-auto mb-2 flex items-center justify-center overflow-hidden">
-            <img src="../assets/img/Proxy-Buy.png" alt="Proxy" class="w-full h-full object-contain group-hover:scale-110 transition-transform">
+    <!-- 구매대행 -->
+    <a href="./mango_proxy_dashboard.html" class="group block bg-gray-800/40 p-4 rounded-2xl border border-gray-700 hover:border-orange-500 transition-all">
+        <div class="w-24 h-24 mx-auto mb-2 flex items-center justify-center overflow-hidden">
+            <img src="/assets/img/Proxy-Buy.png" class="w-full h-full object-contain group-hover:scale-110 transition-transform">
         </div>
-        <p class="text-white text-xs font-bold text-center">구매 대행</p>
-    </div>
+        <p class="text-white text-xs font-bold text-center">구매대행</p>
+    </a>
 
-    <div onclick="location.href='mango_heavy_dashboard.html'" class="group bg-gray-800/40 p-4 rounded-2xl border border-gray-700 hover:border-orange-500 transition-all cursor-pointer">
-        <div class="w-20 h-20 mx-auto mb-2 flex items-center justify-center overflow-hidden">
-            <img src="../assets/img/Heavy-Equipment.png" alt="Heavy" class="w-full h-full object-contain group-hover:scale-110 transition-transform">
+    <!-- 중장비 -->
+    <a href="./mango_heavy_dashboard.html" class="group block bg-gray-800/40 p-4 rounded-2xl border border-gray-700 hover:border-orange-500 transition-all">
+        <div class="w-24 h-24 mx-auto mb-2 flex items-center justify-center overflow-hidden">
+            <img src="/assets/img/Heavy-Equipment.png" class="w-full h-full object-contain group-hover:scale-110 transition-transform">
         </div>
         <p class="text-white text-xs font-bold text-center">중장비 배차</p>
-    </div>
+    </a>
 </div>
 
     <div class="mt-8 bg-black/60 p-5 rounded-[2rem] border border-orange-500/30 shadow-2xl">
