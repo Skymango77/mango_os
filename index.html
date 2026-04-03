@@ -680,6 +680,41 @@ body {
         </div>
     </div>
 </div>
+
+<div id="upload-modal" class="hidden fixed inset-0 z-[100] bg-black/90 backdrop-blur-xl flex-col p-8">
+    <div class="flex justify-between items-center mb-8">
+        <h2 class="text-2xl font-black italic text-yellow-500 uppercase">List Your Property</h2>
+        <button onclick="toggleUploadModal()" class="text-white opacity-50"><i data-lucide="x"></i></button>
+    </div>
+    
+    <div class="space-y-4 overflow-y-auto pb-20">
+        <div class="group bg-white/5 border border-white/10 p-4 rounded-3xl">
+            <p class="text-[10px] font-bold text-gray-500 mb-2 uppercase">Property Photo URL</p>
+            <input id="new-img" type="text" placeholder="https://..." class="w-full bg-transparent border-none text-white text-sm focus:ring-0">
+        </div>
+        <div class="group bg-white/5 border border-white/10 p-4 rounded-3xl">
+            <p class="text-[10px] font-bold text-gray-500 mb-2 uppercase">Property Title</p>
+            <input id="new-title" type="text" placeholder="매물명을 입력하세요" class="w-full bg-transparent border-none text-white text-sm focus:ring-0">
+        </div>
+        <div class="group bg-white/5 border border-white/10 p-4 rounded-3xl">
+            <p class="text-[10px] font-bold text-gray-500 mb-2 uppercase">Price (π)</p>
+            <input id="new-price" type="number" oninput="calculateFee(this.value)" placeholder="가격 입력" class="w-full bg-transparent border-none text-white text-sm focus:ring-0">
+        </div>
+        
+        <div class="bg-yellow-500/10 border border-yellow-500/20 p-6 rounded-[2.5rem]">
+            <div class="flex justify-between items-center mb-2">
+                <span class="text-[11px] font-black text-yellow-500 italic">Platform Fee (3%)</span>
+                <span id="fee-display" class="text-lg font-black text-white">0 π</span>
+            </div>
+            <p class="text-[9px] text-gray-500 font-medium leading-tight">소비자와 집주인, 협력업체 간의 안전 거래를 위한 망고 플랫폼 수수료입니다.</p>
+        </div>
+
+        <button onclick="addNewProperty()" class="w-full bg-yellow-500 text-black py-5 rounded-[2rem] font-black italic shadow-lg active:scale-95 transition-all">
+            REGISTER PROPERTY
+        </button>
+    </div>
+</div>
+
 <style>
     /* 1. 모든 카드 및 뉴스창 너비 430px 통일 (대표님 요청 사항 완벽 준수) */
     .mango-container, .glass, .banner-item, #detail-modal, #partner-modal > div, 
@@ -3334,6 +3369,57 @@ function onIncompletePaymentFound(payment) {
     }
 });
 
+// [함수] 매물 등록 모달 토글
+function toggleUploadModal() {
+    const modal = document.getElementById('upload-modal');
+    modal.classList.toggle('hidden');
+    modal.classList.toggle('flex');
+    lucide.createIcons();
+}
+
+// [함수] 실시간 수수료 계산 (3% 기준)
+function calculateFee(price) {
+    const feeDisplay = document.getElementById('fee-display');
+    if(!price || price <= 0) {
+        feeDisplay.innerText = "0 π";
+        return;
+    }
+    const fee = (parseFloat(price) * 0.03).toFixed(2);
+    feeDisplay.innerText = `${fee} π`;
+}
+
+// [함수] 실제 데이터 추가 (전 세계 검색 리스트에 즉시 반영)
+function addNewProperty() {
+    const title = document.getElementById('new-title').value;
+    const price = document.getElementById('new-price').value;
+    const img = document.getElementById('new-img').value;
+
+    if(!title || !price) {
+        alert("매물명과 가격을 확인해 주세요.");
+        return;
+    }
+
+    const newId = REALTY_DATA.length + 1;
+    const newEntry = {
+        id: newId,
+        title: title,
+        price: parseFloat(price).toLocaleString(),
+        location: "Global Registered",
+        view: "User Added",
+        tag: "DIRECT",
+        desc: "집주인이 직접 등록한 실매물입니다. 협력업체 인증 완료.",
+        area: "TBD",
+        safety: "Verifying",
+        img: img || "https://images.unsplash.com/photo-1560518883-ce09059eeffa?auto=format&fit=crop&w=800",
+        isSold: false
+    };
+
+    // 데이터셋에 추가 및 즉시 렌더링
+    REALTY_DATA.unshift(newEntry); // 최상단에 추가
+    renderRealtyList();
+    toggleUploadModal();
+    alert("새 매물이 전 세계 망고 네트워크에 등록되었습니다!");
+}
     </script>
 </body>
 </html>

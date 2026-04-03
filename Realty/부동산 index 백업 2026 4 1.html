@@ -25,33 +25,6 @@
 .animate-scroll-up {
     animation: scroll-up 9s infinite ease-in-out;
 }
-
-/* AI Chat 메시지 스타일 보정 */
-.user-msg { 
-    align-self: flex-end; 
-    background: #fbbf24; 
-    color: black; 
-    padding: 10px 16px; 
-    border-radius: 1.5rem 1.5rem 0 1.5rem; 
-    font-size: 11px; 
-    font-weight: 800; 
-    max-width: 80%; 
-    margin-left: auto;
-    margin-bottom: 10px;
-}
-.ai-msg { 
-    align-self: flex-start; 
-    background: #1a1a1a; 
-    color: white; 
-    padding: 15px; 
-    border-radius: 0 1.5rem 1.5rem 1.5rem; 
-    font-size: 11px; 
-    border: 1px solid rgba(251, 191, 36, 0.2); 
-    max-width: 85%; 
-    line-height: 1.6;
-    margin-bottom: 10px;
-}
-#ai-chat-log { display: flex; flex-direction: column; }
     </style>
 </head>
 <body class="text-white min-h-screen flex items-center justify-center p-4">
@@ -66,12 +39,7 @@
                         <span class="absolute -top-1 -right-1 w-4 h-4 bg-green-500 border-2 border-black rounded-full shadow-lg"></span>
                     </div>
                     <div>
-                        <div class="flex items-center">
-                            <h1 class="text-xl font-black italic tracking-tighter text-yellow-500 leading-none">REALTY APP</h1>
-                            <span class="ml-3 px-2 py-1 bg-gradient-to-r from-yellow-600/20 to-yellow-400/20 border border-yellow-500/50 rounded-full text-[10px] font-black italic text-yellow-500 tracking-widest shadow-[0_0_10px_rgba(234,179,8,0.2)]">
-                                ✨ MANGO AI
-                            </span>
-                        </div>
+                        <h1 class="text-xl font-black italic tracking-tighter text-yellow-500 leading-none">REALTY APP</h1>
                         <div class="flex items-center gap-2 mt-1.5">
                             <span class="bg-yellow-500/10 text-yellow-500 text-[8px] px-2 py-0.5 rounded-full font-bold border border-yellow-500/20">PREMIUM</span>
                             <p class="text-[9px] text-gray-500 uppercase tracking-[0.2em]">AI Property Ecosystem</p>
@@ -275,20 +243,6 @@ async function processSettlement(amount, agencyId) {
         // 🚀 가장 안정적인 Unsplash 초고화질 링크 적용
         img: "https://images.unsplash.com/photo-1582407947304-fd86f028f716?auto=format&fit=crop&w=1200&q=80", 
         isSold: false 
-    },
-    // [시연용 글로벌 매물 추가]
-    { 
-        id: 99, 
-        title: "Sydney Harbour Residence", 
-        price: "850,000", 
-        location: "Sydney, Australia", 
-        view: "OCEAN VIEW", 
-        tag: "GLOBAL PRESTIGE", 
-        desc: "오페라 하우스가 한눈에 들어오는 시드니 최고의 명당.", 
-        area: "165 SQM", 
-        safety: "S Grade", 
-        img: "https://images.unsplash.com/photo-1506973035872-a4ec16b8e8d9?q=80&w=1200", 
-        isSold: false 
     }
 ];
 
@@ -310,18 +264,15 @@ function renderRealtyList(filter = 'ALL LIST', keyword = '') {
     const filteredData = REALTY_DATA.filter(item => {
         // 1. 카테고리 필터 체크
         let matchFilter = true;
-        if (filter === 'LOW PRICE') {
-            const priceStr = String(item.price || "0").replace(/,/g, '');
-            matchFilter = parseFloat(priceStr) < 100000;
-        } else if (filter === 'OCEAN VIEW') {
-            matchFilter = String(item.view || "").toUpperCase().includes('OCEAN');
+        if(filter === 'LOW PRICE') {
+            matchFilter = parseFloat(item.price.replace(',', '')) < 100000;
+        } else if(filter === 'OCEAN VIEW') {
+            matchFilter = item.view.toUpperCase().includes('OCEAN');
         }
 
-        // 2. '초고도화된 글로벌 다중 키워드 검색 엔진' 적용
-        const searchTarget = `${item.title || ""} ${item.location || ""} ${item.desc || ""} ${item.tag || ""}`.toLowerCase();
-        const keywords = keyword.trim().toLowerCase().split(/\s+/).filter(k => k !== "");
-        // 모든 키워드가 포함되어야 true 반환 (AND 검색)
-        let matchKeyword = keywords.every(k => searchTarget.includes(k));
+        // 2. 전 세계 키워드 검색 (제목, 위치, 상세설명 통합 검색)
+        const searchTarget = `${item.title} ${item.location} ${item.desc}`.toLowerCase();
+        let matchKeyword = searchTarget.includes(keyword.toLowerCase());
 
         return matchFilter && matchKeyword;
     });
@@ -640,111 +591,6 @@ function startPiPayment(amount, title) {
     }
 }
 
-// [좌표: <script> 내부 최하단] MANGO AI 컨시어지 로직
-
-// 1. AI 챗봇 창 열기/닫기
-function toggleAiChat() {
-    const modal = document.getElementById('ai-chat-modal');
-    modal.classList.toggle('hidden');
-    modal.classList.toggle('flex');
-    lucide.createIcons();
-}
-
-// [초고도화] Mango AI 투자 자문 & 환율 엔진 (realtyAI.js 통합)
-const EXCHANGE_RATE = { KRW: 1350, USD: 1, SGD: 1.34 }; // Pi -> 국가별 환율 예시
-
-// [시작점] AI 메시지 처리 및 데이터 연동 고도화
-function sendAiMessage() {
-    const input = document.getElementById('ai-chat-input');
-    const log = document.getElementById('ai-chat-log');
-    const msg = input.value.trim();
-    if(!msg) return;
-// 사용자 메시지 출력
-    log.innerHTML += `<div class="user-msg">${msg}</div>`;
-    input.value = '';
-    
-    const chatLog = document.getElementById('ai-chat-log');
-    chatLog.innerHTML += `<div class="user-msg">${msg}</div>`; // 사용자 메시지 출력
-    input.value = '';
-
-    setTimeout(() => {
-        // 1. 키워드 정제 및 매물 검색
-        const cleanKeyword = msg.replace(/(찾아줘|보여줘|알려줘|계산해|어때|분석해)/g, '').trim();
-        const found = REALTY_DATA.find(d => 
-            d.title.toLowerCase().includes(cleanKeyword.toLowerCase()) || 
-            d.location.toLowerCase().includes(cleanKeyword.toLowerCase())
-        );
-
-        let aiReply = "";
-
-        if (found) {
-            // 2. realtyAI.js 분석 엔진 이식 (ROI 및 환율 계산)
-            const priceNum = parseFloat(found.price.replace(/,/g, ''));
-            // 수익률 계산: 월세(가격의 0.55%) * 12개월 / 매매가 * 100
-            const roi = ((priceNum * 0.0055 * 12) / priceNum * 100).toFixed(1);
-            const krwPrice = (priceNum * 1350).toLocaleString(); // 1 Pi = 1350 KRW 기준
-
-            aiReply = `VVIP 고객님, <b>'${found.title}'</b> 매물에 대한 AI 정밀 분석입니다.<br><br>` +
-                      `• 분석 수익률: <span class="text-yellow-500">${roi}% (연간 추정)</span><br>` +
-                      `• 한화 가치: 약 ₩${krwPrice}<br>` +
-                      `• 자산 등급: <span class="text-blue-400">${found.safety}</span><br><br>` +
-                      `• <b>AI 진단:</b> ${found.location} 지역의 희소성을 고려할 때, 현재 Pi 가치 대비 매우 강력한 매수 신호를 보이고 있습니다.`;
-            
-            // 메인 리스트 동기화
-            searchRealty(cleanKeyword); 
-        } else {
-            aiReply = `죄송합니다. <b>'${cleanKeyword}'</b> 관련 매물을 망고 네트워크에서 찾지 못했습니다. "시드니"나 "해운대" 같은 지역명으로 다시 문의해 주시겠습니까?`;
-        }
-
-        log.innerHTML += `<div class="ai-msg">${aiReply}</div>`;
-        log.scrollTop = log.scrollHeight;
-        if(window.lucide) lucide.createIcons();
-    }, 600);
-}
-// AI 챗봇 스타일링 (실제 프로젝트에서는 CSS 파일로 분리 권장)
-const style = document.createEElement('style');style.textContent =
-    `
-        .user-msg {
-            background-color: #1a1a1a;
-            border-color: #fbbf24;
-        }
-        .ai-msg {
-            background-color: #2a2a2a;
-            border-color: #fbbf24;
-        }
-    `;
-document.head.appendChild(style);
 </script>
-<div id="ai-chat-modal" class="hidden fixed inset-0 z-[100] bg-black/80 backdrop-blur-sm flex-col justify-end sm:p-6 sm:justify-center items-center">
-    <div class="w-full h-[80vh] sm:h-[600px] sm:w-[420px] bg-[#0a0a0a] sm:rounded-[2rem] rounded-t-[2rem] border border-yellow-500/20 flex flex-col overflow-hidden relative shadow-2xl">
-        
-        <div class="p-4 border-b border-white/10 flex justify-between items-center bg-white/5">
-            <div class="flex items-center gap-2">
-                <i data-lucide="bot" class="text-yellow-500 w-5 h-5"></i>
-                <span class="text-yellow-500 font-black italic tracking-widest">MANGO AI</span>
-            </div>
-            <button onclick="toggleAiChat()" class="text-gray-400 hover:text-white transition-colors"><i data-lucide="x" class="w-5 h-5"></i></button>
-        </div>
-
-        <div id="ai-chat-log" class="flex-1 overflow-y-auto p-4 space-y-4">
-            <div class="bg-white/10 text-white text-xs font-medium leading-relaxed p-4 rounded-3xl rounded-tl-none w-[85%] border border-white/5">
-                VVIP 고객님, 환영합니다. 망고 글로벌 부동산 AI 컨시어지입니다.<br><br>어떤 하이엔드 매물을 찾으시나요?<br><span class="text-gray-400 text-[10px] mt-2 block">(예: "시드니 오션뷰 찾아줘", "10만 파이 이하 매물 보여줘")</span>
-            </div>
-        </div>
-
-        <div class="p-4 border-t border-white/10 flex gap-3 bg-black/50">
-            <input type="text" id="ai-chat-input" onkeypress="if(event.key === 'Enter') sendAiMessage()" placeholder="AI에게 물어보세요..." class="flex-1 bg-white/5 border border-white/10 rounded-full px-5 text-xs text-white focus:outline-none focus:border-yellow-500/50 transition-colors">
-            <button onclick="sendAiMessage()" class="bg-yellow-500 text-black p-3 rounded-full shadow-[0_0_15px_rgba(234,179,8,0.3)] hover:scale-105 transition-transform"><i data-lucide="send" class="w-4 h-4"></i></button>
-        </div>
-    </div>
-</div>
-<button onclick="toggleAiChat()" 
-        class="fixed bottom-[100px] right-5 z-[9999] group hover:scale-110 transition-all duration-300 drop-shadow-[0_0_15px_rgba(255,215,0,0.6)]">
-    <img src="../assets/img/Mango_gold.jpg" alt="Mango AI" class="w-16 h-16 rounded-full border-2 border-yellow-500/50 shadow-lg group-hover:rotate-12 transition-transform">
-    <span class="absolute -top-1 -right-1 flex h-4 w-4">
-        <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-yellow-400 opacity-75"></span>
-        <span class="relative inline-flex rounded-full h-4 w-4 bg-yellow-500 border border-black"></span>
-    </span>
-</button>
 </body>
 </html>
