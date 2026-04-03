@@ -47,11 +47,11 @@
         <div class="text-center space-y-2">
             <p class="text-xs font-bold text-yellow-100 uppercase tracking-widest">Test Payment</p>
             <p class="text-4xl font-black">0.01 <span class="text-2xl">π</span></p>
-            <p class="text-[10px] text-yellow-100 opacity-70 italic">Testnet 전용 (실제 파이가 소모되지 않습니다)</p>
+            <p class="text-[10px] text-yellow-100 opacity-70 italic">Mainnet Live (실제 파이가 결제됩니다)</p>
         </div>
         
         <button id="pay-button" onclick="payWithPi()" class="w-full mt-6 bg-black text-white py-4 rounded-2xl font-black text-lg hover:scale-105 transition-all shadow-xl">
-            PAY WITH TEST-PI
+            PAY WITH REAL PI
         </button>
     </div>
 
@@ -60,6 +60,34 @@
     </footer>
 </div>
 
+<div id="ai-chat-modal" class="hidden fixed inset-0 z-[100] bg-black/80 backdrop-blur-sm flex-col justify-end sm:p-6 sm:justify-center items-center">
+    <div class="w-full h-[80vh] sm:h-[600px] sm:w-[420px] bg-[#0a0a0a] sm:rounded-[2rem] rounded-t-[2rem] border border-yellow-500/20 flex flex-col overflow-hidden relative shadow-2xl">
+        <div class="p-4 border-b border-white/10 flex justify-between items-center bg-white/5">
+            <div class="flex items-center gap-2">
+                <span class="text-yellow-500 font-black italic tracking-widest">MANGO AI PROFILE</span>
+            </div>
+            <button onclick="toggleAiChat()" class="text-gray-400 hover:text-white transition-colors">X</button>
+        </div>
+        <div id="ai-chat-log" class="flex-1 overflow-y-auto p-4 space-y-4 flex flex-col">
+            <div class="bg-white/10 text-white text-xs font-medium leading-relaxed p-4 rounded-3xl rounded-tl-none w-[85%] border border-white/5 ai-msg">
+                VVIP 고객님, 마이페이지 AI 컨시어지입니다.<br><br>결제 내역, 망고 생태계 상태, 혹은 메인넷 파이(π) 송금에 대해 무엇이든 물어보세요.
+            </div>
+        </div>
+        <div class="p-4 border-t border-white/10 flex gap-3 bg-black/50">
+            <input type="text" id="ai-chat-input" onkeypress="if(event.key === 'Enter') sendAiMessage()" placeholder="AI에게 물어보세요..." class="flex-1 bg-white/5 border border-white/10 rounded-full px-5 text-xs text-white focus:outline-none focus:border-yellow-500/50">
+            <button onclick="sendAiMessage()" class="bg-yellow-500 text-black p-3 rounded-full font-bold">전송</button>
+        </div>
+    </div>
+</div>
+
+<button onclick="toggleAiChat()" class="fixed bottom-[40px] right-5 z-[9999] group hover:scale-110 transition-all duration-300 drop-shadow-[0_0_15px_rgba(255,215,0,0.6)]">
+    <img src="assets/img/Mango_gold.jpg" alt="Mango AI" class="w-16 h-16 rounded-full border-2 border-yellow-500/50 shadow-lg group-hover:rotate-12 transition-transform">
+    <span class="absolute -top-1 -right-1 flex h-4 w-4">
+        <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-yellow-400 opacity-75"></span>
+        <span class="relative inline-flex rounded-full h-4 w-4 bg-yellow-500 border border-black"></span>
+    </span>
+</button>
+
 <script>
     const Pi = window.Pi;
     let currentUser = null;
@@ -67,9 +95,9 @@
     // 1. 시스템 초기화 및 인증
     async function initMangoSystem() {
         try {
-            // sandbox: true는 Testnet 결제를 의미합니다.
-            await Pi.init({ version: "2.0", sandbox: true });
-            console.log("Pi SDK Initialized (Sandbox)");
+            // [중요] sandbox: false 로 설정하여 실제 파이 지갑 메인넷과 연결합니다.
+            await Pi.init({ version: "2.0", sandbox: false });
+            console.log("Pi SDK Initialized (Mainnet Live)");
 
             const scopes = ['username', 'payments'];
             const auth = await Pi.authenticate(scopes, (payment) => {
@@ -78,7 +106,12 @@
 
             currentUser = auth.user.username;
             document.getElementById('user-name-display').innerText = currentUser;
-            console.log("User Authenticated:", currentUser);
+            
+            // UI 텍스트 메인넷으로 업데이트
+            document.querySelector('.mango-gradient p:last-child').innerText = "Mainnet Live (실제 파이가 결제됩니다)";
+            const payBtn = document.getElementById('pay-button');
+            payBtn.innerText = "PAY WITH REAL PI";
+            payBtn.classList.replace('bg-black', 'bg-red-600'); // 경고성 컬러 부여
 
         } catch (err) {
             console.error("Initialization failed:", err);
@@ -88,17 +121,18 @@
 
     // 2. 테스트 결제 로직
     async function payWithPi() {
+        if(!confirm("⚠️ 실제 Pi가 차감되는 메인넷 결제입니다. 진행하시겠습니까?")) return;
+        
         try {
-            // [Safety] 결제 전 인증 재확인 (Food/index.html 로직 이식)
             const scopes = ['username', 'payments'];
             await Pi.authenticate(scopes, (payment) => {
                 console.log("Incomplete payment found:", payment);
             });
 
-            const payment = await Pi.createPayment({
+            await Pi.createPayment({
                 amount: 0.01,
-                memo: "Mango Ecosystem Test Payment",
-                metadata: { test_user: currentUser, type: "test_check" }
+                memo: "Mango Ecosystem Premium Activation",
+                metadata: { test_user: currentUser, type: "mainnet_activation" }
             }, {
                 onReadyForServerApproval: async (paymentId) => {
                     console.log("Step 1: 서버 승인 요청 시작", paymentId);
@@ -124,7 +158,7 @@
                         });
                         const result = await response.json();
                         if (response.ok) {
-                            alert("✅ 테스트 결제가 최종 완료되었습니다!");
+                            alert("✅ 생태계 프리미엄 활성화 결제가 완료되었습니다!");
                             location.reload();
                         }
                     } catch (err) {
@@ -159,6 +193,33 @@
             navigator.clipboard.writeText(window.location.href);
             alert("링크가 복사되었습니다. 지인에게 공유하세요!");
         }
+    }
+
+    // 3. AI 챗봇 로직 추가
+    function toggleAiChat() {
+        const modal = document.getElementById('ai-chat-modal');
+        modal.classList.toggle('hidden');
+        modal.classList.toggle('flex');
+    }
+
+    function sendAiMessage() {
+        const input = document.getElementById('ai-chat-input');
+        const log = document.getElementById('ai-chat-log');
+        const msg = input.value.trim();
+        if(!msg) return;
+
+        log.innerHTML += `<div class="align-self-end bg-yellow-500 text-black p-3 rounded-[1.5rem] rounded-tr-none text-xs font-bold max-w-[80%] ml-auto mb-2">${msg}</div>`;
+        input.value = '';
+
+        setTimeout(() => {
+            let aiReply = "고객님, 프로필 대시보드에서는 개인 정보 보호를 위해 제한된 데이터만 조회할 수 있습니다. 결제 내역이나 메인넷 연동에 대해 구체적으로 말씀해 주세요.";
+            if(msg.includes('결제') || msg.includes('파이')) {
+                aiReply = "현재 고객님의 계정은 <b>Mainnet Live</b> 모드에 연결되어 있습니다. 하단의 'PAY WITH REAL PI' 버튼을 통해 실제 트랜잭션을 발생시킬 수 있습니다.";
+            }
+
+            log.innerHTML += `<div class="align-self-start bg-[#1a1a1a] text-white p-4 rounded-[1.5rem] rounded-tl-none text-xs border border-yellow-500/20 max-w-[85%] mb-2 leading-relaxed">${aiReply}</div>`;
+            log.scrollTop = log.scrollHeight;
+        }, 600);
     }
 </script>
 </body>
