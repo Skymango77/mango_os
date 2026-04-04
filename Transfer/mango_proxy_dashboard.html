@@ -111,7 +111,7 @@
                         <h2 class="text-white text-sm font-bold tracking-widest uppercase">Proxy Invoice</h2>
                     </div>
                 </div>
-                <span class="bg-orange-500/10 border border-orange-500/50 text-orange-500 text-[9px] font-black px-3 py-1.5 rounded-full uppercase tracking-widest font-mono-num">
+                <span class="bg-orange-500/20 border border-orange-500/50 text-orange-500 text-[8px] font-black px-3 py-1.5 rounded-full uppercase tracking-widest font-mono-num">
                     Pending
                 </span>
             </div>
@@ -121,7 +121,7 @@
                 <p class="text-gray-300 text-xs font-mono-num tracking-widest">#MG-PRX-99428A</p>
             </div>
 
-            <div class="mt-6 mb-2">
+            <div class="mt-4 mb-1">
                 <p class="text-gray-500 text-[10px] uppercase tracking-[0.2em] text-center mb-3 font-bold">Product Verification</p>
                 <div class="flex gap-3 justify-center">
                     <div onclick="document.getElementById('photo-upload').click()" 
@@ -171,7 +171,7 @@
                         </div>
 
                         <div class="w-1/2 aspect-square rounded-2xl bg-gray-800 border-2 border-orange-500/30 overflow-hidden relative group shadow-2xl">
-                            <video src="https://www.rolex.com/content/dam/rolex-58/products/video/watch-movements/rolex_watch-movements_calibre-3235.mp4" 
+                            <video src="https://static.rolex.com/video/watch-movements/calibre-3235/rolex-watches-movements-calibre-3235.mp4" 
                                    class="w-full h-full object-cover" 
                                    loop muted playsinline autoplay
                                    poster="https://images.unsplash.com/photo-1614164185128-e4ec99c436d7?auto=format&fit=crop&q=80&w=600"></video>
@@ -181,9 +181,8 @@
                             </div>
                         </div>
                     </div>
-                    <p class="text-[9px] text-gray-500 mt-4 text-center font-bold italic tracking-tighter">* These are reference samples for quality inspection.</p>
+                    <p class="text-[9px] text-gray-500 mt-4 text-center font-bold italic tracking-tighter">* 노안 대응: 샘플 슬롯을 대폭 확대하였습니다. 위 기준에 맞춰 검증해 주세요.</p>
                 </div>
-            </div>
 
             <div class="invoice-divider"></div>
 
@@ -204,12 +203,13 @@
 
             <div class="invoice-divider"></div>
 
-            <div class="bg-black/50 rounded-2xl p-5 border border-white/5 mb-8 relative overflow-hidden">
-                <div class="absolute inset-0 bg-gradient-to-r from-orange-500/0 via-orange-500/5 to-orange-500/0"></div>
+            <div class="bg-black/50 rounded-2xl p-5 border border-white/5 mb-8 relative overflow-hidden shadow-inner">
+                <div class="absolute inset-0 bg-gradient-to-r from-orange-500/0 via-orange-500/8 to-orange-500/0"></div>
                 <p class="text-gray-500 text-[10px] font-black uppercase tracking-widest text-right mb-2 relative z-10">Total Amount</p>
-                <div class="text-metallic-gold font-black italic text-right font-mono-num leading-none w-full relative z-10" 
-                     style="font-size: clamp(1.8rem, 8vw, 2.8rem);">
-                    ₩ 385,400
+                
+                <div class="flex justify-end items-baseline gap-1.5 w-full pr-2 relative z-10 whitespace-nowrap">
+                    <span class="text-orange-500/80 font-bold text-xl italic drop-shadow-[0_0_5px_rgba(255,107,0,0.5)]">₩</span>
+                    <span class="text-metallic-gold font-black text-4xl italic font-mono-num leading-none tracking-tight">385,400</span>
                 </div>
             </div>
 
