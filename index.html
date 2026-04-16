@@ -999,16 +999,16 @@ style="width: 140px; height: 140px; aspect-ratio: 1/1; object-fit: cover; z-inde
         </div>
     </div>
    <div class="flex items-center gap-3">
-<div onclick="location.
-
-href='profile_dashboard.html'" class="relative group cursor-pointer">
-    
-    <div class="absolute -inset-1 bg-orange-500/20 rounded-full blur group-hover:bg-orange-500/40 transition duration-300"></div>
-    <div class="relative w-12 h-12 bg-zinc-900 border border-white/10 rounded-full flex items-center justify-center hover:border-orange-500/50 transition-all shadow-lg">
-        <i data-lucide="user" class="w-6 h-6 text-orange-500"></i>
-        <span class="absolute top-0 right-0 w-3 h-3 bg-red-600 border-2 border-black rounded-full"></span>
+        <!-- [Architect's Update] Linked to the new Profile Dashboard with enhanced UI -->
+        <a href="./profile/profile_dashboard.html" class="relative group flex items-center justify-center w-12 h-12 rounded-full border-2 border-[#f97316] bg-zinc-900 shadow-[0_0_15px_rgba(249,115,22,0.5)] transition-transform hover:scale-105 active:scale-95">
+            <div class="absolute -inset-1 bg-orange-500/20 rounded-full blur opacity-0 group-hover:opacity-100 transition duration-300"></div>
+            <div class="relative z-10">
+                <i data-lucide="user" class="w-6 h-6 text-orange-500"></i>
+                <!-- Identity Verification Badge -->
+                <span class="absolute -top-1 -right-1 w-3.5 h-3.5 bg-green-500 border-2 border-black rounded-full shadow-sm shadow-green-500/50 animate-pulse"></span>
+            </div>
+        </a>
     </div>
-</div>
 </div>
 </div>
 <div class="mango-container glass px-6 py-4 mt-2 mx-auto" style="width: 92%; max-width: 430px;">

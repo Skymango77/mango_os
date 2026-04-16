@@ -5,6 +5,10 @@
     {
       "source": "/profile",
       "destination": "/profile_dashboard.html"
+    },
+    {
+      "source": "/(.*)",
+      "destination": "/index.html"
     }
   ],
   "headers": [

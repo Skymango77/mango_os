@@ -1,0 +1,3622 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+
+    <meta name="theme-color" content="#f97316"> 
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="mobile-web-app-capable" content="yes">
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <link rel="manifest" href="/manifest.json">
+    <title>MANGO Universe Final - Intuitive UX</title>
+    <link rel="apple-touch-icon" href="https://mango-os-6xu2.vercel.app/mango.jpg?v=final_check">
+<link rel="icon" type="image/jpeg" href="https://mango-os-6xu2.vercel.app/mango.jpg?v=final_check">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    
+    <script src="https://sdk.minepi.com/pi-sdk.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/lucide/0.263.0/lucide.min.js"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+/* [추가] 1. MANGO 로고 하단 금 가루 선 정밀 좌표 */
+.glow-line {
+    position: absolute;
+    top: 85%; /* 대표님이 확인하신 정상 위치 */
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 100%;
+    height: 4px;
+    background: linear-gradient(90deg, transparent, #ffaa00, transparent);
+    box-shadow: 0 0 15px #ffaa00;
+    animation: glow-move 2s infinite ease-in-out;
+    z-index: 5;
+}
+
+@keyframes glow-move {
+    0%, 100% { opacity: 0.3; transform: translate(-50%, -50%) scaleX(0.8); }
+    50% { opacity: 1; transform: translate(-50%, -50%) scaleX(1.1); }
+}
+
+/* [추가] 2. Pi Browser 전용 반응형 레이아웃 (style 태그 닫히기 직전에 추가) */
+@media (max-width: 768px) {
+   /* 1. 모바일에서만 선을 95% 위치(글자 아랫선)로 내립니다 */
+    .glow-line { top: 95% !important; }
+    .main-container, .mango-container, .glass {
+        margin-bottom: 180px !important; 
+    }
+    
+    /* 포털이 회전하는 영역의 높이를 모바일 환경에 맞춰 최적화 */
+    .carousel-view {
+        height: 350px !important;
+        margin-top: 20px;
+    }
+}
+
+        /* 폰트 로드 최상단 배치 */
+        @import url('https://fonts.googleapis.com/css2?family=Kanit:ital,wght@1,900&display=swap');
+        
+        :root {
+        --mango-neon: #ffaa00;
+        --unified-max-width: 430px;
+        --bg-dark: #000000;
+    }
+        /* 1. 기본 레이아웃 및 PC 중앙 정렬 */
+    body {
+        background-color: var(--bg-dark);
+        margin: 0;
+        display: flex;
+        justify-content: center;
+        align-items: flex-start;
+        min-height: 100vh;
+        color: white;
+        font-family: 'Pretendard', sans-serif;
+        overflow-x: hidden;
+    }
+/* 2. 상단 헤더 및 로고 정렬 */
+    .header-area {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding: 20px 0;
+        width: 100%;
+    }
+
+    .logo-img {
+        width: 220px;
+        height: auto;
+    }
+        
+    /* 상단 헤더 및 로고 정렬 */
+    .header-area {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding: 20px 0;
+        width: 100%;
+    }
+
+    .logo-img {
+        width: 220px;
+        height: auto;
+    }
+
+    /* 3. [중요] 모든 카드형 창 너비 92% 통일 규격 */
+    .main-container, 
+    .mango-container, 
+    .glass, 
+    .banner-item,
+    [class*="_portal"] {
+        width: 92% !important;
+        max-width: var(--unified-max-width) !important;
+        margin: 12px auto !important;
+        box-sizing: border-box;
+        position: relative;
+    }
+
+    /* 4. 사양별 렌더링 최적화 */
+    .high-spec .glass { backdrop-filter: blur(15px); }
+    .high-spec .animate-scan { animation: scan 2s infinite ease-in-out; }
+
+    .low-spec .glass { backdrop-filter: none !important; background: rgba(0, 0, 0, 0.8) !important; }
+    .low-spec .animate-scan { display: none; }
+    .low-spec * { transition-duration: 0.1s !important; }
+
+    /* 5. 스캔 애니메이션: 가시성 유지 구간 보정 */
+    @keyframes scan {
+        0% { top: 0%; opacity: 0; }
+        15% { opacity: 1; }   /* 더 빠르게 선명해짐 */
+        85% { opacity: 1; }   /* 하단 직전까지 선명함 유지 */
+        100% { top: 100%; opacity: 0; }
+    }
+        
+
+.animate-scan {
+    animation: scan 2s infinite ease-in-out;
+}
+
+/* 스크롤바 숨기기 */
+    .no-scrollbar::-webkit-scrollbar { display: none; }
+    .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+      /* 피드 창의 기본 디자인 : 너비는 mango-container가 92%로 잡아줍니다 */
+.glass { 
+    background: rgba(255, 255, 255, 0.03); 
+    backdrop-filter: blur(10px); 
+    border: 1px solid rgba(255, 170, 0, 0.2); 
+    border-radius: 20px; 
+    transition: transform 0.2s;
+}
+.glass:active { transform: scale(0.98); } /* 클릭 시 눌리는 효과 */
+
+.feed-img-box { 
+    width: 80px; 
+    height: 80px; 
+    flex-shrink: 0; 
+    overflow: hidden; 
+    border-radius: 20px; 
+    border: 1px solid rgba(255,255,255,0.1);
+}
+.feed-img-box img { width: 100%; height: 100%; object-fit: cover; }  
+        /* 1. 구글에서 '도톰하고 둥근' Kanit 폰트를 빌려오는 코드입니다. */
+
+/* 금가루 애니메이션 효과 */
+.mango-logo-dust {
+    font-size: 3rem;
+    font-weight: 900;
+    letter-spacing: 0.2em;
+    background: linear-gradient(
+        to right, 
+        #bf953f, #fcf6ba, #b38728, #fbf5b7, #aa771c
+    );
+    -webkit-background-clip: text;
+    background-clip: text; 
+    -webkit-text-fill-color: transparent;
+    background-size: 200% auto;
+    animation: shine 4s linear infinite;
+    /* 금가루 입자 느낌을 주는 드롭 쉐도우 */
+    filter: drop-shadow(0 0 5px rgba(255, 215, 0, 0.3));
+} /* <--- 괄호는 딱 여기서 한 번만 닫히면 됩니다! */
+@keyframes shine {
+    to { background-position: 200% center; }
+}
+/* 클래스 필요 없이 이 애니메이션만 있으면 됩니다 */
+@keyframes gold-shine {
+    0% { background-position: -200% center; }
+    100% { background-position: 200% center; }
+}
+/* 맥동 애니메이션 정의 추가 */
+@keyframes mango-pulse {
+    0%, 100% { transform: scale(1); filter: drop-shadow(0 0 5px rgba(255, 170, 0, 0.4)); }
+    50% { transform: scale(1.03); filter: drop-shadow(0 0 15px rgba(255, 170, 0, 0.7)); }
+}
+/* 글자 전용 금가루 스타일 */
+.text-gold-particle {
+    position: absolute;
+    background: gold;
+    border-radius: 50%;
+    box-shadow: 0 0 8px gold;
+    pointer-events: none;
+    z-index: -1; /* 글자 뒤에서 생성되도록 설정 */
+    animation: text-fall 2s linear forwards;
+}
+
+@keyframes text-fall {
+    0% { transform: translateY(0) scale(1); opacity: 1; }
+    100% { transform: translateY(40px) scale(0.5); opacity: 0; }
+}
+/* 금가루 입자 스타일 추가 */
+.gold-particle {
+    position: absolute;
+    background: radial-gradient(circle, #ffffff 0%, #ffcc00 60%, #ffaa00 100%);    border-radius: 50%;
+    pointer-events: none;
+    z-index: 1000; /* 글자보다 앞에 오도록 높은 숫자 부여 */
+    box-shadow: 0 0 5px rgba(255, 215, 0, 1); 
+    filter: blur(0.5px);/* 자체 발광 추가 */
+}
+
+@keyframes fall-and-stack {
+    0% { 
+        transform: translateY(-5px); 
+        opacity: 0; 
+    }
+    15% { opacity: 1; }
+    100% { 
+        /* MANGO 글자 하단 약 32px 지점에 고정되어 쌓임 */
+        transform: translateY(32px) scale(0.9); 
+        opacity: 0.8;
+    }
+}
+/* 글자 영역을 감싸는 컨테이너 설정 */
+.logo-wrapper {
+    position: relative; /* 금가루의 기준점 */
+    display: inline-block;
+}
+.mango-gold-power {
+    position: relative;
+    display: inline-block;
+    
+    
+    /* 1. 폰트 및 두께 설정 */
+    font-family: 'Kanit', sans-serif !important;
+    font-style: italic !important;
+    font-weight: 900 !important; 
+    
+    /* 2. 가독성을 위한 조정: 간격 넓히고 외곽선 살짝 줄임 */
+    letter-spacing: 0.05em; /* 글자 사이 간격 추가하여 글자 뭉침 방지 */
+    -webkit-text-stroke: 3px #fbbf24; /* 6px에서 3px로 줄여 글자 형태 명확화 */
+    paint-order: stroke fill;
+    stroke-linejoin: round;
+
+    /* 3. 금빛 광원 효과 (좌우 이동) */
+    background: linear-gradient(
+        to right, 
+        #f59e0b 0%, 
+        #fbbf24 20%, 
+        #ffffff 50%,  /* 중앙의 밝은 흰색 빛 */
+        #fbbf24 80%, 
+        #f59e0b 100%
+    );
+    background-size: 200% auto;
+    background-clip: text;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    
+    /* 4. 애니메이션 통합 */
+animation: gold-shine 2s linear infinite, mango-pulse 2s infinite ease-in-out !important;    
+    padding: 0 10px; /* 외곽선 때문에 글자가 잘리지 않도록 여백 확보 */
+    filter: drop-shadow(0 0 8px rgba(255, 170, 0, 0.4));
+}
+/* 2. .logo-font라는 이름을 가진 글자들에게 이 폰트를 적용하라는 규칙입니다. */
+.logo-font {
+    font-family: 'Kanit', sans-serif !important;
+    -webkit-font-smoothing: antialiased;
+}
+        /* [2026-01-01] 지침: 모든 창 너비 92% 통일 및 높이 동기화 */
+
+
+/* 모든 카드형 창의 너비를 92%로 고정 */
+.mango-container, 
+#detail-modal, 
+.glass, 
+.banner-item {
+    width: var(--unified-width) !important;
+    max-width: 430px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+/* 뉴스/배너 영역의 높이를 100px로 똑같이 맞춤 */
+#news-track-container, 
+.banner-window, 
+#banner-slots,
+.mango-container.glass {
+    height: 100px !important;
+}
+
+        /* --- 디바이스별 반응형 레이아웃 컨트롤 --- */
+        /* [Watch 모드] */
+        .device-watch .carousel-view { height: 200px; transform: scale(0.8); }
+        .device-watch .mango-container { max-width: 300px; }
+        .device-watch .hide-on-watch { display: none; }
+
+        /* [Glass 모드] */
+        .device-glass .glass { border-color: rgba(255, 170, 0, 0.5); background: rgba(0,0,0,0.2); backdrop-filter: blur(5px); }
+        
+        /* --- 3D 회전 기구 수정 --- */
+.carousel-view {
+    perspective: 2000px; /* 깊이감 증가 */
+    height: 180px; /* 높이 확보 */
+    display: flex; align-items: center; justify-content: center;
+}
+
+.carousel-pivot {
+    width: 100%; height: 100%;
+    position: relative;
+    transform-style: preserve-3d;
+    
+}
+
+/* --- 포털 기본 상태 (비활성) --- */
+.portal-door {
+    position: absolute;
+    width: 160px; height: 160px;
+    left: calc(50% - 80px); top: calc(50% - 80px);
+    background: rgba(10, 10, 10, 0.9);
+    border-radius: 40px;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    backface-visibility: hidden;
+    border: 1px solid rgba(255, 170, 0, 0.1);
+    
+    /* 비활성 상태: 약간 어둡고 흐리게 */
+    opacity: 0.5;
+    filter: grayscale(40%) blur(1px);
+    transition: all 0.5s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+        /* --- 번쩍임 강조 (Active State) --- */
+        .portal-door.active {
+            opacity: 1;
+            filter: blur(0);
+            border: 3px solid var(--mango-neon);
+            box-shadow: 0 0 30px rgba(255, 170, 0, 0.4);
+            transform: scale(1.0) !important;
+            z-index: 10;
+            animation: pulse 1.5s infinite alternate;
+        }
+        
+        .portal-door.active::after {
+            content: '';
+            position: absolute; inset: -4px;
+            border-radius: 34px;
+            background: conic-gradient(from 0deg, transparent, var(--mango-neon), #fff, var(--mango-neon), transparent);
+            animation: rotateGlow 1s linear infinite;
+            -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+            mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+            -webkit-mask-composite: xor;
+            mask-composite: exclude; padding: 4px;
+        }
+/* --- 🌟 중앙 포털 강조 (Active State) --- */
+.portal-door.active {
+    opacity: 1 !important;
+    filter: grayscale(0%) blur(0) !important;
+    border: 3px solid var(--mango-neon);
+    
+    /* 앞으로 튀어나오는 효과 + 강렬한 조명 */
+    transform: scale(1.2) translateZ(80px) !important; 
+    box-shadow: 
+        0 0 40px rgba(255, 170, 0, 0.7),
+        0 0 80px rgba(255, 170, 0, 0.3),
+        inset 0 0 20px rgba(255, 255, 255, 0.1);
+    z-index: 100;
+}
+        @keyframes rotateGlow { 100% { transform: rotate(360deg); } }
+        @keyframes pulse { from { opacity: 0.8; } to { opacity: 1; } }
+
+        .news-track { animation: scrollUp 10s linear infinite; }
+        @keyframes scrollUp { 
+            0% { transform: translateY(0); } 
+            100% { transform: translateY(-100%); } }
+        .logo-glow { filter: drop-shadow(0 0 10px rgba(255,170,0,0.5)); }
+        
+        .glass {
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 170, 0, 0.2);
+            border-radius: 20px;
+        }
+        .glass-card {
+            background: rgba(255, 255, 255, 0.06);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            border-radius: 20px;
+        }
+        /* --- 금가루 흐르는 애니메이션 엔진 --- */
+@keyframes mango-shine-text {
+  0% { background-position: 0% }
+  100% { background-position: 200% }
+}
+
+
+.text-metallic-gold {
+  background: var(--mango-gold);
+  background-size: 200%;
+  animation: mango-shine-text 4s linear infinite;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+
+.gold-dust-effect {
+    background-size: 200% auto;
+    animation: gold-shine 3s linear infinite;
+    position: relative;
+    overflow: hidden;
+}
+/* 가로 스크롤바 숨기기 전용 */
+.no-scrollbar::-webkit-scrollbar {
+    display: none;
+}
+.no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+}
+/* 반짝이는 입자 효과 */
+.gold-dust-effect::before {
+    content: '';
+    position: absolute;
+    top: 0; left: -100%;
+    width: 50%; height: 100%;
+    background: linear-gradient(to right, transparent, rgba(255, 255, 255, 0.3), transparent);
+    transform: skewX(-25deg);
+    animation: sweep 2s infinite;
+}
+.pi-news-container:hover .news-track {
+    animation-play-state: paused; /* 마우스 올리면 정지 */
+}
+/* 1. 모달이 열렸을 때 배경 스크롤 간섭 방지 (오버스크롤 방지) */
+#login-modal {
+    overscroll-behavior: contain; /* 모달 끝에서 스크롤해도 배경에 영향 주지 않음 */
+}
+
+/* 2. 모달 내부 스크롤바를 세련되게 수정 (선택 사항이지만 추천) */
+#login-modal::-webkit-scrollbar {
+    width: 6px;
+}
+#login-modal::-webkit-scrollbar-thumb {
+    background: rgba(249, 115, 22, 0.3); /* 망고 오렌지색 반투명 */
+    border-radius: 10px;
+}
+#login-modal::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+  .social-btn {
+    padding: 14px;
+    border-radius: 20px;
+    background: rgba(255,255,255,0.06);
+    border: 1px solid rgba(255,255,255,0.15);
+    color: white;
+    font-weight: bold;
+    transition: all 0.2s;
+  }
+  .social-btn:hover {
+    background: rgba(249,115,22,0.25);
+    border-color: #f97316;
+  }
+  /* 🚀 수정된 반사 및 바닥 효과 */
+.carousel-view {
+    perspective: 2000px;
+    height: 320px; /* 높이를 더 확보하여 반사가 잘리지 않게 함 */
+    display: flex;
+    align-items: center; 
+    justify-content: center;
+    position: relative;
+    /* overflow: hidden; 이 있다면 반드시 제거해야 반사가 보입니다 */
+}
+/* 중앙 포털 뒤 후광(Backlight) 추가 */
+.carousel-view::before {
+    content: '';
+    position: absolute;
+    width: 300px; height: 300px;
+    background: radial-gradient(circle, rgba(255, 170, 0, 0.15) 0%, transparent 70%);
+    z-index: 0;
+    pointer-events: none;
+}
+.carousel-pivot {
+    width: 100%; 
+    height: 180px; 
+    position: relative;
+    transform-style: preserve-3d;
+    /* 반사 효과를 좀 더 선명하게 조정 */
+    -webkit-box-reflect: below 2px linear-gradient(transparent 50%, rgba(255, 255, 255, 0.2));
+}
+
+/* 바닥면 후광(Glow) 위치 조정 */
+.carousel-view::after {
+    content: '';
+    position: absolute;
+    bottom: 40px; /* 위치를 약간 위로 조정 */
+    width: 250px;
+    height: 40px;
+    background: radial-gradient(ellipse at center, rgba(255, 170, 0, 0.4) 0%, transparent 75%);
+    filter: blur(15px);
+    z-index: -1;
+}
+/* 🌟 하이엔드 골드 텍스트 엔진 */
+.portal-door.active i, 
+.portal-door.active span {
+    background: linear-gradient(
+        -45deg, 
+        #aa771c 0%, 
+        #fcf6ba 45%, 
+        #ffffff 50%, 
+        #fcf6ba 55%, 
+        #aa771c 100%
+    );
+   background-size: 300% 300%;
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    /* 섬광 애니메이션 속도 업! */
+    animation: gold-glint 2s linear infinite, portal-bounce 2s ease-in-out infinite;
+    filter: drop-shadow(0 0 12px rgba(255, 215, 0, 0.8));
+    display: inline-block;
+}
+
+/* ✨ 번쩍이는 섬광 애니메이션 */
+@keyframes gold-glint {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
+
+/* 🚀 아이콘 뒤의 강렬한 스포트라이트 */
+.portal-door.active::before {
+    content: '';
+    position: absolute;
+    width: 100px;
+    height: 100px;
+    background: radial-gradient(circle, rgba(255, 215, 0, 0.4) 0%, transparent 70%);
+    filter: blur(15px);
+    animation: pulse-glow 1.5s infinite alternate;
+}
+
+/* 맥박이 뛰는 듯한 광채 */
+@keyframes pulse-glow {
+    from { transform: scale(0.8); opacity: 0.5; }
+    to { transform: scale(1.3); opacity: 1; }
+}
+
+/* 튀어오르는 듯한 생동감 */
+@keyframes portal-bounce {
+    0%, 100% { transform: translateY(0) scale(1.1); }
+    50% { transform: translateY(-12px) scale(1.15); }
+}
+body {
+    display: flex;
+    justify-content: center;
+    background-color:  #000000; /* PC 배경색 */
+}
+
+/* [초고도화] 오뚜기(Wobble) 애니메이션 - <style> 태그 안 최하단에 복사 */
+@keyframes mango-ottugi-swing {
+    0% { transform: rotate(0deg) scale(1); }
+    20% { transform: rotate(-15deg) scale(1.1); }
+    40% { transform: rotate(12deg) scale(1.05); }
+    60% { transform: rotate(-8deg) scale(1.1); }
+    80% { transform: rotate(4deg) scale(1.02); }
+    100% { transform: rotate(0deg) scale(1); }
+}
+
+.mango-ottugi-active {
+    animation: mango-ottugi-swing 2s cubic-bezier(0.45, 0, 0.55, 1) both;
+    transform-origin: bottom center !important; /* 아래를 축으로 흔들림 */
+}
+</style> 
+
+<div id="partner-modal" class="fixed inset-0 z-[100] hidden bg-black/95 backdrop-blur-xl flex items-start justify-center overflow-y-auto pt-4 pb-10">
+    <div class="mango-container glass p-0 border-orange-500/30 relative w-full max-w-2xl overflow-hidden flex flex-col my-auto">
+        <!-- Header -->
+        <div class="p-5 border-b border-white/10 flex justify-between items-center bg-white/5">
+            <div>
+                <h3 class="text-xl font-black text-orange-400 italic tracking-tighter">MANGO PARTNER PRO</h3>
+                <p class="text-[10px] text-white/40 uppercase tracking-widest">Business Growth Center</p>
+            </div>
+            <button onclick="closePartnerModal()" class="text-white/50 hover:text-white transition-colors">
+                <i data-lucide="x" class="w-6 h-6"></i>
+            </button>
+        </div>
+
+        <div class="p-6 space-y-6">
+            <!-- 1. Live Preview Section -->
+            <div class="bg-black/40 rounded-2xl p-4 border border-white/5">
+                <div class="flex justify-between items-center mb-3">
+                    <p class="text-[10px] text-orange-400 font-bold uppercase tracking-widest flex items-center gap-1"><i data-lucide="eye" class="w-3 h-3"></i> Live Ad Preview</p>
+                    <span class="text-[9px] text-white/30">실제 앱 노출 예시</span>
+                </div>
+                <!-- Preview Card -->
+                <div class="h-[100px] flex items-center gap-4 px-5 bg-white/[0.03] border border-white/10 rounded-2xl relative overflow-hidden shadow-lg">
+                    <div class="w-14 h-14 flex-shrink-0 rounded-2xl bg-zinc-800 flex items-center justify-center border border-white/20 relative overflow-hidden">
+                        <span id="preview-icon" class="absolute text-3xl z-0">🏪</span>
+                        <img id="preview-img" src="" class="absolute inset-0 w-full h-full object-cover z-10 hidden">
+                    </div>
+                    <div class="flex-1 min-w-0">
+                        <div class="flex items-center gap-2 mb-1">
+                            <span id="preview-badge" class="text-[9px] text-orange-400 font-bold border border-orange-400/50 px-2 py-0.5 rounded-full uppercase">New Store</span>
+                        </div>
+                        <h4 id="preview-title" class="text-[14px] font-bold text-white leading-tight truncate">매장 이름이 여기에 표시됩니다</h4>
+                        <p id="preview-desc" class="text-[10px] text-white/40 mt-1 truncate">홍보 문구가 여기에 표시됩니다</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 2. Input Form -->
+            <div class="grid grid-cols-1 gap-4">
+
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="text-[10px] text-white/50 font-bold mb-1 block">업종 카테고리</label>
+                        <select id="ad-category" onchange="updatePreview()" class="w-full bg-white/5 border border-white/10 rounded-xl p-3 text-xs text-white outline-none focus:border-orange-500">
+                            <option value="store">일반 매장</option>
+                            <option value="food">맛집/카페</option>
+                            <option value="realty">부동산</option>
+                            <option value="service">생활 서비스</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="text-[10px] text-white/50 font-bold mb-1 block">매장명</label>
+                        <input type="text" id="ad-shop-name" oninput="updatePreview()" placeholder="예: 망고 카페" class="w-full bg-white/5 border border-white/10 rounded-xl p-3 text-xs text-white outline-none focus:border-orange-500">
+                    </div>
+                </div>
+
+                <div>
+                    <label class="text-[10px] text-white/50 font-bold mb-1 block">홍보 문구 (헤드라인)</label>
+                    <input type="text" id="ad-headline" oninput="updatePreview()" placeholder="예: 오픈 기념 아메리카노 1+1 행사 진행중!" class="w-full bg-white/5 border border-white/10 rounded-xl p-3 text-xs text-white outline-none focus:border-orange-500">
+                </div>
+
+                <div>
+                    <label class="text-[10px] text-white/50 font-bold mb-1 block">대표 사진</label>
+                    <div class="relative">
+                        <input type="file" id="ad-image-input" accept="image/*" onchange="handleAdImage(this)" class="hidden">
+                        <label for="ad-image-input" class="flex items-center justify-center w-full h-10 border border-dashed border-white/20 rounded-xl cursor-pointer hover:bg-white/5 hover:border-orange-500/50 transition-colors">
+                            <span class="text-[10px] text-white/40 flex items-center gap-2"><i data-lucide="image" class="w-3 h-3"></i> 사진 업로드 (터치)</span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Budget & Duration -->
+                <div class="bg-gradient-to-br from-orange-500/10 to-black rounded-xl p-4 border border-orange-500/20">
+                    <div class="flex justify-between items-center mb-3">
+                        <span class="text-xs font-bold text-orange-400 flex items-center gap-1"><i data-lucide="coins" class="w-3 h-3"></i> 예상 비용</span>
+                        <span class="text-lg font-black text-white" id="ad-cost">10 <span class="text-sm text-orange-400">π</span></span>
+                    </div>
+                    <input type="range" min="1" max="30" value="1" class="w-full accent-orange-500 h-1 bg-white/10 rounded-lg appearance-none cursor-pointer" oninput="updateCost(this.value)">
+                    <div class="flex justify-between text-[9px] text-white/30 mt-2 font-mono">
+                        <span>1 Day</span>
+                        <span id="duration-label" class="text-orange-400 font-bold">1일 노출</span>
+                        <span>30 Days</span>
+                    </div>
+                </div>
+            </div>
+
+            <button onclick="submitAd()" class="w-full py-4 bg-gradient-to-r from-orange-500 to-yellow-500 text-black font-black rounded-2xl shadow-lg shadow-orange-500/20 hover:scale-[1.02] active:scale-95 transition-all flex items-center justify-center gap-2">
+                <i data-lucide="rocket" class="w-5 h-5"></i>
+                광고 캠페인 시작하기
+            </button>
+
+            <!-- Premium Upgrade Section -->
+            <div class="mt-6 pt-6 border-t border-white/10">
+                <button onclick="togglePremium()" class="w-full group">
+                    <div class="flex items-center justify-between bg-white/5 p-4 rounded-xl border border-white/10 group-hover:border-yellow-500/50 transition-all">
+                        <div class="text-left">
+                            <h4 class="text-sm font-black text-yellow-400 italic flex items-center gap-2">
+                                <i data-lucide="ticket" class="w-4 h-4"></i> GET PRIORITY TICKET
+                            </h4>
+                            <p class="text-[10px] text-white/40 mt-1">상세 정보 입력하고 지역 광고 대기열 선점하기</p>
+                        </div>
+                        <i data-lucide="chevron-down" class="text-white/30 group-hover:text-yellow-400 transition-colors"></i>
+                    </div>
+                </button>
+                
+                <div id="premium-form" class="hidden mt-4 space-y-4 bg-yellow-500/5 p-4 rounded-2xl border border-yellow-500/20">
+                    <div class="grid grid-cols-2 gap-3">
+                        <input type="text" id="biz-phone" placeholder="매장 전화번호" class="w-full bg-black/50 border border-white/10 rounded-lg p-3 text-xs text-white outline-none focus:border-yellow-500">
+                        <input type="text" id="biz-hours" placeholder="영업 시간 (예: 10:00~22:00)" class="w-full bg-black/50 border border-white/10 rounded-lg p-3 text-xs text-white outline-none focus:border-yellow-500">
+                    </div>
+                    <textarea id="biz-detail" rows="2" placeholder="사장님 한마디 (손님들에게 전할 특별한 메시지)" class="w-full bg-black/50 border border-white/10 rounded-lg p-3 text-xs text-white outline-none focus:border-yellow-500 resize-none"></textarea>
+                    
+                    <button onclick="getTicket()" class="w-full py-3 bg-gradient-to-r from-yellow-400 to-yellow-600 text-black font-black rounded-xl shadow-[0_0_20px_rgba(250,204,21,0.3)] hover:scale-[1.02] active:scale-95 transition-all flex items-center justify-center gap-2">
+                        <i data-lucide="crown" class="w-4 h-4"></i>
+                        골드 티켓 발급받기
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Ticket Overlay -->
+        <div id="ticket-overlay" class="absolute inset-0 z-50 bg-black/95 backdrop-blur-xl hidden flex flex-col items-center justify-center p-6 text-center">
+            <div class="relative w-full max-w-sm bg-gradient-to-br from-yellow-300 via-yellow-500 to-yellow-700 rounded-3xl p-[2px] shadow-[0_0_50px_rgba(234,179,8,0.5)] transform rotate-1 hover:rotate-0 transition-transform duration-500">
+                <div class="bg-black rounded-[22px] p-6 relative overflow-hidden">
+                    <div class="absolute inset-0 opacity-20 bg-[url('https://www.transparenttextures.com/patterns/stardust.png')]"></div>
+                    <div class="relative z-10">
+                        <div class="flex justify-between items-start mb-8">
+                            <span class="text-4xl">🎫</span>
+                            <div class="text-right">
+                                <p class="text-[10px] text-yellow-500 font-bold tracking-widest">PRIORITY PASS</p>
+                                <p class="text-2xl font-black text-white italic tracking-tighter">NO. 00142</p>
+                            </div>
+                        </div>
+                        <h3 class="text-xl font-bold text-white mb-2">MANGO AD TICKET</h3>
+                        <p class="text-xs text-white/60 mb-6">지역 기반 광고 우선 노출 권한 획득</p>
+                        <div class="border-t border-dashed border-white/20 pt-4 flex justify-between items-center">
+                            <span class="text-[10px] text-white/40">DATE: 2026.01.22</span>
+                            <span class="text-[10px] text-yellow-400 font-bold">VERIFIED</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <h2 class="text-2xl font-black text-white mt-8 mb-2 animate-pulse">축하합니다! 🎉</h2>
+            <p class="text-sm text-white/60 mb-8">대기자 명단에 성공적으로 등록되었습니다.</p>
+            <button onclick="closeTicket()" class="px-8 py-3 bg-white/10 border border-white/20 rounded-full text-white font-bold hover:bg-white/20 transition-all">확인</button>
+        </div>
+    </div>
+</div>
+<style>
+    /* 1. 모든 카드 및 뉴스창 너비 430px 통일 (대표님 요청 사항 완벽 준수) */
+    .mango-container, .glass, .banner-item, #detail-modal, #partner-modal > div, 
+    .food_portal, .transfer_portal, .travel_portal, .share_portal, 
+    .realty_portal, .market_portal, .social_portal, .admin_portal,
+    #integrated-auth-modal > div, #realty-modal > div, .news-window {
+        width: 92% !important;
+        max-width: 430px !important;
+        margin: 0 auto !important;
+        left: 0 !important;
+        right: 0 !important;
+    }
+
+    /* 2. 뉴스 티커 고도화: 좌우 흐름 방식 (잘림 방지) */
+    .news-ticker-container {
+    width: 100%;
+    height: 40px; 
+    overflow: hidden; 
+    position: relative;
+    display: flex;
+    align-items: center;
+    background: rgba(255, 255, 255, 0.03);
+    backdrop-filter: blur(10px); 
+    border: 1px solid rgba(255, 170, 0, 0.1); 
+    border-radius: 8px;
+    
+    /* [검수 완료] 상단 광택 및 하단 그림자 효과 */
+    box-shadow: 
+        inset 0 1px 1px rgba(255, 255, 255, 0.1), 
+        0 4px 15px rgba(0, 0, 0, 0.4);
+    }
+
+    /* 3. 좌우 무한 루프 애니메이션 */
+    @keyframes ticker-swipe {
+        0% { transform: translateX(100%); }
+        100% { transform: translateX(-100%); }
+    }
+
+   /* 690행 근처: 뉴스 텍스트 스타일 최종 (CNN/TASS & 가독성 최적화) */
+.news-ticker-content {
+    display: inline-block;
+    white-space: nowrap; /* 글자 줄바꿈 절대 방지 */
+    animation: ticker-swipe 30s linear infinite; /* 30초의 부드러운 흐름 */
+    will-change: transform;
+    color: #cbd5e1; /* 세련된 슬레이트 그레이 */
+    font-family: 'Monaco', 'Courier New', monospace; /* 금융/뉴스 전문 서체 */
+    font-weight: 500;
+    letter-spacing: -0.02em; /* 시각적 밀도 조절 */
+    
+    /* [핵심 추가] 글자가 유리 배경 위에서 튀어나와 보이게 하는 그림자 */
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5); 
+}
+
+/* 뉴스 내 출처(<b>태그</b>) 강조 스타일 */
+.news-ticker-content b {
+    color: #f59e0b; /* 망고 시그니처 오렌지 */
+    font-weight: 800;
+    text-shadow: 0 0 8px rgba(245, 158, 11, 0.3); /* 은은한 발광 효과 */
+}
+
+    /* 4. 배너 규격 유지 */
+    .banner-window, #banner-slots {
+        height: 100px !important;
+    }
+</style>
+    
+    <link rel="icon" href="favicon.ico" type="image/x-icon">
+    <script>
+        function lockMangoBranding() {
+            const mangoTitle = "Mango Quick | Dashboard";
+            const mangoIcon = "favicon.ico";
+            if (document.title !== mangoTitle) { document.title = mangoTitle; }
+            let icons = document.querySelectorAll('link[rel*="icon"]');
+            if (icons.length === 0) {
+                let newIcon = document.createElement('link');
+                newIcon.rel = 'icon';
+                newIcon.href = mangoIcon + "?v=" + Date.now();
+                document.head.appendChild(newIcon);
+            } else {
+                icons.forEach(icon => {
+                    if (!icon.href.includes(mangoIcon)) {
+                        icon.href = mangoIcon + "?v=" + Date.now();
+                    }
+                });
+            }
+        }
+        lockMangoBranding();
+        setInterval(lockMangoBranding, 500);
+    </script>
+    <style>
+        /* 모든 설정을 무시하고 중앙으로 강제 압수수색 */
+        html, body {
+            overflow-x: hidden;
+            width: 100vw !important;
+            display: flex !important;
+            flex-direction: column !important;
+            align-items: center;
+            margin: 0 !important;
+            padding: 0 !important;
+            background-color: var(--bg-dark) !important;
+            display: flex; flex-direction: column;
+            font-family: 'Pretendard', sans-serif;
+            color: white;
+        }
+
+        /* 메인 컨테이너들을 화면 중앙에 쇠사슬로 묶음 */
+        #main-body > div, 
+        .mango-container, 
+        .max-w-\[430px\],
+        #news-track-container {
+            width: 100% !important;
+            max-width: 430px !important;
+            margin-left: auto !important;
+            margin-right: auto !important;
+            position: relative !important;
+            left: 0 !important;
+            transform: none !important;
+        }
+        /* 튀어나오는 Confirm 버튼 정밀 타격 */
+button, .confirm-btn, [class*="confirm"] {
+    max-width: 100% !important;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    word-break: break-all !important; /* 글자가 길어도 버튼 안에서 줄바꿈 */
+    white-space: normal !important;
+    padding: 12px 20px !important;
+    border-radius: 15px !important;
+    font-weight: 800 !important;
+    text-transform: uppercase !important;
+}
+
+/* Travel 포털 내 확인 버튼 강제 정렬 */
+#travel_portal button {
+    width: 100% !important;
+    margin-top: 10px !important;
+    background: linear-gradient(135deg, #f59e0b, #ea580c) !important;
+    color: white !important;
+    border: none !important;
+}
+/* 오뚜기(좌우 흔들기) 애니메이션 */
+@keyframes mango-otogi {
+    0% { transform: rotate(0deg); }
+    20% { transform: rotate(15deg); }  /* 오른쪽으로 살짝 */
+    40% { transform: rotate(-15deg); } /* 왼쪽으로 살짝 */
+    60% { transform: rotate(10deg); }  /* 다시 오른쪽 조금 */
+    80% { transform: rotate(-10deg); } /* 다시 왼쪽 조금 */
+    100% { transform: rotate(0deg); }  /* 정지 */
+}
+
+.animate-mango-otogi-9 {
+    /* 1.2초 동안 1회 작동하며, 총 9번 반복 (총 10.8초간 퍼포먼스) */
+    animation: mango-otogi 1.2s ease-in-out 9 forwards !important;
+    transform-origin: bottom center !important;
+}
+    </style>
+
+<script>
+// 1. Pi SDK 초기화
+Pi.init({ version: "2.0" });
+
+// 2. 결제 전 필수 인증 함수 (이게 있어야 에러가 안 납니다)
+async function authenticateUser() {
+    try {
+        const auth = await Pi.authenticate(['payments', 'username'], onIncompletePaymentFound);
+        console.log("인증 성공:", auth.user.username);
+        return auth;
+    } catch (err) {
+        console.error("인증 실패:", err);
+        return null;
+    }
+}
+
+// 미결제 건 처리 함수 (SDK 필수 요구사항)
+function onIncompletePaymentFound(payment) {
+    console.log("미결제 건 발견:", payment);
+};
+
+// 3. 결제 실행 함수 (인증 절차 통합 버전)
+async function handleMangoTestPayment() {
+    try {
+        console.log("인증 확인 중...");
+        const auth = await authenticateUser();
+        
+        if (!auth) {
+            alert("파이 네트워크 인증에 실패했습니다. 파이 브라우저에서 다시 시도해주세요.");
+            return;
+        }
+
+        console.log("결제 프로세스 시작...");
+        const payment = await window.Pi.createPayment({
+            amount: 0.01,
+            memo: "Mango App Premium Designer Membership Fee", 
+            metadata: { 
+                productId: "membership_premium_2026", 
+                itemType: "service_subscription",
+                orderId: "mango-" + Date.now()
+            }
+        }, {
+            onReadyForServerApproval: function(paymentId) {
+                console.log("서버 승인 대기 중 (ID):", paymentId);
+            },
+            onReadyForServerCompletion: function(paymentId, txid) {
+                console.log("결제 완료! 트랜잭션 ID:", txid);
+                alert("축하합니다! 망고 프리미엄 멤버십 결제가 완료되었습니다. 이제 10단계가 통과됩니다!");
+                if(typeof closeDashboard === 'function') closeDashboard();
+            },
+            onCancel: function(paymentId) {
+                alert("결제를 취소하셨습니다.");
+            },
+            onError: function(error, payment) {
+                console.error("결제 중 에러 발생:", error);
+                alert("결제 오류: " + (error.message || "Unknown error"));
+            }
+        });
+    } catch (err) {
+        console.error("실행 오류:", err);
+    }
+}
+</script>
+
+</head>
+
+<body id="main-body" class="bg-black text-white min-h-screen overflow-x-hidden flex flex-col items-center py-6 space-y-6">
+
+<div id="main-content-wrapper"></div>
+
+    <div id="mango-splash" style="position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background-color: #ffffff; z-index: 999999; display: flex; flex-direction: column; align-items: center; justify-content: center; transition: opacity 0.8s ease-in-out;">
+        <div class="mango-wind-container" style="position: relative; width: 320px; height: 320px; display: flex; align-items: center; justify-content: center;">
+            <div class="wind-layer" style="border: 12px solid transparent; border-top-color: #4DBCE9; border-bottom-color: #4DBCE9; border-radius: 50%; position: absolute; inset: 0; animation: spin-fast 1.5s linear infinite;"></div>
+            <div class="wind-layer" style="border: 16px solid transparent; border-left-color: #A0E4FF; border-right-color: #A0E4FF; border-radius: 50%; position: absolute; inset: 30px; animation: spin-reverse 2s linear infinite; opacity: 0.8;"></div>
+            <div class="wind-layer" style="border: 8px solid transparent; border-top-color: #1E90FF; border-radius: 50%; position: absolute; inset: 60px; animation: spin-fast 1s linear infinite;"></div>
+            <img src="assets/img/mango.jpg" 
+     id="main-mango-logo" 
+class="mango-logo-core rounded-[2.8rem]"     alt="Mango" 
+style="width: 140px; height: 140px; aspect-ratio: 1/1; object-fit: cover; z-index: 10; box-shadow: 0 10px 30px rgba(0,0,0,0.15); display: block;">
+        </div>
+        <p style="color: #4DBCE9; margin-top: 50px; font-weight: 900; font-size: 1.3rem; letter-spacing: 6px; font-style: italic; text-transform: uppercase;">Mango System Starting</p>
+        <style>
+            @keyframes spin-fast { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+            @keyframes spin-reverse { 0% { transform: rotate(360deg); } 100% { transform: rotate(0deg); } }
+            @keyframes splash-pulse { 0%, 100% { transform: scale(1) rotate(-3deg); } 50% { transform: scale(1.05) rotate(3deg); } }
+
+            /* [좌표: 913행~917행 교체] */
+.main-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding-top: 5rem; /* 로고가 너무 붙지 않게 상단 여백 확보 */
+    min-height: 100vh;
+    overflow-y: auto;
+    position: relative;
+    z-index: 10;
+}
+
+.logo-section {
+    margin-bottom: 4rem; /* 로고와 아래 버튼들 사이의 간격 (매우 중요) */
+    text-align: center;
+    width: 100%;
+}
+        </style>
+    </div>
+<div id="integrated-auth-modal" class="hidden fixed inset-0 z-[10001] flex items-center justify-center bg-[#000000] transition-all duration-300">            <div class="w-full max-w-[480px] bg-[#121212] border-t border-yellow-500/30 rounded-t-[3rem] rounded-b-none overflow-hidden shadow-[0_-20px_50px_rgba(0,0,0,0.8)] pb-6 mt-20">
+        <div class="w-full max-w-[480px] bg-zinc-900 border border-yellow-500/30 rounded-[2.5rem] overflow-hidden shadow-[0_0_50px_rgba(234,179,8,0.2)]">
+            
+            <div class="flex bg-white/5 border-b border-white/10">
+                <button onclick="switchTab('login')" class="flex-1 py-4 text-xs font-black text-yellow-500 border-b-2 border-yellow-500" id="tab-login">LOGIN</button>
+                <button onclick="switchTab('my-qr')" class="flex-1 py-4 text-xs font-black text-white/40" id="tab-myqr">MY QR</button>
+                <button onclick="switchTab('scan')" class="flex-1 py-4 text-xs font-black text-white/40" id="tab-scan">SCANNER</button>
+            </div>
+
+            <div class="p-8">
+                <div id="auth-login-section" class="space-y-6">
+                    <div class="flex justify-center gap-4 mb-4">
+                        <span class="px-3 py-1 bg-yellow-500/10 border border-yellow-500/20 rounded-full text-[10px] text-yellow-500 cursor-pointer hover:bg-yellow-500/20">CONSUMER</span>
+                        <span class="px-3 py-1 bg-white/5 border border-white/10 rounded-full text-[10px] text-white/40 cursor-pointer hover:bg-white/10">ADMIN</span>
+                        <span class="px-3 py-1 bg-white/5 border border-white/10 rounded-full text-[10px] text-white/40 cursor-pointer hover:bg-white/10">ADVERTISER</span>
+                    </div>
+                    
+                    <input type="text" placeholder="Email or Phone Number" class="w-full bg-white/5 border border-white/10 p-4 rounded-2xl text-white outline-none focus:border-yellow-500 transition-colors">
+                    
+                    <div class="grid grid-cols-5 gap-3 py-4">
+                        <button class="w-10 h-10 bg-[#FEE500] rounded-full flex items-center justify-center hover:scale-110 transition-transform overflow-hidden"><span class="text-[10px] font-black text-[#3C1E1E]">TALK</span></button>
+                        <button class="w-10 h-10 bg-[#06C755] rounded-full flex items-center justify-center hover:scale-110 transition-transform"><img src="https://upload.wikimedia.org/wikipedia/commons/4/41/LINE_logo.svg" alt="Line" class="w-6 h-6"></button>
+                        <button class="w-10 h-10 bg-[#07C160] rounded-full flex items-center justify-center hover:scale-110 transition-transform"><i data-lucide="message-circle" class="text-white w-6 h-6"></i></button>
+                        <button class="w-10 h-10 bg-[#1877F2] rounded-full flex items-center justify-center text-white hover:scale-110 transition-transform"><i data-lucide="facebook" class="w-6 h-6"></i></button>
+                        <button class="w-10 h-10 bg-white rounded-full flex items-center justify-center hover:scale-110 transition-transform"><img src="https://www.svgrepo.com/show/303108/google-icon-logo.svg" alt="Google" class="w-6 h-6"></button>
+                        <button class="w-10 h-10 bg-black border border-white/20 rounded-full flex items-center justify-center text-white hover:scale-110 transition-transform"><img src="https://upload.wikimedia.org/wikipedia/commons/c/ce/X_logo_2023.svg" alt="X" class="w-5 h-5 invert"></button>
+                        <button class="w-10 h-10 bg-white rounded-full flex items-center justify-center hover:scale-110 transition-transform"><img src="https://upload.wikimedia.org/wikipedia/commons/f/fa/Apple_logo_black.svg" alt="Apple" class="w-5 h-5"></button>
+                        <button class="w-10 h-10 bg-[#0088cc] rounded-full flex items-center justify-center text-white hover:scale-110 transition-transform"><i data-lucide="send" class="w-5 h-5 ml-0.5 mt-0.5"></i></button>
+                        <button class="w-10 h-10 bg-[#25D366] rounded-full flex items-center justify-center hover:scale-110 transition-transform"><img src="https://upload.wikimedia.org/wikipedia/commons/6/6b/WhatsApp.svg" alt="WhatsApp" class="w-6 h-6"></button>
+                        <button class="w-10 h-10 bg-white border border-gray-100 rounded-full overflow-hidden p-1 shadow-sm">
+                            <img src="assets/img/pinetwork.png" alt="Pi Network" class="w-full h-full object-contain">
+</button>
+                    </div>
+                </div>
+                <!-- 2. My QR 섹션 -->
+                <div id="auth-myqr-section" class="hidden text-center space-y-4">
+                    <div class="bg-white p-4 rounded-3xl inline-block shadow-inner">
+                        <img src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=PiNetwork" class="w-40 h-40">
+                    </div>
+                    <div onclick="copyWallet()" class="bg-white/5 border border-white/10 p-3 rounded-xl flex justify-between items-center cursor-pointer hover:bg-white/10 transition-colors">
+                        <p class="text-yellow-500 font-mono text-[10px] truncate mr-2">GBHQ...WALLET_ADDRESS</p>
+                        <i data-lucide="copy" class="w-4 h-4 text-white/40"></i>
+                    </div>
+                </div>
+
+                <!-- 3. Scan QR 섹션 -->
+                <div id="auth-scan-section" class="hidden">
+                    <div class="relative w-full aspect-square bg-black rounded-3xl border-2 border-yellow-500/50 overflow-hidden flex items-center justify-center">
+                        <div class="absolute inset-0 border-[2px] border-yellow-500 animate-pulse opacity-30"></div>
+                        <div class="absolute inset-0 flex flex-col items-center justify-center">
+                            <i data-lucide="camera" class="w-8 h-8 text-white/20 mb-2"></i>
+                            <p class="text-white/40 text-xs">카메라 권한을 허용해주세요...</p>
+                        </div>
+                        <!-- 스캔 라인 애니메이션 -->
+                        <div class="absolute top-0 left-0 w-full h-1 bg-yellow-500 shadow-[0_0_20px_#eab308] animate-scan"></div>
+                    </div>
+                    <p class="text-center text-[10px] text-white/60 mt-4">상대방의 QR 코드를 사각형 안에 맞춰주세요.</p>
+                  </div>
+<div id="auth-reset-section" class="px-4 animate-fade-in ">
+    <div class="space-y-4 py-2">
+        <p class="text-[10px] text-yellow-500 font-bold uppercase tracking-[0.2em] text-center mb-4">
+            Security Recovery
+        </p>
+        
+        <input type="password" id="new-password" placeholder="New Access Key" 
+               class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white text-sm outline-none focus:border-yellow-500/50">
+        
+        <button onclick="updatePassword()" class="w-full bg-yellow-500 text-black font-black py-3 rounded-xl text-xs active:scale-95 transition-transform">
+            SET NEW PASSWORD
+        </button>
+
+        <div class="flex items-center gap-3 py-2 opacity-30">
+            <div class="h-[1px] flex-1 bg-white"></div>
+            <span class="text-[8px]">OR</span>
+            <div class="h-[1px] flex-1 bg-white"></div>
+        </div>
+
+        <input type="email" id="recovery-email" placeholder="CEO Email Address" 
+               class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white text-sm outline-none">
+        
+        <button onclick="sendRecoveryEmail()" class="w-full border border-yellow-500/30 text-yellow-500 py-3 rounded-xl text-xs">
+            SEND RESET LINK
+        </button>
+
+        <p onclick="switchTab('login')" class="text-[9px] text-white/40 text-center mt-4 cursor-pointer hover:text-yellow-500">
+            Return to Login
+        </p>
+    </div>
+</div>     
+    <button class="w-full py-4 bg-yellow-500 text-black font-black rounded-2xl mt-8 transition-transform active:scale-95 hover:bg-yellow-400" onclick="closeAuth()">DONE</button>
+            </div>
+        </div>
+    </div>
+    </div> 
+
+
+
+    <!-- 2. Realty Modal (규격 통일 및 상단 배치) -->
+    <div id="realty-modal" class="hidden fixed inset-0 z-[10000] flex items-center justify-center p-4 bg-black/80 backdrop-blur-md">
+        <div class="dashboard-content w-full max-w-[480px] bg-[#0a0a0a] border border-white/10 rounded-[2.5rem] overflow-hidden transform transition-all duration-300 scale-90 opacity-0 shadow-2xl">
+            <div class="p-6 border-b border-white/5 flex justify-between items-center bg-zinc-900/50">
+                <h2 class="text-xl font-black text-white italic tracking-tighter">REALTY <span class="text-orange-500 text-sm">PORTAL</span></h2>
+                <button onclick="closeRealty()" class="p-2 hover:bg-white/10 rounded-full text-white"><i data-lucide="x" class="w-6 h-6"></i></button>
+            </div>
+            <div class="px-6 pb-4 pt-4">
+                <div class="relative">
+                    <input type="text" id="realtySearchInput" onkeyup="filterProperties()" placeholder="매물명 또는 지역 검색..." class="w-full bg-white/5 border border-white/10 rounded-2xl py-4 pl-12 pr-4 text-white focus:outline-none focus:border-orange-500/50 transition-all">
+                    <span class="absolute left-4 top-1/2 -translate-y-1/2 opacity-40">🔍</span>
+                </div>
+            </div>
+            <div id="property-list" class="p-4 max-h-[60vh] overflow-y-auto space-y-3"></div>
+        </div>
+    </div>
+
+    
+
+<div class="mango-container flex justify-between items-center px-4 pt-6">
+    <div class="flex items-center gap-3">
+        <div class="logo-container" onclick="location.reload()" style="cursor: pointer;">
+            <img id="mango-charging-logo" src="assets/img/mango.jpg" 
+     class="w-14 h-14 rounded-2xl border border-white/10 object-cover animate-mango-otogi transition-all duration-1000" 
+     alt="mango Logo">
+        </div>
+        
+        <div class="flex flex-col">
+            <div class="relative inline-block cursor-pointer" onclick="document.getElementById('integrated-auth-modal').classList.remove('hidden'); switchTab('reset');">
+    <h1 id="mango-text" 
+        class="mango-gold-power text-[34px] font-[900] tracking-tighter leading-none drop-shadow-md pr-2" 
+        style="color: #f97316; font-style: italic; margin: 0; position: relative; z-index: 10;">
+        MANGO
+    </h1>
+                
+                <div id="gold-dust-container" 
+                     class="absolute top-0 left-0 w-full h-full pointer-events-none" 
+                     style="z-index: 20; overflow: hidden;"></div>
+            </div>
+            
+            <span id="main-mango-logo" class="text-[8px] text-white/40 font-bold tracking-[1px] uppercase ml-1 cursor-pointer">  
+                     .PI / ECO-SYSTEM
+            </span>
+        </div>
+    </div>
+   <div class="flex items-center gap-3">
+<a href="javascript:void(0);" onclick="document.getElementById('integrated-auth-modal').classList.remove('hidden')" class="relative group">            <div class="absolute -inset-1 bg-orange-500/20 rounded-full blur group-hover:bg-orange-500/40 transition duration-300"></div>
+            <div class="relative w-12 h-12 bg-zinc-900 border border-white/10 rounded-full flex items-center justify-center hover:border-orange-500/50 transition-all shadow-lg">
+                <i data-lucide="user" class="w-6 h-6 text-orange-500"></i>
+                <span class="absolute top-0 right-0 w-3 h-3 bg-red-600 border-2 border-black rounded-full"></span>
+            </div>
+        </a>
+    </div>
+</div> 
+<div class="mango-container glass px-6 py-4 mt-2 mx-auto" style="width: 92%; max-width: 430px;">
+    <div class="news-ticker h-[120px] overflow-hidden text-[15px] text-yellow-400 font-bold italic tracking-tight">
+        <div id="realtime-news-track" class="news-track">
+            <p class="h-12 flex items-center opacity-50">Global News Syncing...</p>
+        </div>
+    </div>
+</div>
+
+
+<div class="mango-container mb-10 overflow-hidden rounded-[2.5rem] relative">
+    <div class="absolute inset-0 z-0">
+        <img src="https://images.unsplash.com/photo-1513151233558-d860c5398176?w=800" class="w-full h-full object-cover opacity-20">
+        <div class="absolute inset-0 bg-gradient-to-b from-black/80 via-black/40 to-black/80"></div>
+    </div>
+
+    <div class="relative z-10 p-4">
+        <div class="flex justify-between items-center mb-4 px-1">
+            <h3 class="text-[14px] font-black text-yellow-500 tracking-widest uppercase flex items-center gap-2">
+                <i data-lucide="sparkles" class="w-4 h-4 text-yellow-400"></i>
+                Premium Selection
+            </h3>
+            <span class="text-[10px] text-white/30 font-bold uppercase tracking-tighter">Special Flirting</span>
+        </div>
+
+        <div class="relative h-[100px] overflow-hidden rounded-2xl bg-white/[0.03] backdrop-blur-md border border-white/10 shadow-2xl">
+            <div id="premiumRollingBoard" class="absolute w-full transition-all duration-700 ease-in-out">
+                
+              <div class="h-[100px] flex items-center gap-4 px-5 cursor-pointer hover:bg-white/5" onclick="openAdVideo('hospital')">
+    <div class="w-14 h-14 flex-shrink-0 bg-blue-500/20 rounded-2xl flex items-center justify-center border border-blue-400/30 relative overflow-hidden">
+        
+        <span class="absolute text-3xl opacity-50">🩺</span>
+
+        <img src="assets/img/dental.png" 
+             onerror="this.src='https://images.unsplash.com/photo-1629909613654-28e377c37b09?w=200'; this.onerror=function(){this.style.opacity='0'};" 
+             alt="망고치과" 
+             class="absolute inset-0 w-full h-full object-cover z-10"
+             onload="this.style.opacity='1'">
+             
+    </div>
+    <div class="flex-1">
+        <div class="flex items-center gap-2 mb-1">
+            <span class="text-[9px] text-blue-400 font-bold border border-blue-00/50 px-2 py-0.5 rounded-full uppercase">Exclusive π Benefit</span>
+        </div>
+        <h4 class="text-[14px] font-bold text-white leading-tight">"망고치과: 오스템 임플란트 π 결제 시 10% 할인가"</h4>
+        <p class="text-[10px] text-white/40 mt-1">과잉진료 없는 정직한 플러팅 · 당일 예약제 운영</p>
+    </div>
+</div>
+
+<div class="h-[100px] flex items-center gap-4 px-5 cursor-pointer hover:bg-white/5 transition-all" onclick="openAdVideo('bakery')">
+    <div class="w-14 h-14 flex-shrink-0 rounded-2xl bg-gradient-to-br from-orange-400 to-orange-700 flex items-center justify-center border border-orange-400/50 shadow-lg relative overflow-hidden">
+        <span class="absolute text-3xl">🥐</span>
+        <img src="assets/img/bread.png" 
+             onerror="this.src='assets/img/bread.jpg'; this.onerror=function(){this.src='https://images.unsplash.com/photo-1608198093002-ad4e005484ec?w=200'; this.onerror=function(){this.style.opacity='0'};};" 
+             alt="망고브레드" 
+             class="absolute inset-0 w-full h-full object-cover z-10">
+    </div>
+    <div class="flex-1">
+        <div class="flex items-center gap-2 mb-1">
+            <span class="text-[9px] text-orange-400 font-bold border border-orange-400/50 px-2 py-0.5 rounded-full uppercase">Daily Fresh 14:00</span>
+        </div>
+        <h4 class="text-[14px] font-bold text-white leading-tight">"망고브레드: 명장 소금빵 14시 갓 구워져 나옵니다"</h4>
+        <p class="text-[10px] text-white/40 mt-1">매일 한정 50개 · 결제 금액의 10% π 적립</p>
+    </div>
+</div>
+
+<div class="h-[100px] flex items-center gap-4 px-5 cursor-pointer hover:bg-white/5" onclick="openAdVideo('kindergarten')">
+    <div class="w-14 h-14 flex-shrink-0 bg-emerald-500/20 rounded-xl flex items-center justify-center border border-emerald-400/30">
+        <span class="text-3xl">🌸</span>
+    </div>
+    <div class="flex-1">
+        <div class="flex items-center gap-2 mb-1">
+            <span class="text-[9px] text-emerald-400 font-bold border border-emerald-400/50 px-2 py-0.5 rounded-full uppercase">Spring Season / March</span>
+        </div>
+        <h4 class="text-[14px] font-bold text-white leading-tight">"망고유치원: 2026학년도 신입생 모집 중"</h4>
+        <p class="text-[10px] text-white/40 mt-1">아이들의 꿈이 자라는 공간 · π 결제 원비 할인</p>
+    </div>
+</div>
+
+<div class="h-[100px] flex items-center gap-4 px-5 cursor-pointer hover:bg-white/5 transition-all" onclick="openAdVideo('mobile')">
+    <div class="w-14 h-14 flex-shrink-0 rounded-2xl bg-gradient-to-br from-zinc-700 to-black flex items-center justify-center border border-white/20 shadow-lg relative overflow-hidden">
+        <span class="absolute text-3xl">📱</span>
+        <img src="assets/img/phone.png" 
+             onerror="this.src='assets/img/phone.jpg'; this.onerror=function(){this.src='https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?w=200'; this.onerror=function(){this.style.opacity='0'};};" 
+             alt="망고모바일" 
+             class="absolute inset-0 w-full h-full object-cover z-10">
+             
+        <div class="absolute inset-0 bg-gradient-to-tr from-white/10 to-transparent z-20 pointer-events-none"></div>
+    </div>
+    <div class="flex-1">
+        <div class="flex items-center gap-2 mb-1">
+            <span class="text-[9px] text-red-500 font-bold border border-red-500/50 px-2 py-0.5 rounded-full uppercase tracking-tighter">SK · KT · LG U+</span>
+        </div>
+        <h4 class="text-[14px] font-bold text-white leading-tight">"망고 모바일: 파이(π)로 가입 시 최신 기기값 0원"</h4>
+        <p class="text-[10px] text-white/40 mt-1">통신 3사 번호이동 최대 지원 · 사은품 증정</p>
+    </div>
+</div>
+
+<div class="h-[100px] flex items-center gap-4 px-5 cursor-pointer hover:bg-white/5 transition-all">
+    <div class="w-14 h-14 flex-shrink-0 rounded-2xl bg-gradient-to-br from-amber-400 to-amber-700 flex items-center justify-center border border-amber-400/50 shadow-lg relative overflow-hidden">
+        <span class="absolute text-3xl">🍺</span>
+        <img src="assets/img/kirin.png" 
+             onerror="this.src='assets/img/kirin.jpg'; this.onerror=function(){this.src='https://images.unsplash.com/photo-1612528443702-f6741f70a049?w=200'; this.onerror=function(){this.style.opacity='0'};};" 
+             alt="기린 맥주" 
+             class="absolute inset-0 w-full h-full object-cover z-10">
+    </div>
+    <div class="flex-1">
+        <div class="flex items-center gap-2 mb-1">
+            <span class="text-[9px] text-amber-400 font-bold border border-amber-400/50 px-2 py-0.5 rounded-full uppercase">Mango Mart Only</span>
+        </div>
+        <h4 class="text-[14px] font-bold text-white leading-tight">"기린 이치방 500ml 4캔 9,800원 특가"</h4>
+        <p class="text-[10px] text-white/40 mt-1">망고마트 본점 · 파이결제 시 5% 추가 적립</p>
+    </div>
+</div>
+
+<div class="h-[100px] flex items-center gap-4 px-5 cursor-pointer hover:bg-white/5">
+    <div class="w-14 h-14 flex-shrink-0 bg-red-500/20 rounded-2xl flex items-center justify-center border border-red-400/30">
+        <span class="text-3xl">🥩</span>
+    </div>
+    <div class="flex-1">
+        <div class="flex items-center gap-2 mb-1">
+            <span class="text-[9px] text-red-400 font-bold border border-red-400/50 px-2 py-0.5 rounded-full uppercase">Butcher's Cut</span>
+        </div>
+        <h4 class="text-[14px] font-bold text-white leading-tight">"횡성 한우 1++ 등심 구이용 20% 할인"</h4>
+        <p class="text-[10px] text-white/40 mt-1">망고마트 정육코너 · 당일 도축 물량 한정</p>
+    </div>
+</div>
+
+<div class="h-[100px] flex items-center gap-4 px-5 cursor-pointer hover:bg-white/5 transition-all">
+    <div class="w-14 h-14 flex-shrink-0 rounded-2xl bg-gradient-to-br from-red-600 to-red-900 flex items-center justify-center border border-red-400/50 shadow-lg shadow-red-900/40 relative overflow-hidden">
+        
+        <span class="absolute text-3xl">🥬</span>
+
+        <img src="assets/img/kimchi.png" 
+             onerror="this.src='assets/img/kimchi.jpg'; this.onerror=function(){this.src='https://cdn.pixabay.com/photo/2014/01/09/10/39/kimchi-241047_1280.jpg'; this.onerror=function(){this.style.opacity='0'};};" 
+             alt="종가집 김치" 
+             class="absolute inset-0 w-full h-full object-cover z-10">
+             
+        <div class="absolute inset-0 opacity-10 bg-[url('https://www.transparenttextures.com/patterns/asfalt-dark.png')] z-20 pointer-events-none"></div>
+    </div>
+    
+    <div class="flex-1">
+        <div class="flex items-center gap-2 mb-1">
+            <span class="text-[9px] text-red-400 font-bold border border-red-400/50 px-2 py-0.5 rounded-full uppercase tracking-tighter">Fresh K-Food</span>
+        </div>
+        <h4 class="text-[14px] font-bold text-white leading-tight">"종가집 전라도 포기김치 3.3kg 특가"</h4>
+        <p class="text-[10px] text-white/40 mt-1 italic">망고마트 산지직송 · 32.5 π 결제 가능</p>
+    </div>
+</div>
+            </div> <!-- End of premiumRollingBoard -->
+        </div> <!-- End of relative h-[100px] -->
+    </div>
+</div>
+
+
+
+<script>
+    const Pi = window.Pi;
+    let piUser = null;
+
+    // [1] 접속 즉시 실행: 코어팀에 "사용 흔적" 전송
+    async function initPi() {
+        try {
+            await Pi.init({ version: "2.0", sandbox: true });
+            
+            // 접속하자마자 유저 정보를 가져와서 "인증 기록"을 남깁니다.
+            const auth = await Pi.authenticate(['payments', 'username'], (payment) => {
+                console.log("미완료 결제 건 처리:", payment);
+            });
+            
+            piUser = auth.user;
+            console.log("🔥 사용 흔적 기록 완료:", piUser.username);
+            
+            // 로그인 성공 시 UI 표시 (예: 토스트 알림)
+            if(window.showMangoToast) showMangoToast(`${piUser.username}님, 망고 생태계에 오신 것을 환영합니다!`);
+
+        } catch (err) {
+            console.error("인증 실패:", err);
+            // 일반인들에게 보여줄 안내
+            if(err.message.includes('scope')) {
+                alert("망고 앱을 이용하시려면 [허용] 버튼을 눌러주셔야 합니다. 앱을 다시 켜주세요!");
+            }
+        }
+    }
+
+    // [2] 결제 흔적 남기기 (받기 버튼)
+    async function startPayment() {
+        if (!piUser) return alert("인증 로딩 중입니다. 잠시만 기다려주세요!");
+        
+        try {
+            await Pi.createPayment({
+                amount: 0.01,
+                memo: "Mango Ecosystem Trace Test",
+                metadata: { itemId: "trace_001" }
+            }, {
+                onReadyForServerApproval: (id) => console.log("결제 승인 대기:", id),
+                onReadyForServerCompletion: (id, tx) => alert("✅ 결제 성공! 흔적이 기록되었습니다."),
+                onCancel: (id) => console.log("결제 취소"),
+                onError: (err) => alert("결제 실패: " + err.message)
+            });
+        } catch (e) {
+            alert("파이 지갑을 열 수 없습니다.");
+        }
+    }
+
+    // [3] 전파 흔적 남기기 (공유 버튼 - 강제 복사 방식)
+    function shareMango() {
+        const url = "https://mango-os-6xu2.vercel.app"; // 무조건 루트 주소로 공유
+        const t = document.createElement("textarea");
+        document.body.appendChild(t);
+        t.value = url;
+        t.select();
+        document.execCommand('copy');
+        document.body.removeChild(t);
+        
+        alert("🥭 망고 앱 주소가 복사되었습니다!\n이제 카톡이나 파이 채팅창에 붙여넣어 친구들을 초대하세요!");
+    }
+
+    window.addEventListener('load', initPi);
+   // [MANGO LEGAL DATA SYSTEM]
+const MANGO_LEGAL_DATA = {
+    terms: "<h3>이용약관</h3><p>망고 글로벌 서비스 이용 규칙...</p>",
+    privacy: "<h3>개인정보처리방침</h3><p>정보 보호 정책...</p>",
+    location: "<h3>위치정보약관</h3><p>GPS 이용 안내...</p>",
+    finance: "<h3>금융거래약관</h3><p>mPi 결제 보안 안내...</p>"
+};
+
+// --- [2026-02-04] 통합 인증 & 상호 스캔 모달 제어 ---
+function openAuth(tab = 'login') {
+    const modal = document.getElementById('integrated-auth-modal');
+    modal.classList.remove('hidden');
+    document.body.style.overflow = 'hidden'; // 배경 스크롤 잠금
+    switchTab(tab);
+}
+
+function closeAuth() {
+    document.getElementById('integrated-auth-modal').classList.add('hidden');
+    document.body.style.overflow = 'auto'; // 배경 스크롤 해제
+}
+
+function switchTab(tab) {
+    // 섹션 숨기기
+    document.getElementById('auth-login-section').classList.add('hidden');
+    document.getElementById('auth-myqr-section').classList.add('hidden');
+    document.getElementById('auth-scan-section').classList.add('hidden');
+
+    // 탭 스타일 초기화
+    ['login', 'myqr', 'scan'].forEach(t => {
+        const btn = document.getElementById(`tab-${t}`);
+        btn.className = "flex-1 py-4 text-xs font-black text-white/40 transition-colors";
+    });
+
+    // 선택된 섹션 보이기 & 탭 활성화
+    if (tab === 'login') {
+        document.getElementById('auth-login-section').classList.remove('hidden');
+        document.getElementById('tab-login').className = "flex-1 py-4 text-xs font-black text-yellow-500 border-b-2 border-yellow-500 transition-colors";
+    } else if (tab === 'my-qr') {
+        document.getElementById('auth-myqr-section').classList.remove('hidden');
+        document.getElementById('tab-myqr').className = "flex-1 py-4 text-xs font-black text-yellow-500 border-b-2 border-yellow-500 transition-colors";
+    } else if (tab === 'scan') {
+        document.getElementById('auth-scan-section').classList.remove('hidden');
+        document.getElementById('tab-scan').className = "flex-1 py-4 text-xs font-black text-yellow-500 border-b-2 border-yellow-500 transition-colors";
+        // 카메라 권한 요청 시뮬레이션
+        setTimeout(() => {
+            // 실제 구현 시 navigator.mediaDevices.getUserMedia 사용
+            console.log("Camera scanning started...");
+        }, 500);
+    }
+}
+
+function copyWallet() {
+    const addr = document.getElementById('pi-address').innerText;
+    navigator.clipboard.writeText(addr);
+    alert("지갑 주소가 복사되었습니다. 파이 브라우저에서 결제해주세요! 🥭");
+}
+
+function requestConfirm() {
+    alert("결제 확인 요청이 사장님께 전송되었습니다. 확인 후 승인해 드릴게요!");
+}
+// [여기에 추가하세요]
+function shareMango() {
+    if (navigator.share) {
+        navigator.share({
+            title: 'Mango Pi Ecosystem',
+            text: '망고 생태계에 동참하세요!',
+            url: window.location.href
+        });
+    } else {
+        // 공유 기능 미지원 브라우저 대비
+        const dummy = document.createElement('input');
+        document.body.appendChild(dummy);
+        dummy.value = window.location.href;
+        dummy.select();
+        document.execCommand('copy');
+        document.body.removeChild(dummy);
+        alert("링크가 복사되었습니다! 친구에게 전달해 주세요. 🥭");
+    }
+}
+    // 프리미엄 롤링 보드 제어
+    (function() {
+        let currentSlide = 0;
+        const board = document.getElementById('premiumRollingBoard');
+        const totalSlides = 7; 
+
+        if (board) {
+            setInterval(() => {
+                currentSlide = (currentSlide + 1) % totalSlides;
+                board.style.top = `-${currentSlide * 100}px`;
+            }, 4000);
+        }
+    })();
+    // 상담 모달 열기 함수
+function openAdVideo(type) {
+    const modal = document.getElementById('consult-modal');
+    const title = document.getElementById('consult-title');
+    const icon = document.getElementById('consult-icon');
+    
+    // 광고 타입에 따른 내용 변경
+    if(type === 'sk-local') {
+        title.innerText = "SK 공식 대리점 상담";
+        icon.innerText = "📱";
+    } else if(type === 'hospital') {
+        title.innerText = "치과 진료 예약 문의";
+        icon.innerText = "🩺";
+    } else if(type === 'bakery') {
+        title.innerText = "빵집 예약/문의";
+        icon.innerText = "🥐";
+    }
+
+    modal.classList.remove('hidden');
+}
+
+function closeConsultModal() {
+    document.getElementById('consult-modal').classList.add('hidden');
+}
+
+// 사조님께 전송 시뮬레이션
+function submitConsult() {
+    const msg = document.getElementById('consult-message').value;
+    if(!msg) {
+        alert("메시지를 입력해 주세요!");
+        return;
+    }
+    
+    alert("🚀 [전송 완료]\n사장님께 메시지가 전달되었습니다!\n곧 답변이 도착할 예정입니다.");
+    closeConsultModal();
+    document.getElementById('consult-message').value = ""; // 초기화
+}
+// --- [2026-01-19 고도화: 거리 필터 엔진] ---
+function filterByDistance(km) {
+    // 1. 버튼 스타일 변경
+    const btns = document.querySelectorAll('.distance-btn');
+    btns.forEach(btn => {
+        btn.classList.remove('bg-orange-500', 'text-black');
+        btn.classList.add('bg-white/5', 'text-white/60');
+    });
+    
+    // 클릭된 버튼 활성화
+    event.target.classList.add('bg-orange-500', 'text-black');
+    event.target.classList.remove('bg-white/5', 'text-white/60');
+
+    // 2. 필터링 알림 시뮬레이션 (추후 실제 리스트 필터링 연동)
+    if(km === 'all') {
+        alert("📍 전체 지역의 프리미엄 광고를 보여줍니다.");
+    } else {
+        alert(`📍 내 위치 기준 ${km}km 이내의 매장 광고만 필터링합니다.`);
+        // 여기서 실제로 광고 리스트를 숨기거나 보여주는 로직을 추가할 수 있습니다.
+    }
+}
+
+// --- [Realty 포털 모듈 시작] ---
+
+// 2. Realty 상세 정보 주입 함수
+function openRealty() {
+    const listContainer = document.getElementById('property-list');
+    if (!listContainer) return;
+
+    // 한남 더 힐 사진이 포함된 92% 규격 카드 주입
+    listContainer.innerHTML = `
+        <div class="bg-zinc-800/50 rounded-[2rem] border border-white/10 overflow-hidden mb-5 transition-all hover:border-orange-500/50">
+            <div class="relative h-44 w-full">
+                <img src="https://images.unsplash.com/photo-1512917774080-9991f1c4c750?w=800" 
+                     class="w-full h-full object-cover" alt="Hannam THE HILL">
+                <div class="absolute top-4 right-4 bg-orange-500 text-white text-[10px] font-black px-3 py-1 rounded-full shadow-lg">
+                    PREMIUM
+                </div>
+            </div>
+            <div class="p-6">
+                <div class="flex justify-between items-center mb-2">
+                    <h4 class="text-white text-lg font-bold">한남 더 힐</h4>
+                    <span class="text-orange-500 font-black italic">8,500 π</span>
+                </div>
+                <p class="text-white/40 text-xs leading-relaxed">
+                    대한민국 최고의 하이엔드 주거 단지. 파이 생태계 특별 매물.
+                </p>
+            </div>
+        </div>
+    `;
+    }
+    // 부드러운 줌인 애니메이션
+    setTimeout(() => {
+        const modal = document.getElementById('realty-modal');
+        const content = modal.querySelector('.dashboard-content');
+        if(content) {
+            content.classList.remove('scale-90', 'opacity-0');
+            content.classList.add('scale-100', 'opacity-100');
+        }
+    }, 10);
+
+
+// 3. Realty 포털 닫기 함수
+function closeRealty() {
+    const modal = document.getElementById('realty-modal');
+    if (!modal) return;
+    const content = modal.querySelector('.dashboard-content');
+    
+    content.classList.remove('scale-100', 'opacity-100');
+    content.classList.add('scale-90', 'opacity-0');
+    
+    setTimeout(() => {
+        modal.classList.add('hidden');
+        document.body.style.overflow = 'auto';
+    }, 300);
+}
+
+// 4. 매물 데이터 로드 및 렌더링
+function loadRealtyData() {
+    const listContainer = document.getElementById('property-list');
+    if (!listContainer) return;
+    
+    listContainer.innerHTML = ''; 
+    const verifiedList = mockProperties.filter(p => p.trust_score > 50);
+
+    verifiedList.forEach(p => {
+        let tempColor = p.trust_score >= 90 ? 'text-red-500' : 'text-orange-400';
+        let borderColor = p.trust_score >= 90 ? 'border-red-500/50' : 'border-blue-500/30';
+        let glowEffect = p.trust_score >= 90 ? 'shadow-[0_0_15px_rgba(239,68,68,0.3)]' : '';
+
+        const card = `
+            <div onclick="openPropertyDetail(${p.id})" class="flex justify-between items-center p-4 bg-white/5 rounded-2xl border ${borderColor} ${glowEffect} mb-3 cursor-pointer active:scale-95 transition-all">
+                <div class="flex items-center gap-4">
+                    <div class="w-16 h-16 rounded-xl bg-black/50 overflow-hidden flex-shrink-0">
+                        <img src="${p.image}" class="w-full h-full object-cover">
+                    </div>
+                    <div class="flex flex-col">
+                        <span class="text-white font-bold text-sm leading-tight">${p.title}</span>
+                        <span class="text-white/40 text-[10px] mt-1">${p.location}</span>
+                        <div class="flex items-center gap-1 mt-1">
+                            <span class="${tempColor} text-[10px] font-black">${p.trust_score}°C</span>
+                            <div class="w-12 h-1 bg-white/10 rounded-full overflow-hidden">
+                                <div class="h-full bg-gradient-to-r from-blue-500 via-orange-400 to-red-500" style="width: ${p.trust_score}%"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="text-right flex flex-col items-end">
+                    <span class="text-yellow-500 font-black text-sm">${p.price_pi} π</span>
+                    <span class="text-white/30 text-[9px]">${p.price_krw}</span>
+                </div>
+            </div>
+        `;
+        listContainer.insertAdjacentHTML('beforeend', card);
+    });
+}
+// --- [Realty 포털 모듈 끝] ---
+
+// --- CEO Security Logic ---
+let pendingPortalAction = null;
+
+function requestPortalSwitch(portalId, targetState) {
+    if (targetState === 'ON') {
+        pendingPortalAction = { portalId, state: 'ON' };
+        document.getElementById('ceo-auth-modal').classList.remove('hidden');
+        document.getElementById('ceo-key').value = '';
+        document.getElementById('final-confirm').checked = false;
+    } else {
+        if (confirm("서비스를 중단하시겠습니까?")) {
+            executePortalSwitch(portalId, 'OFF');
+        }
+    }
+}
+
+function cancelAuth() {
+    document.getElementById('ceo-auth-modal').classList.add('hidden');
+    pendingPortalAction = null;
+}
+
+function verifyCeoAuth() {
+    const key = document.getElementById('ceo-key').value;
+    const confirmed = document.getElementById('final-confirm').checked;
+
+    if (key === "MANGO-CEO-2026" && confirmed) {
+        executePortalSwitch(pendingPortalAction.portalId, 'ON');
+        document.getElementById('ceo-auth-modal').classList.add('hidden');
+        alert("승인되었습니다. 포털이 전 세계에 개방됩니다.");
+        pendingPortalAction = null;
+    } else {
+        alert("인증 정보가 올바르지 않거나 책임 확인이 필요합니다.");
+    }
+}
+
+function executePortalSwitch(portalId, state) {
+    console.log(`Portal ${portalId} switched to ${state}`);
+    // 실제 포털 활성화/비활성화 로직 (추후 구현)
+}
+
+pressTimer = null;
+function startPress() {
+    pressTimer = window.setTimeout(function() {
+        const gate = document.getElementById('ceo-gate-modal');
+        if(gate) gate.classList.remove('hidden');
+    }, 3000); 
+}
+function cancelPress() {
+    clearTimeout(pressTimer);
+}
+</script>
+
+    </div>
+    </div>
+
+<div class="mango-container mb-8">
+    <div class="swiper main-banner"></div>
+</div>           
+ </p>
+    </div>
+
+    <div id="main-banner" class="mango-container glass h-28 relative overflow-hidden hide-on-watch mb-4">
+    <div id="banner-slots" class="relative w-full h-full"></div>
+        </div>
+
+    <div class="mango-container carousel-view" id="swipe-area">
+        <div class="carousel-pivot" id="pivot"></div>
+    </div>
+    <div class="flex justify-end pr-4 relative z-30" style="margin-top: -28px; margin-bottom: 2px;">
+    <div class="fixed z-[9999] flex flex-col items-end" style="right: 20px; bottom: 185px;">
+        
+<div onclick="openMangoGuide(); event.stopPropagation();" class="relative block transition-transform active:scale-95 group" style="cursor: pointer;">
+    <div class="w-11 h-12 border border-yellow-500/40 flex items-center justify-center text-xl hex-diamond-profile bg-black/70 backdrop-blur-md shadow-[0_0_20px_rgba(255,215,0,0.2)] group-hover:shadow-[0_0_25px_rgba(255,215,0,0.4)] transition-all">
+        💎
+    </div>
+    <div class="absolute -bottom-1 -right-1 level-badge text-[7px] font-black px-1.5 py-0.5 rounded-full text-black bg-yellow-500 shadow-md">
+        LV.1
+    </div>
+</div>
+        <p class="text-[8px] text-yellow-500/80 tracking-[0.3em] font-bold uppercase mt-2 text-right pointer-events-none">
+            Global System Active
+        </p>
+
+    </div>
+</div>
+
+<div class="mango-container mb-6 px-2">
+    <div class="glass p-3 border-2 border-orange-500/50 relative overflow-hidden rounded-3xl">
+        <div class="absolute top-0 right-0">
+            <span class="bg-red-600 text-white text-[9px] font-bold px-2 py-0.5 rounded-bl-xl animate-pulse">HOT TIME</span>
+        </div>
+        
+        <div class="flex items-center gap-3">
+            <div class="w-16 h-16 flex-shrink-0 rounded-xl overflow-hidden border border-white/10 bg-zinc-800">
+                <img src="https://images.unsplash.com/photo-1608198093002-ad4e005484ec?w=400" 
+                     alt="소금빵" 
+                     class="w-full h-full object-cover">
+            </div>
+
+            <div class="flex-1 min-w-0">
+                <h4 class="text-orange-400 text-[10px] font-bold truncate">파리바게뜨 - 해운대역점</h4>
+                <p class="text-white font-black text-xs">소금빵 1+1 쿠폰</p>
+                <div class="flex items-center gap-1 mt-1">
+                    <span id="time-attack-timer" class="text-red-500 font-mono font-bold text-base">29:59</span>
+                    <span class="text-[9px] text-white/50">남음</span>
+                </div>
+            </div>
+
+            <div class="flex flex-shrink-0 flex-col items-end gap-1">
+                <button onclick="startPayment()" class="bg-orange-500 text-black font-black px-4 py-2 rounded-xl text-xs active:scale-95 shadow-lg shadow-orange-500/20">
+                    받기
+                </button>
+                <span class="text-[8px] text-orange-400/80 font-medium tracking-tighter">
+                    📍 4.2km
+                </span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<section class="w-full max-w-[450px] mx-auto mt-8 px-4 pb-0 mb-0 h-auto overflow-visible">
+    <div class="mb-5 pl-1">
+        <h2 class="text-sm font-black text-white flex items-center gap-2">
+            <span class="text-orange-500 animate-pulse">🔥</span> 
+            지역 피드 <span class="text-yellow-500 text-[10px] font-orbitron">(👑NEW 20👑)</span>
+        </h2>
+    </div>
+
+    <div class="relative group p-[2px] rounded-[2.5rem] overflow-hidden shadow-[0_25px_50px_-12px_rgba(0,0,0,0.7)] bg-[ #000000,]">
+        
+        <div class="absolute inset-0 metallic-shimmer"></div>
+        
+        <div class="relative z-10 bg-[#0a0a0a] rounded-[2.4rem] p-5">
+            <div class="grid grid-cols-2 gap-4">
+                
+                <!-- 전포 연화당 -->
+                <div class="relative aspect-[4/5] rounded-[1.8rem] overflow-hidden border border-white/5 bg-[#151515]">
+                    <img src="https://images.unsplash.com/photo-1559339352-11d035aa65de?w=200" 
+                    class="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-110 opacity-50 group-hover:opacity-70">
+                    <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent z-10"></div>
+                    <div class="absolute bottom-0 left-0 right-0 p-4 z-20">
+                        <span class="text-[8px] bg-orange-500 text-black px-1.5 py-0.5 rounded font-black mb-1 inline-block">DINING</span>
+                        <h3 class="text-xs font-black text-white">전포 연화당</h3>
+                        <p class="text-[9px] text-gray-400">개화기 컨셉 디저트 카페</p>
+                    </div>
+                </div>
+
+                <!-- 서면 별한스푼 -->
+                <div class="group relative aspect-[4/5] rounded-[1.8rem] overflow-hidden border border-white/10 bg-gray-900">
+                    <img src="https://images.unsplash.com/photo-1531346878377-a5be20888e57?w=200" class="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-110 opacity-50 group-hover:opacity-70">
+                    <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent z-10"></div>
+                    <div class="absolute bottom-0 left-0 right-0 p-4 z-20">
+                        <span class="text-[8px] bg-cyan-500 text-white px-1.5 py-0.5 rounded font-black mb-1 inline-block">SHOP</span>
+                        <h3 class="text-xs font-black text-white">서면 별한스푼</h3>
+                        <p class="text-[9px] text-gray-400">아기자기한 소품 천국</p>
+                    </div>
+                </div>
+
+                <!-- 샤브20 서면점 -->
+                <div class="group relative aspect-[4/5] rounded-[1.8rem] overflow-hidden border border-white/10 bg-gray-900">
+                    <img src="./assets/img/shabu.jpg" class="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-110 opacity-50 group-hover:opacity-70">
+                    <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent z-10"></div>
+                    <div class="absolute bottom-0 left-0 right-0 p-4 z-20">
+                        <span class="text-[8px] bg-amber-500 text-white px-1.5 py-0.5 rounded font-black mb-1 inline-block">PREMIUM</span>
+                        <h3 class="text-xs font-black text-white">샤브20 서면점</h3>
+                        <p class="text-[9px] text-gray-400">π Pay 10% Off</p>
+                    </div>
+                </div>
+
+                <!-- 롯데케슬 라센트 -->
+                <div class="group relative aspect-[4/5] rounded-[1.8rem] overflow-hidden border border-white/10 bg-gray-900">
+                    <img src="https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?w=200" class="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-110 opacity-50 group-hover:opacity-70">
+                    <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent z-10"></div>
+                    <div class="absolute bottom-0 left-0 right-0 p-4 z-20">
+                        <span class="text-[8px] bg-blue-500 text-white px-1.5 py-0.5 rounded font-black mb-1 inline-block">LUXURY</span>
+                        <h3 class="text-xs font-black text-white">롯데케슬 라센트</h3>
+                        <p class="text-[9px] text-gray-400">로얄동 급매물</p>
+                    </div>
+                </div>
+
+                <!-- 서울 연세 내과 -->
+                <div class="group relative aspect-[4/5] rounded-[1.8rem] overflow-hidden border border-white/10 bg-gray-900">
+                    <img src="https://images.unsplash.com/photo-1519494026892-80bbd2d6fd0d?w=200" class="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-110 opacity-50 group-hover:opacity-70">
+                    <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent z-10"></div>
+                    <div class="absolute bottom-0 left-0 right-0 p-4 z-20">
+                        <span class="text-[8px] bg-rose-500 text-white px-1.5 py-0.5 rounded font-black mb-1 inline-block">CARE</span>
+                        <h3 class="text-xs font-black text-white">서울 연세 내과</h3>
+                        <p class="text-[9px] text-gray-400">정직한 진료 시스템</p>
+                    </div>
+                </div>
+
+                <!-- 부산 시민공원 -->
+                <div class="group relative aspect-[4/5] rounded-[1.8rem] overflow-hidden border border-white/10 bg-gray-900">
+                    <img src="https://images.unsplash.com/photo-1585938389612-a552a28d6914?w=200" class="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-110 opacity-50 group-hover:opacity-70">
+                    <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent z-10"></div>
+                    <div class="absolute bottom-0 left-0 right-0 p-4 z-20">
+                        <span class="text-[8px] bg-purple-500 text-white px-1.5 py-0.5 rounded font-black mb-1 inline-block">NATURE</span>
+                        <h3 class="text-xs font-black text-white">부산 시민공원</h3>
+                        <p class="text-[9px] text-gray-400">도심 속 휴식처</p>
+                    </div>
+                </div>
+
+                <!-- 전포 무림커피 -->
+                <div class="group relative aspect-[4/5] rounded-[1.8rem] overflow-hidden border border-white/10 bg-gray-900">
+                    <img src="https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?w=200" class="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-110 opacity-50 group-hover:opacity-70">
+                    <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent z-10"></div>
+                    <div class="absolute bottom-0 left-0 right-0 p-4 z-20">
+                        <span class="text-[8px] bg-emerald-500 text-white px-1.5 py-0.5 rounded font-black mb-1 inline-block">CAFE</span>
+                        <h3 class="text-xs font-black text-white">전포 무림커피</h3>
+                        <p class="text-[9px] text-gray-400">빈티지 감성 가득</p>
+                    </div>
+                </div>
+
+                <!-- 롯데시네마 서면 -->
+                <div class="group relative aspect-[4/5] rounded-[1.8rem] overflow-hidden border border-white/10 bg-gray-900">
+                    <img src="https://images.unsplash.com/photo-1489599849927-2ee91cede3ba?w=200" class="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-110 opacity-50 group-hover:opacity-70">
+                    <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent z-10"></div>
+                    <div class="absolute bottom-0 left-0 right-0 p-4 z-20">
+                        <span class="text-[8px] bg-slate-500 text-white px-1.5 py-0.5 rounded font-black mb-1 inline-block">MOVIE</span>
+                        <h3 class="text-xs font-black text-white">롯데시네마 서면</h3>
+                        <p class="text-[9px] text-gray-400">최신 개봉작 상영 중</p>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</section>
+
+<style>
+    /* 1. 40px 초강력 울트라 네온 (보정본) */
+    .ultra-heavy-neon {
+        /* 두께를 40px로 유지하되, 입체감을 위해 내부 그림자 강화 */
+        border: 4px solid #dc2626 !important;
+        border-image: linear-gradient(to bottom right, #ff4d4d, #991b1b) 1;
+        box-sizing: border-box;
+        
+        /* 두께에 걸맞은 거대한 외부 광택 */
+        box-shadow: 
+            0 0 30px rgba(220, 38, 38, 0.8), 
+            0 0 60px rgba(220, 38, 38, 0.4),
+            inset 0 0 30px rgba(0, 0, 0, 0.9);
+        
+        animation: neon-pulse-extreme 2.5s infinite ease-in-out;
+    }
+
+    @keyframes neon-pulse-extreme {
+        0%, 100% { 
+            filter: brightness(1) drop-shadow(0 0 10px rgba(220, 38, 38, 0.5));
+            border-color: #991b1b;
+        }
+        50% { 
+            filter: brightness(1.3) drop-shadow(0 0 30px rgba(220, 38, 38, 0.8));
+            border-color: #ef4444;
+        }
+    }
+
+    /* 2. 금가루 로테이션 효과 (확정본) */
+    .gold-dust-effect {
+        position: relative;
+        overflow: hidden;
+        z-index: 1;
+    }
+    .gold-dust-effect::before {
+        content: '';
+        position: absolute;
+        inset: -100%; /* 범위를 넓혀 끊김 방지 */
+        background: conic-gradient(from 0deg, transparent, rgba(255,215,0,0.4), transparent 40%);
+        animation: rotate-gold 4s linear infinite;
+        z-index: -1;
+    }
+    @keyframes rotate-gold {
+        from { transform: rotate(0deg); }
+        to { transform: rotate(360deg); }
+    }
+
+    /* 3. 메탈릭/거울 일렁임 (최적화) */
+    .metallic-shimmer {
+        background: linear-gradient(
+            -45deg, 
+            rgba(0,0,0,0) 0%, 
+            rgba(255,255,255,0.05) 45%, 
+            rgba(255,255,255,0.6) 50%, 
+            rgba(255,255,255,0.05) 55%, 
+            rgba(0,0,0,0) 100%
+        );
+        background-size: 200% 200%;
+        animation: animate-shimmer 4s ease-in-out infinite;
+    }
+
+    @keyframes animate-shimmer {
+        0% { background-position: -100% -100%; }
+        100% { background-position: 200% 200%; }
+    }
+</style>
+
+
+    <p id="modal-content" class="text-white/90 text-[17px] mb-8 font-medium leading-relaxed break-keep"></p>
+    
+    <script>
+        
+        // --- 1. CEO 관리 데이터 (배너 목록) ---
+const promoContents = [
+    { 
+        type: 'image', 
+        src:'./assets/img/banner1.jpg', // 여기에 사진 주소 넣기
+        text: '차원을 넘는 휴가 여행' // 여기에 문구 넣기
+    },
+    {
+        type: 'image', 
+        src:'./assets/img/banner2.jpg', 
+        text: 'Premium Selection:<br>미식 & 엄선된 최고급 ' 
+    },
+    { 
+        type: 'image', 
+        src:'./assets/img/banner3.jpg', // 여기에 사진 주소 넣기
+        text: 'MANGO Special:<br>Early-Bird Trip' // 여기에 문구 넣기
+    },
+    { 
+        type: 'video', // 영상일 때는 'video'라고 적으세요
+        src:'./assets/video/promo_video.mp4', // 여기에 영상 주소(.mp4) 넣기
+        text: '실시간 예약 시스템 오픈'
+    }
+];
+// --- 242행부터 256행까지(updateBanner 함수 부분)를 아래로 교체 ---
+    let currentPromoIdx = 0;
+
+    // 배너 초기화: 처음에 모든 배너를 겹쳐서 미리 그려둡니다.
+    function initBanners() {
+        const slotWrap = document.getElementById('banner-slots');
+        if (!slotWrap) return;
+
+        slotWrap.innerHTML = promoContents.map((data, i) => `
+            <div class="banner-item absolute inset-0 transition-all duration-1000 transform 
+                        ${i === 0 ? 'opacity-100 scale-100' : 'opacity-0 scale-110'}" 
+                 style="z-index: ${i === 0 ? 10 : 1}">
+                ${data.type === 'video' 
+                    ? `<video src="${data.src}" autoplay muted loop class="w-full h-full object-cover opacity-40"></video>` 
+                    : `<img src="${data.src}" class="w-full h-full object-cover opacity-40">`
+                }
+                <div class="absolute inset-0 flex items-center px-6 bg-black/20">
+                    <p class="text-sm font-bold tracking-tighter italic text-white drop-shadow-lg leading-tight">${data.text}</p>
+                </div>
+            </div>
+        `).join('');
+    }
+
+    // 자연스러운 전환 함수 (Cross-fade & Zoom)
+    function rotateBanners() {
+        const items = document.querySelectorAll('.banner-item');
+        if (items.length === 0) return;
+
+        // 현재 배너: 서서히 사라지며 커짐
+        items[currentPromoIdx].classList.replace('opacity-100', 'opacity-0');
+        items[currentPromoIdx].classList.replace('scale-100', 'scale-110');
+        items[currentPromoIdx].style.zIndex = 1;
+
+        // 다음 배너 계산
+        currentPromoIdx = (currentPromoIdx + 1) % items.length;
+
+        // 다음 배너: 서서히 나타나며 원래 크기로
+        items[currentPromoIdx].classList.replace('opacity-0', 'opacity-100');
+        items[currentPromoIdx].classList.replace('scale-110', 'scale-100');
+        items[currentPromoIdx].style.zIndex = 10;
+    }
+
+    // 실행 명령 (기존 setInterval 부분 대체)
+    window.addEventListener('DOMContentLoaded', () => {
+        initBanners();
+        setInterval(rotateBanners, 4000); // 4초마다 부드럽게 전환
+    });
+   // 1. 데이터 설정
+   // --- [수정된 데이터 설정] ---
+const portalData = [
+    { id: 'FOOD', icon: 'utensils', url: 'Food/index.html' },               // 1번째 (정면)
+    { id: 'TRANSFER', icon: 'repeat', url: 'Transfer/index.html', desc: '안전한 이동 시스템.' },          // 2번째
+    { id: 'TRAVEL', icon: 'plane', url: 'Travel/index.html', desc: '글로벌 여행 및 숙박 예약.' },       // 3번째
+    { id: 'HOBBY', icon: 'heart', desc: '취미와 가치를 공유하는 커뮤니티.' }, // 4번째 (정확히 배치)
+    { id: 'REALTY', icon: 'building', desc: '부동산 매물 확인 및 거래.' },        // 5번째 (리액트 연결 -> 모달)
+    { id: 'MARKET', icon: 'shopping-cart', desc: '글로벌 파이 쇼핑몰.' },    // 6번째
+    { id: 'CHAT', icon: 'message-circle', desc: '실시간 채팅 및 소통.' },     // 7번째 (SOCIAL 대체)
+    { id: 'EDUCATION', icon: 'graduation-cap', desc: '미래를 여는 교육 포털.' } // 8번째 (ADMIN 대체)
+];
+
+    const pivot = document.getElementById('pivot');
+    const radius = 280; 
+    let currentIndex = 0; 
+    let autoRotation = null;
+// 2. 포탈 생성 엔진
+    function initPortals() {
+        pivot.innerHTML = '';
+        currentIndex = 0; 
+
+        portalData.forEach((data, i) => {
+            const door = document.createElement('div');
+            door.className = 'portal-door';
+            door.id = `door-${i}`;
+            
+            if (i === 0) {
+                door.classList.add('active');
+                door.style.zIndex = "100";
+            }
+
+            const iconFileName = `${data.id.toLowerCase()}_icon.png`;
+            const iconSize = (data.id === 'FOOD') ? 'w-28 h-28' : 'w-24 h-24';
+
+            door.innerHTML = `
+                <img src="./assets/img/${iconFileName}" 
+                     class="${iconSize} object-contain" 
+                     alt="${data.id}"
+                     onerror="this.src='https://via.placeholder.com/150/222/FFCC00?text=${data.id}'">
+            `;
+
+            // 클릭 이벤트 (통합 제어 엔진)
+// --- [수정된 클릭 로직] ---
+            door.onclick = (e) => {
+    e.stopPropagation();
+
+    // 1. 인덱스 업데이트 및 자동회전 정지
+    currentIndex = i;
+    updateRotation();
+    stopAuto();
+
+    // 2. [핵심] 0.5초 회전 후 목적지 이동
+                setTimeout(() => {
+                    if (data.id === 'REALTY') {
+                        openRealty();
+                    } else if (data.url) {
+                        window.location.href = data.url;
+                    } else {
+                        openDetailModal(data.id, data.desc);
+            }
+         }, 500);
+    };
+            
+            pivot.appendChild(door);
+        });
+
+        lucide.createIcons();
+        updateRotation();
+        startAuto();
+    }
+// 1. 포탈 초기화 실행 (460행 지점)
+    initPortals();
+    // 2. 핵심 무빙 로직
+    function updateRotation() {
+        const total = portalData.length;
+        portalData.forEach((_, i) => {
+            const door = document.getElementById(`door-${i}`);
+            const angle = (i - currentIndex) * (360 / total);
+            const radian = (angle * Math.PI) / 180;
+            const x = Math.sin(radian) * radius;
+            const z = (Math.cos(radian) - 1) * radius; 
+
+            door.style.transform = `translate3d(${Math.sin(radian)*280}px, -30px, ${(Math.cos(radian)-1)*280}px)`;
+
+            const activeIdx = (currentIndex % total + total) % total;
+            if (i === activeIdx) {
+                door.classList.add('active');
+                door.style.opacity = "1";
+                door.style.filter = "blur(0)";
+                door.style.zIndex = "100";
+            } else {
+                door.classList.remove('active');
+                door.style.opacity = "0.2";
+                door.style.filter = "blur(3px)";
+                door.style.zIndex = "1";
+            }
+        });
+    }
+
+    // 3. 자동 회전 시간 제어 (여기서 시간을 조절하세요!)
+    function startAuto() {
+        if (autoRotation) return;
+        autoRotation = setInterval(() => {
+            currentIndex = (currentIndex + 1) % 8;
+            updateRotation();
+        }, 5000); // 5000 = 5초마다 다음 포탈로 이동
+    }
+
+    function stopAuto() {
+        if (autoRotation) {
+            clearInterval(autoRotation);
+            autoRotation = null;
+        }
+    }
+
+    // 4. 금가루 엔진
+    function startGoldRain() {
+        const container = document.getElementById('gold-dust-container');
+        if (!container) return;
+
+        function createParticle() {
+            const particle = document.createElement('span');
+            particle.className = 'gold-particle';
+            const size = Math.random() * 3 + 2;
+            const left = Math.random() * 100;
+            const duration = Math.random() * 1 + 1.5;
+            
+            Object.assign(particle.style, {
+                width: size + 'px', height: size + 'px',
+                left: left + '%', top: '0px', position: 'absolute',
+                animation: `fall-and-stack ${duration}s ease-in-out forwards`
+            });
+            container.appendChild(particle);
+            
+            setTimeout(() => {
+                particle.style.transition = 'opacity 3s';
+                particle.style.opacity = '0';
+                setTimeout(() => { if(particle.parentNode) particle.remove(); }, 3000);
+            }, 20000); 
+        }
+        setInterval(createParticle, 100);
+    }
+
+    // 5. 이벤트 리스너 설정
+    window.addEventListener('load', () => {
+        startGoldRain();
+        startAuto();
+    });
+
+    // 스와이프 및 키보드 제어는 기존 로직 유지...
+    let startX = 0;
+    const swipeArea = document.getElementById('swipe-area');
+    swipeArea.addEventListener('touchstart', e => { startX = e.touches[0].clientX; stopAuto(); }, {passive: true});
+    swipeArea.addEventListener('touchend', e => {
+        const diff = startX - e.changedTouches[0].clientX;
+        if (Math.abs(diff) > 50) {
+            if (diff > 0) currentIndex = (currentIndex + 1) % 8;
+            else currentIndex = (currentIndex - 1 + 8) % 8;
+            updateRotation();
+        }
+    }, {passive: true});
+
+    window.addEventListener('keydown', (e) => {
+        if (e.key === 'ArrowLeft') { currentIndex = (currentIndex - 1 + 8) % 8; updateRotation(); stopAuto(); }
+        if (e.key === 'ArrowRight') { currentIndex = (currentIndex + 1) % 8; updateRotation(); stopAuto(); }
+    });
+
+// --- [1781행-1813행 수정 버전] ---
+function spawnHiddenTreasure() {
+    const bannerArea = document.getElementById('banner-slots');
+    if (!bannerArea) return;
+
+    const treasure = document.createElement('div');
+    treasure.innerHTML = '🎁'; 
+    treasure.style.cssText = `
+        position: absolute;
+        cursor: pointer;
+        z-index: 100;
+        font-size: 24px;
+        filter: drop-shadow(0 0 10px gold);
+        left: ${Math.random() * 80 + 10}%;
+        top: ${Math.random() * 40 + 30}%;
+        transition: opacity 0.5s;
+        animation: box-bounce 1s infinite ease-in-out; /* 바운스 애니메이션 추가 가능 */
+    `;
+    
+    // 클릭 시 리워드 대시보드로 이동하도록 고도화
+    treasure.onclick = (e) => {
+        e.stopPropagation();
+        // [2단계] 경제 시스템 연동: 보상 지급
+        if (typeof MangoApp !== 'undefined') {
+            MangoApp.Economy.claimReward();
+        } else {
+            location.href = './mango_reward_dashboard.html';
+        }
+        treasure.remove();
+    };
+
+    bannerArea.appendChild(treasure);
+    // 2초 뒤에 보물이 사라짐 (미스터리 요소)
+    setTimeout(() => { if(treasure.parentNode) treasure.remove(); }, 2000); 
+}
+
+    // --- 관리자 대시보드 (운영자용) ---
+    function openAdminDashboard() {
+        const pw = prompt("운영자 인증 암호를 입력하세요:");
+        if (pw === "mango777") {
+            // 운영자용 대시보드로 파트너 모달을 활용 (타이틀 변경 등 추가 가능)
+            openPartnerModal();
+            alert("관리자 모드로 접속했습니다.");
+        } else if (pw !== null) {
+            alert("암호가 일치하지 않습니다.");
+        }
+    }
+
+    // --- 파트너 모달 제어 함수 ---
+    function openPartnerModal() {
+        const modal = document.getElementById('partner-modal');
+        if (modal) modal.classList.remove('hidden');
+    }
+    function closePartnerModal() {
+        const modal = document.getElementById('partner-modal');
+        if (modal) modal.classList.add('hidden');
+    }
+    
+    // --- 파트너 대시보드 로직 (고도화) ---
+    function updatePreview() {
+        const shopName = document.getElementById('ad-shop-name').value || '매장 이름';
+        const headline = document.getElementById('ad-headline').value || '홍보 문구가 여기에 표시됩니다';
+        const category = document.getElementById('ad-category').value;
+        
+        document.getElementById('preview-title').innerText = shopName;
+        document.getElementById('preview-desc').innerText = headline;
+        
+        const icons = { 'store': '🏪', 'food': '🍽️', 'realty': '🏠', 'service': '🔧' };
+        const badges = { 'store': 'New Store', 'food': 'Tasty', 'realty': 'Hot Deal', 'service': 'Best Service' };
+        
+        document.getElementById('preview-icon').innerText = icons[category] || '🏪';
+        document.getElementById('preview-badge').innerText = badges[category];
+    }
+
+    function handleAdImage(input) {
+        if (input.files && input.files[0]) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const img = document.getElementById('preview-img');
+                img.src = e.target.result;
+                img.classList.remove('hidden');
+            }
+            reader.readAsDataURL(input.files[0]);
+        }
+    }
+
+    function updateCost(days) {
+        const costPerDay = 10; // 1일당 10파이
+        const total = days * costPerDay;
+        document.getElementById('ad-cost').innerHTML = `${total} <span class="text-sm text-orange-400">π</span>`;
+        document.getElementById('duration-label').innerText = `${days}일 노출`;
+    }
+
+    function submitAd() {
+        const shopName = document.getElementById('ad-shop-name').value;
+        const headline = document.getElementById('ad-headline').value;
+        if(!shopName || !headline) {
+            alert("매장명과 홍보 문구를 모두 입력해주세요.");
+            return;
+        }
+        const cost = document.getElementById('ad-cost').innerText;
+        alert(`🚀 [광고 캠페인 생성 완료]\n\n매장명: ${shopName}\n내용: ${headline}\n예상 비용: ${cost}\n\n관리자 승인 후 파이(π)가 차감됩니다.`);
+        closePartnerModal();
+    }
+
+    // --- 프리미엄 티켓 로직 ---
+    function togglePremium() {
+        const form = document.getElementById('premium-form');
+        form.classList.toggle('hidden');
+    }
+
+    function loginWithPi() {
+      const piId = document.getElementById('pi-id').value;
+      const pw = document.getElementById('pi-password').value;
+
+      if (!piId || !pw) {
+        alert('PI ID와 Mango 비밀번호를 입력해주세요.');
+        return;
+      }
+
+      alert(`🔐 PI ID 로그인 시도\n\nID: ${piId}\n(24단어 사용 ❌)`);
+      // TODO: 백엔드 인증 연동
+    }
+
+    const OAuthConfig = {
+      kakao: {
+        clientId: 'YOUR_KAKAO_REST_API_KEY',
+        redirectUri: `${window.location.origin}/oauth-callback.html`,
+        authUrl: 'https://kauth.kakao.com/oauth/authorize'
+      },
+      google: {
+        clientId: 'YOUR_GOOGLE_CLIENT_ID',
+        redirectUri: `${window.location.origin}/oauth-callback.html`,
+        authUrl: 'https://accounts.google.com/o/oauth2/v2/auth'
+      }
+    };
+
+    let authContext = {
+      provider: null,
+      token: null,
+      tempToken: null, // 2FA용 임시 토큰
+      userType: null
+    };
+
+    function socialLogin(provider) {
+
+        // --- Pi Browser 체크 추가 ---
+        if (window.navigator.userAgent.includes("PiBrowser")) {
+        alert("🌍 Pi Browser에서는 Pi 인증을 이용해주세요.");
+        return; // 카카오, 구글 로그인이 실행되지 않도록 중단
+    } 
+
+        const p = provider.toLowerCase();
+        
+        if (p === 'kakao') {
+            loginWithKakao();
+        } else if (p === 'google') {
+            loginWithGoogle();
+        } else {
+            alert(`🌍 ${provider.toUpperCase()} 로그인 기능은 준비 중입니다.`);
+        }
+    }
+
+    function loginWithKakao() {
+      authContext.provider = 'kakao';
+      localStorage.setItem('oauth_provider', 'kakao');
+
+      const url =
+        `${OAuthConfig.kakao.authUrl}` +
+        `?client_id=${OAuthConfig.kakao.clientId}` +
+        `&redirect_uri=${OAuthConfig.kakao.redirectUri}` +
+        `&response_type=code`;
+
+      window.location.href = url;
+    }
+
+    function loginWithGoogle() {
+      authContext.provider = 'google';
+      localStorage.setItem('oauth_provider', 'google');
+
+      const url =
+        `${OAuthConfig.google.authUrl}` +
+        `?client_id=${OAuthConfig.google.clientId}` +
+        `&redirect_uri=${OAuthConfig.google.redirectUri}` +
+        `&response_type=token` +
+        `&scope=profile email`;
+
+      window.location.href = url;
+    }
+
+    /* ===== Pi Network 전용 로그인 로직 (2063행~2087행) ===== */
+    function loginWithPi() {
+      // 1. Pi Browser 환경인지 먼저 확인
+      if (window.navigator.userAgent.includes("PiBrowser")) {
+          // [Pi SDK 인증 모드]
+          // 파이 브라우저에서는 번거로운 ID/PW 입력을 생략하고 
+          // 파이 계정으로 즉시 자동 인증을 시도합니다.
+          alert("🥭 Mango OS: Pi 계정으로 자동 인증을 시작합니다...");
+          
+          // TODO: 여기에 추후 완성될 mangoAuth() 또는 Pi.authenticate 호출 코드가 들어갑니다.
+          // 현재는 정책 준수를 위한 브릿지 역할만 수행합니다.
+          
+      } else {
+          // [일반 브라우저/관리자 모드]
+          // 파이 브라우저가 아닐 때는 기존처럼 수동 입력을 받습니다.
+          const piId = document.getElementById('pi-id').value;
+          const pw = document.getElementById('pi-password').value;
+
+          if (!piId || !pw) {
+            alert('PI ID와 Mango 비밀번호를 입력해주세요.');
+            return;
+          }
+
+          // 관리자(admin) 계정 여부 확인
+          if (piId === 'admin' && pw === 'mango777') {
+            authContext.tempToken = 'mock_temp_token_123';
+            document.getElementById('login-form-section').classList.add('hidden');
+            document.getElementById('otp-section').classList.remove('hidden');
+            document.getElementById('otp-input').focus();
+            return;
+          }
+
+          alert(`🔐 일반 브라우저 모드: PI ID 로그인 시도\n(파이 브라우저에서는 자동 로그인이 활성화됩니다.)`);
+      }
+    }
+
+    function verifyAdminOTP() {
+        const otp = document.getElementById('otp-input').value;
+        if(otp.length !== 6) {
+            alert('6자리 OTP 코드를 입력해주세요.');
+            return;
+        }
+
+        // [Mock] OTP 검증 성공 시뮬레이션
+        if(otp === '123456') {
+            alert('✅ 관리자 인증 성공!\n대시보드로 이동합니다.');
+            localStorage.setItem('mango_auth', JSON.stringify({ userType: 'admin', token: 'admin_jwt' }));
+            closeLoginModal();
+            // location.href = '/admin/dashboard.html'; // 실제 이동
+        } else {
+            alert('❌ 잘못된 OTP 코드입니다.');
+        }
+    }
+
+    function resetLogin() {
+        document.getElementById('otp-section').classList.add('hidden');
+        document.getElementById('login-form-section').classList.remove('hidden');
+        authContext.tempToken = null;
+    }
+
+    function mockLoginSuccess(provider) {
+        authContext.userType = 'social';
+        authContext.provider = provider;
+        authContext.token = 'mock_token_' + Date.now();
+        
+        // 로컬 스토리지에 저장 (세션 유지 시뮬레이션)
+        localStorage.setItem('mango_auth', JSON.stringify(authContext));
+        
+        alert(`✅ ${provider.toUpperCase()} (Mock) 로그인 성공!\n토큰이 저장되었습니다.`);
+        closeLoginModal();
+        resolveUserJourney();
+    }
+
+    // [2165행] OAuth 및 브라우저 최적화
+    function handleOAuthCallback() {
+        const urlParams = new URLSearchParams(window.location.search);
+        const code = urlParams.get('code');
+        if (code) {
+            window.history.replaceState({}, document.title, window.location.pathname);
+            mockLoginSuccess('oauth_callback');
+        } else {
+            const savedAuth = localStorage.getItem('mango_auth');
+            if (savedAuth) {
+                authContext = JSON.parse(savedAuth);
+                if(typeof resolveUserJourney === 'function') resolveUserJourney();
+            }
+        }
+    }
+
+    // 망고 페이 실행 함수 (부동산 결제 버튼 연결용)
+    function startPayment() {
+        const title = document.getElementById('detail-title').innerText;
+        const priceText = document.getElementById('detail-price').innerText;
+        const piAmount = parseFloat(priceText) || 0;
+        
+        if (typeof MangoPay !== 'undefined') {
+            const mngAmount = piAmount * 1000; // 1 Pi = 1000 MNG
+            MangoPay.executePayment(mngAmount, `부동산: ${title}`);
+        } else {
+            alert("결제 시스템이 준비되지 않았습니다.");
+        }
+    }
+
+    window.addEventListener('load', handleOAuthCallback);
+    window.addEventListener('load', () => {
+        if (window.navigator.userAgent.includes("PiBrowser")) {
+            const socialBox = document.querySelector('.social-login-container');
+            if (socialBox) socialBox.style.display = 'none';
+            console.log("Mango OS: Pi Browser UI Optimized");
+        }
+    });
+
+    function getTicket() {
+        const phone = document.getElementById('biz-phone').value;
+        if(!phone) { alert('연락처를 입력해주세요.'); return; }
+        document.getElementById('ticket-overlay').classList.remove('hidden');
+    }
+
+    function closeTicket() {
+        document.getElementById('ticket-overlay').classList.add('hidden');
+        if(typeof closePartnerModal === 'function') closePartnerModal();
+    }
+</script>
+    <div id="property-detail-modal" class="hidden fixed inset-0 z-[110] bg-black/95 backdrop-blur-2xl">
+    <div class="max-w-[450px] mx-auto h-full flex flex-col relative">
+        <div class="relative h-72 w-full">
+            <img id="detail-image" src="" class="w-full h-full object-cover">
+            <button onclick="closePropertyDetail()" class="absolute top-6 right-6 w-10 h-10 rounded-full bg-black/50 backdrop-blur-md flex items-center justify-center text-white">✕</button>
+        </div>
+        <div class="flex-1 bg-black rounded-t-[32px] -mt-8 p-8 overflow-y-auto border-t border-white/10">
+            <div class="flex justify-between items-start mb-4">
+                <div>
+                    <h2 id="detail-title" class="text-2xl font-bold text-white mb-1">매물명</h2>
+                    <p id="detail-location" class="text-white/50 text-sm">위치 정보</p>
+                </div>
+                <div class="text-right">
+                    <span id="detail-price" class="text-2xl font-black text-orange-500">0 π</span>
+                </div>
+            </div>
+            <div class="bg-white/5 rounded-2xl p-5 mb-6 border border-white/10">
+                <div class="flex justify-between items-center mb-3">
+                    <span class="text-xs text-white/60 font-medium tracking-widest uppercase">Trust Score</span>
+                    <span id="detail-score-text" class="text-orange-500 font-black text-lg">0°C</span>
+                </div>
+                <div class="h-3 w-full bg-white/10 rounded-full overflow-hidden">
+                    <div id="detail-score-bar" class="h-full bg-gradient-to-r from-orange-600 to-orange-400 transition-all duration-1000 ease-out" style="width: 0%;"></div>
+                </div>
+            </div>
+            <p id="detail-description" class="text-white/70 leading-relaxed text-sm mb-10">매물 설명이 들어가는 자리입니다.</p>
+            <button onclick="startPayment()" class="w-full bg-orange-500 hover:bg-orange-600 text-black font-black py-5 rounded-2xl transition-all active:scale-95 mb-10">
+                <span>PI NETWORK 결제하기</span>
+            </button>
+        </div>
+    </div>
+</div>
+
+        <div id="mango-pay-modal" class="fixed inset-0 z-[120] hidden bg-black/80 backdrop-blur-md flex items-center justify-center p-4">
+    <div class="mango-universal-width relative">
+        <button onclick="closeMangoPay()" class="absolute -top-12 right-0 text-white/70 hover:text-white flex items-center gap-2">
+            <span class="text-sm font-bold">닫기</span>
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-x"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+        </button>
+        <div class="mango-pay-card shadow-2xl border border-white/20">
+            <div class="card-header">
+                <span class="card-title">Mango Pay Checkout</span>
+                <span class="card-badge">MNG</span>
+            </div>
+            <div class="card-body">
+                <div class="balance-wrapper">
+                    <span id="display-mng-balance">0</span>
+                    <span class="currency">MNG</span>
+                </div>
+                <div id="payment-target-info" class="text-center text-sm bg-black/20 p-4 rounded-xl mt-4 text-white/80 border border-white/5">
+                    결제 내역을 확인해주세요.
+                </div>
+            </div>
+            <div class="card-footer p-6 pt-0 flex flex-col gap-3">
+                <button id="final-pay-btn" class="w-full bg-[#FFDF00] hover:bg-[#FFEA00] text-black font-black py-4 rounded-xl shadow-[0_0_20px_rgba(255,223,0,0.3)]">
+                    결제 승인하기
+                </button>
+                <button onclick="closeMangoPay()" class="w-full bg-white/5 hover:bg-white/10 text-white/60 py-3 rounded-xl">
+                    결제 취소
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="admin-portal" class="hidden">
+    <div id="control-box" class="space-y-10">
+        <div style="background:rgba(234,179,8,0.05); padding:25px; border-radius:30px; border:1px solid rgba(234,179,8,0.2); text-align:center;">
+            <p style="font-size:8px; color:#EAB308; letter-spacing:3px;">TOTAL EMPIRE REVENUE</p>
+            <div id="vault-val" style="font-size:36px; color:#EAB308; font-weight:900; margin:10px 0;">14,520.45</div>
+            <p style="font-size:9px; color:#22C55E;">● LIVE STREAMING ACTIVE</p>
+        </div>
+
+        <div id="control-box" style="display:none;" class="space-y-10">
+            <div style="background:rgba(234,179,8,0.05); padding:25px; border-radius:30px; border:1px solid rgba(234,179,8,0.2); text-align:center;">
+                <p style="font-size:8px; color:#EAB308; letter-spacing:3px;">TOTAL EMPIRE REVENUE</p>
+                <div id="vault-val" style="font-size:36px; color:#EAB308; font-weight:900; margin:10px 0;">14,520.45</div>
+                <p style="font-size:9px; color:#22C55E;">● LIVE STREAMING ACTIVE</p>
+            </div>
+
+            <div>
+                <h3 style="font-size:10px; color:#EF4444; letter-spacing:2px; margin-bottom:15px;">PERSONNEL ASSENT (인사권)</h3>
+                <div style="background:rgba(255,255,255,0.05); padding:15px; border-radius:20px; display:flex; justify-content:space-between; align-items:center;">
+                    <div style="font-size:10px; color:white;">
+                        <strong>James (NY Node)</strong><br><span style="opacity:0.4;">Logistics Manager</span>
+                    </div>
+                    <button onclick="this.parentElement.style.opacity='0.3'; alert('Assent Granted');" style="color:#22C55E; font-weight:900;">GRANT ✔</button>
+                </div>
+            </div>
+
+            <div style="background:rgba(34,197,94,0.05); padding:20px; border-radius:30px; border:1px solid rgba(34,197,94,0.1);">
+                <h3 style="font-size:10px; color:#22C55E; margin-bottom:20px;">ECOSYSTEM REWARD</h3>
+                <div style="margin-bottom:15px;">
+                    <div style="display:flex; justify-content:space-between; font-size:9px; color:white; opacity:0.6; margin-bottom:8px;">
+                        <span>Referral Bonus</span><span id="ref-txt">3.1 mPi</span>
+                    </div>
+                    <input type="range" min="0" max="10" step="0.1" value="3.1" oninput="document.getElementById('ref-txt').innerText=this.value+' mPi'" style="width:100%; accent-color:#22C55E;">
+                </div>
+            </div>
+
+            <button onclick="closeCeo()" style="width:100%; padding:20px; background:white; color:black; font-weight:900; border-radius:25px; font-size:10px; letter-spacing:2px;">SYNC & EXIT</button>
+        </div>
+    </div>
+</div>
+
+<style>
+    .portal-rail {
+        position: fixed;
+        top: 50%;
+        transform: translateY(-50%);
+        width: 80px; /* 너비 최적화 */
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+        z-index: 45; /* 메인 요소보다 약간 위 */
+        pointer-events: none;
+        transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    /* 400px 메인 창 중심에서 더 안쪽으로 바짝 붙임 (100px -> 80px로 수정) */
+    #rail-left { 
+        left: calc(50% - 200px - 80px); 
+        align-items: flex-end; 
+    }
+    #rail-right { 
+        right: calc(50% - 200px - 80px); 
+        align-items: flex-start; 
+    }
+
+    .portal-unit {
+    pointer-events: auto;
+    width: 65px;
+    height: 65px;
+    opacity: 0.4;
+    filter: grayscale(100%);
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    cursor: pointer;
+    background: rgba(20, 20, 20, 0.6);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 20px;
+    
+    /* 정렬 엔진: 이 두 줄이면 가로/세로 정중앙에 딱 옵니다 */
+    display: flex;
+    align-items: center;      /* 세로 중앙 */
+    justify-content: center;   /* 가로 중앙 */
+    
+    font-size: 10px;
+    color: white;
+    font-weight: 800;
+    text-transform: uppercase;
+    backdrop-filter: blur(8px);
+}
+
+    /* 호버 시 튀어나오는 정도 조절 */
+    .portal-unit:hover {
+        opacity: 1;
+        filter: grayscale(0%);
+        /* 너무 멀리 튀어나가지 않게 수정 */
+        transform: scale(1.1) translateX(calc(var(--dir) * 5px));
+        border-color: #f97316;
+        box-shadow: 0 0 25px rgba(249, 115, 22, 0.5);
+    }
+
+    /* 2. 공통 윈도우 규격 (400px 강제) */
+    .mango-window {
+        width: 400px;
+        position: fixed;
+        left: 50%;
+        top: 55%;
+        transform: translate(-50%, -50%);
+        background: rgba(15, 15, 15, 0.95);
+        backdrop-filter: blur(20px);
+        border: 2px solid rgba(249, 115, 22, 0.5);
+        border-radius: 32px;
+        box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.8);
+        z-index: 100;
+        overflow: hidden;
+        transition: all 0.3s ease;
+        opacity: 0;
+        visibility: hidden;
+        scale: 0.95;
+    }
+    .mango-window.active {
+        opacity: 1;
+        visibility: visible;
+        scale: 1;
+    }
+    /* 스크롤바 숨김 */
+    .no-scroll::-webkit-scrollbar { display: none; }
+
+    @keyframes box-bounce {
+        0%, 100% { transform: scale(1); }
+        50% { transform: scale(1.2); }
+    }
+
+   /* --- 모바일 레이아웃 최종 보정 (2243행 추가분) --- */
+
+/* 1. 상단 로고 가려짐 해결 */
+.header-logo {
+    margin-top: 80px !important;     /* 위쪽 여백을 80px로 대폭 확대 */
+    margin-bottom: 40px !important;  /* 뉴스바와의 안전 거리 */
+    display: flex !important;
+    justify-content: center !important;
+    position: relative !important;   /* 위치 고정 */
+    z-index: 9999 !important;        /* 다른 요소가 덮지 못하게 최상단 배치 */
+    opacity: 1 !important;           /* 혹시 모를 투명화 방지 */
+}
+
+/* 2. 모든 윈도우(뉴스, 포털, 배너) 너비 및 중앙 정렬 통일 */
+.news-window, 
+.food_portal, .transfer_portal, .travel_portal, .share_portal, 
+.realty_portal, .market_portal, .social_portal, .admin_portal,
+.banner-ad {
+    width: 92% !important;           /* 전체 화면의 90%로 고정 */
+    max-width: 430px !important;     /* 너무 커지지 않게 제한 */
+    margin-left: auto !important;    /* 중앙 정렬 */
+    margin-right: auto !important;   /* 중앙 정렬 */
+    margin-bottom: 25px !important;  /* 카드 간 세로 간격 */
+    display: block !important;
+    border-radius: 20px !important;  /* 부드러운 모서리 통일 */
+    overflow: hidden !important;  
+    position: relative !important;   /* 튕겨나감 방지 */   /* 내부 이미지가 튀어나오지 않게 */
+}
+
+/* 3. 여행 광고 배너 왼쪽 쏠림 및 잘림 현상 해결 */
+.banner-ad, .travel_portal {
+    padding: 0 !important;
+    text-align: center !important;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1) !important;
+}
+
+.banner-ad img, .travel_portal img {
+    width: 100% !important;          /* 배너 박스에 이미지 꽉 채우기 */
+    height: auto !important;
+    display: block !important;
+}
+
+</style>
+<div id="consult-modal" class="fixed inset-0 z-[110] hidden bg-black/90 backdrop-blur-lg flex items-center justify-center">
+<div class="w-[92%] max-w-[400px] mx-auto glass p-6 border-orange-500/50 relative">
+            <button onclick="closeConsultModal()" class="absolute top-4 right-4 text-white/50 hover:text-white">✕</button>
+        <div class="text-center mb-6">
+            <div class="text-5xl mb-3">📱</div>
+            <h3 id="consult-title" class="text-xl font-bold text-orange-400">상담 신청하기</h3>
+        </div>
+        <textarea id="consult-message" rows="3" placeholder="문의 내용..." class="w-full bg-white/5 border border-white/10 rounded-2xl p-4 text-sm text-white mb-4"></textarea>
+        <button onclick="submitConsult()" class="w-full py-4 bg-orange-500 text-black font-bold rounded-2xl">전송하기</button>
+    </div>
+</div>
+
+
+
+<div id="chat-modal" class="mango-window h-[600px] flex flex-col" style="z-index: 999999;">
+    <div class="p-5 border-b border-white/10 bg-orange-500/10 flex justify-between items-center">
+        <span class="text-white font-black italic">MANGO CHAT</span>
+        <button onclick="closeChat()" class="text-white text-2xl">×</button>
+    </div>
+    <div id="chat-messages" class="flex-1 p-5 overflow-y-auto flex flex-col gap-4 no-scroll"></div>
+    <div class="p-5 bg-white/5 border-t border-white/10 flex gap-2">
+        <input type="text" id="chat-input" class="flex-1 bg-black border border-white/20 rounded-xl p-3 text-white" placeholder="메시지...">
+        <button onclick="sendMessage()" class="bg-orange-495 px-5 rounded-xl text-black font-bold">SEND</button>
+    </div>
+</div>
+
+<div id="realty-modal" class="hidden fixed inset-0 z-[120] bg-black/95 backdrop-blur-2xl">
+        <div class="dashboard-content w-[92%] max-w-[480px] mx-auto h-full flex flex-col transition-all duration-300 transform scale-90 opacity-0">
+            <div class="p-6 flex justify-between items-center border-b border-white/10">
+                <h2 class="text-xl font-black text-white italic">REALTY <span class="text-orange-500">PORTAL</span></h2>
+                <button onclick="closeRealty()" class="text-white w-10 h-10 flex items-center justify-center bg-white/10 rounded-full">✕</button>
+            </div>
+            <div id="property-list" class="flex-1 overflow-y-auto p-4 space-y-4"></div>
+        </div>
+    </div>
+
+    <div id="property-detail-modal" class="hidden fixed inset-0 z-[130] bg-black/98 flex items-center justify-center">
+        <div class="w-[92%] max-w-[480px] h-full flex flex-col relative bg-black">
+            <div class="relative h-72">
+                <img id="detail-image" src="" class="w-full h-full object-cover">
+                <button onclick="closePropertyDetail()" class="absolute top-6 right-6 w-10 h-10 rounded-full bg-black/50 text-white">✕</button>
+            </div>
+            <div class="p-8 space-y-4">
+                <h2 id="detail-title" class="text-2xl font-bold text-white"></h2>
+                <p id="detail-location" class="text-white/50 text-sm"></p>
+                <div id="detail-price" class="text-3xl font-black text-orange-500"></div>
+                <p id="detail-description" class="text-white/70 text-sm leading-relaxed"></p>
+                <button onclick="alert('결제 시스템 연결 중...')" class="w-full bg-orange-500 text-black font-black py-5 rounded-2xl mt-10">PI NETWORK 결제하기</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="ceo-master-layer" style="display:none;" class="fixed inset-0 z-[10000] bg-black/95 flex items-center justify-center p-4">
+        <div class="w-[92%] max-w-[430px] bg-[#000000] border border-yellow-500/30 rounded-[3rem] p-10 text-center">
+            <div id="auth-box" class="space-y-6">
+                <h2 class="text-yellow-500 font-black text-2xl tracking-tighter">ADMIN SEAL</h2>
+                <input type="password" id="ceo-pass" placeholder="CODE" class="w-full bg-white/5 border border-yellow-500/30 rounded-2xl p-4 text-center text-white text-2xl outline-none" />
+                <button onclick="accessVerify()" class="w-full py-4 bg-yellow-500 text-black font-black rounded-2xl">VERIFY</button>
+            </div>
+            <div id="control-box" style="display:none;" class="space-y-10">
+                <div id="vault-val" class="text-[36px] text-yellow-500 font-black">14,520.45</div>
+                <button onclick="closeCeo()" class="w-full py-5 bg-white text-black font-black rounded-2xl">EXIT SYSTEM</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 1. 관리자 시스템 (암호: 7777)
+        window.accessVerify = function() {
+            const pass = document.getElementById('ceo-pass')?.value;
+            if(pass === '7777' || pass === 'MANGO-CEO-2026') {
+                document.getElementById('auth-box').style.display = 'none';
+                document.getElementById('control-box').style.display = 'block';
+                const vault = document.getElementById('vault-val');
+                let v = 14520.45;
+                setInterval(() => { v += Math.random() * 0.1; vault.innerText = v.toLocaleString(undefined, {minimumFractionDigits:2}); }, 200);
+            } else { alert('ACCESS DENIED'); }
+        };
+
+        window.closeCeo = function() {
+            document.getElementById('ceo-master-layer').style.display = 'none';
+            document.body.style.overflow = 'auto';
+        };
+
+        // 2. 부동산 시스템
+        window.openRealty = function() {
+            const modal = document.getElementById('realty-modal');
+            modal.classList.remove('hidden');
+            document.body.style.overflow = 'hidden';
+            setTimeout(() => {
+                const content = modal.querySelector('.dashboard-content');
+                content.classList.remove('scale-90', 'opacity-0');
+                content.classList.add('scale-100', 'opacity-100');
+                loadRealtyData();
+            }, 10);
+        };
+
+        window.closeRealty = function() {
+            const modal = document.getElementById('realty-modal');
+            const content = modal.querySelector('.dashboard-content');
+            content.classList.replace('scale-100', 'scale-90');
+            content.classList.replace('opacity-100', 'opacity-0');
+            setTimeout(() => { modal.classList.add('hidden'); document.body.style.overflow = 'auto'; }, 300);
+        };
+
+       /* 2531행 시작 */
+        window.loadRealtyData = function() {
+            const container = document.getElementById('property-list');
+            if(!container || !window.mockProperties) return;
+            
+            
+            container.innerHTML = window.mockProperties.filter(p => p.trust_score > 50).map(p => `
+                <div onclick="openPropertyDetail(${p.id})" class="flex justify-between items-center p-4 bg-white/5 rounded-2xl border border-white/10 active:scale-95 transition-all">
+                    <div class="flex items-center gap-4">
+                        <img src="${p.image}" class="w-16 h-16 rounded-xl object-cover">
+                        <div class="flex flex-col">
+                            <span class="text-white font-bold text-sm">${p.title}</span>
+                            <span class="text-white/40 text-[10px]">${p.location}</span>
+                            <span class="text-orange-500 text-[10px] font-black mt-1">${p.trust_score}°C</span>
+                        </div>
+                    </div>
+                    <div class="text-right text-yellow-500 font-black text-sm">${p.price_pi} π</div>
+                          </div>
+                    `).join('');
+                };
+
+        window.openPropertyDetail = function(id) {
+            const p = window.mockProperties.find(item => item.id === id);
+            if(!p) return;
+            document.getElementById('detail-image').src = p.image;
+            document.getElementById('detail-title').innerText = p.title;
+            document.getElementById('detail-location').innerText = p.location;
+            document.getElementById('detail-price').innerText = p.price_pi + ' π';
+            document.getElementById('detail-description').innerText = p.description || "상세 매물 정보입니다.";
+            document.getElementById('property-detail-modal').classList.remove('hidden');
+        };
+
+        window.closePropertyDetail = function() {
+            document.getElementById('property-detail-modal').classList.add('hidden');
+        };
+
+        // 3. 앱 로직 초기화
+        document.addEventListener('DOMContentLoaded', () => {
+            const logo = document.querySelector('.logo-container');
+            if(logo) {
+                let timer;
+                logo.onmousedown = logo.ontouchstart = () => { timer = setTimeout(() => { document.getElementById('ceo-master-layer').style.display = 'flex'; }, 3000); };
+                logo.onmouseup = logo.ontouchend = () => clearTimeout(timer);
+            }
+        });
+
+        // 페이지 로드 시 초기 잔액 표시
+        window.addEventListener('DOMContentLoaded', () => {
+            const balanceDisplay = document.getElementById('display-mng-balance');
+            if (balanceDisplay && typeof MangoPay !== 'undefined') {
+                    balanceDisplay.innerText = MangoPay.getUserBalance().toLocaleString();
+            }
+        });
+
+        // 누군가 결제/충전하여 잔액이 바뀌면 자동으로 화면 갱신! (초고도화 기능)
+        window.addEventListener('mangoPayUpdated', (e) => {
+            const balanceDisplay = document.getElementById('display-mng-balance');
+            if (balanceDisplay) {
+                // 숫자가 부드럽게 바뀌는 효과 (CSS 애니메이션용 클래스 추가/제거)
+                balanceDisplay.classList.add('updated');
+                balanceDisplay.innerText = e.detail.balance.toLocaleString();
+                setTimeout(() => balanceDisplay.classList.remove('updated'), 300);
+            }
+        });
+
+    </script>
+    <style>
+    /* 화면 밀림 방지 및 통합 메뉴 스타일 */
+    body { overflow-x: hidden; width: 100%; position: relative; }
+    
+    #main-body > * { width: 100%; max-width: 480px; margin-left: auto; margin-right: auto; }
+
+    #mango-mega-menu {
+        display: none; position: fixed; top: 90px; left: 50%; transform: translateX(-50%);
+        width: 280px; background: rgba(15, 15, 15, 0.98); border: 2px solid #FFD700;
+        border-radius: 25px; padding: 20px; z-index: 1000000 !important;
+        box-shadow: 0 10px 50px rgba(0,0,0,1); backdrop-filter: blur(15px);
+    }
+
+    /* 상단 지저분한 버튼 소거 */
+    #qr-pay-button, #device-select, .language-selector, .header-actions {
+        display: none !important;
+    }
+
+    /* 오직 간격 조정에만 집중 */
+    .news-window, 
+    .food_portal, .transfer_portal, .travel_portal, .share_portal, 
+    .realty_portal, .market_portal, .social_portal, .admin_portal,
+    .banner-ad, .final-banner-fix {
+        margin-bottom: 10px !important; /* 간격을 10px로 좁힘 */
+    }
+
+    .final-banner-fix {
+        margin-top: 0 !important; /* 멀리 떨어지게 만들던 원인 제거 */
+        width: 92% !important;   /* 현재 백업본 규격에 맞게 정렬 */
+        margin-left: auto !important;
+        margin-right: auto !important;
+        position: relative;
+        z-index: 99;
+    }
+
+/* [2026-2029 Mango OS 절대 규격 시스템] 
+  이 변수(--mango-card-width) 하나로 모든 창의 크기를 제어합니다.
+*/
+:root {
+    --mango-card-width: 92%; /* 모바일 화면 기준 좌우 여백을 둔 최적의 비율 */
+    --mango-card-max-width: 480px; /* PC나 태블릿에서 너무 커지지 않도록 방어 */
+    --mango-gold-gradient: linear-gradient(135deg, #FFDF00 0%, #D4AF37 100%);
+}
+
+/* 1. 절대 규격 클래스 (모든 윈도우/카드에 이 클래스를 부여하세요) */
+.mango-universal-width {
+    width: var(--mango-card-width);
+    max-width: var(--mango-card-max-width);
+    margin: 0 auto; /* 가운데 정렬 */
+    box-sizing: border-box;
+}
+
+/* 2. Mango Pay 골드 카드 전용 디자인 */
+.mango-pay-card {
+    background: var(--mango-gold-gradient);
+    border-radius: 16px;
+    padding: 20px;
+    box-shadow: 0 8px 16px rgba(212, 175, 55, 0.3);
+    color: #333; /* 금색 배경엔 짙은 글씨가 고급스러움 */
+    margin-bottom: 20px; /* 다음 카드와의 간격 */
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.card-header { display: flex; justify-content: space-between; font-weight: bold; }
+.balance-wrapper { font-size: 2.5rem; font-weight: 900; text-align: center; margin: 10px 0; }
+.updated { color: #fff; text-shadow: 0 0 10px rgba(255,255,255,0.8); transition: 0.3s; }
+.card-footer { display: flex; gap: 10px; }
+.card-footer button { flex: 1; padding: 10px; border: none; border-radius: 8px; background: rgba(255,255,255,0.3); font-weight: bold; cursor: pointer; backdrop-filter: blur(4px); }
+
+/* 3. 향후 적용될 8개 포털 및 뉴스창 기본 뼈대 (예시) */
+.portal-window, .banner-ad-window, .pi-news-window {
+    /* 기존 클래스에 .mango-universal-width 만 추가하면 자동으로 폭이 맞춰집니다 */
+    background: #fff;
+    border-radius: 12px;
+    margin-bottom: 15px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+}
+
+</style>
+
+<script>
+    window.callMangoSystem = function(id) {
+        if (!id) return;
+        var btn = document.getElementById(id);
+        if (!btn && id === 'qr-pay-button') btn = document.querySelector('[class*="qr"]');
+        if (!btn && id === 'language-select') btn = document.querySelector('.language-selector');
+        
+        if (btn) {
+            btn.click();
+        } else {
+            console.log("시스템 호출 실패: " + id);
+        }
+    };
+
+    document.addEventListener('DOMContentLoaded', () => {
+        console.log("Mango Universe: 모든 중복 제거 및 시스템 정상화");
+    });
+</script>
+
+<script>
+        // 1. 시스템 통합 호출 함수 (중복 제거됨)
+        window.callMangoSystem = function(id) {
+            if (!id) return;
+            var btn = document.getElementById(id) || document.querySelector('[class*="qr"]') || document.querySelector('.language-selector');
+            if (btn) {
+                btn.click();
+            } else {
+                console.log("Mango System: [" + id + "] 대상을 찾을 수 없습니다.");
+            }
+        };
+
+        // 2. Pi 네트워크 인증 로직
+        async function authenticatePi() {
+            try {
+                const user = await window.Pi.authenticate(['username'], (payment) => {
+                    console.log("미완료 결제 발견:", payment);
+                });
+                console.log("성공! 접속한 유저:", user.username);
+            } catch (err) {
+                console.error("Pi 인증 실패:", err);
+            }
+        }
+
+        // 3. 시스템 가동 로그 및 초기화
+        document.addEventListener('DOMContentLoaded', () => {
+            console.log("🥭 Mango Universe 시스템이 완벽하게 가동되었습니다.");
+            if (typeof initPi === 'function') initPi(); 
+            
+            // 잔액 표시 업데이트
+            const balanceDisplay = document.getElementById('display-mng-balance');
+            if (balanceDisplay && typeof MangoPay !== 'undefined') {
+                balanceDisplay.innerText = MangoPay.getUserBalance().toLocaleString();
+            }
+        });
+    </script>
+
+    <style>
+        :root {
+            --mango-card-width: 92%;
+            --mango-card-max-width: 430px;
+            --mango-gold-gradient: linear-gradient(135deg, #FFDF00 0%, #D4AF37 100%);
+        }
+
+        /* 1. 모든 카드/윈도우 너비 강제 고정 */
+        .news-window, .food_portal, .transfer_portal, .travel_portal, 
+        .share_portal, .realty_portal, .market_portal, .social_portal, 
+        .admin_portal, .banner-ad, .mango-universal-width {
+            width: var(--mango-card-width) !important;
+            max-width: var(--mango-card-max-width) !important;
+            margin-left: auto !important;
+            margin-right: auto !important;
+            margin-bottom: 12px !important;
+        }
+
+        /* 2. 뉴스 티커 애니메이션 (괄호 분리 완료) */
+        @keyframes ticker-swipe {
+            0% { transform: translateX(100%); }
+            100% { transform: translateX(-100%); }
+        }
+
+        .news-ticker-content {
+            display: inline-block !important;
+            white-space: nowrap !important;
+            animation: ticker-swipe 30s linear infinite;
+            will-change: transform;
+            color: #cbd5e1;
+            font-family: 'Monaco', monospace;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+        }
+
+        .news-ticker-content b {
+            color: #f59e0b;
+            font-weight: 800;
+            text-shadow: 0 0 8px rgba(245, 158, 11, 0.4);
+        }
+
+        .mango-pay-card {
+            background: var(--mango-gold-gradient);
+            border-radius: 16px;
+            padding: 20px;
+            color: #333;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        /* 902행 메인 로고 전용: 오뚜기 3회 퍼포먼스 */
+@keyframes mango-otogi {
+    0% { transform: rotate(0deg); }
+    20% { transform: rotate(15deg); }
+    40% { transform: rotate(-15deg); }
+    60% { transform: rotate(10deg); }
+    80% { transform: rotate(-10deg); }
+    100% { transform: rotate(0deg); }
+}
+
+.animate-mango-otogi {
+        animation: mango-otogi 1.2s ease-in-out 3 forwards !important;
+        transform-origin: bottom center !important;    /* 1.2초 동안 1회 작동하며, 총 3번 반복 후 멈춤 */
+}
+/* 5분위 그리드 레이어: 전체 화면을 가로로 5등분하여 배치 제어 */
+        .mango-glass-layout-engine {
+            position: fixed;
+            inset: 0;
+            display: grid;
+            grid-template-columns: repeat(5, 1fr); /* 5등분 시스템 */
+            pointer-events: none; /* 하단 레이어 조작 방해 금지 */
+            z-index: 10000; /* 최상단 유지 */
+        }
+
+        /* 5번째 칸(가장 우측 20% 영역) 하단 고정 앵커 */
+        .hex-right-anchor {
+            grid-column: 5; /* 5번째 칸 선택 */
+            display: flex;
+            align-items: flex-end;
+            justify-content: flex-end;
+            padding: 50px;
+            pointer-events: auto; /* 배지만 클릭 가능하도록 설정 */
+        }
+
+        /* 디자이너님의 오뚜기 애니메이션을 입힐 육각형 배지 */
+        .diamond-hex-badge {
+            width: 140px;
+            height: 160px;
+            background: #C2A6E8; /* 이미지 속 연보라색 */
+            clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: 0 30px 60px rgba(0,0,0,0.5);
+            border: none;
+            transition: filter 0.3s;
+        }
+
+        .diamond-hex-badge:hover {
+            filter: brightness(1.2);
+        }
+
+        .diamond-hex-badge span {
+            font-size: 3.5rem;
+            filter: drop-shadow(0 4px 10px rgba(0,0,0,0.3));
+        }
+
+
+    </style>
+
+    <script>
+    const mangoNewsConfig = {
+        feeds: [
+            { source: "CNN", text: "Global markets react to digital currency breakthrough.", url: "https://edition.cnn.com/business" },
+            { source: "TASS", text: "BRICS nations discuss unified digital payment system.", url: "https://tass.com/economy" },
+            { source: "REUTERS", text: "Fact-Check: Inflation rates stabilize in Q1 2026.", url: "https://www.reuters.com" }, // 중립
+            { source: "AP NEWS", text: "Peace negotiations in Vietnam enter final stage.", url: "https://apnews.com" }, // 중립
+            { source: "π NETWORK", text: "Pi Mainnet ecosystem hits 100M+ active nodes.", url: "https://minepi.com/blog" },
+            { source: "ECONOMY", text: "China records unprecedented trade surplus of $1.7T.", url: "https://www.bloomberg.com" }
+        ]
+    };
+
+    function updateLegacyNews() {
+        const newsTrack = document.getElementById('realtime-news-track');
+        if (!newsTrack) return;
+
+        // a 태그를 넣어 클릭 시 새 창에서 기사를 볼 수 있게 합니다.
+        // py-2(상하 간격)를 추가하여 글자 겹침을 완벽히 해결합니다.
+        newsTrack.innerHTML = mangoNewsConfig.feeds.map(item => `
+        <a href="${item.url}" target="_blank" class="flex items-center h-12 border-b border-white/5 no-underline hover:bg-white/5 transition-all w-full px-2">
+            <span class="text-orange-500 font-bold whitespace-nowrap mr-2" style="flex-shrink: 0;">【${item.source}】</span>
+            <span class="text-yellow-400 truncate flex-grow text-sm">${item.text}</span>
+        </a>
+    `).join('');
+    }
+// 🚨 핵심: 페이지가 로드되자마자 위 함수를 실행하라는 특급 명령입니다.
+// [3060행부터 3144행까지 이 내용으로 덮어쓰시면 방황이 끝납니다]
+window.addEventListener('load', () => {
+    // 1. 뉴스 업데이트 (기존 기능 유지)
+    if (typeof updateLegacyNews === 'function') updateLegacyNews();
+    
+    const logo = document.getElementById('mango-charging-logo');
+    const splash = document.getElementById('mango-splash');
+    
+    // 2. 🚨 [오뚜기 부활] 로딩 시작 시 애니메이션 가동
+    if (logo) {
+        logo.classList.add('animate-mango-otogi');
+    }
+
+    // 3. 🏁 [결승점] 3.1초 뒤 로딩 종료 및 스플래시 제거
+    setTimeout(() => {
+        // 로고 애니메이션 중지
+        if (logo) logo.classList.remove('animate-mango-otogi');
+
+        // 스플래시 화면을 물리적으로 제거 (이게 없으면 화면이 파괴된 것처럼 느껴집니다)
+        if (splash) {
+            splash.style.opacity = '0'; // 부드럽게 투명해짐
+            setTimeout(() => {
+                splash.style.display = 'none'; // 완전히 치워버림 (클릭 방해 금지)
+                console.log("Mango Status: 10-Step UI Integration Successful.");
+            }, 800);
+        }
+        
+        // 메인 경험(사운드 등) 시작
+        if (typeof bootMangoExperience === 'function') {
+            bootMangoExperience();
+        }
+    }, 3100); 
+});
+
+// 🎵 Mango Signature Audio Engine (2026 Update)
+const mangoAudio = new Audio('assets/sounds/mangomangodaldalhe.mp3');
+
+/**
+ * 망고 사운드 재생 함수
+ * 브라우저 정책 대응: 첫 사용자 상호작용 후 오디오 컨텍스트 활성화
+ */
+function playMangoSignature() {
+    mangoAudio.volume = 0.6; // 디자이너님의 귀를 즐겁게 할 최적의 볼륨
+    mangoAudio.play().catch(err => {
+        console.warn("[Mango OS] 사용자 상호작용 전 자동 재생이 제한되었습니다. 첫 클릭 시 활성화됩니다.");
+    });
+}
+
+// [시점 1] 메인 화면 진입 시 1회 재생 (로딩 후 1.5초 뒤, 가장 달콤한 타이밍)
+window.addEventListener('load', () => {
+    setTimeout(() => {
+        playMangoSignature();
+        showMangoToast("🥭 망고망고 달콤해~ (Signature Sound)");
+    }, 1500);
+});
+
+// [시점 2] 10분 주기 반복 재생 (600,000ms)
+// 디자이너님이 작업에 몰입하시다가도 '아, 내가 망고의 세계에 있지!'라고 느낄 수 있게 합니다.
+setInterval(() => {
+    console.log("[Mango OS] 주기적 사운드 재생 타이밍 (10분 경과)");
+    playMangoSignature();
+    showMangoToast("다시 충전되는 달콤한 망고 타임! 🥭");
+}, 600000);
+
+// 추가 고도화: 브라우저 차단 대비, 화면 어디든 첫 클릭 시 사운드 엔진 예열
+document.addEventListener('click', () => {
+    if (mangoSweetSound.paused && mangoSweetSound.currentTime === 0) {
+        // 아직 재생 전이라면 엔진만 예열 (무음 재생 등)
+    }
+}, { once: true });
+
+// 사운드 잠금 해제 및 재생 함수
+function initMangoSound() {
+    // 1. 사운드 재생 시도
+    const playPromise = mangoAudio.play();
+
+    if (playPromise !== undefined) {
+        playPromise.then(_ => {
+            // 재생 성공
+            console.log("Sound started on Edge/Safari/Chrome");
+        }).catch(error => {
+            // 차단 시: 사용자 화면 클릭 시 즉시 재생되도록 예약
+            document.addEventListener('click', () => {
+                mangoAudio.play();
+                startOttugiEffect(); // 사운드 시작 시 로고 흔들기
+            }, { once: true });
+        });
+    }
+}
+
+// 사운드 재생 함수 (볼륨 조절 포함)
+function playMangoSweetSound() {
+    if (isMangoBooted) return; 
+    isMangoBooted = true;
+
+
+    mangoAudio.volume = 0.5; // 너무 크지 않게 적절한 크기로 설정
+    mangoAudio.play().catch(error => {
+        console.log("브라우저 정책으로 인해 첫 인터랙션 후 재생될 수 있습니다:", error);
+    });
+}
+
+// [시점 1] 진입 시 1회 재생 (페이지 로드 후 1초 뒤)
+window.addEventListener('load', () => {
+    setTimeout(() => {
+        playMangoSweetSound();
+        showMangoToast("망고망고 달콤해~ 시그니처 사운드 재생 🥭"); //
+    }, 1000);
+});
+
+// 5. 10분 주기 반복 (600,000ms)
+setInterval(() => {
+    bootMangoExperience();
+}, 600000);
+
+function playMangoWithMotion() {
+    if (isMangoBooted) return; // 👈 1. 이미 소리가 났다면 여기서 중단!
+    isMangoBooted = true;      // 👈 2. 이제 소리가 날 것이라고 표시!
+    // 1. 오뚜기 애니메이션 실행
+    const logo = document.getElementById('main-mango-logo');
+    if (logo) {
+        logo.classList.add('mango-ottugi-active');
+        setTimeout(() => logo.classList.remove('mango-ottugi-active'), 2000);
+    }
+
+    // 2. 사운드 재생 시도
+    const playPromise = mangoAudio.play(); // ✅ mangoAudio로 통일
+    
+    if (playPromise !== undefined) {
+        playPromise.catch(() => {
+            // 차단 시: 사운드 객체를 재초기화하여 대기
+            mangoAudio.load(); 
+        });
+    }
+}
+
+// [핵심] 사용자가 화면 어디든 '처음 클릭'할 때 사운드 잠금을 완전히 해제
+document.addEventListener('click', () => {
+    if (mangoAudio.paused) {
+        playMangoWithMotion();
+        showMangoToast("달콤한 망고 시스템 활성화 🥭");
+    }
+}, { once: true });
+
+// 진입 시 시도 (크롬용)
+window.addEventListener('load', () => {
+    setTimeout(playMangoWithMotion, 1500);
+});
+
+// 10분 주기 리마인더
+setInterval(playMangoWithMotion, 600000);
+
+
+/* 🚀 망고 OS 고도화 엔진 (사운드 잠금 해제 + 9회 오뚜기 통합) */
+
+let isMangoAudioUnlocked = false;
+    isMangoBooted = false; 
+
+function bootMangoExperience() {
+    if (isMangoBooted) return;
+
+    // 파일명이 mango_sweet.mp3가 맞는지 꼭 확인!
+    const mangoAudio = new Audio('mango_sweet.mp3'); 
+    mangoAudio.volume = 0.6;
+
+    mangoAudio.play().then(() => {
+        isMangoBooted = true;
+        isMangoAudioUnlocked = true;
+        if (typeof showMangoToast === 'function') showMangoToast("망고망고 달달해~ 🥭");
+        if (typeof triggerMango9Shake === 'function') triggerMango9Shake(); 
+    }).catch((error) => {
+        console.log("사운드 재생 대기 중...");
+        isMangoBooted = false; 
+    });
+}
+
+// [핵심] 사용자가 화면을 터치/클릭하는 순간 사운드 엔진 가동
+document.addEventListener('pointerdown', () => {
+    if (!isMangoAudioUnlocked) bootMangoExperience();
+}, { once: true });
+
+// 앱 로드 후 자동 시도
+window.addEventListener('load', () => {
+    setTimeout(bootMangoExperience, 2000);
+});
+
+// 1분마다 로고를 9번 흔들어주는 엔진
+function triggerMango9Shake() {
+    const logo = document.getElementById('main-mango-logo') || document.getElementById('mango-charging-logo');
+    if (logo) {
+        logo.classList.remove('animate-mango-otogi-9');
+        void logo.offsetWidth; // 애니메이션 리셋 트릭
+        logo.classList.add('animate-mango-otogi-9');
+    }
+}
+// 4. 실행 시점 컨트롤
+// [시점 A] 페이지 로드 1.5초 후 자동 시도
+window.addEventListener('load', () => {
+    setTimeout(bootMangoExperience, 1500);
+    setTimeout(triggerMango9Shake, 2000);
+});
+
+// [시점 B] 브라우저 차단 대비 - 화면 첫 클릭 시 즉시 해제
+document.addEventListener('pointerdown', () => {
+    if (!isMangoBooted) bootMangoExperience();
+}, { once: true });
+
+// [시점 C] 10분 주기 리마인드 (600,000ms)
+setInterval(() => {
+    isMangoBooted = false; // 주기 재생을 위해 플래그 리셋
+    bootMangoExperience();
+}, 600000);
+setInterval(triggerMango9Shake, 60000);
+
+// 첫 로드 후 2초 뒤에 첫 퍼포먼스 시작
+window.addEventListener('load', () => setTimeout(triggerMango9Shake, 2000));</script>
+
+
+<style>
+/* --- [추가] 육각형 다이아몬드 프로필 --- */
+    .hex-diamond-profile {
+        clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
+        animation: diamondFloat 3s ease-in-out infinite;
+        background: linear-gradient(135deg, rgba(255, 215, 0, 0.2) 0%, rgba(0, 0, 0, 0.8) 100%);
+    }
+
+    @keyframes diamondFloat {
+        0%, 100% { transform: translateY(0); filter: drop-shadow(0 0 10px rgba(255,215,0,0.3)); }
+        50% { transform: translateY(-5px); filter: drop-shadow(0 0 25px rgba(255,215,0,0.8)); }
+    }
+
+/* 다이아몬드 부유 애니메이션 (오토기 스타일) */
+@keyframes mango-lock-float {
+    0%, 100% { transform: translateY(0) rotate(0deg); }
+    50% { transform: translateY(-10px) rotate(3deg); }
+}
+.animate-mango-otogi { animation: mango-lock-float 4s ease-in-out infinite; }
+
+/* 기존 다이아몬드 부유 애니메이션 아래에 추가하세요 */
+@keyframes mango-otogi-9 {
+    0% { transform: rotate(0deg); }
+    20% { transform: rotate(15deg); }
+    40% { transform: rotate(-15deg); }
+    60% { transform: rotate(10deg); }
+    80% { transform: rotate(-10deg); }
+    100% { transform: rotate(0deg); }
+}
+
+.animate-mango-otogi-9 {
+    /* 1.2초 동안 9번 반복하여 약 10.8초간 퍼포먼스 */
+    animation: mango-otogi-9 1.2s ease-in-out 9 forwards !important;
+    transform-origin: bottom center !important;
+}
+
+/* ... 기존 애니메이션 코드 ... */
+
+</style>
+<script>
+   function openDashboard() {
+    // [방법 1] 클릭하자마자 바로 페이지 이동을 원하실 경우 (가장 확실한 경로)
+    // window.location.href = 'mango_profile_dashboard.html';
+    // return; 
+
+    // [방법 2] 세련된 모달 창을 띄운 후, 버튼을 눌러 이동하게 할 경우 (권장)
+    const existingDashboard = document.getElementById('user-dashboard');
+    if (existingDashboard) existingDashboard.remove();
+
+    const dashboardHTML = `
+        <div id="user-dashboard" class="fixed inset-0 z-[10000] flex items-center justify-center p-4 bg-black/90 backdrop-blur-2xl animate-in fade-in zoom-in duration-300">
+            <div class="mango-container glass border-yellow-500/30 p-0 overflow-hidden flex flex-col" style="width: 100%; max-width: 400px;">
+                <div class="p-4 border-b border-white/10 flex justify-between items-center bg-yellow-500/5 text-yellow-500 font-black italic">
+                    <span>CEO DASHBOARD GATE</span>
+                    <button onclick="closeDashboard()" class="text-white/50 text-2xl">✕</button>
+                </div>
+                <div class="p-8 text-center">
+                    <div class="text-5xl mb-6 animate-pulse">💎</div>
+                    <h2 class="text-white text-lg font-bold mb-2">관리자 프로필 진입</h2>
+                    <p class="text-white/50 text-xs mb-8">Mango App의 핵심 설정을 관리하는 대시보드로 이동합니다.</p>
+                    
+                    <div class="flex flex-col gap-3">
+                        <button onclick="location.href='mango_profile_dashboard.html'" class="w-full py-4 bg-yellow-500 text-black font-black rounded-2xl shadow-[0_0_20px_rgba(255,215,0,0.3)] active:scale-95 transition-all">
+                            대시보드 접속하기
+                        </button>
+                        <button onclick="closeDashboard()" class="w-full py-3 text-white/30 text-[10px] font-bold uppercase tracking-widest">
+                            Cancel
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    `;
+    document.body.insertAdjacentHTML('beforeend', dashboardHTML);
+    document.body.style.overflow = 'hidden';
+}
+
+    function closeDashboard() {
+        const dashboard = document.getElementById('user-dashboard');
+        if (dashboard) {
+            dashboard.classList.add('animate-out', 'fade-out', 'zoom-out', 'duration-200');
+            setTimeout(() => {
+                dashboard.remove();
+                document.body.style.overflow = 'auto';
+            }, 200);
+        }
+    }
+
+    // 모달 제어 함수들
+    function openMangoDashboard() {
+        const modal = document.getElementById('mango-dashboard-modal');
+        if(modal) modal.classList.remove('hidden');
+    }
+
+    function closeMangoDashboard() {
+        const modal = document.getElementById('mango-dashboard-modal');
+        if(modal) modal.classList.add('hidden');
+    }
+
+    function openMemo() { alert("메모장을 엽니다."); }
+    function openFavorites() { alert("즐겨찾기를 확인합니다."); }
+    function openFriends() { alert("친구 목록을 불러옵니다."); }
+    function openPayment() { alert("결제 시스템을 연결합니다."); }
+
+    </script>
+
+    <div id="mango-dashboard-modal" class="fixed inset-0 z-[10000] hidden bg-black/95 backdrop-blur-xl flex items-center justify-center p-4">
+        <div class="mango-container glass border-yellow-500/30 p-0 overflow-hidden flex flex-col" style="width: 100%; max-width: 430px;">
+            <div class="p-4 border-b border-white/10 flex justify-between items-center bg-yellow-500/5 text-yellow-500 font-black italic">
+                <span>CEO DASHBOARD</span>
+                <button onclick="closeMangoDashboard()" class="text-white/50 text-2xl">✕</button>
+            </div>
+            <div class="p-6 text-center">
+                <div class="glass border-yellow-500/50 bg-gradient-to-br from-yellow-600/10 to-transparent p-5 rounded-2xl mb-4">
+                    <p class="text-[10px] text-yellow-500 font-bold mb-2 uppercase">Step 10 Verification</p>
+                    <p class="text-white text-sm mb-4">테스트 결제 (0.01 π)를 진행합니다.</p>
+                    <button onclick="handleMangoTestPayment()" class="w-full py-3 bg-yellow-500 text-black font-black rounded-xl shadow-lg active:scale-95 transition-all">
+                        결제 승인하기
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <a href="javascript:void(0);" onclick="openDashboard()" class="relative flex-shrink-0" style="display: none;"></a>
+
+    <script src="assets/js/social-engine.js"></script>
+<script src="assets/js/share-link.js"></script>
+<script src="assets/js/security-gate.js"></script>
+<script src="assets/js/auth-engine.js"></script>
+<script src="assets/js/mango-hompy.js"></script>
+
+<script>
+// [1] 시스템 변수 정의
+let currentUserID = "";
+
+// [2] 토스트 알림 시스템
+window.showMangoToast = function(msg) {
+    const toast = document.createElement('div');
+    toast.style = "position:fixed; bottom:50px; left:50%; transform:translateX(-50%); z-index:10000; background:#EAB308; color:black; padding:12px 24px; border-radius:50px; font-weight:900; box-shadow:0 0 20px rgba(234,179,8,0.5); font-family:sans-serif;";
+    toast.className = "fixed animate-bounce";
+    toast.innerText = msg;
+    document.body.appendChild(toast);
+    setTimeout(() => toast.remove(), 2500);
+};
+
+// [3] 로그인 및 미니홈피 제어
+function onLoginSuccess(user) {
+    const mainContainer = document.getElementById('main-container');
+    if (mainContainer) mainContainer.style.display = 'none';
+
+    const input = document.querySelector('#auth-login-section input[type="text"]');
+    currentUserID = (user && user.username) ? user.username : (input && input.value ? input.value.split('@')[0] : "New User");
+
+    let userLevel = "Lv.1 Beginner"; 
+    const isCEO = currentUserID.toLowerCase().includes('mango') || currentUserID.toLowerCase().includes('ceo');
+    if (isCEO) userLevel = "Lv.99 CEO";
+
+    const modalContent = document.querySelector('#integrated-auth-modal > div');
+    if(!modalContent) return;
+
+    modalContent.innerHTML = `
+        <div class="p-8 text-center animate-fade-in">
+            <div class="w-24 h-24 bg-gradient-to-tr from-yellow-500 to-orange-500 rounded-full mx-auto mb-4 p-1 shadow-[0_0_20px_rgba(234,179,8,0.5)]">
+                <img src="assets/img/mango.jpg" class="w-full h-full rounded-full object-cover border-2 border-black" onerror="this.src='https://via.placeholder.com/100'">
+            </div>
+            <h2 class="text-2xl font-black text-white mb-1">\${currentUserID} 님</h2>
+            <p class="text-yellow-500 text-[10px] mb-6 font-bold tracking-[0.3em] uppercase">\${userLevel} | Mango Ecosystem</p>
+            <div class="grid grid-cols-2 gap-3 mb-8">
+                <div class="bg-white/5 p-4 rounded-2xl border border-white/10 backdrop-blur-sm">
+                    <p class="text-[9px] text-white/40 uppercase tracking-tighter">My Pi Balance</p>
+                    <p class="text-lg font-black text-yellow-500">\${isCEO ? "3,141.59" : "0.00"} π</p>
+                </div>
+                <div class="bg-white/5 p-4 rounded-2xl border border-white/10 backdrop-blur-sm">
+                    <p class="text-[9px] text-white/40 uppercase tracking-tighter">Activity Points</p>
+                    <p class="text-lg font-black text-white">\${isCEO ? "12,500" : "100"} P</p>
+                </div>
+            </div>
+            <button onclick="enterMainSystem()" class="w-full py-4 bg-yellow-500 text-black font-black rounded-2xl shadow-[0_10px_30px_rgba(234,179,8,0.4)] active:scale-95 transition-all duration-300">
+                MANGO 시스템 입장하기
+            </button>
+        </div>
+    `;
+    if (typeof refreshMiniHompy === 'function') refreshMiniHompy(user);
+}
+
+function enterMainSystem() {
+    const modal = document.getElementById('integrated-auth-modal');
+    if(modal) modal.style.display = 'none';
+    const mainContainer = document.getElementById('main-container');
+    if (mainContainer) mainContainer.style.display = 'block';
+    const msg = currentUserID.toLowerCase().includes('ceo') ? "👑 Welcome Back, SkyMango CEO!" : "Welcome to Mango Ecosystem!";
+    showMangoToast(msg);
+}
+
+// [4] 가이드 및 대시보드 제어 함수 (중복 제거 통합 버전)
+function openMangoGuide() {
+    const modal = document.getElementById('mangoGuideModal');
+    if (modal) modal.style.display = 'flex';
+}
+
+function closeMangoGuide() {
+    const modal = document.getElementById('mangoGuideModal');
+    if (modal) modal.style.display = 'none';
+}
+
+function openDashboard() {
+    const existingDashboard = document.getElementById('user-dashboard');
+    if (existingDashboard) existingDashboard.remove();
+    const dashboardHTML = `
+        <div id="user-dashboard" class="fixed inset-0 z-[10000] flex items-center justify-center p-4 bg-black/90 backdrop-blur-2xl">
+            <div class="mango-container glass border-yellow-500/30 p-8 text-center" style="max-width: 400px;">
+                <div class="text-5xl mb-6">💎</div>
+                <h2 class="text-white text-lg font-bold mb-2">CEO DASHBOARD</h2>
+                <p class="text-white/50 text-xs mb-8">관리자 전용 설정 페이지로 이동합니다.</p>
+                <button onclick="location.href='mango_profile_dashboard.html'" class="w-full py-4 bg-yellow-500 text-black font-black rounded-2xl mb-3">접속하기</button>
+                <button onclick="document.getElementById('user-dashboard').remove()" class="text-white/30 text-[10px] uppercase">Cancel</button>
+            </div>
+        </div>`;
+    document.body.insertAdjacentHTML('beforeend', dashboardHTML);
+}
+
+// 기타 제어 함수
+function openMangoDashboard() { document.getElementById('mango-dashboard-modal')?.classList.remove('hidden'); }
+function closeMangoDashboard() { document.getElementById('mango-dashboard-modal')?.classList.add('hidden'); }
+function openPayment() { alert("결제 시스템을 연결합니다."); }
+
+</script>
+
+<div id="mangoGuideModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 10001; justify-content: center; align-items: center; padding: 20px;">
+    <div style="background: white; padding: 25px; border-radius: 20px; max-width: 360px; width: 100%; text-align: center; border: 4px solid #f97316; box-shadow: 0 0 30px rgba(249, 115, 22, 0.5);">
+        <h2 style="color: #f97316; font-size: 22px; font-weight: bold; margin-bottom: 15px;">🥭 망고 서포터즈 가이드</h2>
+        <div style="text-align: left; font-size: 14px; color: #333; line-height: 1.7; margin-bottom: 20px;">
+            <p>✅ <b>Step 1:</b> [받기] 버튼으로 테스트 결제</p>
+            <p>✅ <b>Step 2:</b> [공유하기]로 지인 5명 초대</p>
+            <p>✅ <b>Step 3:</b> 5명 접속 시 <b>LEVEL 2</b> 자동 승급!</p>
+        </div>
+        <div style="background: #fff7ed; padding: 15px; border-radius: 12px; border: 1px dashed #f97316; margin-bottom: 20px;">
+            <p style="font-weight: bold; color: #333;">현재 나의 등급: <span style="color: #ea580c;">LEVEL 1 (씨앗)</span></p>
+            <p style="font-size: 11px; color: #666;">(다음 등급까지 지인 5명 참여 필요)</p>
+        </div>
+        <button onclick="closeMangoGuide()" style="background: #f97316; color: white; width: 100%; padding: 14px; border-radius: 12px; font-weight: bold; border: none; cursor: pointer;">확인했습니다</button>
+    </div>
+</div>
+
+<div id="mango-dashboard-modal" class="fixed inset-0 z-[10000] hidden bg-black/95 backdrop-blur-xl flex items-center justify-center p-4">
+    <div class="mango-container glass border-yellow-500/30 p-0 overflow-hidden flex flex-col" style="width: 100%; max-width: 430px;">
+        <div class="p-4 border-b border-white/10 flex justify-between items-center bg-yellow-500/5 text-yellow-500 font-black italic">
+            <span>CEO DASHBOARD</span>
+            <button onclick="closeMangoDashboard()" class="text-white/50 text-2xl">✕</button>
+        </div>
+        <div class="p-6 text-center">
+            <div class="glass border-yellow-500/50 bg-gradient-to-br from-yellow-600/10 to-transparent p-5 rounded-2xl mb-4">
+                <p class="text-[10px] text-yellow-500 font-bold mb-2 uppercase">Step 10 Verification</p>
+                <p class="text-white text-sm mb-4">테스트 결제 (0.01 π)를 진행합니다.</p>
+                <button onclick="handleMangoTestPayment()" class="w-full py-3 bg-yellow-500 text-black font-black rounded-xl shadow-lg active:scale-95 transition-all">
+                    결제 승인하기
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

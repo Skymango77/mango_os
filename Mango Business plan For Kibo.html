@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mango Strategy 2026</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* Custom Styles for Rich Aesthetics */
+        body {
+            background: linear-gradient(135deg, #1a202c 0%, #2d3748 100%);
+            color: #e2e8f0;
+            font-family: 'Inter', sans-serif;
+            scroll-behavior: smooth;
+        }
+
+        h1, h2, h3, h4, h5, h6 {
+            font-family: 'Outfit', sans-serif;
+            font-weight: 600;
+            color: #f0e68c; /* Goldenrod-like accent for headers */
+        }
+
+        /* Smooth transitions for hover effects */
+        .transition-all-ease-in-out {
+            transition: all 0.3s cubic-bezier(0.645, 0.045, 0.355, 1.000);
+        }
+
+        /* Glassmorphism inspired elements */
+        .glass-card {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px) saturate(180%);
+            -webkit-backdrop-filter: blur(10px) saturate(180%);
+            border-radius: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.2);
+        }
+
+        .service-card {
+            background: rgba(40, 45, 52, 0.8); /* Slightly darker than body, more opaque */
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            border-radius: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+        }
+
+        .service-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 12px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        /* Gradient accents */
+        .gradient-text {
+    background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%);
+    background-clip: text; /* [추가] 표준 속성 */
+    -webkit-background-clip: text; /* 기존 속성 유지 */
+    color: transparent; /* [추가] 표준 색상 투명화 */
+    -webkit-text-fill-color: transparent; /* 기존 속성 유지 */
+}
+
+        /* Specific styling for images to fit containers */
+        .image-container img {
+            border-radius: 8px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+        }
+
+        /* Scrollbar styling for better dark mode integration (optional, browser support varies) */
+        ::-webkit-scrollbar {
+            width: 10px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #2d3748;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #4a5568;
+            border-radius: 5px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #a0aec0;
+        }
+
+        /* Ensure images are responsive */
+        img {
+            max-width: 100%;
+            height: auto;
+            display: block; /* Removes bottom space under images */
+        }
+    </style>
+    <script>
+        // Extend Tailwind Configuration
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        'display': ['Outfit', 'sans-serif'],
+                        'body': ['Inter', 'sans-serif'],
+                    },
+                    colors: {
+                        'primary-dark': '#1a202c',
+                        'secondary-dark': '#2d3748',
+                        'accent-gold': '#f0e68c', // Goldenrod
+                        'accent-yellow': '#ffd700', // Gold
+                        'text-light': '#e2e8f0',
+                        'text-muted': '#a0aec0',
+                    },
+                    backgroundImage: {
+                        'hero-gradient': "linear-gradient(135deg, #1a202c 0%, #2d3748 100%)",
+                    },
+                    boxShadow: {
+                        'glass': '0 4px 30px rgba(0, 0, 0, 0.2)',
+                        'card-hover': '0 12px 20px rgba(0, 0, 0, 0.3)',
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="font-body antialiased">
+
+    <div class="container mx-auto px-4 py-16 max-w-7xl">
+
+        <!-- Header Section -->
+        <header class="text-center mb-16">
+            <h1 class="text-5xl md:text-6xl font-display tracking-tight mb-4 gradient-text">MANGO STRATEGY 2026</h1>
+            <p class="text-xl md:text-2xl text-accent-gold font-semibold">The Mango Global Economic Zone</p>
+            <div class="mt-8 text-lg text-text-muted flex flex-col sm:flex-row justify-center items-center gap-4">
+                <span class="glass-card px-4 py-2 rounded-full">
+                    <span class="font-medium">Date:</span> October 24, 2026
+                </span>
+                <span class="glass-card px-4 py-2 rounded-full">
+                    <span class="font-medium">Entity:</span> Mango Global (est. 2013)
+                </span>
+                <span class="glass-card px-4 py-2 rounded-full">
+                    <span class="font-medium">Classification:</span> Strategic Master Plan
+                </span>
+            </div>
+        </header>
+
+        <!-- Vision Statement -->
+        <section class="mb-16 glass-card p-8 rounded-xl">
+            <h2 class="text-3xl md:text-4xl font-display mb-6 border-b-2 border-accent-gold pb-3 inline-block">I. VISION STATEMENT</h2>
+            <p class="text-lg leading-relaxed text-text-muted">
+                To establish the <strong>Mango Economic Zone</strong>—a borderless, Web3-integrated O2O (Online-to-Offline) ecosystem that bridges 55 million Pi Network pioneers with global physical commerce through institutional-grade financial security, standardized mobile architecture, and localized service portals.
+            </p>
+        </section>
+
+        <!-- Core Strategic Pillars -->
+        <section class="mb-16">
+            <h2 class="text-3xl md:text-4xl font-display mb-8 text-center text-accent-gold">II. CORE STRATEGIC PILLARS</h2>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <!-- Pillar 1: Institutional Bridge -->
+                <div class="glass-card p-6 rounded-xl flex flex-col">
+                    <h3 class="text-2xl font-display mb-4 text-accent-yellow">공공 인프라 연계: B.Cube 거점 신청</h3>
+<p class="text-base text-text-muted mb-4 flex-grow">
+    망고 글로벌은 <strong>부산창조경제혁신센터</strong>에서 운영하는 스마트 스타트업 거점인 <strong>B.Cube(비큐브)</strong>의 공유 사무실 입주를 신청하여 현재 <strong>심사 단계</strong>에 있습니다. 본 인큐베이팅 인프라 활용을 통해 공공기관의 사업화 지원을 수혜받고, 부산 핀테크 생태계 내에서의 기술적 입지를 공고히 하여 제도권 금융 가이드라인에 부합하는 안정적인 서비스 운영 기반을 마련할 예정입니다.
+</p>
+                    
+    <li><strong>가맹점 통합 정산:</strong> 한국에 이미 존재하는 600여 가맹점 대상의 파이(Pi) 결제 및 실물 경제 정산 게이트웨이 기술 구축 준비</li>
+    <li><strong>제도권 규제 준수:</strong> B.Cube 및 공공 인프라 연계를 통한 표준 KYC/AML 프로토콜 및 샌드박스 보안 설계</li>
+</ul>
+                </div>
+
+                <!-- Pillar 2: Technical Standard -->
+                <div class="glass-card p-6 rounded-xl flex flex-col">
+                    <h3 class="text-2xl font-display mb-4 text-accent-yellow">기술 표준: 450px 통합 아키텍처</h3>
+                    <p class="text-base text-text-muted mb-4 flex-grow">
+                        전 세계 모바일 사용자 기반에서 "렌더링 일관성"을 확보하기 위해 모든 서비스 포털에 <strong>450px 표준 UI</strong>를 의무화했습니다 .
+                    </p>
+                    <ul class="list-disc list-inside text-sm text-text-muted space-y-2">
+                        <li><strong>Global Mapping Guide:</strong> An architectural blueprint that links the 8+ service portals into a single "Mapping Guide," allowing users to navigate from food to travel with zero cognitive friction.</li>
+                        <li><strong>Visual Trust (The Golden Aesthetic):</strong> All services are identified by high-fidelity, square-rounded <strong>Golden Icons</strong> (as seen in the [Travel Portal App Image] and [Image 3] set). This cohesive branding signifies premium status and verified utility within the Pi Browser.</li>
+                    </ul>
+                </div>
+
+                <!-- Pillar 3: Ecosystem Catalyst -->
+                <div class="glass-card p-6 rounded-xl flex flex-col">
+                    <h3 class="text-2xl font-display mb-4 text-accent-yellow">Ecosystem Catalyst: The Strategic Request (PCT)</h3>
+                    <p class="text-base text-text-muted mb-4 flex-grow">
+                        Mango Global has initiated a formal <strong>Strategic Request</strong> to the <strong>Pi Core Team (PCT)</strong> to cement its position as the primary commerce hub for the network.
+                    </p>
+                    <ul class="list-disc list-inside text-sm text-text-muted space-y-2">
+                        <li><strong>Mainnet SDK Access:</strong> Leveraging specialized SDK permissions for high-frequency transactions across all 8 gateways.</li>
+                        <li><strong>Commerce Priority:</strong> Seeking "Official Ecosystem App" status to prioritize Mango Global users in the migration queue, ensuring immediate liquidity and participation during the Enclosed Mainnet period.</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- Ecosystem Section -->
+        <section class="mb-16">
+            <h2 class="text-3xl md:text-4xl font-display mb-8 text-center text-accent-gold">III. THE 8+ SERVICE PORTAL ECOSYSTEM (SUPER APP)</h2>
+            <p class="text-lg text-center text-text-muted mb-12 max-w-4xl mx-auto">
+                *The Mango Global "Super App" structure integrates the following primary gateways, each utilizing the standardized 450px interface and golden visual motifs:*
+            </p>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <!-- Service Card 1: Mango Food -->
+                <div class="service-card p-6 rounded-xl flex flex-col items-center text-center">
+                    <div class="image-container mb-4 w-full">
+                        <img src='https://opal.google/board/blobs/4a2cbd40-ac41-4d48-9617-f69a4ec44803' alt='Mango Food Example' class="mx-auto rounded-lg"/>
+                    </div>
+                    <h3 class="text-xl font-display mb-2 text-accent-yellow">Mango Food</h3>
+                    <p class="text-sm text-text-muted">Local restaurant curation and real-time reservation systems with instant Pi payment support.</p>
+                </div>
+
+                <!-- Service Card 2: Mango Mobility -->
+                <div class="service-card p-6 rounded-xl flex flex-col items-center text-center">
+                    <div class="image-container mb-4 w-full">
+                        <img src='https://opal.google/board/blobs/ab78ede9-8d62-4e14-bec8-a84ab5d7c434' alt='Mango Mobility Example' class="mx-auto rounded-lg"/>
+                    </div>
+                    <h3 class="text-xl font-display mb-2 text-accent-yellow">Mango Mobility</h3>
+                    <p class="text-sm text-text-muted">A unified ride-hailing and airport transfer network utilizing the Taxi/Transfer visual branding for seamless global transit.</p>
+                </div>
+
+                <!-- Service Card 3: Mango Travel -->
+                <div class="service-card p-6 rounded-xl flex flex-col items-center text-center">
+                    <div class="image-container mb-4 w-full">
+                        <img src='https://opal.google/board/blobs/cd4e96e4-01f0-42de-834d-93941ed5e1a1' alt='Mango Travel Example' class="mx-auto rounded-lg"/>
+                    </div>
+                    <h3 class="text-xl font-display mb-2 text-accent-yellow">Mango Travel</h3>
+                    <p class="text-sm text-text-muted">A flagship "Tropical Journey" solution providing flights, luxury hotel bookings, and hot-air balloon leisure packages.</p>
+                </div>
+
+                <!-- Service Card 4: Mango Hobby -->
+                <div class="service-card p-6 rounded-xl flex flex-col items-center text-center">
+                    <div class="image-container mb-4 w-full">
+                        <img src='https://opal.google/board/blobs/a52d5747-1c81-48b8-9c83-4dc1ed121808' alt='Mango Hobby Example' class="mx-auto rounded-lg"/>
+                    </div>
+                    <h3 class="text-xl font-display mb-2 text-accent-yellow">Mango Hobby</h3>
+                    <p class="text-sm text-text-muted">A community-focused "Mango Friend" portal for localized shared interests and experience packages.</p>
+                </div>
+
+                <!-- Service Card 5: Mango Realty -->
+                <div class="service-card p-6 rounded-xl flex flex-col items-center text-center">
+                    <div class="image-container mb-4 w-full">
+                        <img src='https://opal.google/board/blobs/38d1743d-ddf6-4a80-b12c-632ca2d6c526' alt='Mango Realty Example' class="mx-auto rounded-lg"/>
+                    </div>
+                    <h3 class="text-xl font-display mb-2 text-accent-yellow">Mango Realty</h3>
+                    <p class="text-sm text-text-muted">Transparent property listings and blockchain-backed contract history management for real-world asset transactions.</p>
+                </div>
+
+                <!-- Service Card 6: Mango Market -->
+                <div class="service-card p-6 rounded-xl flex flex-col items-center text-center">
+                    <div class="image-container mb-4 w-full">
+                        <img src='https://opal.google/board/blobs/126fdcc9-068b-47f1-a758-7f7361f554b8' alt='Mango Market Example' class="mx-auto rounded-lg"/>
+                    </div>
+                    <h3 class="text-xl font-display mb-2 text-accent-yellow">Mango Market</h3>
+                    <p class="text-sm text-text-muted">A P2P and B2C commerce hub featuring a wallet-linked Escrow system to ensure security in product exchanges.</p>
+                </div>
+
+                <!-- Service Card 7: Mango Chat -->
+                <div class="service-card p-6 rounded-xl flex flex-col items-center text-center">
+                    <div class="image-container mb-4 w-full">
+                        <img src='https://opal.google/board/blobs/9ce52c36-7554-415b-b0b0-433697ca7c8f' alt='Mango Chat Example' class="mx-auto rounded-lg"/>
+                    </div>
+                    <h3 class="text-xl font-display mb-2 text-accent-yellow">Mango Chat</h3>
+                    <p class="text-sm text-text-muted">Encrypted real-time communication using wallet addresses as IDs, creating a high-trust social environment for the "Mango Economic Zone."</p>
+                </div>
+
+                <!-- Service Card 8: Mango Education -->
+                <div class="service-card p-6 rounded-xl flex flex-col items-center text-center">
+                    <div class="image-container mb-4 w-full">
+                        <img src='https://opal.google/board/blobs/a9d537de-ecef-45ef-ade9-c32e45ec99ef' alt='Mango Education Example' class="mx-auto rounded-lg"/>
+                    </div>
+                    <h3 class="text-xl font-display mb-2 text-accent-yellow">Mango Education</h3>
+                    <p class="text-sm text-text-muted">A professional development and hobby sharing platform supporting Learn-to-Earn (L2E) and the tokenization of knowledge assets.</p>
+                </div>
+                
+                <!-- Service Card 9: Mango Delivery -->
+                <div class="service-card p-6 rounded-xl flex flex-col items-center text-center">
+                    <div class="image-container mb-4 w-full">
+                        <!-- No image provided for Mango Delivery, so skipping img tag -->
+                    </div>
+                    <h3 class="text-xl font-display mb-2 text-accent-yellow">Mango Delivery</h3>
+                    <p class="text-sm text-text-muted">A last-mile logistics solution connecting the Market and Food portals with local distribution networks.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Brand Protection & Legal Roots -->
+        <section class="mb-16 glass-card p-8 rounded-xl">
+            <h2 class="text-3xl md:text-4xl font-display mb-6 border-b-2 border-accent-gold pb-3 inline-block">IV. BRAND PROTECTION & LEGAL ROOTS</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <div>
+                    <h3 class="text-2xl font-display mb-4 text-accent-yellow">1. Trademark Defense & 2013 Legacy</h3>
+                    <p class="text-base text-text-muted mb-4">
+                        Mango Global holds primary rights under the <strong>Trademark Notice</strong> for the "Mango Global" brand within Software (Class 9), Finance (Class 36), and IT Services (Class 42) sectors.
+                    </p>
+                    <ul class="list-disc list-inside text-sm text-text-muted space-y-2">
+                        <li><strong>Establishment of Prior Use:</strong> Our strategy is built upon the <strong>2013 Past Business Plan</strong> which originally conceptualized "Hyper-Local Portals." This decade-long evolution provides the legal foundation for our trademark claims, distinguishing us from fashion or food-only brands.</li>
+                        <li><strong>Brand Integrity:</strong> We enforce a strict "Anti-Phishing" policy across the Pi Browser to ensure the Mango name remains synonymous with secure, verified utility.</li>
+                    </ul>
+                </div>
+                <div>
+                    <h3 class="text-2xl font-display mb-4 text-accent-yellow">2. Economic Advantage (CAC Efficiency)</h3>
+                    <p class="text-base text-text-muted mb-4">
+                        By repurposing the 2013 O2O logic for the 2026 Pi Network environment, Mango Global achieves an industry-leading <strong>Customer Acquisition Cost (CAC)</strong>. The 55 million pre-existing Pioneers form an instant, high-trust consumer base that requires no traditional ad-spend for onboarding.
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Economic Impact & Revenue Model -->
+        <section class="glass-card p-8 rounded-xl text-center">
+            <h2 class="text-3xl md:text-4xl font-display mb-6 border-b-2 border-accent-gold pb-3 inline-block">V. ECONOMIC IMPACT & REVENUE MODEL</h2>
+            <div class="flex flex-wrap justify-center gap-6 text-lg md:text-xl text-text-muted">
+                <div class="flex items-center gap-3 p-3 bg-secondary-dark rounded-lg glass-card">
+                    <span class="bg-accent-yellow text-primary-dark font-bold px-4 py-2 rounded-full">01</span>
+                    <span>Transaction Fees: Low-margin, high-volume fees from the 600+ merchant network.</span>
+                </div>
+                <div class="flex items-center gap-3 p-3 bg-secondary-dark rounded-lg glass-card">
+                    <span class="bg-accent-yellow text-primary-dark font-bold px-4 py-2 rounded-full">02</span>
+                    <span>Premium Advertising: Ad-revenue generated from high-visibility placement within the "Global Mapping Guide."</span>
+                </div>
+                <div class="flex items-center gap-3 p-3 bg-secondary-dark rounded-lg glass-card">
+                    <span class="bg-accent-yellow text-primary-dark font-bold px-4 py-2 rounded-full">03</span>
+                    <span>Institutional Arbitrage: Revenue from the Pi-to-Fiat settlement spread and escrow service fees.</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- Authorized By -->
+        <section class="mt-16 text-center text-text-muted text-sm">
+            <p>Authorized by:</p>
+            <p class="font-medium">Executive Board of Mango Global</p>
+            <p class="font-medium">2026 Strategic Planning Division</p>
+        </section>
+
+    </div>
+
+</body>
+</html>

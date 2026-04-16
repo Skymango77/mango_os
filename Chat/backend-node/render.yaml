@@ -1,0 +1,20 @@
+services:
+  - type: web
+    name: mango-realty-backend
+    env: node
+    plan: starter
+    buildCommand: npm install
+    startCommand: node scc/appp.js
+    envVars:
+      - key: NODE_ENV_ENV
+        value: productionuction
+      - key: PORT
+        value: 10000
+      - key: FRONTEND_URL
+        value: https://mango-universe.vercel.app
+      - key: JWT_SECRET
+        key: MONGO_URI
+        fromSmall: mango-db-uri
+      - key: PI_SERVER_KEY
+        fromSmall: pi-api-RIGIN
+       ek

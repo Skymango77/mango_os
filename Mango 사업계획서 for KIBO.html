@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>망고 글로벌 - 기술보증기금 기술평가 보고서</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;900&family=Outfit:wght@400;600;800&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        mango: {
+                            50: '#fffbeb',
+                            100: '#fef3c7',
+                            200: '#fde68a',
+                            300: '#fcd34d',
+                            400: '#fbbf24',
+                            500: '#f59e0b', // Primary Accent
+                            600: '#d97706',
+                            DEFAULT: '#f59e0b',
+                        },
+                        charcoal: '#1f2937',
+                        background: '#f9fafb',
+                    },
+                    fontFamily: {
+                        sans: ['Noto Sans KR', 'sans-serif'],
+                        display: ['Outfit', 'Noto Sans KR', 'sans-serif'],
+                    },
+                    boxShadow: {
+                        'premium': '0 20px 50px -12px rgba(0, 0, 0, 0.08)',
+                        'glass': '0 8px 32px 0 rgba(31, 38, 135, 0.07)',
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            background-color: #f9fafb;
+            color: #1f2937;
+            scroll-behavior: smooth;
+        }
+        .glass-card {
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.18);
+        }
+        .service-icon-inline {
+            display: inline-block;
+            vertical-align: middle;
+            height: 1.4em;
+            margin: 0 4px;
+            border-radius: 4px;
+        }
+        .report-section h2 {
+            position: relative;
+            padding-left: 1rem;
+            border-left: 4px solid #f59e0b;
+        }
+        @media (max-width: 450px) {
+            .fixed-card-width {
+                width: 100% !important;
+                max-width: 450px !important;
+            }
+        }
+    </style>
+</head>
+<body class="font-sans antialiased">
+
+    <!-- Header -->
+    <header class="w-full bg-white border-b border-gray-100 py-8 sticky top-0 z-50 shadow-sm">
+        <div class="max-w-7xl mx-auto px-4 flex flex-col items-center">
+            <div class="transform hover:scale-105 transition-transform duration-300">
+                <img src='https://opal.google/board/blobs/670f0fa3-3fff-467e-8aec-f78ccf67253e' alt='Icon' class="w-20 h-20 rounded-lg shadow-sm"  alt='Mango Global 
+                Logo' 
+                 
+                class="w-full h-auto object-contain" />
+            </div>
+            <h1 class="mt-4 font-display font-bold text-2xl tracking-tight text-gray-900 uppercase">Mango Global</h1>
+        </div>
+    </header>
+
+    <main class="max-w-[1200px] mx-auto px-6 py-12">
+        
+        <!-- KIBO Formal Report Section -->
+        <section class="bg-white rounded-3xl p-8 md:p-16 shadow-premium mb-20 border border-gray-50 report-section overflow-hidden">
+            <div class="max-w-3xl mx-auto">
+                <div class="mb-12 text-center">
+                    <span class="inline-block px-4 py-1 rounded-full bg-mango-100 text-mango-600 text-sm font-bold mb-4 uppercase tracking-wider">Formal Technical Report</span>
+                    <h2 class="text-3xl md:text-4xl font-bold text-gray-900 leading-tight mb-4 border-none p-0 text-center">  사업
+                 계획서</h2>
+                    <p class="text-xl text-gray-500 font-medium">기업명: 망고 글로벌 (Mango Global)</p>
+                </div>
+
+                <div class="space-y-12 text-gray-700 leading-relaxed text-lg">
+                    
+                    <div>
+                        <h2 class="text-2xl font-bold text-gray-900 mb-6">1. 기술 개발의 필요성</h2>
+                        <p>
+                            본 기술 사업은 2013년 당시 정립된 오투오(O2O) 비즈니스 분석 역량과 수익 모델을 현대적 금융 기술 환경에 맞춰 재해석한 것입니다. 전통적인 플랫폼 중개 모델이 직면했던 과도한 수수료 체제와 오프라인 인프라의 확장성 한계를 극복하기 위해, 2026년 기준 5,500만 명의 거대한 활성 사용자 기반을 보유한 파이 네트워크(Pi Network)의 분산 원장 기술을 통합하고자 합니다. 이를 통해 글로벌 크로스보더 결제의 효율성을 극대화하고, 다변화된 모바일 포털 환경에서의 사용자 경험을 표준화하기 위한 핵심 기술 확보가 필수적입니다.
+                        </p>
+                    </div>
+
+                    <div>
+                        <h2 class="text-2xl font-bold text-gray-900 mb-6">2. 기술의 개요 및 특징</h2>
+                        <p>
+                            망고 글로벌의 시스템은 8대 주요 서비스 포털을 유기적으로 연결하는 글로벌 시각화 매핑 가이드 아키텍처를 기반으로 합니다. 모든 서비스 인터페이스는 모바일 기기별 렌더링 무결성을 보장하기 위해 450px 규격의 표준 UI 기술을 채택하였습니다. 현재 확보된 600여 개의 실질 가맹점 데이터와 실시간 연동되어 
+                            <!-- 1. Restaurant -->
+                <div class="service-window glass-card rounded-2xl overflow-hidden flex flex-col">
+                    <div class="relative">
+                        
+                        <img src='https://opal.google/board/blobs/59d09d6f-93b6-4964-b0dd-79899f2eeefd0' alt='Restaurant Illustration' class="w-full h-auto" />
+                        <div class="absolute bottom-0 left-0 right-0 h-24 bg-gradient-to-t from-white to-transparent"></div>
+                    </div>
+                    <div class="p-6 pt-2">
+                        <div class="flex items-center gap-3 mb-3">
+                            
+                           <img src='https://opal.google/board/blobs/a322c1ee-fe0f-4abc-ae29-5026e0bf3ab9' alt='Icon' class="w-10 h-10 rounded-lg shadow-sm" />
+                            <h3 class="text-xl font-bold ml-auto text-brand-primary">맛집 서비스</h3>
+                        </div>
+                        <p class="text-sm text-slate-600">전 세계 현지 맛집 큐레이션 및 예약 시스템입니다. 사용자의 위치 기반 데이터를 활용하여 최적의 식당을 추천하며, Pi 코인을 통한 즉시 결제를 지원합니다.</p>
+                    </div>
+                </div>
+
+                <!-- 2. Delivery -->
+                <div class="service-window glass-card rounded-2xl overflow-hidden flex flex-col">
+                    <div class="relative">
+                        <svg class="w-10 h-10 shadow-sm rounded-lg" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+    <rect width="100" height="100" rx="20" fill="#f59e0b"/>
+    <path d="M30 50h40M60 40l10 10-10 10" stroke="white" stroke-width="8" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+    <circle cx="40" cy="70" r="5" fill="white"/>
+    <circle cx="65" cy="70" r="5" fill="white"/>
+</svg>
+                        <div class="absolute bottom-0 left-0 right-0 h-24 bg-gradient-to-t from-white to-transparent"></div>
+                    </div>
+                    <div class="p-6 pt-2">
+                        <div class="flex items-center gap-3 mb-3">
+                            
+                            
+                            <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAGQAAABk..." alt="Icon" class="w-10 h-10 rounded-lg shadow-sm" />
+                            <h3 class="text-xl font-bold ml-auto text-brand-primary">배달 서비스</h3>
+                        </div>
+                        <p class="text-sm text-slate-600">퀵 서비스 및 배달 대행 기술이 결합된 라스트 마일 솔루션입니다. 물류 최적화 알고리즘을 통해 배달 경로의 효율성을 극대화하였습니다.</p>
+                    </div>
+                </div>
+
+                <!-- 3. Taxi -->
+                <div class="service-window glass-card rounded-2xl overflow-hidden flex flex-col">
+                    <div class="relative">
+                        <img src='https://opal.google/board/blobs/59d09d6f-93b6-4964-b0dd-79899f2eeefd2' alt='Taxi Illustration' class="w-full h-auto" />
+                        <div class="absolute bottom-0 left-0 right-0 h-24 bg-gradient-to-t from-white to-transparent"></div>
+                    </div>
+                    <div class="p-6 pt-2">
+                        <div class="flex items-center gap-3 mb-3">
+                            <img src='https://opal.google/board/blobs/d1549691-db4b-4758-b58a-14f44d591cff' alt='Icon' class="w-10 h-10 rounded-lg shadow-sm" />
+                            <img src='https://opal.google/board/blobs/f486e47b-e96a-46f3-8417-809e6bc08b93' alt='Icon' class="w-10 h-10 rounded-lg shadow-sm" />
+                            
+                            <h3 class="text-xl font-bold ml-auto text-brand-primary">택시/모빌리티</h3>
+                        </div>
+                        <p class="text-sm text-slate-600">글로벌 모빌리티 네트워크 'Mango-Taxi'입니다. 국가별 이동 수단 예약 시스템을 통합하여 국경 없는 이동 편의성을 제공합니다.</p>
+                    </div>
+                </div>
+
+                <!-- 4. Travel -->
+                <div class="service-window glass-card rounded-2xl overflow-hidden flex flex-col">
+                    <div class="relative">
+                        <img src='https://opal.google/board/blobs/59d09d6f-93b6-4964-b0dd-79899f2eeefd3' alt='Travel Illustration' class="w-full h-auto" />
+                        <img src='https://opal.google/board/blobs/59d09d6f-93b6-4964-b0dd-79899f2eeefd4' alt='Travel Sub Illustration' class="w-full h-auto absolute top-0 left-0 opacity-0 hover:opacity-100 transition-opacity duration-500" />
+                        <div class="absolute bottom-0 left-0 right-0 h-24 bg-gradient-to-t from-white to-transparent"></div>
+                    </div>
+                    <div class="p-6 pt-2">
+                        <div class="flex items-center gap-2 mb-3">
+                            <img src='https://opal.google/board/blobs/2e824db2-48b7-47c1-8208-d9912d35f7b8' alt='Icon' class="w-8 h-8 rounded shadow-sm" />
+                            <img src='travel_Portal.png' alt='Travel Portal' class="w-10 h-10 rounded-lg shadow-sm" />
+<img src='travel_Portal_App.png' alt='Travel App' class="w-10 h-10 rounded-lg shadow-sm" />
+                            
+                            <h3 class="text-xl font-bold ml-auto text-brand-primary">해외여행 서비스</h3>
+                        </div>
+                        <p class="text-sm text-slate-600">항공, 숙박 및 현지 가이드 연결 패키지입니다. 분산형 신원 인증(DID)을 통해 예약 보안을 강화한 트로피컬 여정 솔루션입니다.</p>
+                    </div>
+                </div>
+<!-- 5. Hobby Sharing -->
+                <div class="service-window glass-card rounded-2xl overflow-hidden flex flex-col">
+                    <div class="relative">
+                        <img src='https://opal.google/board/blobs/59d09d6f-93b6-4964-b0dd-79899f2eeefd3' alt='Travel Illustration' class="w-full h-auto" />
+                        <img src='https://opal.google/board/blobs/59d09d6f-93b6-4964-b0dd-79899f2eeefd4' alt='Travel Sub Illustration' class="w-full h-auto absolute top-0 left-0 opacity-0 hover:opacity-100 transition-opacity duration-500" />
+                        <div class="absolute bottom-0 left-0 right-0 h-24 bg-gradient-to-t from-white to-transparent"></div>
+                    </div>
+                    <div class="p-6 pt-2">
+                        <div class="flex items-center gap-2 mb-3">
+                            <img src='https://opal.google/board/blobs/2e824db2-48b7-47c1-8208-d9912d35f7b8' alt='Icon' class="w-8 h-8 rounded shadow-sm" />
+                            
+                            
+                            <h3 class="text-xl font-bold ml-auto text-brand-primary">취미공유</h3>
+                        </div>
+                        <p class="text-sm text-slate-600">새로운 망고 친구들과 여정 솔루션입니다.</p>
+                    </div>
+                </div>
+                <!-- 6. Realty Estate -->
+                <div class="service-window glass-card rounded-2xl overflow-hidden flex flex-col">
+                    <div class="relative">
+                        <img src='https://opal.google/board/blobs/59d09d6f-93b6-4964-b0dd-79899f2eeefd5' alt='Real Estate Illustration' class="w-full h-auto" />
+                        <div class="absolute bottom-0 left-0 right-0 h-24 bg-gradient-to-t from-white to-transparent"></div>
+                    </div>
+                    <div class="p-6 pt-2">
+                        <div class="flex items-center gap-3 mb-3">
+                            
+                            <img src='https://opal.google/board/blobs/4e60c332-f3ef-463c-8faf-d3e8eeea4d312' alt='Icon' class="w-10 h-10 rounded-lg shadow-sm" />
+                            <h3 class="text-xl font-bold ml-auto text-brand-primary">부동산 정보</h3>
+                        </div>
+                        <p class="text-sm text-slate-600">실물 자산 정보의 투명한 공개와 블록체인 기반의 계약 이력 관리 서비스입니다. 기술적 필터링으로 데이터 신뢰성을 확보합니다.</p>
+                    </div>
+                </div>
+
+                <!-- 6. Marketplace -->
+                <div class="service-window glass-card rounded-2xl overflow-hidden flex flex-col">
+                    <div class="relative">
+                        <img src='https://opal.google/board/blobs/59d09d6f-93b6-4964-b0dd-79899f2eeefd6' alt='Marketplace Illustration' class="w-full h-auto" />
+                        <div class="absolute bottom-0 left-0 right-0 h-24 bg-gradient-to-t from-white to-transparent"></div>
+                    </div>
+                    <div class="p-6 pt-2">
+                        <div class="flex items-center gap-3 mb-3">
+                            
+                            <img src='https://opal.google/board/blobs/07387e2e-5368-4b33-a23d-e543683d827a' alt='Icon' class="w-8 h-8 rounded shadow-sm" />
+                            <h3 class="text-xl font-bold ml-auto text-brand-primary">마켓플레이스</h3>
+                        </div>
+                        <p class="text-sm text-slate-600">Web3 생태계 내 사용자 간 P2P 거래 및 커머스 포털입니다. 지갑 연동 에스크로(Escrow) 시스템으로 안전한 거래를 보장합니다.</p>
+                    </div>
+                </div>
+
+                <!-- 7. Chat -->
+                <div class="service-window glass-card rounded-2xl overflow-hidden flex flex-col">
+                    <div class="relative">
+                        <img src='https://opal.google/board/blobs/59d09d6f-93b6-4964-b0dd-79899f2eeefd7' alt='Chat Illustration' class="w-full h-auto" />
+                        <div class="absolute bottom-0 left-0 right-0 h-24 bg-gradient-to-t from-white to-transparent"></div>
+                    </div>
+                    <div class="p-6 pt-2">
+                        <div class="flex items-center gap-3 mb-3">
+                            
+                            <img src='https://opal.google/board/blobs/1e0b7b37-5231-49c2-be5f-a9f0c44c81d3' alt='Icon' class="w-10 h-10 rounded-lg shadow-sm" />
+                            <h3 class="text-xl font-bold ml-auto text-brand-primary">채팅 및 커뮤니티</h3>
+                        </div>
+                        <p class="text-sm text-slate-600">사용자 간 실시간 암호화 메신저입니다. 지갑 주소 기반 소통으로 보안성을 강화하고 사용자 간 신뢰도를 확보합니다.</p>
+                    </div>
+                </div>
+
+                <!-- 8. Education -->
+                <div class="service-window glass-card rounded-2xl overflow-hidden flex flex-col">
+                    <div class="relative">
+                        <img src='https://opal.google/board/blobs/59d09d6f-93b6-4964-b0dd-79899f2eeefd8' alt='Education Illustration' class="w-full h-auto" />
+                        <div class="absolute bottom-0 left-0 right-0 h-24 bg-gradient-to-t from-white to-transparent"></div>
+                    </div>
+                    <div class="p-6 pt-2">
+                        <div class="flex items-center gap-3 mb-3">
+                            <img src='https://opal.google/board/blobs/4e60c332-f3ef-463c-8faf-d3e8eeea4d317' alt='Icon' class="w-10 h-10 rounded-lg shadow-sm" />
+                            
+                            <h3 class="text-xl font-bold ml-auto text-brand-primary">온라인 교육</h3>
+                        </div>
+                        <p class="text-sm text-slate-600">전문 교육 및 취미 공유 플랫폼입니다. 성취도 보상 체계(L2E)와 지식 자산 토큰화를 지원하여 참여를 독려합니다.</p>
+                    </div>
+                </div>
+            </div>
+
+                    <div>
+                        <h2 class="text-2xl font-bold text-gray-900 mb-6">3. 시장성 및 기술적 차별성</h2>
+                        <p>
+                            본 플랫폼의 시장 정보는 2026년 현재 5,500만 명에 이르는 파이 네트워크 유저의 신뢰 자산을 기반으로 산출되었습니다. 이는 2013년 사업계획서 상의 정밀한 시장 점유율 확보 전략을 수치적으로 구현한 것이며, 기존 중앙 집중식 플랫폼 대비 현저히 낮은 고객 획득 비용(CAC)을 달성할 수 있습니다. 8대 포털 매핑 가이드는 각 분야별 전문 이미지를 텍스트와 병치하여 시각적 직관성을 높였으며, 450px 표준화 기술을 통해 웹과 앱을 넘나드는 심리스(Seamless)한 서비스 확장성을 실현함으로써 독보적인 시장 경쟁력을 확보하였습니다.
+                        </p>
+                    </div>
+
+                    <div class="bg-mango-50 rounded-2xl p-8 border border-mango-100">
+                        <h2 class="text-2xl font-bold text-gray-900 mb-6 border-mango-400">4. 수익 모델 및 경제적 파급효과</h2>
+                        <p>
+                            당사의 수익 구조는 2013년 설계된 탄탄한 수익 배분 로직을 기반으로 다각화되어 있습니다. 600개 가맹점으로부터 발생하는 트랜잭션 수수료, 매핑 포털 내 프리미엄 광고 노출 과금, 그리고 5,500만 유저를 대상으로 한 부가가치 서비스(구매대행, 퀵서비스 등)의 중개 수수료가 중심축을 이룹니다. 특히 파이 네트워크와의 기술적 결합을 통해 글로벌 결제 인프라 비용을 최소화함으로써 기업 가치를 극대화하고, 국내외 가맹점의 디지털 전환을 가속화하는 경제적 파급효과를 창출할 것입니다.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+</body>
+</html>

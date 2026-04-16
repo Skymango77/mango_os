@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mango Character Lab</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="./avatar.js"></script>
+    <style>
+        body { background: #050505; color: white; font-family: sans-serif; }
+        .glass { background: rgba(255,255,255,0.03); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.1); }
+    </style>
+</head>
+<body class="flex flex-col items-center justify-center min-h-screen p-6">
+
+    <div class="w-64 h-64 mb-10 bg-zinc-900 rounded-[3rem] p-4 shadow-2xl border border-white/5">
+        <div id="avatar-target" class="w-full h-full"></div>
+    </div>
+
+    <div class="glass p-8 rounded-[2.5rem] w-full max-w-md space-y-6">
+        <h2 class="text-orange-500 font-black italic tracking-tighter text-xl text-center">CHARACTER_API_LAB</h2>
+        
+        <div class="space-y-4">
+            <div class="flex justify-between items-center">
+                <label class="text-xs font-bold text-white/40 uppercase">E2E Security (Verified)</label>
+                <input type="checkbox" id="sec-toggle" class="accent-orange-500" onchange="refresh()">
+            </div>
+
+            <div class="flex justify-between items-center">
+                <label class="text-xs font-bold text-white/40 uppercase">AI Translation Active</label>
+                <input type="checkbox" id="trans-toggle" class="accent-cyan-500" onchange="refresh()">
+            </div>
+
+            <div class="flex justify-between items-center">
+                <label class="text-xs font-bold text-white/40 uppercase">Offline Mode</label>
+                <input type="checkbox" id="offline-toggle" onchange="refresh()">
+            </div>
+
+            <div class="space-y-2">
+                <div class="flex justify-between">
+                    <label class="text-xs font-bold text-white/40 uppercase">PoA Score (Activity)</label>
+                    <span id="poa-val" class="text-xs font-mono text-orange-500">85</span>
+                </div>
+                <input type="range" id="poa-slider" min="0" max="100" value="85" class="w-full accent-orange-500" oninput="refresh()">
+            </div>
+
+            <div class="space-y-2 pt-2">
+                <label class="text-xs font-bold text-white/40 uppercase">Public Key (Hash seed)</label>
+                <input type="text" id="pk-input" value="Mango_Pioneer_777" class="w-full bg-black border border-white/10 p-3 rounded-xl text-xs outline-none focus:border-orange-500" oninput="refresh()">
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function refresh() {
+            const score = document.getElementById('poa-slider').value;
+            document.getElementById('poa-val').innerText = score;
+
+            const config = {
+                publicKey: document.getElementById('pk-input').value,
+                securityLevel: document.getElementById('sec-toggle').checked ? 2 : 1,
+                translationActive: document.getElementById('trans-toggle').checked,
+                poaScore: parseInt(score),
+                offline: document.getElementById('offline-toggle').checked
+            };
+
+            MangoAvatar.render('avatar-target', config);
+        }
+
+        // Initial render
+        window.onload = refresh;
+    </script>
+</body>
+</html>

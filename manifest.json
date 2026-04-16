@@ -1,6 +1,7 @@
 {
   "name": "Mango Universe",
   "short_name": "Mango",
+  "description": "Luxury Web3 Super App & Secure Chat",
   "icons": [
     {
       "src": "/mango.jpg",
@@ -13,8 +14,9 @@
       "type": "image/jpeg"
     }
   ],
-  "start_url": "/",
+  "start_url": "./Chat/index.html",
   "display": "standalone",
+  "orientation": "portrait",
   "background_color": "#ffffff",
   "theme_color": "#ffaa00"
 }
