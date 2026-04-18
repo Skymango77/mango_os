@@ -6,6 +6,7 @@
     <title>Mango Profile | Core Dashboard</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,900;1,900&family=Outfit:wght@300;400;700&display=swap" rel="stylesheet">
     <style>
         :root { --mango-gold: #f59e0b; --dark-chrome: #0f172a; }
@@ -31,20 +32,19 @@
                 <img id="profile-bg-img" src="" class="w-full h-full object-cover opacity-50 hidden" />
                 <video id="profile-bg-video" class="w-full h-full object-cover opacity-50 hidden" autoplay loop muted playsinline></video>
             </div>
-            <label class="absolute top-4 right-4 bg-black/40 p-2.5 rounded-full cursor-pointer backdrop-blur-md border border-white/20 hover:bg-white/20 transition-all z-20">
+            <!-- TARGET 1: Update Camera Icons (Trigger Menu) -->
+            <button onclick="openMediaMenu('bg')" class="absolute top-4 right-4 bg-black/40 p-2.5 rounded-full cursor-pointer backdrop-blur-md border border-white/20 hover:bg-white/20 transition-all z-20">
                 <i data-lucide="camera" class="w-5 h-5 text-white drop-shadow-md"></i>
-                <input type="file" id="bg-upload" accept="image/*,video/mp4" class="hidden" onchange="handleMediaUpload(event, 'bg')">
-            </label>
+            </button>
             <div class="absolute bottom-0 left-0 w-full p-6 bg-gradient-to-t from-black via-black/70 to-transparent flex items-end gap-4 z-10">
                 <div class="relative shrink-0">
                     <div class="w-16 h-16 rounded-full border-[3px] border-amber-500 overflow-hidden shadow-lg bg-black flex items-center justify-center relative">
                         <img id="profile-avatar-img" src="" class="w-full h-full object-cover absolute inset-0 hidden z-10" />
                         <span id="profile-avatar-text" class="text-3xl font-black text-amber-500 z-0">M</span>
                     </div>
-                    <label class="absolute bottom-0 right-0 bg-amber-600 p-1.5 rounded-full cursor-pointer border border-amber-300 hover:bg-amber-500 transition-all z-20 translate-x-1 translate-y-1">
+                    <button onclick="openMediaMenu('avatar')" class="absolute bottom-0 right-0 bg-amber-600 p-1.5 rounded-full cursor-pointer border border-amber-300 hover:bg-amber-500 transition-all z-20 translate-x-1 translate-y-1">
                         <i data-lucide="camera" class="w-3 h-3 text-white"></i>
-                        <input type="file" id="avatar-upload" accept="image/*" class="hidden" onchange="handleMediaUpload(event, 'avatar')">
-                    </label>
+                    </button>
                 </div>
                 <div class="flex-1 pb-1">
                     <h2 class="text-xl font-bold text-white flex items-center gap-2 drop-shadow-md"><span id="display-name">Loading...</span> <i data-lucide="badge-check" class="w-4 h-4 text-blue-400"></i></h2>
@@ -90,8 +90,8 @@
                     <span class="text-[8px] text-green-300 font-bold uppercase">Market</span>
                     <span class="text-[9px] text-white font-black">마켓</span>
                 </a>
-                <!-- FIXED: Updated path to mango_chat.html -->
-                <a href="mango_chat.html" class="portal-stat-card rounded-2xl p-3 flex flex-col items-center justify-center border border-white/10 bg-black/40 transition-all group-active:scale-95">
+                <!-- TARGET 1: Fixed Chat Routing (Relative Path) -->
+                <a href="../chat/index.html" class="portal-stat-card rounded-2xl p-3 flex flex-col items-center justify-center border border-white/10 bg-black/40 transition-all group-active:scale-95">
                     <i data-lucide="message-circle" class="w-5 h-5 text-cyan-400 mb-1 drop-shadow-[0_0_8px_rgba(34,211,238,0.6)]"></i>
                     <span class="text-[8px] text-cyan-300 font-bold uppercase">Chat</span>
                     <span class="text-[9px] text-white font-black italic">채팅</span>
@@ -119,64 +119,204 @@
         </section>
     </div>
     <div id="copy-toast" class="fixed bottom-10 left-1/2 -translate-x-1/2 px-8 py-4 bg-amber-500 text-black font-black text-[10px] rounded-full shadow-2xl opacity-0 translate-y-10 transition-all duration-500 z-[100] italic">INFO!</div> 
+
+    <!-- TARGET 2: Add the Action Sheet UI (Kakao Style) -->
+    <div id="media-action-sheet" class="fixed inset-0 z-[200] hidden">
+        <div class="absolute inset-0 bg-black/60 backdrop-blur-sm" onclick="closeMediaMenu()"></div>
+        <div id="action-sheet-panel" class="absolute bottom-0 left-1/2 -translate-x-1/2 w-full max-w-[480px] p-4 translate-y-full transition-transform duration-500">
+            <div class="bg-[#1e293b]/95 backdrop-blur-2xl rounded-[2rem] overflow-hidden border border-white/10 shadow-2xl">
+                <button onclick="triggerFileSelect()" class="w-full py-5 text-sm font-bold text-white border-b border-white/5 active:bg-white/10 transition-colors">앨범에서 선택 (Choose from Album)</button>
+                <button onclick="resetToDefault()" class="w-full py-5 text-sm font-bold text-red-400 active:bg-white/10 transition-colors">기본 이미지로 변경 (Reset to Default)</button>
+            </div>
+            <button onclick="closeMediaMenu()" class="w-full mt-3 py-5 bg-[#1e293b]/95 backdrop-blur-2xl rounded-[1.5rem] text-sm font-black text-white shadow-xl active:scale-95 transition-all">취소 (Cancel)</button>
+        </div>
+    </div>
+
+    <!-- Hidden Inputs -->
+    <input type="file" id="hidden-avatar-input" accept="image/*" class="hidden" onchange="handleMediaUpload(event, 'avatar')">
+    <input type="file" id="hidden-bg-input" accept="image/*,video/mp4" class="hidden" onchange="handleMediaUpload(event, 'bg')">
+
 <script>
+        // 1. Initialize Supabase
+        const SUPABASE_URL = 'https://kxmnxzcqrcqvxgrjkcyk.supabase.co';
+        const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imt4bW54emNxcmNxdnhncmprY3lrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzY0OTc3NDQsImV4cCI6MjA5MjA3Mzc0NH0.HcLwKeDarBvsfzPhKpLKdbBKkMH62Vdr-N92XILOm-s';
+        const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+        let currentMenuTarget = null;
         lucide.createIcons();
-        document.addEventListener('DOMContentLoaded', () => {
-            const nameEl = document.getElementById('display-name');
-            const idEl = document.getElementById('display-id');
-            nameEl.innerText = localStorage.getItem('mango_user_name') || 'New Mango Member';
-            let mId = localStorage.getItem('mango_user_id');
-            if(!mId) { mId = 'MNG-' + Math.random().toString(36).substr(2, 5).toUpperCase(); localStorage.setItem('mango_user_id', mId); }
-            idEl.innerText = 'ID: ' + mId;
-            
-            // Load Persisted Images
-            const savedAvatar = localStorage.getItem('mango_avatar_image');
-            if(savedAvatar) {
-                const img = document.getElementById('profile-avatar-img');
-                document.getElementById('profile-avatar-text').classList.add('hidden');
-                img.src = savedAvatar; img.classList.remove('hidden');
+
+        // TARGET 3: DOMContentLoaded with Cloud Sync
+        document.addEventListener('DOMContentLoaded', async () => {
+            // 1. Load User Identity
+            let savedName = localStorage.getItem('mango_user_name') || "New Mango Member";
+            let savedId = localStorage.getItem('mango_user_id');
+            if(!savedId) { 
+                savedId = "MNG-" + Math.floor(Math.random() * 90000 + 10000); 
+                localStorage.setItem('mango_user_id', savedId); 
             }
-            const savedBg = localStorage.getItem('mango_bg_image');
-            const savedBgType = localStorage.getItem('mango_bg_type');
-            if(savedBg) applyBg(savedBg, savedBgType);
+
+            // 2. Fetch Profile from Cloud
+            const { data: profile, error } = await supabaseClient
+                .from('user_profiles')
+                .select('*')
+                .eq('pi_id', savedId)
+                .single();
+
+            if (profile) {
+                savedName = profile.user_name || savedName;
+                localStorage.setItem('mango_user_name', savedName);
+                
+                if (profile.avatar_url) {
+                    const imgEl = document.getElementById('profile-avatar-img');
+                    imgEl.src = profile.avatar_url;
+                    imgEl.classList.remove('hidden');
+                    document.getElementById('profile-avatar-text').classList.add('hidden');
+                }
+                if (profile.bg_url) {
+                    const bgImg = document.getElementById('profile-bg-img');
+                    bgImg.src = profile.bg_url;
+                    bgImg.classList.remove('hidden');
+                    document.getElementById('profile-bg-video').classList.add('hidden');
+                }
+            }
+
+            document.getElementById('display-name').innerText = savedName;
+            document.getElementById('display-id').innerText = "ID: " + savedId;
 
             renderNetwork();
         });
 
-        function showToast(m) { const t = document.getElementById('copy-toast'); t.innerText = m; t.classList.replace('opacity-0', 'opacity-100'); t.classList.replace('translate-y-10', 'translate-y-0'); setTimeout(() => { t.classList.replace('opacity-100', 'opacity-0'); t.classList.replace('translate-y-0', 'translate-y-10'); }, 3000); }
+        // Action Sheet Controls
+        function openMediaMenu(type) {
+            currentMenuTarget = type;
+            const sheet = document.getElementById('media-action-sheet');
+            const panel = document.getElementById('action-sheet-panel');
+            sheet.classList.remove('hidden');
+            setTimeout(() => panel.classList.remove('translate-y-full'), 10);
+        }
+
+        function closeMediaMenu() {
+            const sheet = document.getElementById('media-action-sheet');
+            const panel = document.getElementById('action-sheet-panel');
+            panel.classList.add('translate-y-full');
+            setTimeout(() => sheet.classList.add('hidden'), 500);
+        }
+
+        function triggerFileSelect() {
+            const inputId = currentMenuTarget === 'avatar' ? 'hidden-avatar-input' : 'hidden-bg-input';
+            document.getElementById(inputId).click();
+            closeMediaMenu();
+        }
+
+        async function handleMediaUpload(event, target) {
+            const file = event.target.files[0]; if (!file) return;
+            const piId = localStorage.getItem('mango_user_id');
+            const userName = localStorage.getItem('mango_user_name');
+            showToast("⏳ Uploading to Cloud...");
+
+            // 1. Upload to Supabase Storage
+            const fileExt = file.name.split('.').pop();
+            const filePath = `${piId}/${target}_${Date.now()}.${fileExt}`;
+            
+            const { data: uploadData, error: uploadError } = await supabaseClient.storage
+                .from('profiles')
+                .upload(filePath, file, { upsert: true });
+
+            if (uploadError) return showToast("❌ Upload Failed");
+
+            // 2. Get Public URL
+            const { data: { publicUrl } } = supabaseClient.storage.from('profiles').getPublicUrl(filePath);
+
+            // 3. Update Table
+            const updates = { pi_id: piId, user_name: userName };
+            if (target === 'avatar') updates.avatar_url = publicUrl;
+            else updates.bg_url = publicUrl;
+
+            const { error: dbError } = await supabaseClient.from('user_profiles').upsert(updates);
+            if (dbError) return showToast("❌ DB Sync Failed");
+
+            // 4. Update UI
+            if (target === 'avatar') {
+                const img = document.getElementById('profile-avatar-img');
+                img.src = publicUrl; img.classList.remove('hidden');
+                document.getElementById('profile-avatar-text').classList.add('hidden');
+            } else {
+                const bg = document.getElementById('profile-bg-img');
+                bg.src = publicUrl; bg.classList.remove('hidden');
+                document.getElementById('profile-bg-video').classList.add('hidden');
+            }
+
+            // Auto-Save Feedback & Modal Close
+            showToast("✅ 프로필 사진이 변경되었습니다");
+            closeMediaMenu();
+        }
+
+        async function resetToDefault() {
+            const piId = localStorage.getItem('mango_user_id');
+            showToast("⏳ 초기화 중...");
+            
+            const updates = { pi_id: piId, user_name: localStorage.getItem('mango_user_name') };
+            if (currentMenuTarget === 'avatar') {
+                updates.avatar_url = null;
+                document.getElementById('profile-avatar-img').classList.add('hidden');
+                document.getElementById('profile-avatar-text').classList.remove('hidden');
+            } else {
+                updates.bg_url = null;
+                document.getElementById('profile-bg-img').classList.add('hidden');
+                document.getElementById('profile-bg-video').classList.remove('hidden');
+            }
+
+            const { error } = await supabaseClient.from('user_profiles').upsert(updates);
+            if (error) return showToast("❌ 초기화 실패");
+
+            showToast("♻️ 기본 이미지로 변경되었습니다");
+            closeMediaMenu();
+        }
+
+        function showToast(m) { 
+            const t = document.getElementById('copy-toast'); 
+            t.innerText = m; 
+            t.classList.replace('opacity-0', 'opacity-100'); 
+            t.classList.replace('translate-y-10', 'translate-y-0'); 
+            setTimeout(() => { 
+                t.classList.replace('opacity-100', 'opacity-0'); 
+                t.classList.replace('translate-y-0', 'translate-y-10'); 
+            }, 3000); 
+        }
+
         function copyToClipboard(text) { navigator.clipboard.writeText(text).then(() => showToast('✨ Code Copied to Clipboard!')); }
+        
         function shareReferral() {
             const m = "Join Mango with me! Code: MANGO-2026. Future is here! https://mango-os-6xu2.vercel.app";
             if(navigator.share) { navigator.share({ title: 'Mango Invite', text: m, url: 'https://mango-os-6xu2.vercel.app' }).then(() => showToast('🚀 Invitation Sent!')); } 
             else { copyToClipboard(m); }
         }
 
+        // Media Upload & Persistence Logic (Base64 Transformation)
         function handleMediaUpload(event, target) {
             const file = event.target.files[0]; if (!file) return;
             const reader = new FileReader();
-            reader.onload = function(e) {
-                const fileURL = e.target.result;
+            reader.onload = (e) => {
+                const base64Data = e.target.result;
+
                 if (target === 'avatar') {
-                    localStorage.setItem('mango_avatar_image', fileURL);
-                    const img = document.getElementById('profile-avatar-img'); document.getElementById('profile-avatar-text').classList.add('hidden');
-                    img.src = fileURL; img.classList.remove('hidden');
+                    localStorage.setItem('mango_avatar_data', base64Data);
+                    const imgEl = document.getElementById('profile-avatar-img'); 
+                    const textEl = document.getElementById('profile-avatar-text');
+                    imgEl.src = base64Data; 
+                    imgEl.classList.remove('hidden'); 
+                    textEl.classList.add('hidden');
                 }
                 else if (target === 'bg') {
-                    localStorage.setItem('mango_bg_image', fileURL);
-                    localStorage.setItem('mango_bg_type', file.type);
-                    applyBg(fileURL, file.type);
+                    localStorage.setItem('mango_bg_data', base64Data);
+                    const bgImg = document.getElementById('profile-bg-img'); 
+                    const bgVid = document.getElementById('profile-bg-video');
+                    bgImg.src = base64Data; 
+                    bgImg.classList.remove('hidden'); 
+                    bgVid.classList.add('hidden');
                 }
-            }
+            };
             reader.readAsDataURL(file);
-        }
-
-        function applyBg(url, type) {
-            const bgImg = document.getElementById('profile-bg-img'); const bgVid = document.getElementById('profile-bg-video');
-            if (type && type.startsWith('video/')) {
-                bgImg.classList.add('hidden'); bgVid.src = url; bgVid.classList.remove('hidden'); bgVid.play();
-            } else {
-                bgVid.classList.add('hidden'); bgVid.pause(); bgImg.src = url; bgImg.classList.remove('hidden');
-            }
         }
 
         const mangoNetworkMembers = [
