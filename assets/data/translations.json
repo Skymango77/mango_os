@@ -1,0 +1,51 @@
+{
+  "ko": {
+    "market_title": "Mango <span class='text-amber-500 italic'>Market</span>",
+    "search_placeholder": "망고에서 무엇을 찾으시나요?",
+    "category_all": "전체",
+    "new_arrivals": "신규 상품",
+    "ai_recommended": "AI 추천 선물",
+    "buy_now": "구매하기",
+    "add_cart": "담기",
+    "cart_title": "내 장바구니",
+    "cart_empty": "장바구니가 비어 있습니다.",
+    "verified": "검증됨",
+    "realty_portal": "부동산 포털",
+    "travel_portal": "여행 포털"
+  },
+  "en": {
+    "market_title": "Mango <span class='text-amber-500 italic'>Market</span>",
+    "search_placeholder": "What are you looking for?",
+    "category_all": "All",
+    "new_arrivals": "New Arrivals",
+    "ai_recommended": "AI Recommended Gifts",
+    "buy_now": "Buy Now",
+    "add_cart": "Add Cart",
+    "cart_title": "My Cart",
+    "cart_empty": "Your cart is empty.",
+    "verified": "Verified",
+    "realty_portal": "Realty Portal",
+    "travel_portal": "Travel Portal"
+  },
+  "ja": {
+    "market_title": "Mango <span class='text-amber-500 italic'>Market</span>",
+    "search_placeholder": "何をお探しですか？",
+    "category_all": "すべて",
+    "new_arrivals": "新着商品",
+    "ai_recommended": "AIおすすめギフト",
+    "buy_now": "今すぐ購入",
+    "add_cart": "カートに入れる",
+    "cart_title": "ショッピングカート",
+    "cart_empty": "カートは空です。",
+    "verified": "認証済み",
+    "realty_portal": "不動産ポータル",
+    "travel_portal": "旅行ポータル"
+  },
+  "vi": {
+    "market_title": "Mango <span class='text-amber-500 italic'>Market</span>",
+    "search_placeholder": "Bạn đang tìm gì?",
+    "category_all": "Tất cả",
+    "new_arrivals": "Hàng mới về",
+    "ai_recommended": "Quà tặng gợi ý bởi AI"
+  }
+}

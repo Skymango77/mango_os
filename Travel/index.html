@@ -2,680 +2,658 @@
 <html lang="ko">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Mango UI - Busan Haeundae</title>
-    
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MANGO ULTIMATE OS v4.0</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    
     <script src="https://unpkg.com/lucide@latest"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700;900&family=Pretendard:wght@400;700;900&display=swap" rel="stylesheet">
     
-    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@500;700&family=Noto+Sans+KR:wght@300;400;700;900&display=swap" rel="stylesheet">
-
-    <script src="https://sdk.minepi.com/pi-sdk.js"></script>
     <style>
+        :root {
+            --m-orange: #FF6B00; --m-teal: #00F2FF; --m-pink: #FF007A;
+            --m-purple: #A855F7; --m-yellow: #FACC15; --portal-width: 480px;
+        }
         
-    /* 1. 이미지에서 누락되었던 Shimmer 및 핵심 애니메이션 추가 */
-    @keyframes shimmer {
-        0% { background-position: -200% 0; }
-        100% { background-position: 200% 0; }
-    }
-    .animate-shimmer {
-        background: linear-gradient(90deg, rgba(255,255,255,0) 0%, rgba(255,255,255,0.1) 50%, rgba(255,255,255,0) 100%);
-        background-size: 200% 100%;
-        animation: shimmer 2s infinite;
-    }
+        /* AI 컨시어지 애니메이션 로직 */
+        @keyframes gold-dust-fall {
+            0% { transform: translateY(-20px) translateX(0); opacity: 0; }
+            20% { opacity: 1; }
+            100% { transform: translateY(30px) translateX(15px); opacity: 0; }
+        }
+        @keyframes mango-pulse {
+            0%, 100% { text-shadow: 0 0 10px rgba(255, 215, 0, 0.4); filter: drop-shadow(0 0 5px rgba(255, 115, 0, 0.3)); }
+            50% { text-shadow: 0 0 25px rgba(255, 215, 0, 0.8); filter: drop-shadow(0 0 10px rgba(255, 115, 0, 0.6)); }
+        }
+        .mango-pulsar-wrapper { position: relative; overflow: visible; display: inline-block; }
+        .mango-pulsing-text { animation: mango-pulse 1.8s ease-in-out infinite; position: relative; z-index: 10; -webkit-text-stroke: 1.2px rgba(255, 215, 0, 0.2); }
+        .mango-pulsar-wrapper::before, .mango-pulsar-wrapper::after {
+            content: ""; position: absolute; width: 3px; height: 3px; background-color: #ffd700; border-radius: 50%; opacity: 0; z-index: 5;
+        }
+        .mango-pulsar-wrapper::before { top: 0; left: 10%; animation: gold-dust-fall 2.5s linear infinite; box-shadow: 0 0 5px #ffd700, -10px 15px 8px #ffd700, 10px 25px 3px #ffa500; }
+        .mango-pulsar-wrapper::after { top: -10px; right: 20%; animation: gold-dust-fall 3s linear infinite 0.5s; box-shadow: 0 0 5px #ffd700, 5px 12px 6px #ffd700, -15px 22px 4px #ffa500; }
+        
+        body { background: #000; color: #fff; font-family: 'Pretendard', sans-serif; display: flex; justify-content: center; margin: 0; overflow-x: hidden; }
+        
+        /* OS 마스터 프레임: 모든 윈도우 규격 통일 */
+        .os-master-frame {
+            position: relative;
+            width: var(--portal-width);
+            min-height: 100vh;
+            background: #050505;
+            padding: 20px;
+            padding-bottom: 120px;
+            display: flex;
+            flex-direction: column;
+            gap: 18px;
+            border: 3px solid transparent;
+            background-image: linear-gradient(#050505, #050505), 
+                              linear-gradient(135deg, #FF6B00 0%, #FF007A 50%, #00F2FF 100%);
+            background-origin: border-box;
+            background-clip: content-box, border-box;
+            box-shadow: 0 0 40px rgba(255, 107, 0, 0.1);
+        }
 
-    /* 항공 궤적 애니메이션 */
-    @keyframes flight-path {
-        0% { stroke-dashoffset: 100; opacity: 0; }
-        50% { opacity: 1; }
-        100% { stroke-dashoffset: 0; opacity: 0; }
-    }
-    .path-animate { stroke-dasharray: 100; animation: flight-path 3s linear infinite; }
+        .premium-glass {
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.05) 0%, rgba(255, 255, 255, 0.01) 100%);
+            backdrop-filter: blur(25px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 32px;
+            position: relative;
+            overflow: hidden;
+        }
 
-    /* 유체 흐름 효과 (Liquid BG) */
-    .liquid-bg {
-        background: linear-gradient(45deg, rgba(0, 242, 255, 0.05), rgba(255, 0, 122, 0.05), rgba(255, 107, 0, 0.05));
-        background-size: 200% 200%;
-        animation: fluid-shift 10s ease infinite;
-    }
-    @keyframes fluid-shift {
-        0% { background-position: 0% 50%; }
-        50% { background-position: 100% 50%; }
-        100% { background-position: 0% 50%; }
-    }
+        .font-orb { font-family: 'Orbitron', sans-serif; }
 
-    /* 윈도우 규격 고정 (사용자 요청사항) */
-    .portal-window {
-        width: var(--portal-width);
-        margin: 0 auto;
-    }
-</style>
-<style>
-    :root {
-        --portal-width: 450px; /* 480px에서 450px로 정밀 수정 */
-        --m-teal: rgba(0, 136, 145, 0.5); 
-        --m-blue: rgba(37, 99, 235, 0.4);
-        --m-yellow: rgba(202, 138, 4, 0.5);
-    }
+        /* [애니메이션 모듈] */
+        .liquid-bg {
+            background: linear-gradient(45deg, rgba(0, 242, 255, 0.05), rgba(255, 0, 122, 0.05), rgba(255, 107, 0, 0.05));
+            background-size: 200% 200%;
+            animation: fluid-shift 10s ease infinite;
+        }
+        @keyframes fluid-shift { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
+        
+        .path-animate { stroke-dasharray: 100; stroke-dashoffset: 100; animation: flight-path 3s linear infinite; }
+        @keyframes flight-path { to { stroke-dashoffset: 0; } }
 
-    /* 아코디언 기능 활성화 코드 추가 */
-    .accordion-toggle { display: none; }
-    .accordion-content {
-        max-height: 0;
-        overflow: hidden;
-        transition: max-height 0.3s ease-out;
-    }
-    .accordion-toggle:checked ~ div .accordion-content {
-        max-height: 200px;
-    }
-    .accordion-toggle:checked ~ div .chevron {
-        transform: rotate(180deg);
-    }
-    
-    /* 모든 섹션의 너비를 450px로 강제 고정 */
-    section, .portal-window {
-        width: var(--portal-width) !important;
-        margin-left: auto !important;
-        margin-right: auto !important;
-    }
+        /* Match: 싱크로율 궤도 */
+        #sync-orbit-display { display: none; height: 120px; position: relative; }
+        .orbit-ring { position: absolute; top:50%; left:50%; transform:translate(-50%, -50%); border: 1px solid rgba(0, 242, 255, 0.2); border-radius: 50%; animation: spin 10s linear infinite; }
+        @keyframes spin { to { transform: translate(-50%, -50%) rotate(360deg); } }
 
-    /* 전체 배경을 더 깊은 블랙으로 */
-    body { background-color: #030303; }
+        /* 토스트 알림 */
+        .toast-notification {
+            position: fixed; top: -100px; left: 50%; transform: translateX(-50%);
+            width: 90%; max-width: 400px; background: rgba(0,0,0,0.8);
+            backdrop-filter: blur(10px); border: 1px solid var(--m-yellow);
+            border-radius: 16px; padding: 16px; z-index: 10001; transition: 0.5s;
+        }
+        .toast-notification.show { top: 20px; }
 
-    /* Shimmer 효과를 훨씬 어둡게 조정 */
-    @keyframes shimmer {
-        0% { background-position: -200% 0; }
-        100% { background-position: 200% 0; }
-    }
-    .animate-shimmer {
-        background: linear-gradient(90deg, 
-            transparent 0%, 
-            rgba(255,255,255,0.03) 50%, 
-            transparent 100%);
-        background-size: 200% 100%;
-        animation: shimmer 4s infinite; /* 속도를 늦춰 눈의 피로 감소 */
-    }
+        /* AR HUD 전용 스타일 */
+        #ar-hud { transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1); pointer-events: none; }
+        
+        /* [Glass Mode] 주간 시인성 확보를 위한 초강력 강조 스타일 */
+        .glass-highlight-target { 
+            font-size: 1.5rem !important; 
+            color: #00F2FF !important; 
+            text-shadow: 0 0 20px #00F2FF, 0 0 40px rgba(0, 242, 255, 0.5) !important;
+            font-weight: 900 !important;
+            transform: scale(1.1);
+        }
+        .glass-highlight-arrow { 
+            border-color: #FF6B00 !important; 
+            filter: drop-shadow(0 0 15px #FF6B00) !important; 
+            width: 80px !important; 
+            height: 80px !important; 
+            border-width: 8px !important; 
+        }
+        .glass-highlight-circle { 
+            border-width: 5px !important; 
+            border-color: #00F2FF !important; 
+            box-shadow: 0 0 50px rgba(0, 242, 255, 0.8), inset 0 0 20px rgba(0, 242, 255, 0.4) !important; 
+            width: 280px !important; 
+            height: 280px !important; 
+        }
+        
+        /* 배경 워터마크화 (시각적 소거) */
+        .os-master-frame { transition: all 0.6s ease; }
+        .ar-active-dim { opacity: 0.05 !important; filter: grayscale(1) blur(10px) !important; pointer-events: none; }
+        body.ar-on nav { opacity: 0.4; pointer-events: auto; } /* 하단바는 조작을 위해 최소한의 노출 유지 */
+        
+        /* 검색창 오버레이 스타일 */
+        #search-overlay {
+            position: fixed; top: 120px; left: 50%; transform: translateX(-50%) translateY(-20px);
+            width: 90%; max-width: 400px; z-index: 10001; opacity: 0; pointer-events: none;
+            transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        body.ar-on #search-overlay { opacity: 1; pointer-events: auto; transform: translateX(-50%) translateY(0); }
 
-    /* 카드 베이스: 배경을 더 어둡고 불투명하게 */
-    .premium-glass {
-        background: rgba(15, 15, 15, 0.8);
-        backdrop-filter: blur(20px);
-        border: 1px solid rgba(255, 255, 255, 0.05);
-        border-radius: 1.25rem;
-    }
+        /* [네비게이션 상태별 스타일] */
+        @keyframes mango-bounce {
+            0%, 100% { transform: translateY(-2px); animation-timing-function: cubic-bezier(0.8, 0, 1, 1); }
+            50% { transform: translateY(0); animation-timing-function: cubic-bezier(0, 0, 0.2, 1); }
+        }
+        .nav-signal-arrow { 
+            width: 40px;
+            height: 40px;
+            border-top-width: 4px;
+            border-right-width: 4px;
+            border-style: solid;
+            border-color: rgba(20,184,166,0.9); /* teal-400 */
+            transform: rotate(-45deg);
+            animation: mango-bounce 1s infinite;
+            transition: all 0.5s;
+        }
+        .nav-signal-square { 
+            width: 120px; height: 120px; border-width: 4px; border-style: solid; border-color: #f97316; border-radius: 24px; opacity: 0; transform: scale(0.5); transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            display: flex; align-items: center; justify-content: center;
+            box-shadow: 0 0 30px rgba(255, 107, 0, 0.5);
+        }
+        .nav-signal-square.active { opacity: 1; scale: 1; }
+        
+        /* 접근 시 박동 효과 */
+        @keyframes proximity-pulse {
+            0% { box-shadow: 0 0 0 0 rgba(0, 242, 255, 0.7); }
+            100% { box-shadow: 0 0 0 20px rgba(0, 242, 255, 0); }
+        }
+        .proximity-active { animation: proximity-pulse 1s infinite; }
 
-    /* 텍스트 밝기 조절 (순백색 제거) */
-    .text-muted { color: rgba(255, 255, 255, 0.6); }
-    .text-title { color: rgba(255, 255, 255, 0.85); }
-</style>
+        /* 타겟 잠금 효과 (네모 마커) */
+        .target-lock-corner {
+            position: absolute; width: 20px; height: 20px; border: 2px solid #f97316;
+        }
+        .corner-tl { top: -10px; left: -10px; border-top-width: 6px; border-left-width: 6px; border-bottom: 0; border-right: 0; }
+        .corner-tr { top: -10px; right: -10px; border-top-width: 6px; border-right-width: 6px; border-bottom: 0; border-left: 0; }
+        .corner-bl { bottom: -10px; left: -10px; border-bottom-width: 6px; border-left-width: 6px; border-top: 0; border-right: 0; }
+        .corner-br { bottom: -10px; right: -10px; border-bottom-width: 6px; border-right-width: 6px; }
 
+        /* 망고 로고 전용 스타일 */
+        .mango-gold-power {
+            font-family: 'Orbitron', sans-serif;
+        }
+        .glow-line {
+            z-index: 5;
+        }
+        @keyframes pulse {
+            0%, 100% { opacity: 1; transform: translate(-50%, 0) scaleX(1); }
+            50% { opacity: 0.6; transform: translate(-50%, 0) scaleX(0.95); }
+        }
+        .mango-gold-power {
+            display: inline-block;
+            min-width: 1.2em; 
+            overflow: visible !important;
+        }
+        .logo-wrapper {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+        }
+    </style>
 </head>
-<body class="pb-32"> 
+<body class="bg-gradient-to-br from-gray-950 to-gray-800">
+    <div class="os-master-frame relative">
     
-    <header class="w-[450px] mx-auto pt-8 pb-4 px-6 sticky top-0 z-50 bg-[#030303]/80 backdrop-blur-xl">
-    <div class="flex items-center justify-between">
-        <div class="flex items-center gap-4">
-<div class="w-14 h-14 rounded-2xl bg-[#111] shadow-[0_5px_15px_rgba(251,146,60,0.15)] flex items-center justify-center border border-white/10 overflow-hidden group">                <img src="/assets/img/mango.jpg" 
-        alt="Mango"              class="w-full h-full object-cover transition-transform group-hover:scale-110"
-         onerror="this.src='https://ui-avatars.com/api/?name=M&background=fb923c&color=fff&rounded=false'"> 
-</div>
-            <div>
-                <h1 class="text-2xl font-black text-white tracking-tighter leading-tight font-orbitron">
-                    MANGO <span class="text-orange-500">PORTAL</span>
+        <!-- AI Concierge Header -->
+        <div class="flex items-center gap-4 mb-6 pt-6 px-5 w-full overflow-visible">
+            <div class="w-16 h-16 rounded-full overflow-hidden border-2 border-orange-500 shadow-[0_0_20px_rgba(249,115,22,0.5)] flex-shrink-0 bg-black">
+                <img src="../assets/img/mango.jpg" alt="Logo" class="w-full h-full object-cover">
+            </div>
+            
+            <div class="flex flex-col justify-center overflow-visible">
+                <h1 class="font-orbitron leading-none uppercase overflow-visible"> 
+                    <span class="mango-pulsar-wrapper block">
+                        <span class="mango-pulsing-text text-metallic-gold text-2xl font-[900] italic tracking-[0.2em] inline-block pr-4"
+                              style="-webkit-text-stroke: 1.5px rgba(255, 215, 0, 0.5); filter: drop-shadow(0 0 10px rgba(255,170,0,0.4));">
+                            MANGO
+                        </span>
+                    </span>
+                    <span class="text-metallic-gold text-3xl font-black italic font-orbitron leading-none py-1 tracking-tighter uppercase mt-[-2px] block overflow-visible pr-8">
+                        TRAVEL
+                    </span>
                 </h1>
-                <p class="text-[9px] text-white/40 font-mono tracking-[0.3em] uppercase">Intelligence OS v2.0</p>
+                <div class="flex flex-col overflow-visible mt-1 w-full min-w-[280px]">
+                    <p class="text-gray-400 text-[8.5px] uppercase tracking-[0.4em] font-bold overflow-visible pr-20 whitespace-nowrap mb-1" 
+                       style="font-family: 'Syncopate', sans-serif; text-shadow: 0 0 5px rgba(255,255,255,0.1); width: max-content;">
+                        Global Logistics
+                    </p>
+                    <div class="w-[80%] h-[1px] bg-gradient-to-r from-orange-500/80 via-yellow-400/50 to-transparent"></div>
+                </div>
+            </div>
+
+            <div class="ml-auto text-right">
+                <div class="text-[10px] text-yellow-500/60 font-bold mb-1 uppercase tracking-tighter">POINT BALANCE</div>
+                <div class="text-sm text-yellow-400 font-black" id="point-balance">0 P</div>
             </div>
         </div>
-        <div class="text-right font-rajdhani">
-            <span class="text-[11px] text-orange-400 font-bold block tracking-widest">BUSAN_HAEUNDAE</span>
-            <span class="text-[9px] text-white/30 tracking-tighter">35.1595° N, 129.1604° E</span>
+
+        <div class="premium-glass p-5 border-b-2 border-teal-500/50 mt-2">
+            <div class="flex justify-between items-center mb-4">
+                <div class="flex items-center gap-2">
+                    <i data-lucide="activity" class="text-teal-400 w-4 h-4 animate-pulse"></i>
+                    <span class="font-orb text-[10px] font-black tracking-widest uppercase">Live_Hype_Index</span>
+                </div>
+                <div class="flex gap-4">
+                    <div class="text-right">
+                        <p class="text-[8px] text-gray-500 font-bold uppercase">Active</p>
+                        <p class="text-xs font-orb text-teal-400">1,284</p>
+                    </div>
+                    <div class="text-right">
+                        <p class="text-[8px] text-gray-500 font-bold uppercase">Flow</p>
+                        <p id="pi-price" class="text-xs font-orb text-orange-500">42.85 <span class="text-[8px]">Pi</span></p>
+                    </div>
+                </div>
+            </div>
+            <div id="sync-orbit-display" class="bg-black/20 rounded-2xl mb-2 border border-white/5 overflow-hidden">
+                <div class="orbit-ring w-20 h-20"></div>
+                <div class="orbit-ring w-40 h-40" style="animation-duration: 15s"></div>
+                <div class="absolute inset-0 flex items-center justify-center">
+                    <span class="text-[9px] font-black text-teal-400 animate-pulse uppercase">Syncing Travelers...</span>
+                </div>
+            </div>
         </div>
-    </div>
-</header>
 
-    <main class="px-4 space-y-6 max-w-[450px] mx-auto w-full"> 
-
-        <section class="space-y-3">
-            <div class="flex justify-between items-end px-2">
-                <h3 class="font-orb text-[10px] text-gray-500 tracking-[0.2em]">01_AUTO_PILOT_SUMMON</h3>
-                <span class="text-[9px] text-yellow-500 font-bold animate-pulse">● STANDBY</span>
-            </div>
-            <div class="premium-glass p-5 border-l-4 border-yellow-500 group">
-                <div class="mood-light bg-yellow-500 top-[-50px] left-[-50px] opacity-10"></div>
-                <div class="relative z-10 flex items-center gap-4">
-                    <div class="relative cursor-pointer" onclick="startSummon()">
-                        <div id="car-node" class="w-16 h-16 bg-yellow-500/10 rounded-full flex items-center justify-center border border-yellow-500/30 transition-all duration-[3000ms] ease-in-out">
-                            <i data-lucide="car-front" class="w-8 h-8 text-yellow-500"></i>
-                        </div>
-                        <div id="summon-pulse" class="absolute inset-0 border-2 border-yellow-500 rounded-full scale-100 opacity-0"></div>
-                    </div>
-                    <div class="flex-1">
-                        <div class="flex justify-between items-start">
-                            <h4 class="text-sm font-black italic text-white">Model_Mango_Z</h4>
-                            <span class="text-[9px] bg-yellow-500 text-black px-2 py-0.5 rounded-full font-black animate-bounce">SUMMONING</span>
-                        </div>
-                        <p class="text-[10px] text-gray-500 mt-1 uppercase font-orb">Battery: 78% | Range: 320km</p>
-                        <div class="flex gap-2 mt-3">
-                            <button class="flex-1 py-2 bg-white/5 border border-white/10 rounded-lg text-[10px] font-black text-white hover:bg-yellow-500 hover:text-black transition-all">UNLOCK</button>
-                            <button class="flex-1 py-2 bg-yellow-500 text-black rounded-lg text-[10px] font-black italic">REMOTE CONTROL</button>
-                        </div>
+        <!-- 1. 항공권 예매 섹션 (전체 클릭 가능) -->
+        <a href="Flight_Ticket_mall.html" class="block hover:scale-105 hover:brightness-125 transition-all duration-300" style="display: block;">
+            <section class="premium-glass p-5 liquid-bg border-t-2 border-blue-500/50">
+            <div class="flex justify-between items-start mb-4">
+                <div>
+                    <p class="text-[9px] text-blue-400 font-black uppercase mb-1">00_SKY_SYNC</p>
+                    <h4 class="text-xl font-black italic">PUS → NRT</h4>
+                    <p id="flight-timer" class="text-lg font-orb text-white mt-1">01:55:00</p>
+                </div>
+                <div class="text-right">
+                    <div class="w-12 h-12 bg-white/5 rounded-full flex items-center justify-center border border-white/10">
+                        <i data-lucide="plane" class="text-white w-5 h-5 -rotate-45"></i>
                     </div>
                 </div>
             </div>
+            <svg width="100%" height="30" viewBox="0 0 300 30">
+                <path d="M10,25 Q150,5 290,25" stroke="rgba(255,255,255,0.1)" fill="none"/>
+                <path d="M10,25 Q150,5 290,25" stroke="url(#sky-grad)" stroke-width="2" fill="none" class="path-animate"/>
+                <defs><linearGradient id="sky-grad"><stop offset="0%" stop-color="#00F2FF"/><stop offset="100%" stop-color="#FF007A"/></linearGradient></defs>
+            </svg>
         </section>
+        </a>
 
-        <section class="space-y-3">
-            <div class="flex justify-between items-end px-2">
-                <h3 class="font-orb text-[10px] text-gray-500 tracking-[0.2em]">02_VIP_STAY_&_RESERVE</h3>
-                <span class="text-[9px] text-pink-500 font-bold animate-pulse">● LIVE COMPARE</span>
-            </div>
-            
-            <div class="grid grid-cols-2 gap-3">
-                <div class="premium-glass stay-card p-4 min-h-[190px] flex flex-col justify-between group active:scale-[0.98] transition-all cursor-pointer">
-                    <div class="mood-light bg-pink-600 top-[-60px] right-[-60px] opacity-20"></div>
-                    <div class="relative z-10">
-                        <div class="flex justify-between items-start mb-3">
-                            <div class="p-2 bg-pink-500/20 rounded-lg text-pink-500 group-hover:bg-pink-500 group-hover:text-white transition-colors">
-                                <i data-lucide="bed-double" class="w-4 h-4"></i>
-                            </div>
-                            <span class="text-[8px] bg-pink-600 px-1.5 py-0.5 rounded text-white font-black uppercase mb-1">VIP</span>
-                        </div>
-                        <h4 class="text-[13px] font-black text-white leading-tight">신라스테이 해운대</h4>
-                        <div class="flex items-center gap-1 mt-1">
-                            <i data-lucide="map-pin" class="w-2.5 h-2.5 text-gray-500"></i>
-                            <p class="text-[9px] text-gray-500">도보 3분</p>
-                        </div>
-                    </div>
-                    <div class="relative z-10 mt-4">
-                        <p class="text-sm font-orb text-pink-400">22.8 <span class="text-[9px] text-orange-500 font-sans uppercase">Pi</span></p>
-                        <div class="mt-2 py-2 bg-white/5 rounded-lg border border-white/5 text-center">
-                            <span class="text-[10px] font-black text-pink-400">Instant Check-in</span>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="premium-glass p-4 min-h-[190px] flex flex-col justify-between border-t-3 border-teal-500/50 group active:scale-[0.98] transition-all cursor-pointer">
-                    <div class="mood-light bg-teal-500 bottom-[-60px] left-[-60px] opacity-20"></div>
-                    <div class="relative z-10">
-                        <div class="flex justify-between items-start mb-3">
-                            <div class="p-2 bg-teal-500/20 rounded-lg text-teal-500 group-hover:bg-teal-500 group-hover:text-black transition-colors">
-                                <i data-lucide="zap" class="w-4 h-4"></i>
-                            </div>
-                            <span class="text-[8px] bg-teal-500 px-1.5 py-0.5 rounded text-black font-black uppercase">Smart</span>
-                        </div>
-                        <h4 class="text-[13px] font-black text-white leading-tight">트레블로지 부산</h4>
-                        <p class="text-[10px] text-gray-500 mt-1 italic">시티뷰 (잔여 1)</p>
-                    </div>
-                    <div class="relative z-10">
-                        <p class="text-sm font-orb text-teal-400">18.5 <span class="text-[9px] text-orange-500 font-sans uppercase">Pi</span></p>
-                         <div class="mt-2 py-2 bg-teal-500 rounded-lg text-center shadow-[0_5px_15px_rgba(20,184,166,0.3)]">
-                            <span class="text-[10px] font-black text-black italic uppercase">Book Now</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <section class="space-y-3">
-            <div class="flex justify-between items-end px-2">
-                <h3 class="font-orb text-[10px] text-gray-500 tracking-[0.2em]">03_MICRO_COMMERCE</h3>
-                <div class="flex items-center gap-1.5">
-                    <span class="w-1.5 h-1.5 bg-green-500 rounded-full animate-pulse"></span>
-                    <span class="text-[9px] text-green-500 font-black uppercase">Deals</span>
-                </div>
-            </div>
-
-            <div class="premium-glass border-l-4 border-green-500 group active:scale-[0.98] transition-all cursor-pointer p-4 flex items-center gap-4">
+        <!-- 2. 망고 택시 스캐너 (즉각적 이동 수단) -->
+        <section class="premium-glass p-5 border-l-4 border-yellow-500 cursor-pointer hover:bg-white/5 transition-all" onclick="scanMangoTaxi()">
+            <div class="flex items-center gap-4">
                 <div class="relative">
-                    <div class="w-14 h-14 bg-green-500/10 rounded-2xl flex items-center justify-center text-green-500 border border-green-500/20">
-                        <i data-lucide="shopping-cart" class="w-6 h-6"></i>
+                    <div id="taxi-node" class="w-16 h-16 bg-yellow-500/10 rounded-full flex items-center justify-center border border-yellow-500/30 transition-all duration-700">
+                        <i data-lucide="navigation" class="text-yellow-500 w-8 h-8"></i>
                     </div>
-                    <span class="absolute -top-1 -right-1 bg-red-500 text-[8px] font-black px-1.5 py-0.5 rounded-full text-white animate-bounce">20%</span>
+                    <div id="taxi-radar" class="absolute inset-0 border-2 border-yellow-500 rounded-full scale-100 opacity-0 transition-all"></div>
                 </div>
                 <div class="flex-1">
-                    <div class="flex items-center gap-2 mb-0.5">
-                        <h4 class="text-[13px] font-black text-white italic">GS25 해운대점</h4>
-                        <span class="text-[9px] text-gray-500 font-bold">120m</span>
-                    </div>
-                    <p class="text-[11px] text-gray-400">혜자로운 도시락 <span class="text-green-400 font-bold">마감 세일</span></p>
-                    <div class="flex items-center gap-3 mt-2">
-                        <div class="h-1 flex-1 bg-white/5 rounded-full overflow-hidden">
-                            <div class="h-full bg-green-500" style="width: 75%"></div>
-                        </div>
+                    <h4 class="text-sm font-black italic uppercase">Mango Taxi Match</h4>
+                    <p class="text-[10px] text-teal-400 font-orb uppercase tracking-tighter mt-1">대기 기사: 12명 | 최단 거리: 0.3km</p>
+                    <div class="flex gap-2 mt-2">
+                        <button class="flex-1 py-1.5 bg-yellow-500 text-black text-[10px] font-black rounded-lg active:scale-95 transition-transform">기사 호출</button>
+                        <button class="flex-1 py-1.5 bg-white/5 border border-white/10 text-[10px] font-black rounded-lg">예약</button>
                     </div>
                 </div>
-                <div class="text-right">
-                    <i data-lucide="chevron-right" class="w-5 h-5 text-gray-500"></i>
-                </div>
-            </div>
-
-            <div class="premium-glass border-l-4 border-orange-500 group active:scale-[0.98] transition-all cursor-pointer relative overflow-hidden p-4 flex items-center gap-4">
-                 <div class="absolute inset-0 opacity-10 pointer-events-none" style="background-image: radial-gradient(#FF6B00 0.5px, transparent 0.5px); background-size: 4px 4px;"></div>
-                 <div class="relative z-10 w-14 h-14 bg-orange-500/10 rounded-2xl flex items-center justify-center text-orange-500 border border-orange-500/30">
-                    <i data-lucide="flame" class="w-6 h-6 animate-pulse"></i>
-                 </div>
-                 <div class="relative z-10 flex-1">
-                    <h4 class="text-[14px] font-black text-white italic tracking-tight">명물 씨앗호떡</h4>
-                    <div class="flex items-center gap-2 mt-1">
-                        <span class="text-[10px] font-black text-green-400 animate-pulse">대기 없음 (0명)</span>
-                    </div>
-                 </div>
-                 <button class="relative z-10 bg-orange-500 text-black px-3 py-1.5 rounded-lg font-black text-[10px] uppercase italic">Ticket</button>
             </div>
         </section>
 
-        <section class="space-y-3">
-             <h3 class="font-orb text-[10px] text-gray-500 px-2 tracking-[0.2em]">04_ADMIN_&_FINTECH</h3>
-             
-             <input type="checkbox" id="fintech-acc" class="accordion-toggle">
-             <div class="premium-glass border-l-4 border-teal-500">
-                <label for="fintech-acc" class="p-4 flex justify-between items-center cursor-pointer hover:bg-white/5 transition-all">
-                    <div class="flex items-center gap-4">
-                        <div class="w-10 h-10 bg-teal-500/20 rounded-xl flex items-center justify-center text-teal-400">
-                            <i data-lucide="wallet" class="w-5 h-5"></i>
-                        </div>
-                        <div>
-                            <h3 class="font-orb text-[10px] text-teal-400 uppercase">Mango Node v1.0</h3>
-                            <span class="text-[13px] font-black text-white">결제 및 토큰 관리</span>
-                        </div>
+        <!-- 3. 여행 부가 서비스 (계획형 이동 및 숙박) -->
+        <div class="grid grid-cols-3 gap-3">
+            <a href="Hotel_Book.html" class="block hover:scale-105 hover:brightness-125 transition-all duration-300">
+                <div class="premium-glass p-4 border-t-4 border-pink-500 h-full flex flex-col items-center justify-center text-center">
+                    <i data-lucide="bed" class="text-pink-500 w-5 h-5 mb-2"></i>
+                    <h5 class="text-[11px] font-black"> Stay</h5>
+                    <p class="text-[9px] text-pink-400 font-orb mt-1">22.8 Pi</p>
+                </div>
+            </a>
+            <a href="Travel_mall.html" class="block hover:scale-105 hover:brightness-125 transition-all duration-300">
+                <div class="premium-glass p-4 border-t-4 border-yellow-500 h-full flex flex-col items-center justify-center text-center">
+                    <i data-lucide="shopping-bag" class="text-yellow-500 w-5 h-5 mb-2"></i>
+                    <h5 class="text-[11px] font-black">Pop-up</h5>
+                    <p class="text-[9px] text-yellow-400 font-orb mt-1">Active</p>
+                </div>
+            </a>
+            <a href="Rent_Car.html" class="block hover:scale-105 hover:brightness-125 transition-all duration-300">
+                <div class="premium-glass p-4 border-t-4 border-teal-500 h-full flex flex-col items-center justify-center text-center">
+                    <i data-lucide="car-front" class="text-teal-500 w-5 h-5 mb-2"></i>
+                    <h5 class="text-[11px] font-black">Rent-A-Car</h5>
+                    <p class="text-[9px] text-teal-400 font-orb mt-1">Mango_Z</p>
+                </div>
+            </a>
+        </div>
+
+        <!-- 4. 하단 내비게이션 바 (메인 포털 연결) -->
+        <nav class="fixed bottom-6 left-1/2 -translate-x-1/2 w-[90%] max-w-[430px] z-[9999]">
+            <div class="premium-glass bg-black/60 backdrop-blur-3xl border border-white/10 rounded-[32px] p-2 flex justify-around items-center shadow-2xl">
+                <div onclick="toggleAR()" class="flex flex-col items-center p-3 text-orange-500 cursor-pointer hover:scale-110 active:scale-90 transition-all">
+                    <i data-lucide="zap" class="w-5 h-5"></i>
+                    <span class="text-[8px] font-black uppercase">Moment</span>
+                </div>
+                <div onclick="toggleMatch()" class="flex flex-col items-center p-3 text-gray-500 hover:text-teal-400 hover:scale-110 cursor-pointer transition-all">
+                    <i data-lucide="users" class="w-5 h-5"></i>
+                    <span class="text-[8px] font-black uppercase">Match</span>
+                </div>
+                <!-- Voice Search Button -->
+                <div onclick="startMangoVoice()" class="flex flex-col items-center p-3 text-white hover:scale-110 active:scale-90 cursor-pointer transition-all relative">
+                    <div class="absolute inset-0 bg-teal-500/20 rounded-full animate-ping opacity-50"></div>
+                    <div class="bg-gradient-to-r from-teal-400 to-teal-600 rounded-full p-3 shadow-[0_0_15px_rgba(0,242,255,0.6)] z-10">
+                        <i data-lucide="mic" class="w-6 h-6 text-black"></i>
                     </div>
-                    <i data-lucide="chevron-down" class="chevron w-5 h-5 text-gray-500 transition-transform"></i>
-                </label>
-                <div class="accordion-content px-5">
-                    <div class="pt-2 pb-6 grid grid-cols-3 gap-2">
-                        <button class="flex flex-col items-center gap-1 py-3 bg-teal-500 text-black rounded-xl" onclick="showMangoToast('Mango 결제가 승인되었습니다.')">
-                            <i data-lucide="shrub" class="w-4 h-4"></i>
-                            <span class="text-[9px] font-black">MANGO</span>
-                        </button>
-                         <button class="flex flex-col items-center gap-1 py-3 bg-white/5 text-orange-500 rounded-xl border border-orange-500/30">
-                            <i data-lucide="pie-chart" class="w-4 h-4"></i>
-                            <span class="text-[9px] font-black">PI</span>
-                        </button>
-                        <button class="flex flex-col items-center gap-1 py-3 bg-white/5 text-blue-400 rounded-xl border border-white/10">
-                            <i data-lucide="banknote" class="w-4 h-4"></i>
-                            <span class="text-[9px] font-black">CASH</span>
-                        </button>
-                    </div>
                 </div>
-             </div>
 
-             <div class="premium-glass bg-red-600/10 border-red-600/40 p-3 flex items-center gap-3">
-                <div class="w-8 h-8 bg-red-600 rounded-lg flex items-center justify-center text-white animate-pulse">
-                    <i data-lucide="map-pin" class="w-4 h-4"></i>
-                </div>
-                <div class="flex-1">
-                    <h4 class="text-xs font-black text-red-500 italic underline">개방 화장실 (Emergency)</h4>
-                    <p class="text-[10px] text-gray-400 italic">우동 주민센터 1층 (비번없음)</p>
-                </div>
-                <button class="bg-red-600 text-white text-[10px] px-3 py-1 rounded font-black">NAV</button>
+                <a href="../Market/index.html" class="flex flex-col items-center p-3 text-gray-500 hover:text-white hover:scale-110 cursor-pointer transition-all">
+                    <i data-lucide="user" class="w-5 h-5"></i>
+                    <span class="text-[8px] font-black uppercase">Archive</span>
+                </a>
             </div>
-        </section>
-
-        <section id="travel_intelligence_section" class="w-[450px] mx-auto space-y-3 pt-6 px-4">
-    <div class="flex justify-between items-center px-1">
-        <div class="flex items-center gap-2">
-            <div class="w-1.5 h-3.5 bg-orange-500 rounded-full shadow-[0_0_8px_rgba(249,115,22,0.5)]"></div>
-            <h3 class="font-orb text-[11px] text-white/80 tracking-[0.15em] uppercase font-black">Core_8_Intelligence_Portals</h3>
-        </div>
-        <span class="text-[8px] text-orange-500/60 font-mono animate-pulse">SYSTEM_ACTIVE</span>
-    </div>
-    
-    <div class="grid grid-cols-2 gap-3">
-        
-        <div class="premium-glass travel-card cursor-pointer p-3 flex flex-col justify-between border-l-2 border-orange-500/40 h-[100px] active:scale-95 transition-all group" data-city-id="food">
-            <div class="flex justify-between items-start"><i data-lucide="utensils" class="w-4 h-4 text-orange-400"></i><span class="text-[7px] text-orange-500 font-bold uppercase tracking-widest">Food</span></div>
-            <div class="flex items-end justify-between">
-                <p class="text-[10px] font-bold text-white leading-tight">해운대 맛집 인텔<br><span class="text-orange-400 text-[8px]">인기순 실시간 추천</span></p>
-                <div class="w-8 h-8 rounded-lg bg-orange-500/10 border border-orange-500/20 flex items-center justify-center shadow-inner">
-                    <i data-lucide="flame" class="w-4 h-4 text-orange-500 group-hover:scale-110 transition-transform"></i>
-                </div>
-            </div>
-        </div>
-
-        <div class="premium-glass travel-card cursor-pointer p-3 flex flex-col justify-between border-l-2 border-blue-500/40 h-[100px] active:scale-95 transition-all group" data-city-id="transfer">
-            <div class="flex justify-between items-start"><i data-lucide="navigation" class="w-4 h-4 text-blue-400"></i><span class="text-[7px] text-blue-500 font-bold uppercase tracking-widest">Transfer</span></div>
-            <div class="flex items-end justify-between">
-                <p class="text-[10px] font-bold text-white leading-tight">모빌리티 호출<br><span class="text-blue-400 text-[8px]">Model_Z 3분 내 도착</span></p>
-                <div class="w-8 h-8 rounded-lg bg-blue-500/10 border border-blue-500/20 flex items-center justify-center shadow-inner">
-                    <i data-lucide="car" class="w-4 h-4 text-blue-500 group-hover:scale-110 transition-transform"></i>
-                </div>
-            </div>
-        </div>
-
-        <div class="premium-glass travel-card cursor-pointer p-3 flex flex-col justify-between border-l-2 border-purple-500/40 h-[100px] active:scale-95 transition-all group" data-city-id="travel">
-            <div class="flex justify-between items-start"><i data-lucide="map-pin" class="w-4 h-4 text-purple-400"></i><span class="text-[7px] text-purple-500 font-bold uppercase tracking-widest">Travel</span></div>
-            <div class="flex items-end justify-between">
-                <p class="text-[10px] font-bold text-white leading-tight">관광 POI 탐색<br><span class="text-purple-400 text-[8px]">AR 가이드 활성화</span></p>
-                <div class="w-8 h-8 rounded-lg bg-purple-500/10 border border-purple-500/20 flex items-center justify-center shadow-inner">
-                    <i data-lucide="camera" class="w-4 h-4 text-purple-500 group-hover:scale-110 transition-transform"></i>
-                </div>
-            </div>
-        </div>
-
-        <div class="premium-glass travel-card cursor-pointer p-3 flex flex-col justify-between border-l-2 border-pink-500/40 h-[100px] active:scale-95 transition-all group" data-city-id="hobby">
-            <div class="flex justify-between items-start"><i data-lucide="heart" class="w-4 h-4 text-pink-400"></i><span class="text-[7px] text-pink-500 font-bold uppercase tracking-widest">Hobby</span></div>
-            <div class="flex items-end justify-between">
-                <p class="text-[10px] font-bold text-white leading-tight">취미 액티비티<br><span class="text-pink-400 text-[8px]">서핑 & 해양 레저</span></p>
-                <div class="w-8 h-8 rounded-lg bg-pink-500/10 border border-pink-500/20 flex items-center justify-center shadow-inner">
-                    <i data-lucide="compass" class="w-4 h-4 text-pink-500 group-hover:scale-110 transition-transform"></i>
-                </div>
-            </div>
-        </div>
-
-        <div class="premium-glass travel-card cursor-pointer p-3 flex flex-col justify-between border-l-2 border-emerald-500/40 h-[100px] active:scale-95 transition-all group" data-city-id="realty">
-            <div class="flex justify-between items-start"><i data-lucide="home" class="w-4 h-4 text-emerald-400"></i><span class="text-[7px] text-emerald-500 font-bold uppercase tracking-widest">Realty</span></div>
-            <div class="flex items-end justify-between">
-                <p class="text-[10px] font-bold text-white leading-tight">부동산 DEX<br><span class="text-emerald-400 text-[8px]">Pi 결제 실시간 매물</span></p>
-                <div class="w-8 h-8 rounded-lg bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center shadow-inner">
-                    <i data-lucide="trending-up" class="w-4 h-4 text-emerald-500 group-hover:scale-110 transition-transform"></i>
-                </div>
-            </div>
-        </div>
-
-        <div class="premium-glass travel-card cursor-pointer p-3 flex flex-col justify-between border-l-2 border-yellow-500/40 h-[100px] active:scale-95 transition-all group" data-city-id="market">
-            <div class="flex justify-between items-start"><i data-lucide="shopping-cart" class="w-4 h-4 text-yellow-400"></i><span class="text-[7px] text-yellow-500 font-bold uppercase tracking-widest">Market</span></div>
-            <div class="flex items-end justify-between">
-                <p class="text-[10px] font-bold text-white leading-tight">망고 직거래 마켓<br><span class="text-yellow-400 text-[8px]">Pi Network 스토어</span></p>
-                <div class="w-8 h-8 rounded-lg bg-yellow-500/10 border border-yellow-500/20 flex items-center justify-center shadow-inner">
-                    <i data-lucide="coins" class="w-4 h-4 text-yellow-500 group-hover:scale-110 transition-transform"></i>
-                </div>
-            </div>
-        </div>
-
-        <div class="premium-glass travel-card cursor-pointer p-3 flex flex-col justify-between border-l-2 border-cyan-500/40 h-[100px] active:scale-95 transition-all group" data-city-id="chat">
-            <div class="flex justify-between items-start"><i data-lucide="messages-square" class="w-4 h-4 text-cyan-400"></i><span class="text-[7px] text-cyan-500 font-bold uppercase tracking-widest">Chat</span></div>
-            <div class="flex items-end justify-between">
-                <p class="text-[10px] font-bold text-white leading-tight">커뮤니티 채널<br><span class="text-cyan-400 text-[8px]">실시간 정보 공유</span></p>
-                <div class="w-8 h-8 rounded-lg bg-cyan-500/10 border border-cyan-500/20 flex items-center justify-center shadow-inner">
-                    <i data-lucide="users" class="w-4 h-4 text-cyan-500 group-hover:scale-110 transition-transform"></i>
-                </div>
-            </div>
-        </div>
-
-        <div class="premium-glass travel-card cursor-pointer p-3 flex flex-col justify-between border-l-2 border-indigo-500/40 h-[100px] active:scale-95 transition-all group" data-city-id="stay">
-            <div class="flex justify-between items-start"><i data-lucide="bed" class="w-4 h-4 text-indigo-400"></i><span class="text-[7px] text-indigo-500 font-bold uppercase tracking-widest">Stay</span></div>
-            <div class="flex items-end justify-between">
-                <p class="text-[10px] font-bold text-white leading-tight">숙박 인텔리전스<br><span class="text-indigo-400 text-[8px]">LCT & 특급 호텔</span></p>
-                <div class="w-8 h-8 rounded-lg bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-center shadow-inner">
-                    <i data-lucide="key-round" class="w-4 h-4 text-indigo-500 group-hover:scale-110 transition-transform"></i>
-                </div>
-            </div>
-        </div>
-
-    </div>
-</section>
-
-
-<section class="w-full space-y-4 px-2">
-    <div class="flex justify-between items-center px-3 mb-2">
-        <div class="flex items-center gap-2">
-            <div class="w-2 h-2 bg-red-600 rounded-full animate-ping"></div>
-            <h3 class="text-[12px] font-black text-white/90 tracking-widest uppercase font-orb">Global_Hot_Spot</h3>
-        </div>
-        <div class="flex items-center gap-2">
-            <span class="text-[9px] text-teal-400 font-bold tracking-tighter">4K_LIVE_HAEUNDAE</span>
-            <i data-lucide="cast" class="w-3 h-3 text-teal-400"></i>
-        </div>
+        </nav>
     </div>
 
-    <div class="w-full premium-glass aspect-[16/9] relative overflow-hidden group border border-white/5 bg-black shadow-2xl">
-        <iframe 
-            class="absolute inset-0 w-full h-full scale-[1.3] pointer-events-none opacity-70"
-            src="https://www.youtube.com/embed/uHdl_9hsHqw?autoplay=1&mute=1&controls=0&loop=1&playlist=uHdl_9hsHqw&showinfo=0&rel=0&modestbranding=1&iv_load_policy=3" 
-            title="Haeundae 4K Live" 
-            frameborder="0" 
-            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
-            allowfullscreen>
-        </iframe>
-        
-        <div class="absolute inset-0 bg-gradient-to-t from-[#0a0a0a] via-transparent to-transparent opacity-90"></div>
-        <div class="absolute inset-0 shadow-[inset_0_0_100px_rgba(0,0,0,0.8)]"></div>
-
-        <div class="absolute inset-0 p-6 flex flex-col justify-end z-10">
-            <div class="flex justify-between items-end">
-                <div class="space-y-1">
-                    <div class="flex items-center gap-2 text-teal-400">
-                        <i data-lucide="map-pin" class="w-3.5 h-3.5"></i>
-                        <span class="text-[10px] font-black uppercase tracking-widest font-rajdhani">Busan, Haeundae Beach</span>
-                    </div>
-
-                    <h4 class="text-3xl font-black font-orb text-white leading-none tracking-tighter drop-shadow-2xl">
-                        HAEUNDAE_REALTIME
-                    </h4>
-                </div>
-                
-                <div class="text-right">
-                    <div class="flex items-center gap-1.5 text-orange-500 mb-2 justify-end drop-shadow-lg font-rajdhani">
-                        <i data-lucide="thermometer-sun" class="w-4 h-4 animate-pulse"></i>
-                        <span class="text-[16px] font-black">12.5°C</span>
-                    </div>
-                    <button onclick="window.open('https://www.youtube.com/watch?v=uHdl_9hsHqw')" 
-                            class="bg-white/5 hover:bg-white/10 backdrop-blur-xl border border-white/20 px-4 py-2 rounded-full flex items-center gap-2 transition-all">
-                        <i data-lucide="maximize" class="w-3 h-3 text-white"></i>
-                        <span class="text-[9px] font-black text-white uppercase tracking-tighter">Full Screen</span>
-                    </button>
-                </div>
-            </div>
-        </div>   
-    </div> 
-<section class="px-2 mt-4 mb-6 max-w-[450px] mx-auto">
-    <div class="grid grid-cols-2 gap-3">
-        <div class="premium-glass p-4 border-b-2 border-orange-500/50 bg-gradient-to-br from-orange-500/5 to-transparent cursor-pointer active:scale-95 transition-all" onclick="openSupporterModal()">
-            <div class="flex items-center gap-2 mb-2">
-                <i data-lucide="users" class="w-4 h-4 text-orange-500"></i>
-                <span class="text-[10px] font-black text-white uppercase tracking-widest font-orb">Supporters</span>
-            </div>
-            <p class="text-[8px] text-gray-500 font-bold leading-tight">내 지역 핫스팟 공유<br><span class="text-orange-500">1.0 MGO REWARD</span></p>
-        </div>
-
-        <div class="premium-glass p-4 border-b-2 border-teal-500/50 bg-gradient-to-br from-teal-500/5 to-transparent cursor-pointer active:scale-95 transition-all" onclick="openPartnerModal()">
-            <div class="flex items-center gap-2 mb-2">
-                <i data-lucide="briefcase" class="w-4 h-4 text-teal-500"></i>
-                <span class="text-[10px] font-black text-white uppercase tracking-widest font-orb">Partners</span>
-            </div>
-            <p class="text-[8px] text-gray-500 font-bold leading-tight">비즈니스 노드 등록<br><span class="text-teal-500">GLOBAL ADS</span></p>
-        </div>
-    </div>
-    <section class="space-y-4 mt-8 px-2 pb-24 max-w-[450px] mx-auto">
-        <div class="flex justify-between items-center px-3 mb-2">
-            <h3 class="font-orb text-[10px] text-gray-600 tracking-[0.2em] uppercase">01_POST_TRIP_FEEDBACK</h3>
-            <span class="text-[9px] text-amber-500/50 font-bold italic">REWARD: 0.1 TOKEN</span>
-        </div>
-        
-        <div class="premium-glass border-t-2 border-amber-500/30 p-8 flex flex-col items-center shadow-2xl bg-gradient-to-b from-white/5 to-transparent relative overflow-hidden">
-            <div class="absolute top-0 right-0 p-2 opacity-10"><i data-lucide="quote" class="w-12 h-12 text-white"></i></div>
-            
-            <h4 class="text-xl font-black text-white mb-2 italic tracking-tight">즐거운 동행이었나요?</h4>
-            <p class="text-[11px] text-gray-400 mb-8 font-medium">Mango_Captain님과의 여정을 평가해주세요.</p>
-            
-            <div class="flex gap-4 mb-10">
-                <button class="group hover:scale-125 transition-transform"><i data-lucide="star" class="w-9 h-9 text-gray-800 fill-gray-800 group-hover:text-amber-400 group-hover:fill-amber-500 group-hover:drop-shadow-[0_0_15px_rgba(245,158,11,0.6)] transition-all duration-300"></i></button>
-                <button class="group hover:scale-125 transition-transform"><i data-lucide="star" class="w-9 h-9 text-gray-800 fill-gray-800 group-hover:text-amber-400 group-hover:fill-amber-500 transition-all"></i></button>
-                <button class="group hover:scale-125 transition-transform"><i data-lucide="star" class="w-9 h-9 text-gray-800 fill-gray-800 group-hover:text-amber-400 group-hover:fill-amber-500 transition-all"></i></button>
-                <button class="group hover:scale-125 transition-transform"><i data-lucide="star" class="w-9 h-9 text-gray-800 fill-gray-800 group-hover:text-amber-400 group-hover:fill-amber-500 transition-all"></i></button>
-                <button class="group hover:scale-125 transition-transform"><i data-lucide="star" class="w-9 h-9 text-gray-800 fill-gray-800 group-hover:text-amber-400 group-hover:fill-amber-500 transition-all"></i></button>
-            </div>
-
-
-            <button onclick="showMangoToast('0.1 Token이 적립되었습니다!')" 
-                class="w-full py-5 rounded-2xl bg-gradient-to-r from-orange-500 to-amber-600 text-black font-black text-sm uppercase tracking-widest hover:scale-[1.02] transition-all active:scale-95 shadow-[0_15px_30px_rgba(249,115,22,0.3)] border border-white/20">
-                SUBMIT & CLAIM TOKEN
+    <!-- AR 모드 전용 검색창 -->
+    <div id="search-overlay">
+        <div class="premium-glass p-1 flex items-center bg-black/40 border-orange-500/50">
+            <input type="text" id="ar-search-input" placeholder="어디로 갈까요? (목적지 검색)" 
+                   class="flex-1 bg-transparent px-5 py-3 text-sm outline-none text-white placeholder:text-white/30 font-bold">
+            <button onclick="execARSearch()" class="p-3 text-orange-500 hover:scale-110 active:scale-90 transition-transform">
+                <i data-lucide="search"></i>
             </button>
         </div>
-    </section>
+    </div>
 
-    </main>
-
-    <div class="fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-[450px] z-[90] bg-[#030303]/95 border-t border-white/10 h-[42px] overflow-hidden flex items-center shadow-[0_-10px_30px_rgba(0,0,0,0.8)]">
-        <div class="absolute left-0 top-0 bottom-0 px-4 bg-gradient-to-r from-orange-600 to-amber-500 text-black z-20 flex items-center justify-center shadow-[5px_0_15px_rgba(0,0,0,0.5)]">
-            <span class="text-[9px] font-black italic uppercase tracking-tighter">Mango_Live</span>
+    <div id="ar-hud" class="fixed inset-0 z-[10000] opacity-0 pointer-events-none bg-teal-900/5">
+        <div class="absolute inset-0 bg-[radial-gradient(circle_at_center,transparent_0%,rgba(0,0,0,0.4)_100%)]"></div>
+        <div id="ar-circle" class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-40 h-40 border border-teal-500/20 rounded-full flex items-center justify-center transition-all duration-700">
+            <div class="w-1 h-1 bg-teal-400 rounded-full animate-ping"></div>
+            <div id="ar-coords" class="absolute -bottom-10 text-[9px] font-orb text-teal-400 opacity-0 transition-opacity">LAT: 35.1595 N | LNG: 129.1611 E</div>
         </div>
-        
-        <div class="flex items-center whitespace-nowrap overflow-hidden relative z-10 w-full ml-20">
-            <div class="flex animate-marquee py-1">
-                <div class="flex items-center gap-4 px-6 border-r border-white/5">
-                    <span class="text-[8px] bg-white/10 text-orange-400 px-1.5 py-0.5 rounded border border-orange-500/20 font-bold">PI_NET</span>
-                    <p class="text-[10px] font-medium text-white/80 italic">Pi Mainnet Migration: Status Active (98%)</p>
+        <div id="ar-signal" class="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 flex flex-col items-center gap-12">
+            <!-- 가변 가이드 영역 -->
+            <div id="nav-guide-container" class="relative">
+                <div id="nav-arrow" class="w-10 h-10 border-t-4 border-r-4 border-teal-400 rotate-[-45deg] animate-bounce"></div>
+                <div id="nav-square" class="nav-signal-square hidden">
+                    <span class="text-white font-black font-orb text-xs">ARRIVED</span>
+                    <div class="target-lock-corner corner-tl"></div><div class="target-lock-corner corner-tr"></div>
+                    <div class="target-lock-corner corner-bl"></div><div class="target-lock-corner corner-br"></div>
                 </div>
-                <div class="flex items-center gap-4 px-6 border-r border-white/5">
-                    <span class="text-[8px] bg-teal-500/20 text-teal-400 px-1.5 py-0.5 rounded border border-teal-500/20 font-bold">PORTAL</span>
-                    <p class="text-[10px] font-medium text-white/80 italic">Haeundae 4K Cam: Night Vision Mode Ready</p>
-                </div>
-                <div class="flex items-center gap-4 px-6 border-r border-white/5">
-                    <span class="text-[8px] bg-purple-500/20 text-purple-400 px-1.5 py-0.5 rounded border border-purple-500/20 font-bold">ECO</span>
-                    <p class="text-[10px] font-medium text-white/80 italic">Mango Token (MGO) Airdrop Event for Top Reviewers</p>
-                </div>
+            </div>
+            <div id="nav-info-box" class="bg-black/80 backdrop-blur-md px-6 py-3 rounded-full border border-teal-500/30 transition-all">
+                <p class="text-[11px] font-orb font-black text-white transition-all">
+                    <span class="text-teal-400">TARGET:</span> <span id="nav-target-name">'목적지를 검색하세요'</span> <span id="nav-dist-text" class="text-gray-400 ml-2">---</span>
+                </p>
             </div>
         </div>
     </div>
 
-    <div id="ar-hud" class="fixed inset-0 z-[10000] pointer-events-none opacity-0 transition-opacity duration-1000 bg-teal-900/5">
-        <div class="absolute inset-0 bg-[linear-gradient(rgba(18,16,16,0)_50%,rgba(0,255,255,0.03)_50%),linear-gradient(90deg,rgba(255,0,0,0.01),rgba(0,255,0,0.01),rgba(0,0,255,0.01))] bg-[length:100%_2px,2px_100%]"></div>
-        
-        <div class="absolute top-16 left-8 text-teal-400 font-orb drop-shadow-[0_0_5px_rgba(45,212,191,0.5)]">
-            <p class="text-[7px] tracking-[0.4em] opacity-60 uppercase">System_Scanning...</p>
-            <p class="text-[11px] font-black italic tracking-wider">HAEUNDAE_ZONE_V2</p>
+    <!-- 5. Voice Search Overlay -->
+    <div id="voice-overlay" class="fixed inset-0 z-[10005] bg-black/80 backdrop-blur-md hidden opacity-0 transition-opacity duration-500 flex flex-col items-center justify-center">
+        <div id="voice-wave-ui" class="w-32 h-32 rounded-full border border-teal-500/30 flex items-center justify-center relative transition-all">
+            <i data-lucide="mic" class="w-12 h-12 text-teal-400 z-10"></i>
+            <div class="absolute inset-0 border-2 border-teal-400 rounded-full scale-100 opacity-0 wave-anim"></div>
+            <div class="absolute inset-0 border-2 border-teal-400 rounded-full scale-100 opacity-0 wave-anim" style="animation-delay: 0.5s"></div>
         </div>
+        <p id="voice-text-display" class="mt-8 text-lg font-black text-white text-center px-6">듣고 있습니다...</p>
+    </div>
 
-        <div class="absolute top-16 right-8 text-right font-orb text-amber-500">
-            <p class="text-[9px] font-black italic tracking-widest opacity-80">HUD_ACTIVE</p>
-            <p class="text-[7px] text-white/40">SYNC: GLASS / WATCH / RING</p>
-        </div>
+    <style>
+        .active-listening .wave-anim { animation: ping-slow 2s cubic-bezier(0, 0, 0.2, 1) infinite; }
+        @keyframes ping-slow { 75%, 100% { transform: scale(2); opacity: 0; } }
+    </style>
 
-        <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-72 h-72 border border-teal-500/10 rounded-full flex items-center justify-center">
-            <div class="w-1.5 h-1.5 bg-teal-400 rounded-full animate-ping"></div>
-            <div class="absolute inset-0 border-t-2 border-teal-500/30 rounded-full animate-spin-slow"></div>
-            <div class="absolute inset-4 border-b border-white/5 rounded-full animate-reverse-spin opacity-20"></div>
+    <script src="../Transfer/mangoVoice.js"></script>
+
+    <div id="mango-toast" class="toast-notification">
+        <div class="flex items-center gap-3">
+            <i data-lucide="bell" class="text-yellow-500 w-5 h-5"></i>
+            <p class="text-xs font-bold text-white"></p>
         </div>
     </div>
 
-    <div id="mango-toast" class="toast-notification fixed bottom-16 left-1/2 -translate-x-1/2 z-[101]">
-        <div class="flex items-center gap-4 bg-[#111]/90 backdrop-blur-xl border border-white/10 p-4 rounded-2xl shadow-2xl min-w-[280px]">
-            <div class="w-10 h-10 bg-gradient-to-br from-orange-500/20 to-amber-500/20 rounded-xl flex items-center justify-center text-orange-500 border border-orange-500/30">
-                <i data-lucide="shield-check" class="w-5 h-5"></i>
-            </div>
-            <div>
-                <h5 class="text-white text-[10px] font-black uppercase tracking-widest mb-0.5">Mango_Notice</h5>
-                <p id="toast-message" class="text-gray-400 text-[12px] font-bold">시스템이 정상 가동 중입니다.</p>
-            </div>
+    <!-- Voice Search Overlay -->
+    <div id="voice-overlay" class="fixed inset-0 z-[10005] bg-black/80 backdrop-blur-md hidden opacity-0 transition-opacity duration-500 flex flex-col items-center justify-center">
+        <div id="voice-wave-ui" class="w-32 h-32 rounded-full border border-teal-500/30 flex items-center justify-center relative transition-all">
+            <i data-lucide="mic" class="w-12 h-12 text-teal-400 z-10"></i>
+            <div class="absolute inset-0 border-2 border-teal-400 rounded-full scale-100 opacity-0 wave-anim"></div>
+            <div class="absolute inset-0 border-2 border-teal-400 rounded-full scale-100 opacity-0 wave-anim" style="animation-delay: 0.5s"></div>
         </div>
+        <p id="voice-text-display" class="mt-8 text-lg font-black text-white text-center px-6">듣고 있습니다...</p>
     </div>
+
+    <style>
+        .active-listening .wave-anim { animation: ping-slow 2s cubic-bezier(0, 0, 0.2, 1) infinite; }
+        @keyframes ping-slow { 75%, 100% { transform: scale(2); opacity: 0; } }
+    </style>
+
+    <script src="../Transfer/mangoVoice.js"></script>
 
     <script>
-        // 0. Pi SDK 초기화
-        const Pi = window.Pi;
-        let isSandbox = true; 
-        if(Pi) { Pi.init({ version: "2.0", sandbox: isSandbox }); }
-
-        // 1. Initialize Icons
         lucide.createIcons();
 
-        // --- MANGO TRAVEL NAVIGATION ENGINE START ---
-        // 모든 여행 카드의 클릭을 감지하여 상세 페이지로 자동 라우팅함
-        document.addEventListener('click', (e) => {
-            // 클릭된 요소나 그 부모 중 'travel-card' 클래스를 가진 요소를 찾음
-            const card = e.target.closest('.travel-card');
-            if (card) {
-                const cityId = card.getAttribute('data-city-id');
-                if (cityId) {
-                    // 현재 폴더 구조상 detail.html이 같은 위치에 있을 때
-                    window.location.href = `detail.html?id=${cityId}`;
-                }
-            }
-        });
-        // --- MANGO TRAVEL NAVIGATION ENGINE END ---
+        // [사운드 시스템 초기화]
+        const arrivalAudio = new Audio('../assets/sounds/mangomangodaldalhe.mp3');
+        let navWatchId = null;
+        let targetCoords = null;
+        let lastBeepTime = 0;
+        let currentDist = 900; // 900m 시작
 
-        // 2. Toast System (Sleek Design using HTML element)
+        // 1. 토스트 시스템
         function showMangoToast(msg) {
             const toast = document.getElementById('mango-toast');
-            const msgNode = document.getElementById('toast-message');
-            if (!toast || !msgNode) return;
-            
-            if(msg) msgNode.innerText = msg;
+            toast.querySelector('p').innerText = msg;
             toast.classList.add('show');
-            setTimeout(() => {
-                toast.classList.remove('show');
-            }, 3000);
+            setTimeout(() => toast.classList.remove('show'), 3000);
         }
 
-        // 3. Auto Pilot (Model_Mango_Z 호출) - Unified logic
-        function startSummon() {
-            const car = document.getElementById('car-node');
-            const pulse = document.getElementById('summon-pulse');
-            
-            if(!car || !pulse) return;
-
-            showMangoToast("Model_Mango_Z 호출 신호 전송...");
-            pulse.classList.add('animate-ping');
-            pulse.style.opacity = "1";
-            car.style.transform = "translateX(50px) scale(1.1)"; 
-            
-            setTimeout(() => {
-                pulse.classList.remove('animate-ping');
-                pulse.style.opacity = "0";
-                car.style.transform = "translateX(0) scale(1)";
-                showMangoToast("차량이 지정된 위치에 도착했습니다.");
-            }, 3000);
+        // [고급 네비게이션 띵동음 생성]
+        function playProximityBeep() {
+            const context = new (window.AudioContext || window.webkitAudioContext)();
+            const osc = context.createOscillator();
+            const gain = context.createGain();
+            osc.type = 'sine';
+            osc.frequency.setValueAtTime(880, context.currentTime);
+            gain.gain.setValueAtTime(0.1, context.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.01, context.currentTime + 0.3);
+            osc.connect(gain);
+            gain.connect(context.destination);
+            osc.start();
+            osc.stop(context.currentTime + 0.3);
         }
 
-        // 4. AR HUD Logic
-        const arBtn = document.getElementById('ar-toggle-btn');
-        let arActive = false; 
+        // 2. AR HUD 토글
+        let arActive = false;
+        function toggleAR() {
+            arActive = !arActive;
+            const hud = document.getElementById('ar-hud');
+            const searchOverlay = document.getElementById('search-overlay');
+            const mainFrame = document.querySelector('.os-master-frame');
+            const arCircle = document.getElementById('ar-circle');
+            const arArrow = document.querySelector('#ar-signal > div:first-child');
+            const arText = document.querySelector('#ar-signal p');
+            const arCoords = document.getElementById('ar-coords');
+            
+            hud.style.opacity = arActive ? '1' : '0';
+            
+            if (arActive) {
+                document.body.classList.add('ar-on');
+                mainFrame.classList.add('ar-active-dim');
+                arCircle.classList.add('glass-highlight-circle');
+                arArrow.classList.add('glass-highlight-arrow');
+                arText.classList.add('glass-highlight-target');
+                arCoords.style.opacity = '1';
+                startRealNavigation(); // 실제 위치 기반 내비게이션 준비
+            } else {
+                document.body.classList.remove('ar-on');
+                mainFrame.classList.remove('ar-active-dim');
+                arCircle.classList.remove('glass-highlight-circle');
+                arArrow.classList.remove('glass-highlight-arrow');
+                arText.classList.remove('glass-highlight-target');
+                arCoords.style.opacity = '0';
+                stopNavigation();
+            }
+            
+            showMangoToast(arActive ? "스마트 글라스 야외 길 안내 모드 활성" : "표준 인터페이스 전환");
+        }
 
-        if (arBtn) {
-            arBtn.addEventListener('click', () => {
-                arActive = !arActive;
-                const hud = document.getElementById('ar-hud');
-                if (hud) {
-                    hud.style.opacity = arActive ? '1' : '0';
-                    showMangoToast(arActive ? "AR 글래스 모드 활성화" : "일반 모드 전환");
+        // [Advanced] AR 검색 실행 (search_handler.js 연동)
+        function execARSearch() {
+            const query = document.getElementById('ar-search-input').value;
+            if(!query) return showMangoToast("검색어를 입력해주세요.");
+
+            // 외부 핸들러 시뮬레이션 (context의 search_handler.js 로직 참고)
+            const result = handleSearchQuery(query);
+            
+            if(result.success) {
+                targetCoords = result.data.coords;
+                document.getElementById('nav-target-name').innerText = `'${result.data.name}'`;
+                showMangoToast(`목적지 설정 완료: ${result.data.name}`);
+                playProximityBeep(); // 설정 알림음
+
+                // 좌표 업데이트 시뮬레이션
+                document.getElementById('ar-coords').innerText = 
+                    `LAT: ${data.coords.lat.toFixed(4)} N | LNG: ${data.coords.lng.toFixed(4)} E`;
+            }
+        }
+
+        // search_handler.js의 로직을 로컬에 복사하여 통합 (브라우저 환경용)
+        function handleSearchQuery(query) {
+            const db = {
+                "해운대 백사장": { lat: 35.1587, lng: 129.1603, distance: 900 },
+                "해리단길": { lat: 35.1631, lng: 129.1589, distance: 450 },
+                "광안대교": { lat: 35.1478, lng: 129.1301, distance: 3500 },
+                "신라 스테이": { lat: 35.1598, lng: 129.1611, distance: 120 }
+            };
+            const matchKey = Object.keys(db).find(k => k.includes(query) || query.includes(k));
+            const match = db[matchKey] || { lat: 35.15, lng: 129.16, distance: Math.floor(Math.random() * 1000) + 100 };
+            return { success: true, data: { name: matchKey || query, coords: match, initialDistance: match.distance } };
+        }
+
+        // [실시간 하버사인 거리 계산기 - 1억명 대응 클라이언트 연산]
+        function getHaversineDistance(lat1, lon1, lat2, lng2) {
+            const R = 6371e3; // 지구 반경 (m)
+            const dLat = (lat2 - lat1) * Math.PI / 180;
+            const dLon = (lng2 - lon1) * Math.PI / 180;
+            const a = Math.sin(dLat/2) * Math.sin(dLat/2) +
+                      Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
+                      Math.sin(dLon/2) * Math.sin(dLon/2);
+            const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+            return R * c;
+        }
+
+        // [고도화된 실사용 내비게이션 로직]
+        function startRealNavigation() {
+            if (!navigator.geolocation) return showMangoToast("GPS를 지원하지 않는 기기입니다.");
+
+            const arrow = document.getElementById('nav-arrow');
+            const square = document.getElementById('nav-square');
+            const infoBox = document.getElementById('nav-info-box');
+            const distText = document.getElementById('nav-dist-text');
+
+            navWatchId = navigator.geolocation.watchPosition((pos) => {
+                const { latitude, longitude, heading } = pos.coords;
+                
+                // 현재 좌표 업데이트
+                document.getElementById('ar-coords').innerText = 
+                    `LAT: ${latitude.toFixed(4)} N | LNG: ${longitude.toFixed(4)} E`;
+
+                if (!targetCoords) return;
+
+                const dist = getHaversineDistance(latitude, longitude, targetCoords.lat, targetCoords.lng);
+                distText.innerText = dist > 1000 ? (dist/1000).toFixed(2) + "km" : Math.round(dist) + "m";
+
+                // 1. 방향 회전 (나침반 데이터 기반)
+                if (heading !== null) {
+                    // 목적지 방위각 계산 로직 추가 가능
+                    arrow.style.transform = `rotate(${heading}deg)`;
                 }
+
+                // 2. 접근성 알림 (정밀도 강화)
+                if (dist <= 50 && dist > 5) {
+                    infoBox.classList.add('proximity-active');
+                    const now = Date.now();
+                    const beepInterval = dist <= 20 ? 500 : 1500; // 가까울수록 빠르게 비프음
+                    
+                    if (now - lastBeepTime > beepInterval) {
+                        playProximityBeep();
+                        lastBeepTime = now;
+                    }
+                }
+
+                // 3. 도착 판정
+                if (dist <= 5) {
+                    arrivalAction(arrow, square, infoBox, distText);
+                }
+            }, (err) => console.warn(err), {
+                enableHighAccuracy: true,
+                maximumAge: 1000,
+                timeout: 5000
             });
         }
 
-        // 5. Supporters & Partners Logic
-        function openSupporterModal() {
-            const locationName = prompt("공유하고 싶은 핫스팟 명칭을 입력하세요 (예: 다낭 미케비치)");
-            if(locationName) {
-                showMangoToast(`${locationName} 데이터 분석 중...`);
+        function arrivalAction(arrow, square, infoBox, distText) {
+            distText.innerText = "ARRIVED";
+            arrow.classList.add('hidden');
+            square.classList.remove('hidden');
+            square.classList.add('active');
+            infoBox.classList.remove('proximity-active');
+            infoBox.style.borderColor = "#FF6B00";
+            arrivalAudio.play().catch(() => {});
+            showMangoToast("목적지 도착: 안내를 종료합니다.");
+            stopNavigation();
+        }
+
+        function stopNavigation() {
+            if (navWatchId) navigator.geolocation.clearWatch(navWatchId);
+            document.getElementById('nav-arrow').classList.remove('hidden');
+            document.getElementById('nav-square').classList.add('hidden');
+            document.getElementById('nav-square').classList.remove('active');
+        }
+
+        // 3. Match 엔진 토글
+        let matchActive = false;
+        function toggleMatch() {
+            matchActive = !matchActive;
+            const display = document.getElementById('sync-orbit-display');
+            display.style.display = matchActive ? 'block' : 'none';
+            showMangoToast(matchActive ? "동행 싱크로율 분석 중..." : "매칭 엔진 정지");
+        }
+
+        // 4. 망고 택시 레이더 스캔 및 대시보드 연결 로직
+        function scanMangoTaxi() {
+            const node = document.getElementById('taxi-node');
+            const radar = document.getElementById('taxi-radar');
+            
+            // 레이더 애니메이션 가동
+            radar.style.opacity = '1';
+            radar.classList.add('animate-ping');
+            node.style.transform = "scale(1.1)";
+            
+            showMangoToast("반경 3km 내 대기 중인 망고 택시 기사를 탐색합니다...");
+            
+            // 2초 후 기사 발견 및 Transfer 포털로 이동
+            setTimeout(() => {
+                showMangoToast("최적의 기사를 찾았습니다. 콜 수락 대기 화면으로 이동합니다.");
+                radar.classList.remove('animate-ping');
                 setTimeout(() => {
-                    showMangoToast("검수 완료! 1.0 MGO가 지급되었습니다.");
-                }, 2000);
-            }
+                    // Transfer 포털의 택시 대시보드로 정확히 라우팅
+                    window.location.href = '../Transfer/mango_taxi_dashboard.html';
+                }, 1200);
+            }, 2000);
         }
 
-        function openPartnerModal() {
-            showMangoToast("비즈니스 파트너 센터로 연결합니다...");
-        }
+        // 5. 리얼타임 데이터 업데이트
+        setInterval(() => {
+            // 타이머 감소 로직
+            const timerNode = document.getElementById('flight-timer');
+            let parts = timerNode.innerText.split(':');
+            let s = parseInt(parts[2]) + parseInt(parts[1])*60 + parseInt(parts[0])*3600;
+            s--;
+            let h = Math.floor(s/3600).toString().padStart(2,'0');
+            let m = Math.floor((s%3600)/60).toString().padStart(2,'0');
+            let sec = (s%60).toString().padStart(2,'0');
+            timerNode.innerText = `${h}:${m}:${sec}`;
 
-        // 6. Initial Welcome
-        window.addEventListener('load', () => {
-            setTimeout(() => showMangoToast("부산 해운대 존에 진입했습니다."), 1000);
-        });
+            // 가격 변동
+            const priceNode = document.getElementById('pi-price');
+            let p = parseFloat(priceNode.innerText);
+            priceNode.innerHTML = `${(p + (Math.random()-0.5)*0.01).toFixed(2)} <span class="text-[8px]">Pi</span>`;
+        }, 1000);
     </script>
-    <nav class="fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-[450px] bg-[#0a0a0a]/90 backdrop-blur-xl border-t border-white/5 px-6 py-4 z-[90] flex justify-between items-center">
-    <button onclick="location.href='index.html'" class="flex flex-col items-center gap-1 group">
-        <i data-lucide="home" class="w-5 h-5 text-gray-500 group-hover:text-orange-500 transition-colors"></i>
-        <span class="text-[8px] font-orb text-gray-500 group-hover:text-orange-500 uppercase">Home</span>
-    </button>
-    <button class="flex flex-col items-center gap-1 group">
-        <i data-lucide="search" class="w-5 h-5 text-gray-500 group-hover:text-orange-500 transition-colors"></i>
-        <span class="text-[8px] font-orb text-gray-500 group-hover:text-orange-500 uppercase">Explore</span>
-    </button>
-    <div class="relative -top-8">
-        <button class="w-14 h-14 bg-gradient-to-br from-orange-400 to-orange-600 rounded-2xl rotate-45 shadow-[0_0_20px_rgba(249,115,22,0.4)] flex items-center justify-center border-2 border-white/20 active:scale-90 transition-all">
-            <i data-lucide="layers" class="w-7 h-7 text-black -rotate-45"></i>
-        </button>
-    </div>
-    <button class="flex flex-col items-center gap-1 group">
-        <i data-lucide="heart" class="w-5 h-5 text-gray-500 group-hover:text-orange-500 transition-colors"></i>
-        <span class="text-[8px] font-orb text-gray-500 group-hover:text-orange-500 uppercase">Saved</span>
-    </button>
-    <button onclick="location.href='mypage.html'" class="flex flex-col items-center gap-1 group">
-        <i data-lucide="user" class="w-5 h-5 text-orange-500 transition-colors"></i>
-        <span class="text-[8px] font-orb text-orange-500 uppercase">My Page</span>
-    </button>
-</nav>
 </body>
 </html>

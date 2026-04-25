@@ -1,0 +1,114 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum PaymentType {
+  PI_ONLY
+  HYBRID
+}
+
+enum EscrowStatus {
+  PENDING
+  HELD
+  RELEASED
+  REFUNDED
+}
+
+enum Portal {
+  MARKET
+  TRAVEL
+  FOOD
+  REALTY
+  EDUCATION
+  TRANSFER
+  HOBBY
+}
+
+enum Currency {
+  PI
+  MNG
+}
+
+model Profile {
+  id         String   @id @db.Uuid
+  piUid      String   @unique @map("pi_uid")
+  nickname   String?
+  mngBalance Float    @default(0) @map("mng_balance")
+  piBalance  Float    @default(0) @map("pi_balance")
+  avatarUrl  String?  @map("avatar_url")
+  updatedAt  DateTime @default(now()) @updatedAt @map("updated_at")
+  orders     Order[]
+
+  @@map("profiles")
+}
+
+model MarketProduct {
+  id          String   @id @default(uuid())
+  title       String
+  description String?
+  pricePi     Float
+  imageUrl    String?
+  orders      Order[]
+  createdAt   DateTime @default(now())
+}
+
+model TravelBooking {
+  id          String   @id @default(uuid())
+  type        String   // FLIGHT, HOTEL, CAR
+  title       String
+  description String?
+  pricePi     Float
+  orders      Order[]
+  createdAt   DateTime @default(now())
+}
+
+model EducationCourse {
+  id          String   @id @default(uuid())
+  title       String
+  description String?
+  pricePi     Float
+  orders      Order[]
+  createdAt   DateTime @default(now())
+}
+
+model Order {
+  id                String       @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  buyerId           String       @db.Uuid @map("buyer_id")
+  buyer             Profile      @relation(fields: [buyerId], references: [id], onDelete: Cascade)
+  paymentType       PaymentType
+  totalPi           Float        @default(0) @map("total_pi")
+  totalMng          Float        @default(0) @map("total_mng")
+  status            EscrowStatus @default(PENDING)
+  portalType        Portal       @map("portal_type")
+  
+  // Optional relations to specific portal items
+  marketProduct     MarketProduct?   @relation(fields: [marketProductId], references: [id])
+  marketProductId   String?
+  travelBooking     TravelBooking?   @relation(fields: [travelBookingId], references: [id])
+  travelBookingId   String?
+  educationCourse   EducationCourse? @relation(fields: [educationCourseId], references: [id])
+  educationCourseId String?
+
+  createdAt         DateTime     @default(now()) @map("created_at")
+
+  @@map("orders")
+}
+
+model Ledger {
+  id          String   @id @default(uuid())
+  user        User     @relation(fields: [userId], references: [id])
+  userId      String
+  amount      Float    // Positive for earn, Negative for spend
+  currency    Currency
+  portal      Portal
+  description String
+  createdAt   DateTime @default(now())
+}

@@ -17,6 +17,13 @@
         .portal-stat-card:hover { border-color: var(--mango-gold); transform: translateY(-2px); }
         .gold-glow { text-shadow: 0 0 10px rgba(245, 158, 11, 0.5); }
         .custom-scroll::-webkit-scrollbar { width: 0px; }
+
+        /* 🎯 Modal Slide Animation */
+        @keyframes slideUp {
+            from { transform: translateY(100%); }
+            to { transform: translateY(0); }
+        }
+        .animate-slideUp { animation: slideUp 0.3s ease; }
     </style>
 </head>
 <body class="pb-10 custom-scroll">
@@ -32,8 +39,8 @@
                 <img id="profile-bg-img" src="" class="w-full h-full object-cover opacity-50 hidden" />
                 <video id="profile-bg-video" class="w-full h-full object-cover opacity-50 hidden" autoplay loop muted playsinline></video>
             </div>
-            <!-- TARGET 1: Update Camera Icons (Trigger Menu) -->
-            <button onclick="openMediaMenu('bg')" class="absolute top-4 right-4 bg-black/40 p-2.5 rounded-full cursor-pointer backdrop-blur-md border border-white/20 hover:bg-white/20 transition-all z-20">
+            <!-- 🔥 2️⃣ 기존 버튼 수정 (배경 카메라) -->
+            <button onclick="openMediaModal('bg')" class="absolute top-4 right-4 bg-black/40 p-2.5 rounded-full z-20 backdrop-blur-md border border-white/20 active:scale-90 transition-all">
                 <i data-lucide="camera" class="w-5 h-5 text-white drop-shadow-md"></i>
             </button>
             <div class="absolute bottom-0 left-0 w-full p-6 bg-gradient-to-t from-black via-black/70 to-transparent flex items-end gap-4 z-10">
@@ -42,7 +49,8 @@
                         <img id="profile-avatar-img" src="" class="w-full h-full object-cover absolute inset-0 hidden z-10" />
                         <span id="profile-avatar-text" class="text-3xl font-black text-amber-500 z-0">M</span>
                     </div>
-                    <button onclick="openMediaMenu('avatar')" class="absolute bottom-0 right-0 bg-amber-600 p-1.5 rounded-full cursor-pointer border border-amber-300 hover:bg-amber-500 transition-all z-20 translate-x-1 translate-y-1">
+                    <!-- 🔥 2️⃣ 아바타 버튼 수정 -->
+                    <button onclick="openMediaModal('avatar')" class="absolute bottom-0 right-0 bg-amber-600 p-1.5 rounded-full z-20 border border-amber-300 active:scale-90 transition-all translate-x-1 translate-y-1">
                         <i data-lucide="camera" class="w-3 h-3 text-white"></i>
                     </button>
                 </div>
@@ -120,157 +128,153 @@
     </div>
     <div id="copy-toast" class="fixed bottom-10 left-1/2 -translate-x-1/2 px-8 py-4 bg-amber-500 text-black font-black text-[10px] rounded-full shadow-2xl opacity-0 translate-y-10 transition-all duration-500 z-[100] italic">INFO!</div> 
 
-    <!-- TARGET 2: Add the Action Sheet UI (Kakao Style) -->
-    <div id="media-action-sheet" class="fixed inset-0 z-[200] hidden">
-        <div class="absolute inset-0 bg-black/60 backdrop-blur-sm" onclick="closeMediaMenu()"></div>
-        <div id="action-sheet-panel" class="absolute bottom-0 left-1/2 -translate-x-1/2 w-full max-w-[480px] p-4 translate-y-full transition-transform duration-500">
-            <div class="bg-[#1e293b]/95 backdrop-blur-2xl rounded-[2rem] overflow-hidden border border-white/10 shadow-2xl">
-                <button onclick="triggerFileSelect()" class="w-full py-5 text-sm font-bold text-white border-b border-white/5 active:bg-white/10 transition-colors">앨범에서 선택 (Choose from Album)</button>
-                <button onclick="resetToDefault()" class="w-full py-5 text-sm font-bold text-red-400 active:bg-white/10 transition-colors">기본 이미지로 변경 (Reset to Default)</button>
-            </div>
-            <button onclick="closeMediaMenu()" class="w-full mt-3 py-5 bg-[#1e293b]/95 backdrop-blur-2xl rounded-[1.5rem] text-sm font-black text-white shadow-xl active:scale-95 transition-all">취소 (Cancel)</button>
+    <!-- 🔥 1️⃣ HTML: 카카오 스타일 모달 추가 -->
+    <div id="media-modal" class="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-end justify-center z-[999] hidden">
+        <div class="w-full max-w-[480px] bg-gray-100 rounded-t-3xl p-6 space-y-4 animate-slideUp">
+            <button onclick="selectMedia('gallery')" class="w-full py-4 text-left text-black font-bold text-lg border-b">
+                앨범에서 사진/동영상 선택
+            </button>
+            <button onclick="selectMedia('custom')" class="w-full py-4 text-left text-black font-bold text-lg border-b">
+                커스텀 프로필 만들기
+            </button>
+            <button onclick="resetProfile()" class="w-full py-4 text-left text-black font-bold text-lg">
+                기본 이미지 적용
+            </button>
+            <button onclick="closeModal()" class="w-full py-3 bg-gray-300 rounded-xl font-bold">
+                취소
+            </button>
         </div>
     </div>
 
-    <!-- Hidden Inputs -->
-    <input type="file" id="hidden-avatar-input" accept="image/*" class="hidden" onchange="handleMediaUpload(event, 'avatar')">
-    <input type="file" id="hidden-bg-input" accept="image/*,video/mp4" class="hidden" onchange="handleMediaUpload(event, 'bg')">
+    <!-- 🔥 3️⃣ 숨겨진 input (파일 선택용) -->
+    <input type="file" id="hidden-file-input" accept="image/*,video/mp4" class="hidden">
 
 <script>
-        // 1. Initialize Supabase
-        const SUPABASE_URL = 'https://kxmnxzcqrcqvxgrjkcyk.supabase.co';
-        const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imt4bW54emNxcmNxdnhncmprY3lrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzY0OTc3NDQsImV4cCI6MjA5MjA3Mzc0NH0.HcLwKeDarBvsfzPhKpLKdbBKkMH62Vdr-N92XILOm-s';
-        const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-
-        let currentMenuTarget = null;
         lucide.createIcons();
 
-        // TARGET 3: DOMContentLoaded with Cloud Sync
+        // 🔥 4️⃣ 핵심 JS 로직
+        let currentTarget = null;
+
+        function openMediaModal(target) {
+            currentTarget = target;
+            document.getElementById('media-modal').classList.remove('hidden');
+        }
+
+        function closeModal() {
+            document.getElementById('media-modal').classList.add('hidden');
+        }
+
+        function selectMedia(type) {
+            if (type === 'gallery') {
+                document.getElementById('hidden-file-input').click();
+            } else if (type === 'custom') {
+                showToast('🎨 Custom profile coming soon');
+            }
+            closeModal();
+        }
+
+        document.getElementById('hidden-file-input').addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (!file) return;
+
+            // 🎯 7초 영상 제한
+            if (file.type.startsWith('video/')) {
+                const video = document.createElement('video');
+                video.preload = "metadata";
+                video.onloadedmetadata = function () {
+                    if (video.duration > 7) {
+                        showToast('❌ 영상은 7초 이내만 가능합니다');
+                        return;
+                    }
+                    applyMedia(file);
+                };
+                video.src = URL.createObjectURL(file);
+            } else {
+                applyMedia(file);
+            }
+        });
+
+        // 🔥 5️⃣ 미디어 적용 + 저장
+        function applyMedia(file) {
+            const fileURL = URL.createObjectURL(file);
+
+            if (currentTarget === 'avatar') {
+                const img = document.getElementById('profile-avatar-img');
+                const text = document.getElementById('profile-avatar-text');
+                img.src = fileURL;
+                img.classList.remove('hidden');
+                if(text) text.classList.add('hidden');
+
+                localStorage.setItem('mango_avatar', fileURL);
+            }
+
+            if (currentTarget === 'bg') {
+                const img = document.getElementById('profile-bg-img');
+                const video = document.getElementById('profile-bg-video');
+
+                if (file.type.startsWith('video/')) {
+                    img.classList.add('hidden');
+                    video.src = fileURL;
+                    video.classList.remove('hidden');
+                    video.play();
+
+                    localStorage.setItem('mango_bg_type', 'video');
+                    localStorage.setItem('mango_bg', fileURL);
+                } else {
+                    video.classList.add('hidden');
+                    img.src = fileURL;
+                    img.classList.remove('hidden');
+
+                    localStorage.setItem('mango_bg_type', 'image');
+                    localStorage.setItem('mango_bg', fileURL);
+                }
+            }
+            showToast("✨ 프로필이 반영되었습니다.");
+        }
+
+        // 🔥 6️⃣ 페이지 로드 시 복원
         document.addEventListener('DOMContentLoaded', async () => {
-            // 1. Load User Identity
             let savedName = localStorage.getItem('mango_user_name') || "New Mango Member";
             let savedId = localStorage.getItem('mango_user_id');
-            if(!savedId) { 
-                savedId = "MNG-" + Math.floor(Math.random() * 90000 + 10000); 
-                localStorage.setItem('mango_user_id', savedId); 
-            }
-
-            // 2. Fetch Profile from Cloud
-            const { data: profile, error } = await supabaseClient
-                .from('user_profiles')
-                .select('*')
-                .eq('pi_id', savedId)
-                .single();
-
-            if (profile) {
-                savedName = profile.user_name || savedName;
-                localStorage.setItem('mango_user_name', savedName);
-                
-                if (profile.avatar_url) {
-                    const imgEl = document.getElementById('profile-avatar-img');
-                    imgEl.src = profile.avatar_url;
-                    imgEl.classList.remove('hidden');
-                    document.getElementById('profile-avatar-text').classList.add('hidden');
-                }
-                if (profile.bg_url) {
-                    const bgImg = document.getElementById('profile-bg-img');
-                    bgImg.src = profile.bg_url;
-                    bgImg.classList.remove('hidden');
-                    document.getElementById('profile-bg-video').classList.add('hidden');
-                }
-            }
+            if(!savedId) { savedId = "MNG-" + Math.floor(Math.random() * 90000 + 10000); localStorage.setItem('mango_user_id', savedId); }
 
             document.getElementById('display-name').innerText = savedName;
             document.getElementById('display-id').innerText = "ID: " + savedId;
 
+            const avatar = localStorage.getItem('mango_avatar');
+            const bg = localStorage.getItem('mango_bg');
+            const type = localStorage.getItem('mango_bg_type');
+
+            if (avatar) {
+                const img = document.getElementById('profile-avatar-img');
+                const text = document.getElementById('profile-avatar-text');
+                img.src = avatar;
+                img.classList.remove('hidden');
+                if(text) text.classList.add('hidden');
+            }
+
+            if (bg) {
+                const img = document.getElementById('profile-bg-img');
+                const video = document.getElementById('profile-bg-video');
+                if (type === 'video') {
+                    video.src = bg;
+                    video.classList.remove('hidden');
+                    video.play();
+                } else {
+                    img.src = bg;
+                    img.classList.remove('hidden');
+                }
+            }
+
             renderNetwork();
         });
 
-        // Action Sheet Controls
-        function openMediaMenu(type) {
-            currentMenuTarget = type;
-            const sheet = document.getElementById('media-action-sheet');
-            const panel = document.getElementById('action-sheet-panel');
-            sheet.classList.remove('hidden');
-            setTimeout(() => panel.classList.remove('translate-y-full'), 10);
-        }
-
-        function closeMediaMenu() {
-            const sheet = document.getElementById('media-action-sheet');
-            const panel = document.getElementById('action-sheet-panel');
-            panel.classList.add('translate-y-full');
-            setTimeout(() => sheet.classList.add('hidden'), 500);
-        }
-
-        function triggerFileSelect() {
-            const inputId = currentMenuTarget === 'avatar' ? 'hidden-avatar-input' : 'hidden-bg-input';
-            document.getElementById(inputId).click();
-            closeMediaMenu();
-        }
-
-        async function handleMediaUpload(event, target) {
-            const file = event.target.files[0]; if (!file) return;
-            const piId = localStorage.getItem('mango_user_id');
-            const userName = localStorage.getItem('mango_user_name');
-            showToast("⏳ Uploading to Cloud...");
-
-            // 1. Upload to Supabase Storage
-            const fileExt = file.name.split('.').pop();
-            const filePath = `${piId}/${target}_${Date.now()}.${fileExt}`;
-            
-            const { data: uploadData, error: uploadError } = await supabaseClient.storage
-                .from('profiles')
-                .upload(filePath, file, { upsert: true });
-
-            if (uploadError) return showToast("❌ Upload Failed");
-
-            // 2. Get Public URL
-            const { data: { publicUrl } } = supabaseClient.storage.from('profiles').getPublicUrl(filePath);
-
-            // 3. Update Table
-            const updates = { pi_id: piId, user_name: userName };
-            if (target === 'avatar') updates.avatar_url = publicUrl;
-            else updates.bg_url = publicUrl;
-
-            const { error: dbError } = await supabaseClient.from('user_profiles').upsert(updates);
-            if (dbError) return showToast("❌ DB Sync Failed");
-
-            // 4. Update UI
-            if (target === 'avatar') {
-                const img = document.getElementById('profile-avatar-img');
-                img.src = publicUrl; img.classList.remove('hidden');
-                document.getElementById('profile-avatar-text').classList.add('hidden');
-            } else {
-                const bg = document.getElementById('profile-bg-img');
-                bg.src = publicUrl; bg.classList.remove('hidden');
-                document.getElementById('profile-bg-video').classList.add('hidden');
-            }
-
-            // Auto-Save Feedback & Modal Close
-            showToast("✅ 프로필 사진이 변경되었습니다");
-            closeMediaMenu();
-        }
-
-        async function resetToDefault() {
-            const piId = localStorage.getItem('mango_user_id');
-            showToast("⏳ 초기화 중...");
-            
-            const updates = { pi_id: piId, user_name: localStorage.getItem('mango_user_name') };
-            if (currentMenuTarget === 'avatar') {
-                updates.avatar_url = null;
-                document.getElementById('profile-avatar-img').classList.add('hidden');
-                document.getElementById('profile-avatar-text').classList.remove('hidden');
-            } else {
-                updates.bg_url = null;
-                document.getElementById('profile-bg-img').classList.add('hidden');
-                document.getElementById('profile-bg-video').classList.remove('hidden');
-            }
-
-            const { error } = await supabaseClient.from('user_profiles').upsert(updates);
-            if (error) return showToast("❌ 초기화 실패");
-
-            showToast("♻️ 기본 이미지로 변경되었습니다");
-            closeMediaMenu();
+        // 🔥 7️⃣ 기본 이미지 버튼
+        function resetProfile() {
+            localStorage.removeItem('mango_avatar');
+            localStorage.removeItem('mango_bg');
+            localStorage.removeItem('mango_bg_type');
+            location.reload();
         }
 
         function showToast(m) { 

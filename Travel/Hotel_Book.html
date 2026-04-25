@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Mango Travel | Hotel Booking</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root { --mango-gold: #f59e0b; --bg-dark: #0f172a; }
+        body { background-color: #050505; font-family: 'Inter', sans-serif; color: white; -webkit-tap-highlight-color: transparent; }
+        .glass { background: rgba(255, 255, 255, 0.03); backdrop-filter: blur(20px); border: 1px solid rgba(255, 255, 255, 0.08); }
+        .mango-gradient { background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%); }
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        @keyframes slideUp { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+        .animate-slide-up { animation: slideUp 0.5s ease forwards; }
+        .hotel-card { transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
+        .hotel-card:active { transform: scale(0.98); }
+
+        /* AI 컨시어지 애니메이션 로직 */
+        @keyframes gold-dust-fall {
+            0% { transform: translateY(-20px) translateX(0); opacity: 0; }
+            20% { opacity: 1; }
+            100% { transform: translateY(30px) translateX(15px); opacity: 0; }
+        }
+        @keyframes mango-pulse {
+            0%, 100% { text-shadow: 0 0 10px rgba(255, 215, 0, 0.4); filter: drop-shadow(0 0 5px rgba(255, 115, 0, 0.3)); }
+            50% { text-shadow: 0 0 25px rgba(255, 215, 0, 0.8); filter: drop-shadow(0 0 10px rgba(255, 115, 0, 0.6)); }
+        }
+        .mango-pulsar-wrapper { position: relative; overflow: visible; display: inline-block; }
+        .mango-pulsing-text { animation: mango-pulse 1.8s ease-in-out infinite; position: relative; z-index: 10; }
+        .mango-pulsar-wrapper::before, .mango-pulsar-wrapper::after {
+            content: ""; position: absolute; width: 3px; height: 3px; background-color: #ffd700; border-radius: 50%; opacity: 0; z-index: 5;
+        }
+        .mango-pulsar-wrapper::before { top: 0; left: 10%; animation: gold-dust-fall 2.5s linear infinite; box-shadow: 0 0 5px #ffd700, -10px 15px 8px #ffd700, 10px 25px 3px #ffa500; }
+        .mango-pulsar-wrapper::after { top: -10px; right: 20%; animation: gold-dust-fall 3s linear infinite 0.5s; box-shadow: 0 0 5px #ffd700, 5px 12px 6px #ffd700, -15px 22px 4px #ffa500; }
+
+        /* Calendar Indicator Color (Yellow) */
+        input[type="date"]::-webkit-calendar-picker-indicator {
+            filter: invert(72%) sepia(93%) saturate(464%) hue-rotate(352deg) brightness(101%) contrast(104%);
+        }
+
+        /* 망고 로고 전용 스타일 */
+        .mango-gold-power {
+            font-family: 'Orbitron', sans-serif;
+            display: inline-block;
+            min-width: 1.2em; 
+            overflow: visible !important;
+        }
+        .logo-wrapper {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+        }
+        .glow-line {
+            z-index: 5;
+        }
+        @keyframes pulse {
+            0%, 100% { opacity: 1; transform: translate(-50%, 0) scaleX(1); }
+            50% { opacity: 0.6; transform: translate(-50%, 0) scaleX(0.95); }
+        }
+    </style>
+</head>
+<body class="max-w-[480px] mx-auto min-h-screen relative pb-24 overflow-x-hidden bg-gradient-to-br from-gray-950 to-gray-800">
+
+    <!-- AI Concierge Header (Premium Edition) -->
+    <div class="flex items-center gap-4 mb-6 pt-6 px-5 w-full overflow-visible">
+        <div class="w-16 h-16 rounded-full overflow-hidden border-2 border-orange-500 shadow-[0_0_20px_rgba(249,115,22,0.5)] flex-shrink-0 bg-black">
+            <img src="../assets/img/mango.jpg" alt="Logo" class="w-full h-full object-cover">
+        </div>
+        
+        <div class="flex flex-col justify-center overflow-visible">
+            <h1 class="font-orbitron leading-none uppercase overflow-visible pr-8"> 
+                <span class="mango-pulsar-wrapper block">
+                    <span class="mango-pulsing-text text-metallic-gold text-5xl font-[950] italic tracking-[0.1em] inline-block"
+                          style="-webkit-text-stroke: 2.5px rgba(255, 215, 0, 0.5); filter: drop-shadow(0 0 15px rgba(255,170,0,0.6));">
+                        MANGO
+                    </span>
+                </span>
+            </h1>
+            <div class="flex items-center gap-2 mt-1">
+                <span class="text-[10px] text-yellow-400 font-black tracking-widest uppercase">AI CONCIERGE</span>
+                <div class="h-[1px] w-12 bg-gradient-to-r from-yellow-400 to-transparent animate-pulse"></div>
+            </div>
+        </div>
+
+        <div class="ml-auto text-right">
+            <div class="text-[10px] text-yellow-500/60 font-bold mb-1 uppercase tracking-tighter">POINT BALANCE</div>
+            <div class="text-sm text-yellow-400 font-black" id="point-balance">0 P</div>
+        </div>
+    </div>
+
+
+    <!-- 2. SEARCH PANEL (Agoda Style) -->
+    <section class="mt-6 px-4">
+        <div class="glass rounded-[2.5rem] p-6 border-t border-white/10 shadow-2xl">
+            <div class="flex items-center gap-2 mb-6">
+                <span class="w-1.5 h-4 mango-gradient rounded-full"></span> 
+                <h2 class="text-sm font-black uppercase tracking-widest italic text-amber-500">Find Your Stay</h2>
+            </div>
+
+            <div class="space-y-4">
+                <!-- Destination -->
+                <div class="bg-white/5 border border-white/10 rounded-2xl p-4 flex items-center gap-4">
+                    <i data-lucide="map-pin" class="w-5 h-5 text-amber-500/50"></i>
+                    <div class="flex-1 group">
+                        <p class="text-[9px] text-white/30 font-black uppercase tracking-tighter">Destination / Hotel</p>
+                        <input type="text" id="hotel-city" value="Haeundae, Busan" class="bg-transparent border-none outline-none text-sm font-bold w-full text-white">
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-2 gap-3">
+                    <div class="bg-yellow-400/5 border border-yellow-400/20 rounded-2xl p-3">
+                        <span class="text-[9px] text-white font-black block mb-1 uppercase tracking-widest">Check-in</span>
+                        <input type="date" id="date-start" class="bg-transparent text-sm w-full outline-none text-yellow-400 font-black" value="2026-06-12">
+                    </div>
+                    <div class="bg-yellow-400/5 border border-yellow-400/20 rounded-2xl p-3">
+                        <span class="text-[9px] text-white font-black block mb-1 uppercase tracking-widest">Check-out</span>
+                        <input type="date" id="date-end" class="bg-transparent text-sm w-full outline-none text-yellow-400 font-black" value="2026-06-15">
+                    </div>
+                </div>
+
+                <div class="bg-black/40 p-4 rounded-2xl border border-white/5 space-y-4">
+                    <div class="flex justify-between items-center">
+                        <span class="text-xs font-bold text-zinc-300">인원 (성인)</span>
+                        <div class="flex items-center gap-3">
+                            <button onclick="updateCount('adult', -1)" class="w-8 h-8 rounded-lg bg-zinc-800 flex items-center justify-center">-</button>
+                            <span id="count-adult" class="text-sm font-black w-4 text-center">2</span>
+                            <button onclick="updateCount('adult', 1)" class="w-8 h-8 rounded-lg bg-orange-600 flex items-center justify-center">+</button>
+                        </div>
+                    </div>
+                    <div class="flex justify-between items-center">
+                        <span class="text-xs font-bold text-zinc-300">인원 (아동)</span>
+                        <div class="flex items-center gap-3">
+                            <button onclick="updateCount('child', -1)" class="w-8 h-8 rounded-lg bg-zinc-800 flex items-center justify-center">-</button>
+                            <span id="count-child" class="text-sm font-black w-4 text-center">0</span>
+                            <button onclick="updateCount('child', 1)" class="w-8 h-8 rounded-lg bg-orange-600 flex items-center justify-center">+</button>
+                        </div>
+                    </div>
+                </div>
+
+                <button onclick="executeHotelSearch()" class="w-full py-5 mango-gradient text-black font-black rounded-2xl text-sm uppercase tracking-widest shadow-lg active:scale-[0.98] transition-all flex items-center justify-center gap-2">
+                    <i data-lucide="search" class="w-4 h-4"></i>
+                    Search Hotels
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <!-- 3. HOTEL RESULTS GRID -->
+    <section class="mt-8 px-4">
+        <div class="flex items-center justify-between mb-6 px-2">
+            <h2 class="text-xl font-black uppercase tracking-tighter italic">Top Recommended</h2>
+            <div class="flex items-center gap-2">
+                <i data-lucide="sliders-horizontal" class="w-4 h-4 text-white/40"></i>
+                <span class="text-[10px] font-black text-white/30 uppercase tracking-widest">Filter</span>
+            </div>
+        </div>
+
+        <div class="space-y-6">
+            <!-- Hotel Card 1 -->
+            <div class="hotel-card glass rounded-[2.5rem] overflow-hidden animate-slide-up">
+                <div class="relative h-56">
+                    <img src="https://images.unsplash.com/photo-1566073771259-6a8506099945?auto=format&fit=crop&w=800&q=80" class="w-full h-full object-cover">
+                    <div class="absolute top-4 left-4 flex flex-col gap-1.5">
+                        <span class="bg-red-600 text-white text-[9px] font-black px-2.5 py-1 rounded-lg shadow-lg w-fit">특가 상품</span>
+                        <span class="bg-amber-500 text-black text-[9px] font-black px-2.5 py-1 rounded-lg shadow-lg w-fit">마지막 1객실</span>
+                    </div>
+                    <button class="absolute bottom-4 right-4 w-10 h-10 glass rounded-full flex items-center justify-center text-white/50"><i data-lucide="heart" class="w-5 h-5"></i></button>
+                </div>
+                <div class="p-6">
+                    <div class="flex justify-between items-start mb-2">
+                        <div>
+                            <div class="flex items-center gap-1 mb-1">
+                                <i data-lucide="star" class="w-3 h-3 fill-amber-500 text-amber-500"></i>
+                                <i data-lucide="star" class="w-3 h-3 fill-amber-500 text-amber-500"></i>
+                                <i data-lucide="star" class="w-3 h-3 fill-amber-500 text-amber-500"></i>
+                                <i data-lucide="star" class="w-3 h-3 fill-amber-500 text-amber-500"></i>
+                                <i data-lucide="star" class="w-3 h-3 fill-amber-500 text-amber-500"></i>
+                            </div>
+                            <h3 class="text-lg font-black italic tracking-tighter">Grand Chosun Busan</h3>
+                            <p class="text-[10px] text-white/40 font-bold uppercase tracking-wide flex items-center gap-1 mt-1">
+                                <i data-lucide="map-pin" class="w-3 h-3"></i> Haeundae, Busan
+                            </p>
+                        </div>
+                        <div class="bg-emerald-500/10 border border-emerald-500/20 px-2 py-1 rounded-xl text-center">
+                            <p class="text-[10px] font-black text-emerald-400">9.2</p>
+                            <p class="text-[7px] font-bold text-emerald-400 opacity-70 uppercase">Excellent</p>
+                        </div>
+                    </div>
+
+                    <div class="mt-6 pt-4 border-t border-white/5 flex justify-between items-end">
+                        <div class="space-y-0.5">
+                            <p class="text-[10px] text-white/30 line-through">₩ 420,000</p>
+                            <p class="text-xs font-bold text-amber-500">₩ 285,600 (32% OFF)</p>
+                            <p class="text-xl font-black text-white italic tracking-tighter">19.04 <span class="text-amber-500 font-sans">π</span></p>
+                            <p class="text-[8px] text-emerald-400 font-bold mt-1 tracking-widest">+1.5 MNG Reward</p>
+                        </div>
+                        <button onclick="openHotelReceipt('Grand Chosun Busan', '19.04 π')" class="mango-gradient text-black px-8 py-3.5 rounded-2xl font-black text-[11px] uppercase italic shadow-lg active:scale-95 transition-all">Book Now</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Hotel Card 2 -->
+            <div class="hotel-card glass rounded-[2.5rem] overflow-hidden animate-slide-up" style="animation-delay: 0.1s">
+                <div class="relative h-56">
+                    <img src="https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?auto=format&fit=crop&w=800&q=80" class="w-full h-full object-cover">
+                    <div class="absolute top-4 left-4 flex flex-col gap-1.5">
+                        <span class="bg-blue-600 text-white text-[9px] font-black px-2.5 py-1 rounded-lg shadow-lg w-fit">인기 급상승</span>
+                    </div>
+                    <button class="absolute bottom-4 right-4 w-10 h-10 glass rounded-full flex items-center justify-center text-white/50"><i data-lucide="heart" class="w-5 h-5"></i></button>
+                </div>
+                <div class="p-6">
+                    <div class="flex justify-between items-start mb-2">
+                        <div>
+                            <div class="flex items-center gap-1 mb-1">
+                                <i data-lucide="star" class="w-3 h-3 fill-amber-500 text-amber-500"></i>
+                                <i data-lucide="star" class="w-3 h-3 fill-amber-500 text-amber-500"></i>
+                                <i data-lucide="star" class="w-3 h-3 fill-amber-500 text-amber-500"></i>
+                                <i data-lucide="star" class="w-3 h-3 fill-amber-500 text-amber-500"></i>
+                            </div>
+                            <h3 class="text-lg font-black italic tracking-tighter">Signiel Busan</h3>
+                            <p class="text-[10px] text-white/40 font-bold uppercase tracking-wide flex items-center gap-1 mt-1">
+                                <i data-lucide="map-pin" class="w-3 h-3"></i> LCT Tower, Busan
+                            </p>
+                        </div>
+                        <div class="bg-emerald-500/10 border border-emerald-500/20 px-2 py-1 rounded-xl text-center">
+                            <p class="text-[10px] font-black text-emerald-400">9.5</p>
+                            <p class="text-[7px] font-bold text-emerald-400 opacity-70 uppercase">Superb</p>
+                        </div>
+                    </div>
+
+                    <div class="mt-6 pt-4 border-t border-white/5 flex justify-between items-end">
+                        <div class="space-y-0.5">
+                            <p class="text-[10px] text-white/30 line-through">₩ 650,000</p>
+                            <p class="text-xs font-bold text-amber-500">₩ 525,000 (19% OFF)</p>
+                            <p class="text-xl font-black text-white italic tracking-tighter">35.00 <span class="text-amber-500 font-sans">π</span></p>
+                            <p class="text-[8px] text-emerald-400 font-bold mt-1 tracking-widest">+3.2 MNG Reward</p>
+                        </div>
+                        <button onclick="openHotelReceipt('Signiel Busan', '35.00 π')" class="mango-gradient text-black px-8 py-3.5 rounded-2xl font-black text-[11px] uppercase italic shadow-lg active:scale-95 transition-all">Book Now</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Hotel Receipt & Rules Modal -->
+    <div id="hotel-modal" class="fixed inset-0 z-[200] hidden bg-black/90 backdrop-blur-xl flex items-center justify-center p-4">
+        <div class="glass w-full max-w-[420px] p-6 rounded-[2.5rem] border-amber-500/30 overflow-y-auto max-h-[90vh] no-scrollbar">
+            <div class="flex justify-between items-center mb-6">
+                <h2 class="text-xl font-black italic text-amber-500 uppercase tracking-tighter">Stay <span class="text-white">Receipt</span></h2>
+                <button onclick="closeHotelModal()"><i data-lucide="x" class="text-white/40"></i></button>
+            </div>
+
+            <div class="bg-white/5 border border-white/10 rounded-3xl p-5 mb-6 space-y-4">
+                <div class="flex justify-between text-xs">
+                    <span class="text-white/40 font-bold uppercase">Property</span>
+                    <span id="h-receipt-name" class="font-black text-white italic">---</span>
+                </div>
+                <div class="flex justify-between text-xs">
+                    <span class="text-white/40 font-bold">VAT & Tax</span>
+                    <span class="font-black text-white italic">Included (10%)</span>
+                </div>
+                <div class="border-t border-white/10 pt-4 flex justify-between items-end">
+                    <span class="text-sm font-black uppercase">Total Fare</span>
+                    <span id="h-receipt-total" class="text-2xl font-black text-white italic tracking-tighter">---</span>
+                </div>
+            </div>
+
+            <div class="space-y-4">
+                <h3 class="text-[10px] font-black text-gray-500 uppercase tracking-[0.3em] ml-2">House Rules</h3>
+                <div class="space-y-2">
+                    <div class="p-4 bg-white/5 rounded-2xl border border-white/5">
+                        <p class="text-[10px] font-black text-amber-500 mb-1 uppercase">Cancellation</p>
+                        <p class="text-[11px] text-white/60 leading-relaxed">체크인 7일 전까지 100% 환불 가능합니다. 당일 취소 시 위약금이 발생할 수 있습니다.</p>
+                    </div>
+                    <div class="p-4 bg-white/5 rounded-2xl border border-white/5">
+                        <p class="text-[10px] font-black text-emerald-400 mb-1 uppercase">Check-in/out</p>
+                        <p class="text-[11px] text-white/60 leading-relaxed">입실: 15:00 / 퇴실: 11:00. 시간 외 이용 시 추가 비용이 발생할 수 있습니다.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Voucher Delivery Email Section -->
+            <div class="mt-8 space-y-3 bg-white/5 p-4 rounded-3xl border border-white/5">
+                <h3 class="text-[10px] font-black text-amber-500 uppercase tracking-[0.3em] ml-1">Voucher Delivery Email</h3>
+                <div class="flex gap-2 items-center">
+                    <input type="text" id="h-email-user" placeholder="Email ID" class="flex-[1.5] bg-white/5 border border-white/10 rounded-xl p-3 text-[11px] text-white outline-none focus:border-amber-500 transition-all">
+                    <span class="text-white/40">@</span>
+                    <select id="h-email-domain-select" onchange="handleDomainChange('h', this.value)" class="flex-1 bg-white/5 border border-white/10 rounded-xl p-3 text-[11px] text-white outline-none focus:border-amber-500 transition-all">
+                        <option value="gmail.com">gmail.com</option>
+                        <option value="naver.com">naver.com</option>
+                        <option value="kakao.com">kakao.com</option>
+                        <option value="direct">Direct Input</option>
+                    </select>
+                </div>
+                <input type="text" id="h-email-domain-direct" placeholder="example.com" class="hidden w-full bg-white/5 border border-white/10 rounded-xl p-3 text-[11px] text-white outline-none focus:border-amber-500 transition-all mt-2">
+            </div>
+
+            <button onclick="confirmHotel()" class="w-full mt-8 py-5 mango-gradient text-black font-black rounded-2xl text-sm uppercase tracking-widest active:scale-95 transition-all">Confirm Stay</button>
+        </div>
+    </div>
+
+    <!-- 4. BOTTOM NAVIGATION -->
+    <nav class="fixed bottom-0 left-0 right-0 max-w-[480px] mx-auto bg-[#0f172a]/95 backdrop-blur-xl border-t border-white/5 px-8 py-5 flex justify-between items-center z-[100]">
+        <a href="../index.html" class="flex flex-col items-center gap-1 opacity-30 active:scale-90 transition-all">
+            <i data-lucide="home" class="w-6 h-6"></i>
+            <span class="text-[9px] font-black uppercase tracking-widest">Home</span>
+        </a>
+        <a href="../Chat/index.html" class="flex flex-col items-center gap-1 opacity-30 active:scale-90 transition-all">
+            <i data-lucide="message-circle" class="w-6 h-6"></i>
+            <span class="text-[9px] font-black uppercase tracking-widest">Chat</span>
+        </a>
+        <a href="Travel_mall.html" class="flex flex-col items-center gap-1 text-amber-500 active:scale-90 transition-all">
+            <div class="relative">
+                <i data-lucide="plane" class="w-6 h-6"></i>
+                <span class="absolute -top-1 -right-1 w-2 h-2 bg-amber-500 rounded-full animate-pulse"></span>
+            </div>
+            <span class="text-[9px] font-black uppercase tracking-widest">Travel</span>
+        </a>
+        <a href="../profile/profile_dashboard.html" class="flex flex-col items-center gap-1 opacity-30 active:scale-90 transition-all">
+            <i data-lucide="layout-dashboard" class="w-6 h-6"></i>
+            <span class="text-[9px] font-black uppercase tracking-widest">Profile</span>
+        </a>
+    </nav>
+
+    <!-- SIDEBAR DRAWER -->
+    <div id="sidebar-overlay" onclick="toggleMenu(false)" class="fixed inset-0 bg-black/60 z-[60] hidden backdrop-blur-sm opacity-0 transition-opacity"></div>
+    <aside id="sidebar-menu" class="fixed top-0 left-0 w-[80%] max-w-[340px] h-full bg-[#0f172a] z-[70] -translate-x-full shadow-2xl border-r border-white/5 transition-transform duration-300">
+        <div class="p-6">
+            <div class="flex items-center justify-between mb-8">
+                <h2 class="text-xl font-black italic text-amber-500 tracking-widest uppercase">Travel Menu</h2>
+                <button onclick="toggleMenu(false)" class="p-2 text-white/30"><i data-lucide="x"></i></button>
+            </div>
+            <nav class="space-y-2">
+                <a href="Travel_mall.html" class="flex items-center gap-4 py-4 px-4 rounded-2xl hover:bg-white/5 transition-colors group">
+                    <div class="w-10 h-10 rounded-xl bg-orange-500/10 flex items-center justify-center text-orange-400"><i data-lucide="globe" class="w-5 h-5"></i></div>
+                    <span class="font-bold text-sm">Travel Home</span>
+                </a>
+                <a href="Flight_Ticket_mall.html" class="flex items-center gap-4 py-4 px-4 rounded-2xl hover:bg-white/5 transition-colors group">
+                    <div class="w-10 h-10 rounded-xl bg-blue-500/10 flex items-center justify-center text-blue-400"><i data-lucide="plane" class="w-5 h-5"></i></div>
+                    <span class="font-bold text-sm text-white/70">Flight Tickets</span>
+                </a>
+                <a href="#" class="flex items-center gap-4 py-4 px-4 rounded-2xl bg-amber-500/10 border border-amber-500/20 group">
+                    <div class="w-10 h-10 rounded-xl bg-amber-500 text-black flex items-center justify-center"><i data-lucide="hotel" class="w-5 h-5"></i></div>
+                    <span class="font-bold text-sm text-amber-500">Hotel Booking</span>
+                </a>
+            </nav>
+        </div>
+    </aside>
+
+    <script>
+        lucide.createIcons();
+
+        function updateCount(type, delta) {
+            const element = document.getElementById(`count-${type}`);
+            let current = parseInt(element.innerText);
+            current = Math.max(0, current + delta);
+            if(type === 'adult' && current < 1) current = 1;
+            element.innerText = current;
+        }
+
+        function executeHotelSearch() {
+            const city = document.getElementById('hotel-city').value || 'Busan';
+            const checkin = document.getElementById('date-start').value;
+            const checkout = document.getElementById('date-end').value;
+            const adults = document.getElementById('count-adult').innerText;
+            
+            if(!checkin || !checkout) { alert('체크인/체크아웃 날짜를 선택해주세요.'); return; }
+            window.open(`https://www.agoda.com/ko-kr/search?city=${city}&checkin=${checkin}&checkout=${checkout}&adults=${adults}`, '_blank');
+        }
+
+        function toggleMenu(show) {
+            const sidebar = document.getElementById('sidebar-menu');
+            const overlay = document.getElementById('sidebar-overlay');
+            if (show) {
+                sidebar.classList.remove('-translate-x-full');
+                overlay.classList.remove('hidden');
+                setTimeout(() => overlay.classList.replace('opacity-0', 'opacity-100'), 10);
+            } else {
+                sidebar.classList.add('-translate-x-full');
+                overlay.classList.replace('opacity-100', 'opacity-0');
+                setTimeout(() => overlay.classList.add('hidden'), 300);
+            }
+        }
+    </script>
+</body>
+</html>

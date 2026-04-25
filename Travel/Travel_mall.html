@@ -1,0 +1,783 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Mango Travel | Premium Journey</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root { --mango-gold: #f59e0b; --bg-dark: #0f172a; }
+        body { background-color: var(--bg-dark); font-family: 'Inter', sans-serif; color: white; -webkit-tap-highlight-color: transparent; }
+        .glass { background: rgba(255, 255, 255, 0.03); backdrop-filter: blur(20px); border: 1px solid rgba(255, 255, 255, 0.08); }
+        .mango-gradient { background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%); }
+        .glass-dark { background: rgba(15, 23, 42, 0.8); backdrop-filter: blur(30px) saturate(150%); border: 1px solid rgba(255, 255, 255, 0.1); }
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        .product-card { transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1); }
+        .product-card:active { transform: scale(0.96); }
+        #sidebar-menu, #cart-drawer, #seller-modal { transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1); }
+        .active-nav { color: var(--mango-gold); }
+        @keyframes slideUp { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+        .animate-slide-up { animation: slideUp 0.5s ease forwards; }
+
+        /* 망고 로고 전용 스타일 */
+        .mango-gold-power {
+            font-family: 'Orbitron', sans-serif;
+        }
+        .glow-line {
+            z-index: 5;
+        }
+        @keyframes pulse {
+            0%, 100% { opacity: 1; transform: translate(-50%, 0) scaleX(1); }
+            50% { opacity: 0.6; transform: translate(-50%, 0) scaleX(0.95); }
+        }
+
+        /* AI 3D Carousel Advertisement Styles */
+        .carousel-view-ai {
+            perspective: 2500px;
+            height: 380px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: visible;
+            margin-top: 20px;
+        }
+        .carousel-pivot-ai {
+            width: 100%;
+            height: 280px;
+            position: relative;
+            transform-style: preserve-3d;
+            transition: transform 1s cubic-bezier(0.2, 0.8, 0.2, 1);
+        }
+        .ai-package-card {
+            position: absolute;
+            width: 160px;
+            height: 240px;
+            left: calc(50% - 80px);
+            top: calc(50% - 120px);
+            backface-visibility: hidden;
+            transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+        }
+        .ai-package-card.active {
+            opacity: 1 !important;
+            filter: blur(0) brightness(1.1) !important;
+            transform: scale(1.1) translateZ(100px) rotateY(0deg) !important;
+            z-index: 100;
+        }
+    </style>
+</head>
+<body class="max-w-[480px] mx-auto min-h-screen relative pb-24 overflow-x-hidden">
+
+    <!-- 1. TOP HEADER -->
+    <header class="sticky top-0 z-50 bg-[#0f172a]/90 backdrop-blur-xl border-b border-white/5">
+        <div class="flex items-center justify-between px-4 py-3">
+            <button onclick="toggleMenu(true)" class="p-2 -ml-2 active:opacity-50">
+                <i data-lucide="menu" class="w-6 h-6"></i>
+            </button>
+            <div class="flex flex-col items-center">
+                <h1 class="font-extrabold text-xl tracking-tighter uppercase">Mango <span class="text-amber-500 italic">Travel</span></h1>
+            </div>
+            <div class="flex items-center gap-1">
+                <button onclick="toggleSellerDashboard(true)" class="p-2 active:opacity-50 hover:text-amber-500 transition-colors"><i data-lucide="user" class="w-6 h-6"></i></button>
+                <button onclick="toggleCart(true)" class="p-2 relative active:opacity-50 hover:text-amber-500 transition-colors">
+                    <i data-lucide="shopping-cart" class="w-6 h-6"></i>
+                    <span id="cart-badge" class="absolute top-1 right-1 w-4 h-4 bg-amber-500 text-[10px] font-bold rounded-full flex items-center justify-center text-black">0</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- 2. SMART SEARCH BAR -->
+        <div class="px-4 pb-4">
+            <div class="flex items-center bg-white/10 rounded-2xl overflow-hidden border border-white/10 focus-within:border-amber-500/50 transition-all">
+                <select class="bg-transparent text-[11px] font-bold px-3 py-3 outline-none border-r border-white/10 appearance-none text-amber-500">
+                    <option>전체</option>
+                </select>
+                <input type="text" placeholder="어디로 떠나고 싶으신가요? (Where do you want to go?)" class="flex-1 bg-transparent px-3 py-3 text-sm outline-none placeholder:text-white/30">
+                <button onclick="startVoiceSearch()" class="p-2 text-white/50 hover:text-amber-500"><i data-lucide="mic" class="w-5 h-5"></i></button>
+                <button onclick="startGlobalSearch()" class="mango-gradient px-4 py-3 text-black"><i data-lucide="search" class="w-5 h-5 font-bold"></i></button>
+            </div>
+            <div class="flex gap-4 mt-3 overflow-x-auto no-scrollbar whitespace-nowrap text-[11px] font-medium text-white/40">
+                <span>🔥 인기검색어:</span>
+                <span class="text-amber-500/80 font-bold">#Swiss_Alps</span>
+                <span>#Amalfi_Coast</span>
+                <span>#Singapore_Marina</span>
+                <span>#Flight_Tickets</span>
+            </div>
+        </div>
+    </header>
+
+    <!-- 3. SLIDE MENU (Drawer) -->
+    <div id="sidebar-overlay" onclick="toggleMenu(false)" class="fixed inset-0 bg-black/60 z-[60] hidden backdrop-blur-sm opacity-0 transition-opacity"></div>
+    <aside id="sidebar-menu" class="fixed top-0 left-0 w-[80%] max-w-[340px] h-full bg-[#0f172a] z-[70] -translate-x-full shadow-2xl border-r border-white/5">
+        <div class="p-6">
+            <div class="flex items-center justify-between mb-8">
+                <h2 class="text-xl font-black italic text-amber-500 tracking-widest">CATEGORY</h2>
+                <button onclick="toggleMenu(false)" class="p-2 text-white/30"><i data-lucide="x"></i></button>
+            </div>
+            <nav class="space-y-2">
+                <a href="../Food/index.html" class="flex items-center gap-4 py-4 px-4 rounded-2xl hover:bg-white/5 transition-colors group">
+                    <div class="w-10 h-10 rounded-xl bg-orange-500/10 flex items-center justify-center text-orange-400 group-hover:scale-110 transition-transform"><i data-lucide="utensils" class="w-5 h-5"></i></div>
+                    <span class="font-bold text-sm">Food (맛집/배달)</span>
+                </a>
+                <a href="../Beauty/index.html" class="flex items-center gap-4 py-4 px-4 rounded-2xl hover:bg-white/5 transition-colors group">
+                    <div class="w-10 h-10 rounded-xl bg-pink-500/10 flex items-center justify-center text-pink-400 group-hover:scale-110 transition-transform"><i data-lucide="sparkles" class="w-5 h-5"></i></div>
+                    <span class="font-bold text-sm">Beauty (뷰티/케어)</span>
+                </a>
+                <a href="../Electronics/index.html" class="flex items-center gap-4 py-4 px-4 rounded-2xl hover:bg-white/5 transition-colors group">
+                    <div class="w-10 h-10 rounded-xl bg-blue-500/10 flex items-center justify-center text-blue-400 group-hover:scale-110 transition-transform"><i data-lucide="monitor" class="w-5 h-5"></i></div>
+                    <span class="font-bold text-sm">Electronics (가전/디지털)</span>
+                </a>
+                <a href="#" class="flex items-center gap-4 py-4 px-4 rounded-2xl bg-amber-500/10 border border-amber-500/20 group">
+                    <div class="w-10 h-10 rounded-xl bg-amber-500 text-black flex items-center justify-center"><i data-lucide="plane" class="w-5 h-5"></i></div>
+                    <span class="font-bold text-sm text-amber-500">Travel (여행/숙박)</span>
+                </a>
+                <a href="../Market/index.html" class="flex items-center gap-4 py-4 px-4 rounded-2xl hover:bg-white/5 transition-colors group">
+                    <div class="w-10 h-10 rounded-xl bg-amber-500/10 flex items-center justify-center text-amber-500 group-hover:scale-110 transition-transform"><i data-lucide="shopping-bag" class="w-5 h-5"></i></div>
+                    <span class="font-bold text-sm">Market (오픈마켓)</span>
+                </a>
+                <a href="../Hobby/index.html" class="flex items-center gap-4 py-4 px-4 rounded-2xl hover:bg-white/5 transition-colors group">
+                    <div class="w-10 h-10 rounded-xl bg-red-500/10 flex items-center justify-center text-red-400 group-hover:scale-110 transition-transform"><i data-lucide="heart" class="w-5 h-5"></i></div>
+                    <span class="font-bold text-sm">Hobby (취미/동호회)</span>
+                </a>
+            </nav>
+        </div>
+    </aside>
+
+    <!-- 8. SELLER DASHBOARD MODAL -->
+    <div id="modal-overlay" onclick="closeAllDrawers()" class="fixed inset-0 z-[110] hidden bg-black/70 backdrop-blur-sm opacity-0 transition-opacity duration-300"></div>
+    
+    <div id="seller-modal" class="fixed inset-x-0 bottom-0 z-[120] w-full max-w-[480px] mx-auto bg-[#0f172a] rounded-t-[2.5rem] border-t border-white/10 shadow-2xl translate-y-full overflow-hidden flex flex-col max-h-[92vh]">
+        <div class="w-12 h-1.5 bg-white/10 rounded-full mx-auto my-4"></div>
+        
+        <div class="px-8 pb-12 overflow-y-auto no-scrollbar">
+            <div class="flex justify-between items-center mb-6">
+                <h2 class="text-2xl font-black italic text-amber-500 uppercase tracking-tighter">Agency <span class="text-white">Dashboard</span></h2>
+                <button onclick="toggleSellerDashboard(false)" class="p-2 text-white/30 hover:text-white transition-colors"><i data-lucide="x"></i></button>
+            </div>
+
+            <!-- Verification Status Badge -->
+            <div class="mb-8 p-5 glass-dark rounded-2xl flex items-center justify-between border-amber-500/20">
+                <div class="flex items-center gap-3">
+                    <div class="w-11 h-11 bg-amber-500/20 rounded-xl flex items-center justify-center text-amber-500"><i data-lucide="shield-check"></i></div>
+                    <div>
+                        <p class="text-[9px] font-black text-amber-500 uppercase tracking-[0.2em] mb-0.5">Agency Status</p>
+                        <p class="text-xs font-bold text-white">Verified Individual (Standard Fee: 5%)</p>
+                    </div>
+                </div>
+                <span class="text-[10px] font-black text-emerald-500 bg-emerald-500/10 px-3 py-1.5 rounded-full border border-emerald-500/20">ACTIVE</span>
+            </div>
+
+            <!-- Settlement / Escrow Section -->
+            <div class="mb-10">
+                <h3 class="text-[10px] font-black text-gray-500 uppercase tracking-[0.3em] mb-4 ml-2">Settlement / Escrow</h3>
+                <div class="grid grid-cols-2 gap-3">
+                    <div class="p-5 glass rounded-[2rem] border-white/5">
+                        <p class="text-[8px] font-black text-gray-500 uppercase tracking-widest mb-1">Pending Funds (Escrow)</p>
+                        <p id="seller-pending-funds" class="text-xl font-black text-white italic tracking-tighter">142.50 π</p>
+                    </div>
+                    <div class="p-5 glass rounded-[2rem] border-amber-500/30">
+                        <p class="text-[8px] font-black text-amber-500 uppercase tracking-widest mb-1">Available to Withdraw</p>
+                        <p id="seller-available-funds" class="text-xl font-black text-white italic tracking-tighter">85.00 π</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Product Registration Form -->
+            <h3 class="text-[10px] font-black text-gray-500 uppercase tracking-[0.3em] mb-4 ml-2">List New Package</h3>
+            <div class="space-y-4">
+                <input type="text" placeholder="Package Title" class="w-full bg-white/5 border border-white/10 rounded-xl p-4 text-sm text-white focus:border-amber-500 outline-none transition-all">
+                <div class="relative">
+                    <input type="number" placeholder="Price" class="w-full bg-white/5 border border-white/10 rounded-xl p-4 text-sm text-white focus:border-amber-500 outline-none transition-all">
+                    <span class="absolute right-4 top-1/2 -translate-y-1/2 text-amber-500 font-black italic">π</span>
+                </div>
+                <div class="w-full h-32 border-2 border-dashed border-white/10 rounded-2xl flex flex-col items-center justify-center bg-white/[0.02] cursor-pointer group">
+                    <i data-lucide="image" class="w-8 h-8 text-white/20 group-hover:text-amber-500 transition-colors mb-1"></i>
+                    <span class="text-[9px] font-bold text-gray-500 uppercase">Upload Destination Media</span>
+                </div>
+                <textarea placeholder="Package Details..." rows="3" class="w-full bg-white/5 border border-white/10 rounded-xl p-4 text-sm text-white focus:border-amber-500 outline-none transition-all resize-none"></textarea>
+                <button onclick="alert('🚀 Package registered successfully!')" class="w-full py-5 mango-gradient text-black font-black rounded-2xl text-xs uppercase tracking-[0.2em] shadow-lg active:scale-[0.98] transition-all">List Package Now</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 9. CART DRAWER -->
+    <div id="cart-drawer" class="fixed top-0 right-0 w-[85%] max-w-[340px] h-full bg-[#0f172a] z-[120] translate-x-full transition-transform duration-300 border-l border-white/5 shadow-2xl flex flex-col">
+        <div class="p-6 flex items-center justify-between border-b border-white/5 bg-white/5">
+            <h2 class="text-xl font-black italic text-amber-500 uppercase tracking-widest">Travel <span class="text-white">Cart</span></h2>
+            <button onclick="toggleCart(false)" class="p-2 text-white/30"><i data-lucide="x"></i></button>
+        </div>
+        <div id="cart-content" class="flex-1 overflow-y-auto p-6 flex flex-col items-center justify-center opacity-30">
+            <i data-lucide="plane" class="w-16 h-16 mb-4"></i>
+            <p class="text-sm font-bold uppercase tracking-widest italic">No bookings yet</p>
+        </div>
+    </div>
+
+    <!-- 10. FEATURED TICKET SPOTLIGHT (SHINKANSEN) -->
+    <section class="mt-6 px-4 animate-slide-up">
+        <div class="flex items-center gap-2 mb-4 px-2">
+            <span class="w-1.5 h-4 mango-gradient rounded-full"></span> 
+            <h2 class="text-sm font-black uppercase tracking-widest italic text-amber-500">Instant Digital Ticket</h2>
+        </div>
+        <div class="glass rounded-[2.5rem] p-0 overflow-hidden relative border-l-4 border-amber-500 shadow-2xl group active:scale-[0.98] transition-all">
+            <div class="absolute -right-16 -top-16 w-48 h-48 bg-amber-500/10 blur-3xl group-hover:bg-amber-500/20 transition-all"></div>
+            <!-- Background Image for Shinkansen Ticket -->
+            <div class="absolute inset-0 z-0 opacity-20 group-hover:opacity-30 transition-opacity">
+                <img src="https://images.unsplash.com/photo-1540959733332-e94e270b4d42?auto=format&fit=crop&w=800&q=80" class="w-full h-full object-cover">
+            </div>
+            
+            <div class="p-6 border-b border-white/5 border-dashed relative">
+                <div class="flex justify-between items-start mb-6">
+                    <div class="flex items-center gap-2.5">
+                        <div class="w-10 h-10 rounded-xl bg-amber-500/20 flex items-center justify-center text-amber-500 border border-amber-500/30">
+                            <i data-lucide="train"></i>
+                        </div>
+                        <h3 class="text-lg font-black text-white italic tracking-tighter">Shinkansen Express</h3>
+                    </div>
+                    <p class="text-[9px] font-mono text-white/20 tracking-widest">#TK-NRT-OSA-701</p>
+                </div>
+                
+                <div class="flex justify-between items-center px-2">
+                    <div class="text-center"><p class="text-[8px] text-white/30 uppercase font-bold mb-1">Departure</p><h4 class="text-2xl font-black italic tracking-tighter text-white">TOKYO</h4></div>
+                    <div class="flex-1 flex flex-col items-center px-6">
+                        <div class="w-full h-[1px] bg-white/10 relative"><div class="absolute inset-0 bg-amber-500/40 animate-pulse"></div></div>
+                        <p class="text-[8px] text-amber-500 font-black mt-1.5 uppercase tracking-[0.2em]">Bullet Train</p>
+                    </div>
+                    <div class="text-center"><p class="text-[8px] text-white/30 uppercase font-bold mb-1">Arrival</p><h4 class="text-2xl font-black italic tracking-tighter text-white">OSAKA</h4></div>
+                </div>
+            </div>
+
+            <div class="bg-white/[0.02] p-5 flex justify-between items-center">
+                <div class="flex items-center gap-4">
+                    <div class="w-12 h-12 bg-white rounded-xl p-1.5 flex items-center justify-center shadow-inner"><i data-lucide="qr-code" class="text-black w-full h-full"></i></div>
+                    <div><p class="text-[8px] text-white/30 uppercase font-bold">Fare</p><p class="text-xl font-black text-white italic tracking-tighter">8.5 <span class="text-amber-500">π</span></p></div>
+                </div>
+                <button onclick="openTrainReceipt('Shinkansen Tokyo-Osaka', '8.5 π')" class="mango-gradient text-black px-6 py-3.5 rounded-2xl font-black text-[10px] uppercase italic shadow-lg shadow-amber-500/20 active:scale-95 transition-all">Buy Pass Now</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- 11. FLIGHT TICKET ENTRY POINT -->
+    <section class="mt-8 px-4 animate-slide-up">
+        <div class="flex items-center gap-2 mb-4 px-2">
+            <span class="w-1.5 h-4 bg-blue-500 rounded-full"></span> 
+            <h2 class="text-sm font-black uppercase tracking-widest italic text-blue-400">Air Travel Gateway</h2>
+        </div>
+        <a href="./Flight_Ticket_mall.html" class="block group">
+            <div class="glass rounded-[2.5rem] p-0 overflow-hidden relative border-l-4 border-blue-500 shadow-2xl active:scale-[0.98] transition-all">
+                <div class="absolute -right-16 -top-16 w-48 h-48 bg-blue-500/10 blur-3xl group-hover:bg-blue-500/20 transition-all"></div>
+                <!-- Background Image for Flight (Stylized cloud & Wing) -->
+                <div class="absolute inset-0 z-0 opacity-20 group-hover:opacity-30 transition-opacity">
+                    <img src="https://images.unsplash.com/photo-1436491865332-7a61a109c0f2?auto=format&fit=crop&w=800&q=80" class="w-full h-full object-cover">
+                </div>
+                
+                <div class="p-6 relative z-10">
+                    <div class="flex justify-between items-start mb-4">
+                        <div class="flex items-center gap-3">
+                            <div class="w-12 h-12 rounded-2xl bg-blue-500/20 flex items-center justify-center text-blue-400 border border-blue-500/30">
+                                <i data-lucide="plane" class="w-7 h-7"></i>
+                            </div>
+                            <div>
+                                <h3 class="text-xl font-black text-white italic tracking-tighter leading-tight">✈️ Book Flight Tickets</h3>
+                                <p class="text-xs text-blue-300/70 font-bold uppercase tracking-wider">Explore the Mango Flight Mall</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="flex justify-between items-center mt-6 pt-4 border-t border-white/5 border-dashed">
+                        <p class="text-[10px] text-white/30 uppercase font-black tracking-widest">Global Route Sync</p>
+                        <div class="mango-gradient text-black px-6 py-3 rounded-2xl font-black text-[11px] uppercase italic shadow-lg active:scale-95 transition-all">
+                            예약하러 가기
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </a>
+    </section>
+
+    <!-- 12. HOTEL BOOKING ENTRY POINT -->
+    <section class="mt-8 px-4 animate-slide-up" style="animation-delay: 0.1s">
+        <div class="flex items-center gap-2 mb-4 px-2">
+            <span class="w-1.5 h-4 bg-amber-500 rounded-full"></span> 
+            <h2 class="text-sm font-black uppercase tracking-widest italic text-amber-500">Premium Stay Gateway</h2>
+        </div>
+        <a href="./Hotel_Book.html" class="block group">
+            <div class="glass rounded-[2.5rem] p-0 overflow-hidden relative border-l-4 border-amber-500 shadow-2xl active:scale-[0.98] transition-all">
+                <div class="absolute -right-16 -top-16 w-48 h-48 bg-amber-500/10 blur-3xl group-hover:bg-amber-500/20 transition-all"></div>
+                <!-- Background Image for Hotels -->
+                <div class="absolute inset-0 z-0 opacity-20 group-hover:opacity-30 transition-opacity">
+                    <img src="https://images.unsplash.com/photo-1566073771259-6a8506099945?auto=format&fit=crop&w=800&q=80" class="w-full h-full object-cover">
+                </div>
+                
+                <div class="p-6 relative z-10">
+                    <div class="flex justify-between items-start mb-4">
+                        <div class="flex items-center gap-3">
+                            <div class="w-12 h-12 rounded-2xl bg-amber-500/20 flex items-center justify-center text-amber-500 border border-amber-500/30">
+                                <i data-lucide="hotel" class="w-7 h-7"></i>
+                            </div>
+                            <div>
+                                <h3 class="text-xl font-black text-white italic tracking-tighter leading-tight">🏨 Book Hotels & Stays</h3>
+                                <p class="text-xs text-amber-300/70 font-bold uppercase tracking-wider">Luxury Stays & Global Accommodations</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="flex justify-between items-center mt-6 pt-4 border-t border-white/5 border-dashed">
+                        <p class="text-[10px] text-white/30 uppercase font-black tracking-widest">Live Room Sync</p>
+                        <div class="mango-gradient text-black px-6 py-3 rounded-2xl font-black text-[11px] uppercase italic shadow-lg active:scale-95 transition-all">
+                            예약하러 가기
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </a>
+    </section>
+
+    <!-- 13. RENT CAR ENTRY POINT -->
+    <section class="mt-8 px-4 animate-slide-up" style="animation-delay: 0.2s">
+        <div class="flex items-center gap-2 mb-4 px-2">
+            <span class="w-1.5 h-4 bg-orange-500 rounded-full"></span> 
+            <h2 class="text-sm font-black uppercase tracking-widest italic text-orange-500">Mobility Gateway</h2>
+        </div>
+        <a href="./Rent_Car.html" class="block group">
+            <div class="glass rounded-[2.5rem] p-0 overflow-hidden relative border-l-4 border-orange-500 shadow-2xl active:scale-[0.98] transition-all">
+                <div class="absolute -right-16 -top-16 w-48 h-48 bg-orange-500/10 blur-3xl group-hover:bg-orange-500/20 transition-all"></div>
+                <!-- Background Image for Rent Car -->
+                <div class="absolute inset-0 z-0 opacity-20 group-hover:opacity-30 transition-opacity">
+                    <img src="https://images.unsplash.com/photo-1533473359331-0135ef1b58bf?auto=format&fit=crop&w=800&q=80" class="w-full h-full object-cover">
+                </div>
+                
+                <div class="p-6 relative z-10">
+                    <div class="flex justify-between items-start mb-4">
+                        <div class="flex items-center gap-3">
+                            <div class="w-12 h-12 rounded-2xl bg-orange-500/20 flex items-center justify-center text-orange-500 border border-orange-500/30">
+                                <i data-lucide="car" class="w-7 h-7"></i>
+                            </div>
+                            <div>
+                                <h3 class="text-xl font-black text-white italic tracking-tighter leading-tight">🚗 Rent a Car</h3>
+                                <p class="text-xs text-orange-300/70 font-bold uppercase tracking-wider">Premium Fleets & Easy Rental</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="flex justify-between items-center mt-6 pt-4 border-t border-white/5 border-dashed">
+                        <p class="text-[10px] text-white/30 uppercase font-black tracking-widest">Instant Booking Sync</p>
+                        <div class="mango-gradient text-black px-6 py-3 rounded-2xl font-black text-[11px] uppercase italic shadow-lg active:scale-95 transition-all">
+                            예약하러 가기
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </a>
+    </section>
+
+    <!-- 6. AI Recommended Packages (3D Rotating Ad Carousel) -->
+    <section class="mt-8 overflow-hidden">
+        <div class="flex items-center justify-between px-6 mb-4">
+            <h2 class="text-lg font-extrabold flex items-center gap-2 italic">
+                <span class="w-1.5 h-5 mango-gradient rounded-full"></span> 
+                🔥 AI <span class="text-amber-500">Recommended</span> Packages
+            </h2>
+            <p class="text-[10px] font-black text-white/30 uppercase tracking-widest">30 Featured Offers</p>
+        </div>
+        <div class="carousel-view-ai" id="ai-carousel-area">
+            <div class="carousel-pivot-ai" id="ai-pivot">
+                <!-- Injected by JS -->
+            </div>
+        </div>
+    </section>
+
+    <!-- 4. PRODUCT LIST -->
+    <section class="mt-4 px-4">
+        <div class="flex items-center justify-between mb-6 px-2">
+            <h2 class="text-xl font-black uppercase tracking-tighter italic">Popular Destinations & Tickets</h2>
+            <div class="flex gap-2">
+                <button id="grid-view-btn" onclick="toggleView('grid')" class="p-1.5 glass rounded-lg"><i data-lucide="layout-grid" class="w-4 h-4 text-amber-500"></i></button>
+                <button id="list-view-btn" onclick="toggleView('list')" class="p-1.5 opacity-30"><i data-lucide="list" class="w-4 h-4"></i></button>
+            </div>
+        </div>
+        
+        <div id="product-grid" class="grid grid-cols-2 gap-4">
+            <!-- Injected by JS -->
+        </div>
+    </section>
+
+    <!-- 5. FLOATING BUTTON -->
+    <button onclick="scrollToTop()" id="btn-top" class="fixed bottom-28 right-6 w-12 h-12 glass rounded-full flex items-center justify-center shadow-2xl opacity-0 translate-y-10 transition-all z-40">
+        <i data-lucide="arrow-up" class="w-6 h-6 text-amber-500"></i>
+    </button>
+
+    <!-- 7. BOTTOM NAVIGATION -->
+    <nav class="fixed bottom-0 left-0 right-0 max-w-[480px] mx-auto bg-[#0f172a]/95 backdrop-blur-xl border-t border-white/5 px-8 py-5 flex justify-between items-center z-[100]">
+        <a href="../index.html" class="flex flex-col items-center gap-1 opacity-30 active:scale-90 transition-all">
+            <i data-lucide="home" class="w-6 h-6"></i>
+            <span class="text-[9px] font-black uppercase tracking-widest">Home</span>
+        </a>
+        <a href="../Chat/index.html" class="flex flex-col items-center gap-1 opacity-30 active:scale-90 transition-all">
+            <i data-lucide="message-circle" class="w-6 h-6"></i>
+            <span class="text-[9px] font-black uppercase tracking-widest">Chat</span>
+        </a>
+        <a href="#" class="flex flex-col items-center gap-1 text-amber-500 active:scale-90 transition-all">
+            <div class="relative">
+                <i data-lucide="plane" class="w-6 h-6"></i>
+                <span class="absolute -top-1 -right-1 w-2 h-2 bg-amber-500 rounded-full animate-pulse"></span>
+            </div>
+            <span class="text-[9px] font-black uppercase tracking-widest">Travel</span>
+        </a>
+        <a href="../profile/profile_dashboard.html" class="flex flex-col items-center gap-1 opacity-30 active:scale-90 transition-all">
+            <i data-lucide="layout-dashboard" class="w-6 h-6"></i>
+            <span class="text-[9px] font-black uppercase tracking-widest">Profile</span>
+        </a>
+    </nav>
+
+    <script>
+        lucide.createIcons();
+
+        // --- GLOBAL SETTLEMENT STATE ---
+        let sellerAccount = {
+            pending: 45.20,
+            available: 100.00
+        };
+
+        // --- DUMMY DATA ARRAY ---
+        const productData = [
+            {
+                id: 1,
+                title: "Swiss Alps 5-Day Luxury Tour",
+                price: "350.0 π",
+                priceValue: 350.0,
+                originalPrice: "480.0 π",
+                discount: "27%",
+                img: "https://images.unsplash.com/photo-1531310197839-ccf54634509e?auto=format&fit=crop&w=500&q=80",
+                delivery: "VIP Guide",
+                rating: 4.9,
+                rewards: "12.0 MNG",
+                sellerType: 'partner',
+                status: 'on_sale'
+            },
+            {
+                id: 2,
+                title: "Paris Louvre Museum Fast Track Ticket",
+                price: "1.5 π",
+                priceValue: 1.5,
+                originalPrice: "2.0 π",
+                discount: "25%",
+                img: "https://images.unsplash.com/photo-1502602898657-3e91760cbb34?auto=format&fit=crop&w=500&q=80",
+                delivery: "Instant E-Ticket",
+                rating: 4.8,
+                rewards: "0.1 MNG",
+                sellerType: 'individual',
+                status: 'on_sale'
+            },
+            {
+                id: 3,
+                title: "Maldives Overwater Villa 3-Night Package",
+                price: "850.0 π",
+                priceValue: 850.0,
+                originalPrice: "1200.0 π",
+                discount: "29%",
+                img: "https://images.unsplash.com/photo-1514282401047-d79a71a590e8?auto=format&fit=crop&w=500&q=80",
+                delivery: "Premium Booking",
+                rating: 5.0,
+                rewards: "50.0 MNG",
+                sellerType: 'partner',
+                status: 'purchased_pending_confirmation'
+            },
+            {
+                id: 4,
+                title: "Tokyo to Osaka Shinkansen Ticket",
+                price: "8.5 π",
+                priceValue: 8.5,
+                originalPrice: "10.0 π",
+                discount: "15%",
+                img: "https://images.unsplash.com/photo-1540959733332-e94e270b4d42?auto=format&fit=crop&w=500&q=80",
+                delivery: "Digital QR",
+                rating: 4.7,
+                rewards: "0.5 MNG",
+                sellerType: 'partner',
+                status: 'on_sale'
+            }
+        ];
+
+        // --- MARKETPLACE LOGIC ---
+
+        function calculateCommission(price, sellerType) {
+            const feeRate = sellerType === 'partner' ? 0.02 : 0.05;
+            const platformProfit = price * feeRate;
+            const netAmount = price - platformProfit;
+            return { netAmount, platformProfit, feeRate: feeRate * 100 };
+        }
+
+        function confirmPurchase(productId) {
+            const product = productData.find(p => p.id === productId);
+            if (!product) return;
+
+            const isConfirmed = confirm(`Confirm that the booking for "${product.title}" is accurate and all vouchers have been received?`);
+            if (!isConfirmed) return;
+            
+            product.status = 'completed';
+            const { netAmount, platformProfit, feeRate } = calculateCommission(product.priceValue, product.sellerType);
+
+            sellerAccount.pending -= product.priceValue;
+            sellerAccount.available += netAmount;
+
+            console.log(`[Travel Settlement] ${new Date().toISOString()}`);
+            console.log(`> Service: ${product.title}`);
+            console.log(`> Fee Applied: ${feeRate}%`);
+            console.log(`> Net Payout: ${netAmount.toFixed(4)} π`);
+
+            updateSellerDashboardUI();
+            renderProducts();
+            alert(`✅ Booking confirmed!\n\nSettled: ${netAmount.toFixed(2)} π\nPlatform Fee (${feeRate}%): ${platformProfit.toFixed(2)} π`);
+        }
+
+        // --- COMPONENT RENDERER ---
+        function renderProducts() {
+            const grid = document.getElementById('product-grid');
+            grid.innerHTML = productData.map((p, index) => `
+                <div class="product-card glass rounded-[2rem] overflow-hidden flex flex-col animate-slide-up" style="animation-delay: ${index * 0.1}s">
+                    <div class="relative aspect-square">
+                        <img src="${p.img}" class="w-full h-full object-cover">
+                        <span class="absolute top-4 left-4 bg-red-500 text-white text-[10px] font-black px-2 py-1 rounded-lg shadow-lg">${p.discount}</span>
+                        <button onclick="toggleLike(this)" class="absolute bottom-4 right-4 w-8 h-8 glass rounded-full flex items-center justify-center text-white/50 hover:text-pink-500 transition-colors">
+                            <i data-lucide="heart" class="w-4 h-4"></i>
+                        </button>
+                    </div>
+                    ${p.status === 'purchased_pending_confirmation' ? `
+                        <button onclick="confirmPurchase(${p.id})" class="mx-4 mt-4 py-2 bg-indigo-500/20 text-indigo-400 border border-indigo-500/30 rounded-xl text-[10px] font-black uppercase tracking-widest active:scale-95 transition-all">
+                            Confirm Booking
+                        </button>
+                    ` : ''}
+                    <div class="p-4 flex-1 flex flex-col">
+                        <h3 class="text-[11px] font-semibold leading-tight line-clamp-2 mb-3 text-white/90">${p.title}</h3>
+                        <div class="mt-auto">
+                            <div class="flex items-center gap-1.5 mb-1">
+                                <span class="text-[9px] text-white/30 line-through">${p.originalPrice}</span>
+                                <span class="text-[9px] text-amber-500 font-bold">${p.discount} OFF</span>
+                            </div>
+                            <div class="flex items-center justify-between mb-3">
+                                <p class="text-sm font-black text-white italic">${p.price}</p>
+                                <span class="text-[8px] font-bold text-amber-500/80 bg-amber-500/10 px-1.5 py-0.5 rounded uppercase tracking-tighter border border-amber-500/20">${p.delivery}</span>
+                            </div>
+                            <div class="flex items-center justify-between pt-3 border-t border-white/5">
+                                <div class="flex items-center gap-1">
+                                    <i data-lucide="star" class="w-2.5 h-2.5 fill-amber-500 text-amber-500"></i>
+                                    <span class="text-[9px] font-bold text-white/40">${p.rating}</span>
+                                </div>
+                                <p class="text-[9px] font-bold text-emerald-400">+${p.rewards}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+            lucide.createIcons();
+        }
+
+        // --- UI LOGIC ---
+        function toggleMenu(show) {
+            const sidebar = document.getElementById('sidebar-menu');
+            const overlay = document.getElementById('sidebar-overlay');
+            if (show) {
+                sidebar.classList.remove('-translate-x-full');
+                overlay.classList.remove('hidden');
+                setTimeout(() => overlay.classList.replace('opacity-0', 'opacity-100'), 10);
+            } else {
+                sidebar.classList.add('-translate-x-full');
+                overlay.classList.replace('opacity-100', 'opacity-0');
+                setTimeout(() => overlay.classList.add('hidden'), 300);
+            }
+        }
+
+        function closeAllDrawers() {
+            toggleMenu(false);
+            toggleCart(false);
+            toggleSellerDashboard(false);
+        }
+
+        function updateSellerDashboardUI() {
+            document.getElementById('seller-pending-funds').innerText = sellerAccount.pending.toFixed(2) + " π";
+            document.getElementById('seller-available-funds').innerText = sellerAccount.available.toFixed(2) + " π";
+        }
+
+        function toggleSellerDashboard(show) {
+            const modal = document.getElementById('seller-modal');
+            const overlay = document.getElementById('modal-overlay');
+            modal.classList.toggle('translate-y-full', !show);
+            overlay.classList.toggle('hidden', !show);
+            setTimeout(() => overlay.classList.toggle('opacity-100', show), 10);
+        }
+
+        function toggleCart(show) {
+            const drawer = document.getElementById('cart-drawer');
+            drawer.classList.toggle('translate-x-full', !show);
+        }
+
+        function startVoiceSearch() {
+            alert("🎙️ Voice search activated. Speak your destination.");
+        }
+
+        function startGlobalSearch() {
+            alert("🔍 Global search initiated for your destination.");
+        }
+
+        // --- AI 3D CAROUSEL LOGIC ---
+        const aiPackageData = [];
+        const destinations = [
+            { city: "Paris", theme: "Romantic", img: "photo-1502602898657-3e91760cbb34", color: "rose-500" },
+            { city: "Tokyo", theme: "Neon Tech", img: "photo-1540959733332-e94e270b4d42", color: "blue-400" },
+            { city: "New York", theme: "Urban VIP", img: "photo-1496442226666-8d4d0e62e3e9", color: "amber-500" },
+            { city: "Rome", theme: "History", img: "photo-1552832230-c0197dd311b5", color: "orange-600" },
+            { city: "Bali", theme: "Zen Spirit", img: "photo-1537996194471-e657df975ab4", color: "emerald-400" },
+            { city: "London", theme: "Royal", img: "photo-1513635269975-59663e0ac1ad", color: "sky-500" },
+            { city: "Sydney", theme: "Oceanic", img: "photo-1506973035872-a4ec16b8e8d9", color: "cyan-400" },
+            { city: "Dubai", theme: "Gold Luxury", img: "photo-1512453979798-5ea266f8880c", color: "yellow-500" },
+            { city: "Santorini", theme: "Blue Aegean", img: "photo-1570077188670-e3a8d69ac5ff", color: "blue-400" },
+            { city: "Cairo", theme: "Desert King", img: "photo-1503177119275-0aa32b3a9368", color: "yellow-700" },
+            { city: "Rio", theme: "Samba VIP", img: "photo-1483729558449-99ef09a8c325", color: "pink-500" },
+            { city: "Kyoto", theme: "Tradition", img: "photo-1493976040374-85c8e12f0c0e", color: "red-500" },
+            { city: "Barcelona", theme: "Gaudí Art", img: "photo-1583997051654-820ca147d34d", color: "orange-500" },
+            { city: "Amsterdam", theme: "Vintage", img: "photo-1534351590666-13e3e96b5017", color: "blue-600" },
+            { city: "Venice", theme: "Grand Canal", img: "photo-1514890547357-a9ee288728e0", color: "indigo-400" },
+            { city: "Prague", theme: "Gothic Soul", img: "photo-1541849546-216549ae216d", color: "slate-400" },
+            { city: "Seoul", theme: "K-Modern", img: "photo-1538481199705-c710c4e965fc", color: "purple-400" },
+            { city: "Maldives", theme: "Overwater", img: "photo-1514282401047-d79a71a590e8", color: "teal-300" },
+            { city: "Swiss Alps", theme: "Snow Peak", img: "photo-1531310197839-ccf54634509e", color: "sky-200" },
+            { city: "Amalfi", theme: "Cliff Side", img: "photo-1533105079780-92b9be482077", color: "emerald-300" },
+            { city: "Phuket", theme: "Tropical", img: "photo-1528181304800-2f140819ad1c", color: "amber-400" },
+            { city: "Singapore", theme: "Cyber Garden", img: "photo-1525596662741-e94ff9916323", color: "green-400" },
+            { city: "Machu Picchu", theme: "Inca Trail", img: "photo-1526392060635-9d6019884377", color: "stone-500" },
+            { city: "Agra", theme: "Imperial", img: "photo-1548013146-72479768bada", color: "orange-300" },
+            { city: "Marrakesh", theme: "Spicy", img: "photo-1539020140153-e479b8c22e70", color: "rose-600" },
+            { city: "Banff", theme: "Lake View", img: "photo-1454496522488-7a8e488e8606", color: "teal-600" },
+            { city: "Cape Town", theme: "Wild Safari", img: "photo-1580741569354-08dee7948332", color: "emerald-600" },
+            { city: "Istanbul", theme: "Ottoman", img: "photo-1524231757912-21f4fe3a7200", color: "amber-700" },
+            { city: "Vienna", theme: "Symphony", img: "photo-1516550893923-42d28e5677af", color: "rose-400" },
+            { city: "Petra", theme: "Canyon", img: "photo-1579606030136-1e967a57a53e", color: "orange-800" }
+        ];
+        
+        destinations.forEach((d, i) => {
+            aiPackageData.push({
+                id: i,
+                title: `${d.city} ${d.theme} Full Pass`,
+                price: (Math.random() * 150 + 20).toFixed(1) + " π",
+                img: `https://images.unsplash.com/${d.img}?w=300&auto=format&fit=crop&q=80`,
+                badge: `${d.theme} Pick`,
+                color: d.color
+            });
+        });
+
+        let aiCurrentIndex = 0;
+        const aiRadius = 650;
+        let aiAutoRotation = null;
+
+        function initAICarousel() {
+            const pivot = document.getElementById('ai-pivot');
+            if (!pivot) return;
+            
+            pivot.innerHTML = aiPackageData.map((p, i) => `
+                <div class="ai-package-card glass rounded-[2.5rem] p-4 border-b-4 border-${p.color}/30" id="ai-card-${i}">
+                    <div class="w-24 h-24 bg-slate-800 rounded-full mb-3 shadow-xl border-4 border-white/5 overflow-hidden">
+                        <img src="${p.img}" class="w-full h-full object-cover" onerror="this.src='https://images.unsplash.com/photo-1503220317375-aaad61436b1b?w=300'">
+                    </div>
+                    <p class="text-[9px] text-${p.color} font-black uppercase mb-1">${p.badge}</p>
+                    <h3 class="text-[11px] font-bold leading-tight text-white">${p.title}</h3>
+                    <p class="text-xs font-black text-white mt-2">${p.price}</p>
+                </div>
+            `).join('');
+            
+            updateAIRotation();
+            startAIAuto();
+        }
+
+        function updateAIRotation() {
+            const total = aiPackageData.length;
+            aiPackageData.forEach((_, i) => {
+                const card = document.getElementById(`ai-card-${i}`);
+                if (!card) return;
+                
+                const angle = (i - aiCurrentIndex) * (360 / total);
+                const radian = (angle * Math.PI) / 180;
+                
+                const x = Math.sin(radian) * aiRadius;
+                const z = (Math.cos(radian) - 1) * aiRadius;
+                
+                card.style.transform = `translate3d(${x}px, 0px, ${z}px) rotateY(${angle}deg)`;
+                
+                const activeIdx = (aiCurrentIndex % total + total) % total;
+                if (i === activeIdx) {
+                    card.classList.add('active');
+                    card.style.opacity = "1";
+                } else {
+                    card.classList.remove('active');
+                    const absAngle = Math.abs(angle) % 360;
+                    if (absAngle > 45 && absAngle < 315) {
+                        card.style.opacity = "0.05";
+                    } else {
+                        card.style.opacity = "0.3";
+                    }
+                }
+            });
+        }
+
+        function startAIAuto() {
+            if (aiAutoRotation) return;
+            aiAutoRotation = setInterval(() => {
+                aiCurrentIndex = (aiCurrentIndex + 1) % aiPackageData.length;
+                updateAIRotation();
+            }, 5000);
+        }
+
+        function toggleView(mode) {
+            const grid = document.getElementById('product-grid');
+            const gridBtn = document.getElementById('grid-view-btn');
+            const listBtn = document.getElementById('list-view-btn');
+            
+            if (mode === 'list') {
+                grid.classList.replace('grid-cols-2', 'grid-cols-1');
+                listBtn.classList.replace('opacity-30', 'glass');
+                listBtn.querySelector('i').classList.add('text-amber-500');
+                gridBtn.classList.replace('glass', 'opacity-30');
+                gridBtn.querySelector('i').classList.remove('text-amber-500');
+            } else {
+                grid.classList.replace('grid-cols-1', 'grid-cols-2');
+                gridBtn.classList.replace('opacity-30', 'glass');
+                gridBtn.querySelector('i').classList.add('text-amber-500');
+                listBtn.classList.replace('glass', 'opacity-30');
+                listBtn.querySelector('i').classList.remove('text-amber-500');
+            }
+        }
+
+        function toggleLike(btn) {
+            const icon = btn.querySelector('i');
+            icon.classList.toggle('fill-pink-500');
+            icon.classList.toggle('text-pink-500');
+        }
+
+        function scrollToTop() {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        window.onscroll = function() {
+            const btn = document.getElementById('btn-top');
+            if (window.scrollY > 400) {
+                btn.classList.replace('opacity-0', 'opacity-100');
+                btn.classList.replace('translate-y-10', 'translate-y-0');
+            } else {
+                btn.classList.replace('opacity-100', 'opacity-0');
+                btn.classList.replace('translate-y-0', 'translate-y-10');
+            }
+        };
+
+        document.addEventListener('DOMContentLoaded', () => {
+            renderProducts();
+            updateSellerDashboardUI();
+            initAICarousel();
+        });
+    </script>
+</body>
+</html>

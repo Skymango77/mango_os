@@ -1,0 +1,28 @@
+{
+  "ko": {
+    "market_title": "망고 <span class='text-amber-500 italic'>마켓</span>",
+    "new_arrivals": "신규 도착 매물",
+    "recommended": "추천",
+    "gifts": "선물",
+    "add_cart": "담기",
+    "buy_now": "구매하기",
+    "food_portal": "푸드",
+    "transfer_portal": "이동/물류",
+    "travel_portal": "여행",
+    "realty_portal": "부동산",
+    "lang_select": "언어 선택"
+  },
+  "en": {
+    "market_title": "Mango <span class='text-amber-500 italic'>Market</span>",
+    "new_arrivals": "New Arrivals",
+    "recommended": "Recommended",
+    "gifts": "Gifts",
+    "add_cart": "Add",
+    "buy_now": "Buy Now",
+    "food_portal": "Food",
+    "transfer_portal": "Transfer",
+    "travel_portal": "Travel",
+    "realty_portal": "Realty",
+    "lang_select": "Language"
+  }
+}

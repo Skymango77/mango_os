@@ -1,0 +1,10 @@
+{
+    "deno.enable": false,
+    "deno.lint": false,
+    "deno.unstable": false,
+    "typescript.tsdk": "node_modules/typescript/lib",
+    "editor.codeActionsOnSave": [
+        "source.fixAll.eslint",
+        "source.organizeImports"
+    ]
+}
