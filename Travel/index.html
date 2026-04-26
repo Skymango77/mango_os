@@ -37,7 +37,8 @@
         /* OS 마스터 프레임: 모든 윈도우 규격 통일 */
         .os-master-frame {
             position: relative;
-            width: var(--portal-width);
+            width: 100%;
+            max-width: var(--portal-width);
             min-height: 100vh;
             background: #050505;
             padding: 20px;
@@ -100,13 +101,11 @@
             font-weight: 900 !important;
             transform: scale(1.1);
         }
-        .glass-highlight-arrow { 
-            border-color: #FF6B00 !important; 
-            filter: drop-shadow(0 0 15px #FF6B00) !important; 
-            width: 80px !important; 
-            height: 80px !important; 
-            border-width: 8px !important; 
+        .glass-highlight-arrow i { 
+            color: #FF6B00 !important; 
+            filter: drop-shadow(0 0 25px #FF6B00) !important; 
         }
+        .glass-highlight-arrow { transform: scale(1.4); }
         .glass-highlight-circle { 
             border-width: 5px !important; 
             border-color: #00F2FF !important; 
@@ -190,8 +189,8 @@
         }
     </style>
 </head>
-<body class="bg-gradient-to-br from-gray-950 to-gray-800">
-    <div class="os-master-frame relative">
+<body class="bg-black text-white min-h-screen w-full overflow-x-hidden relative">
+    <div class="w-full max-w-md mx-auto relative os-master-frame">
     
         <!-- AI Concierge Header -->
         <div class="flex items-center gap-4 mb-6 pt-6 px-5 w-full overflow-visible">
@@ -220,26 +219,26 @@
                 </div>
             </div>
 
-            <div class="ml-auto text-right">
-                <div class="text-[10px] text-yellow-500/60 font-bold mb-1 uppercase tracking-tighter">POINT BALANCE</div>
-                <div class="text-sm text-yellow-400 font-black" id="point-balance">0 P</div>
+            <div class="ml-auto text-right pr-20">
+            <div class="text-[10px] text-orange-500/60 font-bold mb-1 uppercase tracking-tighter">POINT BALANCE</div>
+            <div class="text-sm text-orange-500 font-black" id="point-balance">0 P</div>
             </div>
         </div>
 
         <div class="premium-glass p-5 border-b-2 border-teal-500/50 mt-2">
             <div class="flex justify-between items-center mb-4">
                 <div class="flex items-center gap-2">
-                    <i data-lucide="activity" class="text-teal-400 w-4 h-4 animate-pulse"></i>
-                    <span class="font-orb text-[10px] font-black tracking-widest uppercase">Live_Hype_Index</span>
+                    <i data-lucide="activity" class="text-teal-400 w-5 h-5 animate-pulse"></i>
+                    <span class="font-orb text-xs font-black tracking-widest uppercase">Live_Hype_Index</span>
                 </div>
                 <div class="flex gap-4">
                     <div class="text-right">
-                        <p class="text-[8px] text-gray-500 font-bold uppercase">Active</p>
-                        <p class="text-xs font-orb text-teal-400">1,284</p>
+                        <p class="text-[10px] text-gray-500 font-bold uppercase">Active</p>
+                        <p class="text-sm font-orb text-teal-400">1,284</p>
                     </div>
                     <div class="text-right">
-                        <p class="text-[8px] text-gray-500 font-bold uppercase">Flow</p>
-                        <p id="pi-price" class="text-xs font-orb text-orange-500">42.85 <span class="text-[8px]">Pi</span></p>
+                        <p class="text-[10px] text-gray-500 font-bold uppercase">Flow</p>
+                        <p id="pi-price" class="text-sm font-orb text-orange-500">42.85 <span class="text-[10px]">Pi</span></p>
                     </div>
                 </div>
             </div>
@@ -296,38 +295,35 @@
         </section>
 
         <!-- 3. 여행 부가 서비스 (계획형 이동 및 숙박) -->
-        <div class="grid grid-cols-3 gap-3">
-            <a href="Hotel_Book.html" class="block hover:scale-105 hover:brightness-125 transition-all duration-300">
-                <div class="premium-glass p-4 border-t-4 border-pink-500 h-full flex flex-col items-center justify-center text-center">
-                    <i data-lucide="bed" class="text-pink-500 w-5 h-5 mb-2"></i>
-                    <h5 class="text-[11px] font-black"> Stay</h5>
-                    <p class="text-[9px] text-pink-400 font-orb mt-1">22.8 Pi</p>
-                </div>
+        <div class="flex gap-3 mt-4">
+            
+            <a href="Hotel_Book.html" class="flex-1 flex flex-col items-center justify-center p-4 rounded-2xl border border-pink-500/50 bg-zinc-900/50 hover:bg-zinc-800 active:scale-95 transition-all cursor-pointer group">
+                <i data-lucide="bed" class="w-6 h-6 text-pink-500 mb-2 group-hover:scale-110 transition-transform"></i>
+                <span class="text-lg font-bold text-white tracking-wide">STAY</span>
+                <span class="text-sm font-semibold text-pink-500 mt-1">22.8 Pi</span>
             </a>
-            <a href="Travel_mall.html" class="block hover:scale-105 hover:brightness-125 transition-all duration-300">
-                <div class="premium-glass p-4 border-t-4 border-yellow-500 h-full flex flex-col items-center justify-center text-center">
-                    <i data-lucide="shopping-bag" class="text-yellow-500 w-5 h-5 mb-2"></i>
-                    <h5 class="text-[11px] font-black">Pop-up</h5>
-                    <p class="text-[9px] text-yellow-400 font-orb mt-1">Active</p>
-                </div>
+
+            <a href="Travel_mall.html" class="flex-1 flex flex-col items-center justify-center p-4 rounded-2xl border border-yellow-500/50 bg-zinc-900/50 hover:bg-zinc-800 active:scale-95 transition-all cursor-pointer group">
+                <i data-lucide="shopping-bag" class="w-6 h-6 text-yellow-500 mb-2 group-hover:scale-110 transition-transform"></i>
+                <span class="text-lg font-bold text-white tracking-wide">POP-UP</span>
+                <span class="text-sm font-semibold text-yellow-500 mt-1">Active</span>
             </a>
-            <a href="Rent_Car.html" class="block hover:scale-105 hover:brightness-125 transition-all duration-300">
-                <div class="premium-glass p-4 border-t-4 border-teal-500 h-full flex flex-col items-center justify-center text-center">
-                    <i data-lucide="car-front" class="text-teal-500 w-5 h-5 mb-2"></i>
-                    <h5 class="text-[11px] font-black">Rent-A-Car</h5>
-                    <p class="text-[9px] text-teal-400 font-orb mt-1">Mango_Z</p>
-                </div>
+
+            <a href="Rent_Car.html" class="flex-1 flex flex-col items-center justify-center p-4 rounded-2xl border border-teal-500/50 bg-zinc-900/50 hover:bg-zinc-800 active:scale-95 transition-all cursor-pointer group">
+                <i data-lucide="car" class="w-6 h-6 text-teal-500 mb-2 group-hover:scale-110 transition-transform"></i>
+                <span class="text-lg font-bold text-white tracking-wide">RENT-A-CAR</span>
+                <span class="text-sm font-semibold text-teal-500 mt-1">Mango_Z</span>
             </a>
         </div>
 
         <!-- 4. 하단 내비게이션 바 (메인 포털 연결) -->
         <nav class="fixed bottom-6 left-1/2 -translate-x-1/2 w-[90%] max-w-[430px] z-[9999]">
             <div class="premium-glass bg-black/60 backdrop-blur-3xl border border-white/10 rounded-[32px] p-2 flex justify-around items-center shadow-2xl">
-                <div onclick="toggleAR()" class="flex flex-col items-center p-3 text-orange-500 cursor-pointer hover:scale-110 active:scale-90 transition-all">
+                <div onclick="toggleAR()" class="flex flex-col items-center p-3 text-orange-500 cursor-pointer hover:scale-110 active:scale-95 transition-all">
                     <i data-lucide="zap" class="w-5 h-5"></i>
                     <span class="text-[8px] font-black uppercase">Moment</span>
                 </div>
-                <div onclick="toggleMatch()" class="flex flex-col items-center p-3 text-gray-500 hover:text-teal-400 hover:scale-110 cursor-pointer transition-all">
+                <div onclick="toggleMatch()" class="flex flex-col items-center p-3 text-gray-500 hover:text-teal-400 hover:scale-110 active:scale-95 cursor-pointer transition-all">
                     <i data-lucide="users" class="w-5 h-5"></i>
                     <span class="text-[8px] font-black uppercase">Match</span>
                 </div>
@@ -364,19 +360,20 @@
             <div class="w-1 h-1 bg-teal-400 rounded-full animate-ping"></div>
             <div id="ar-coords" class="absolute -bottom-10 text-[9px] font-orb text-teal-400 opacity-0 transition-opacity">LAT: 35.1595 N | LNG: 129.1611 E</div>
         </div>
-        <div id="ar-signal" class="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 flex flex-col items-center gap-12">
-            <!-- 가변 가이드 영역 -->
+        <div id="ar-signal" class="absolute bottom-10 right-10 flex flex-col items-end gap-2 z-20 transition-all">
             <div id="nav-guide-container" class="relative">
-                <div id="nav-arrow" class="w-10 h-10 border-t-4 border-r-4 border-teal-400 rotate-[-45deg] animate-bounce"></div>
+                <div id="nav-arrow" class="w-16 h-16 rounded-2xl border-4 border-orange-500/50 bg-black/60 flex items-center justify-center shadow-[0_0_20px_rgba(249,115,22,0.4)] animate-pulse">
+                    <i data-lucide="corner-down-right" class="w-10 h-10 text-orange-500"></i>
+                </div>
                 <div id="nav-square" class="nav-signal-square hidden">
                     <span class="text-white font-black font-orb text-xs">ARRIVED</span>
                     <div class="target-lock-corner corner-tl"></div><div class="target-lock-corner corner-tr"></div>
                     <div class="target-lock-corner corner-bl"></div><div class="target-lock-corner corner-br"></div>
                 </div>
             </div>
-            <div id="nav-info-box" class="bg-black/80 backdrop-blur-md px-6 py-3 rounded-full border border-teal-500/30 transition-all">
-                <p class="text-[11px] font-orb font-black text-white transition-all">
-                    <span class="text-teal-400">TARGET:</span> <span id="nav-target-name">'목적지를 검색하세요'</span> <span id="nav-dist-text" class="text-gray-400 ml-2">---</span>
+            <div id="nav-info-box" class="px-3 py-1 rounded-full bg-orange-950/50 border border-orange-800/50">
+                <p class="text-xs font-bold text-orange-300 tracking-wider">
+                    <span id="nav-target-name" class="hidden">목적지</span> <span id="nav-dist-text">350m</span>
                 </p>
             </div>
         </div>
@@ -507,7 +504,7 @@
 
                 // 좌표 업데이트 시뮬레이션
                 document.getElementById('ar-coords').innerText = 
-                    `LAT: ${data.coords.lat.toFixed(4)} N | LNG: ${data.coords.lng.toFixed(4)} E`;
+                    `LAT: ${result.data.coords.lat.toFixed(4)} N | LNG: ${result.data.coords.lng.toFixed(4)} E`;
             }
         }
 
@@ -536,6 +533,16 @@
             return R * c;
         }
 
+        // [실시간 방위각(Bearing) 계산기: 내 위치 기준 목적지의 방향각 추출]
+        function getBearing(lat1, lon1, lat2, lon2) {
+            const dLon = (lon2 - lon1) * Math.PI / 180;
+            const y = Math.sin(dLon) * Math.cos(lat2 * Math.PI / 180);
+            const x = Math.cos(lat1 * Math.PI / 180) * Math.sin(lat2 * Math.PI / 180) -
+                      Math.sin(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) * Math.cos(dLon);
+            const brng = Math.atan2(y, x) * 180 / Math.PI;
+            return (brng + 360) % 360;
+        }
+
         // [고도화된 실사용 내비게이션 로직]
         function startRealNavigation() {
             if (!navigator.geolocation) return showMangoToast("GPS를 지원하지 않는 기기입니다.");
@@ -557,11 +564,12 @@
                 const dist = getHaversineDistance(latitude, longitude, targetCoords.lat, targetCoords.lng);
                 distText.innerText = dist > 1000 ? (dist/1000).toFixed(2) + "km" : Math.round(dist) + "m";
 
-                // 1. 방향 회전 (나침반 데이터 기반)
-                if (heading !== null) {
-                    // 목적지 방위각 계산 로직 추가 가능
-                    arrow.style.transform = `rotate(${heading}deg)`;
-                }
+                // 1. 방향 회전 (내 위치와 목적지 간의 상대 각도 계산)
+                const bearing = getBearing(latitude, longitude, targetCoords.lat, targetCoords.lng);
+                // 기기가 가리키는 방향(heading)을 빼주어 목적지 방향을 화살표가 가리키게 함
+                // heading 데이터가 없을 경우 bearing 절대값을 사용함
+                const rotation = heading !== null ? (bearing - heading) : bearing;
+                arrow.style.transform = `rotate(${rotation}deg)`;
 
                 // 2. 접근성 알림 (정밀도 강화)
                 if (dist <= 50 && dist > 5) {
