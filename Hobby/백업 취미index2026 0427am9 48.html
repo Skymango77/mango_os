@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>MANGO HOBBY - THE CORE</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;900&family=Syncopate:wght@700&family=Noto+Sans+KR:wght@100;400;900&display=swap');
+        
+        :root { --mango-pearl: #F5F5F5; --neon-orange: #FF5F00; }
+        body { font-family: 'Noto Sans KR', sans-serif; background: #000; color: white; overflow-x: hidden; }
+        .font-orbit { font-family: 'Orbitron', sans-serif; }
+
+        .neon-glow { text-shadow: 0 0 10px currentColor; }
+        
+        /* 가로 스크롤바 숨기기 */
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+        /* 🛰️ 실시간 모임 맥동(Pulse) 진동 애니메이션 */
+        @keyframes pulse-vibe {
+            0% { transform: translate(0, 0); }
+            25% { transform: translate(1px, -1px); }
+            50% { transform: translate(-1px, 1px); }
+            75% { transform: translate(1px, 1px); }
+            100% { transform: translate(0, 0); }
+        }
+        .vibe-active { animation: pulse-vibe 0.3s linear infinite; }
+
+        .custom-scrollbar::-webkit-scrollbar { width: 4px; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 10px; }
+    </style>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;900&family=Noto+Sans+KR:wght@100;400;900&display=swap');
+        
+        :root { --mango-pearl: #F5F5F5; --neon-orange: #FF5F00; }
+        body { font-family: 'Noto Sans KR', sans-serif; background: #000; color: white; overflow-x: hidden; }
+        .font-orbit { font-family: 'Orbitron', sans-serif; }
+        
+        /* 1. 캐러셀 엔진: 5초 주기, 왼쪽->오른쪽, 3장 동시 가시성 */
+        .carousel-viewport { width: 100%; overflow: hidden; position: relative; padding: 20px 0; }
+        .carousel-track { 
+            display: flex; 
+            transition: transform 0.8s cubic-bezier(0.45, 0, 0.55, 1); 
+            gap: 1.5rem; 
+        }
+        .carousel-item { 
+            flex: 0 0 calc(33.333% - 1rem); /* 3장 동시 노출 핵심 */
+            min-width: calc(33.333% - 1rem);
+            transition: all 0.5s ease;
+        }
+        @media (max-width: 768px) {
+            .carousel-item { flex: 0 0 85%; min-width: 85%; } /* 모바일 배려 */
+        }
+
+        .neon-glow { text-shadow: 0 0 10px currentColor; }
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+        /* 2. 10장 한정 갤러리 썸네일 스타일 */
+        .gallery-thumb { aspect-ratio: 1; border-radius: 0.8rem; overflow: hidden; border: 1px solid rgba(255,255,255,0.1); }
+        .gallery-thumb img { width: 100%; height: 100%; object-fit: cover; }
+    </style>
+</head>
+<body class="text-white min-h-screen">
+    <div class="zen-bg"></div>
+
+    <header class="p-6 flex justify-between items-start">
+        <div class="animate-pulse">
+            <h1 class="font-orbit text-2xl font-black text-orange-500 neon-glow">GLOBAL HOBBY SYSTEM</h1>            
+            <p class="font-orbit text-[9px] tracking-[0.3em] text-orange-500/60 mt-1 uppercase">Dimensional Gateway: v3.1 Ready</p>
+        </div>
+        <div class="flex gap-2">
+            <button class="p-3 rounded-2xl border border-white/10 bg-white/5 backdrop-blur-xl">
+                <i data-lucide="search" class="w-5 h-5 text-white/50"></i>
+            </button>
+        </div>
+    </header>
+
+    <!-- 🛰️ Global Hobby Synergy Section -->
+    <section class="mt-4 px-6 space-y-8">
+        
+        <!-- 1. Active Pulse: 알고리즘 기반 상단 노출 -->
+        <div>
+            <div class="flex justify-between items-end mb-4 px-1">
+                <h3 class="font-orbit text-[10px] text-orange-500 tracking-[0.3em] uppercase">Active Pulse</h3>
+                <span class="text-[8px] text-orange-500/50 font-bold">WEIGHT: Pulse(40%) + Density(30%)</span>
+            </div>
+            <div class="flex gap-4 overflow-x-auto pb-4 no-scrollbar">
+                <!-- 실시간 맥동 모임 카드 -->
+                <div class="flex-none w-64 p-6 rounded-[2.5rem] border-2 border-orange-500/30 bg-orange-500/5 shadow-[0_0_20px_rgba(249,115,22,0.1)] animate-pulse relative overflow-hidden">
+                    <div class="absolute -right-4 -top-4 w-20 h-20 bg-orange-500/10 blur-2xl rounded-full"></div>
+                    <div class="flex justify-between items-start mb-4 relative z-10">
+                        <span class="bg-orange-500 text-black text-[9px] font-black px-2 py-0.5 rounded italic">LIVE</span>
+                        <span class="text-white/40 text-[9px] font-orbit">12 ACTIVE</span>
+                    </div>
+                    <h4 class="text-lg font-bold text-white leading-tight">밤샘 코딩 챌린지</h4>
+                    <p class="text-xs text-white/60 mt-2">지금 <span class="text-orange-400 font-bold">8명</span>이 열띤 토론 중</p>
+                </div>
+
+                <!-- 추가 모임 예시 -->
+                <div class="flex-none w-64 p-6 rounded-[2.5rem] border-2 border-white/10 bg-white/5">
+                    <div class="flex justify-between items-start mb-4">
+                        <span class="bg-zinc-700 text-white text-[9px] font-black px-2 py-0.5 rounded italic">TRENDING</span>
+                        <span class="text-white/40 text-[9px] font-orbit">42 MEMBERS</span>
+                    </div>
+                    <h4 class="text-lg font-bold text-white/90">해운대 아침 조깅</h4>
+                    <p class="text-xs text-white/40 mt-2">신규 유입률 24% 상승 중</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- 2. Mango Specials: 망고 전용 독창적 기능 -->
+        <div>
+            <h3 class="font-orbit text-[10px] text-pink-500 mb-4 tracking-[0.3em] uppercase">Mango Specials</h3>
+            <div class="flex gap-3 overflow-x-auto pb-2 no-scrollbar">
+                <!-- Flash Meet -->
+                <div class="flex-none w-40 p-5 rounded-[2rem] border border-red-500/40 bg-red-500/5 flex flex-col items-center text-center">
+                    <i data-lucide="zap" class="w-6 h-6 text-red-500 mb-3 animate-bounce"></i>
+                    <span class="text-xs font-bold text-white mb-1">FLASH MEET</span>
+                    <span class="text-[9px] text-red-400 font-black font-orbit tracking-widest uppercase">01:24:55</span>
+                </div>
+                <!-- Skill Swap -->
+                <div class="flex-none w-40 p-5 rounded-[2rem] border border-blue-500/40 bg-blue-500/5 flex flex-col items-center text-center">
+                    <i data-lucide="repeat" class="w-6 h-6 text-blue-400 mb-3"></i>
+                    <span class="text-xs font-bold text-white mb-1">SKILL SWAP</span>
+                    <span class="text-[9px] text-blue-300 font-bold uppercase">Match Now</span>
+                </div>
+                <!-- Hobby Quest -->
+                <div class="flex-none w-40 p-5 rounded-[2rem] border border-yellow-500/40 bg-yellow-500/5 flex flex-col items-center text-center">
+                    <i data-lucide="award" class="w-6 h-6 text-yellow-500 mb-3"></i>
+                    <span class="text-xs font-bold text-white mb-1">QUEST</span>
+                    <span class="text-[9px] text-yellow-400 font-bold uppercase">Get Badge</span>
+                </div>
+                <!-- 🤖 AI Model Dimension (New) -->
+                <div onclick="if(window.MangoModel) window.MangoModel.activate()" class="flex-none w-40 p-5 rounded-[2rem] border-2 border-orange-500 bg-orange-500/10 flex flex-col items-center text-center cursor-pointer hover:scale-105 transition-transform shadow-[0_0_20px_rgba(249,115,22,0.3)]">
+                    <div class="relative mb-3">
+                        <i data-lucide="bot" class="w-8 h-8 text-white"></i>
+                        <div class="absolute inset-0 bg-white/20 blur-xl rounded-full animate-pulse"></div>
+                    </div>
+                    <span class="text-xs font-black text-white mb-1 uppercase italic">SEEDANCE 2.0</span>
+                    <span class="text-[8px] text-orange-200 font-bold uppercase">AI Dimension</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- 🌌 ACTIVE GATHERINGS: 비주얼 스토리텔링 및 Pi 결제 통합 -->
+        <section class="mt-8 px-1 pb-10 space-y-10">
+            <div class="flex justify-between items-end px-1">
+                <h3 class="font-orbit text-xl font-black text-white neon-glow">ACTIVE GATHERINGS</h3>
+                <span class="text-[10px] text-orange-500 font-bold tracking-tighter">TOTAL 128 ACTIVE IN BUSAN</span>
+            </div>
+
+            <div class="relative group overflow-hidden rounded-[3rem] border border-white/10 bg-zinc-900 shadow-2xl transition-all hover:scale-[1.02] vibe-active">
+                <div class="absolute inset-0 opacity-60">
+                    <img src="https://images.unsplash.com/photo-1535525153412-5a42439a210d?auto=format&fit=crop&q=80" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" alt="K-POP Dance">
+                    <div class="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent"></div>
+                </div>
+
+                <div class="relative p-8 min-h-[400px] flex flex-col justify-end">
+                    <div class="flex gap-2 mb-4">
+                        <span class="px-3 py-1 rounded-full bg-rose-500/20 border border-rose-500 text-rose-500 text-[10px] font-bold">K-POP DANCE</span>
+                        <span class="px-3 py-1 rounded-full bg-emerald-500/20 border border-emerald-500 text-emerald-500 text-[10px] font-bold">BUSAN SYNC</span>
+                    </div>
+                    
+                    <h2 class="text-3xl font-black mb-2 leading-tight">서면 2026 DANCE 2.0<br>K-POP 커버 챌린지</h2>
+                    <p class="text-sm text-white/60 mb-6 line-clamp-2">부산 최고의 댄스 스튜디오에서 진행되는 K-POP 커버 모임입니다. 초보자 환영!</p>
+
+                    <div class="flex items-center justify-between py-4 border-t border-white/10 mb-6">
+                        <div class="flex -space-x-2">
+                            <img class="w-8 h-8 rounded-full border-2 border-black" src="https://i.pravatar.cc/100?u=1">
+                            <img class="w-8 h-8 rounded-full border-2 border-black" src="https://i.pravatar.cc/100?u=2">
+                            <div class="w-8 h-8 rounded-full border-2 border-black bg-zinc-800 flex items-center justify-center text-[10px] font-bold">+15</div>
+                        </div>
+                        <div class="text-right">
+                            <p class="text-[10px] text-white/40 uppercase tracking-widest">Entry Fee</p>
+                            <p class="text-lg font-orbit font-bold text-orange-500">3.14 Pi</p>
+                        </div>
+                    </div>
+
+                    <button onclick="handleJoin('뉴진스 커버 챌린지')" class="w-full py-5 rounded-2xl bg-white text-black font-black text-lg hover:bg-orange-500 hover:text-white transition-all active:scale-95 flex items-center justify-center gap-2">
+                        <i data-lucide="zap" class="w-5 h-5"></i>
+                        가입하고 참여하기
+                    </button>
+                </div>
+            </div>
+
+            <div class="mt-12">
+                <h4 class="font-orbit text-xs text-white/40 mb-4 tracking-[0.3em]">LIVE FEED FROM MEMBERS</h4>
+                <div class="grid grid-cols-3 gap-2">
+                    <div class="aspect-square bg-zinc-800 rounded-2xl overflow-hidden border border-white/5">
+                        <img src="https://images.unsplash.com/photo-1514525253361-bee8718a300a?auto=format&fit=crop&q=80" class="w-full h-full object-cover">
+                    </div>
+                    <div class="aspect-square bg-zinc-800 rounded-2xl overflow-hidden border border-white/5">
+                        <img src="https://images.unsplash.com/photo-1524117074681-31bd4bb22ad3?auto=format&fit=crop&q=80" class="w-full h-full object-cover">
+                    </div>
+                    <div class="aspect-square bg-zinc-800 rounded-2xl overflow-hidden border border-white/5 flex items-center justify-center relative">
+                        <img src="https://images.unsplash.com/photo-1547153760-18fc86324498?auto=format&fit=crop&q=80" class="w-full h-full object-cover opacity-40">
+                        <span class="absolute text-[10px] font-bold">+240</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 3. Nearby Gates: 위치 기반 필터링 -->
+        <div class="pb-10">
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="font-orbit text-[10px] text-emerald-400 tracking-[0.3em] uppercase">Nearby Gates</h3>
+                <span class="text-[9px] text-emerald-400/50 font-bold font-orbit italic">RADIUS: 5KM SYNC</span>
+            </div>
+            <div id="nearby-meetings-list" class="space-y-3">
+                <!-- 부산 기반 실시간 모임 데이터가 동적으로 로드됩니다 -->
+            </div>
+        </div>
+    </section>
+
+    <main id="gate-container" class="px-6 pb-32 grid grid-cols-2 gap-4 custom-scrollbar">
+    </main>
+
+    <div id="modal" class="fixed inset-0 bg-black/90 backdrop-blur-md hidden z-50 flex items-center justify-center p-6">
+        <div class="w-full max-w-sm bg-zinc-900 border border-white/20 rounded-[3rem] p-8 space-y-6">
+            <h2 class="font-orbit text-xl font-bold text-center text-orange-500">NEW GATE SYNTHESIS</h2>
+            <input id="hobby-name" type="text" placeholder="새 주제의 문 이름" class="w-full bg-black/50 border border-white/10 rounded-2xl px-5 py-4 text-white focus:border-orange-500 outline-none">
+            <div class="flex gap-3">
+                <button onclick="closeModal()" class="flex-1 py-4 rounded-2xl bg-zinc-800 font-bold">ABORT</button>
+                <button onclick="createNewGate()" class="flex-1 py-4 rounded-2xl bg-orange-600 font-bold">CONFIRM</button>
+            </div>
+        </div>
+    </div>
+
+    <footer class="fixed bottom-0 w-full p-6 bg-gradient-to-t from-black to-transparent flex justify-between items-center text-[10px] font-orbit text-white/20">
+        <span>LAT: 35.1490 N | LNG: 129.0100 E</span>
+        <span class="text-orange-500/40 animate-pulse">CREATIVE_EXPANSION_READY</span>
+    </footer>
+
+    <script>
+        // 스크린샷 기반 카테고리 데이터
+        let hobbies = [
+            { name: '아웃도어', color: 'lime-400', icon: 'tent' },
+            { name: '운동/스포츠', color: 'orange-500', icon: 'trophy' },
+            { name: '인문학/책', color: 'amber-200', icon: 'book' },
+            { name: '외국/언어', color: 'blue-400', icon: 'languages' },
+            { name: '문화/공연', color: 'pink-500', icon: 'ticket' },
+            { name: '음악/악기', color: 'purple-400', icon: 'music' },
+            { name: '공예/만들기', color: 'yellow-600', icon: 'hammer' },
+            // 댄스 아이콘: K-POP 리듬을 상징하는 music-2로 변경
+            { name: '댄스/무용', color: 'rose-400', icon: 'music-2' }, 
+            { name: '봉사활동', color: 'red-500', icon: 'heart' },
+            { name: '사교/인맥', color: 'indigo-400', icon: 'users' },
+            { name: '차/바이크', color: 'zinc-400', icon: 'car' },
+            { name: '사진/영상', color: 'cyan-400', icon: 'camera' },
+            { name: '게임/오락', color: 'emerald-400', icon: 'gamepad-2' },
+            { name: '요리/제조', color: 'orange-300', icon: 'utensils' },
+            { name: '반려동물', color: 'orange-200', icon: 'dog' },
+            { name: '자기계발', color: 'teal-400', icon: 'trending-up' },
+            // --- [신규 추가: 여행 카테고리] ---
+            { name: '여행/종합', color: 'sky-400', icon: 'map' },
+            { name: '국내 여행', color: 'indigo-500', icon: 'map-pin' },
+            { name: '해외 여행', color: 'fuchsia-500', icon: 'plane' }
+        ];
+
+        function renderGates() {
+            const container = document.getElementById('gate-container');
+            container.innerHTML = '';
+
+            hobbies.forEach(h => {
+                const card = `
+                    <div class="gate-card p-6 rounded-[2.5rem] border-2 border-${h.color}/20 bg-zinc-900/40 backdrop-blur-xl cursor-pointer text-${h.color}">
+                        <i data-lucide="${h.icon}" class="w-7 h-7 mb-4"></i>
+                        <span class="block font-orbit text-[8px] opacity-40 mb-1 tracking-[0.2em]">GATEWAY ACTIVE</span>
+                        <h2 class="text-sm font-bold text-white/90">${h.name}</h2>
+                    </div>
+                `;
+                container.innerHTML += card;
+            });
+
+            const addCard = `
+                <div onclick="openModal()" class="gate-card p-6 rounded-[2.5rem] border-2 border-white/5 bg-white/5 border-dashed backdrop-blur-sm cursor-pointer flex flex-col items-center justify-center hover:bg-white/10">
+                    <i data-lucide="plus" class="w-8 h-8 text-white/20 mb-2"></i>
+                    <span class="text-[9px] font-bold text-white/30 uppercase tracking-widest">Add Custom</span>
+                </div>
+            `;
+            container.innerHTML += addCard;
+            lucide.createIcons();
+        }
+
+        function openModal() { document.getElementById('modal').classList.remove('hidden'); }
+        function closeModal() { document.getElementById('modal').classList.add('hidden'); }
+
+        function createNewGate() {
+            const name = document.getElementById('hobby-name').value;
+            if (!name) return;
+            hobbies.push({ name: name, color: 'orange-500', icon: 'plus-square' });
+            renderGates();
+            closeModal();
+            document.getElementById('hobby-name').value = '';
+        }
+
+        function handleJoin(name) {
+            // Pi SDK 연동 시뮬레이션
+            const confirmed = confirm(`${name} 모임에 3.14 Pi를 지불하고 참여하시겠습니까?`);
+            if(confirmed) {
+                if(window.showMangoToast) window.showMangoToast("결제 승인 완료: 멤버십이 활성화되었습니다.");
+                else alert("시스템 승인 완료: 망고 멤버십이 활성화되었습니다.");
+            }
+        }
+
+        /* 🤝 SOCIAL 게이트웨이: 부산 Community 엔진 */
+        const userLocation = { lat: 35.1490, lng: 129.0100 }; 
+
+        function loadLocalMeetings() {
+            // 1. 전포, 사상 등 부산 핵심 지역 기반 실시간 번개 모임 로드
+            const activeMeetings = [
+                { id: 1, title: "배찌가 말아주는 야장낮술", time: "16:00", location: "전포", members: "19/20", dist: "0.5km" },
+                { id: 2, title: "화요곱창 번개", time: "20:00", location: "사상", members: "16/20", dist: "1.2km" }
+            ];
+            renderMeetingCards(activeMeetings);
+        }
+
+        function renderMeetingCards(meetings) {
+            const container = document.getElementById('nearby-meetings-list');
+            if(!container) return;
+            container.innerHTML = meetings.map(m => `
+                <div class="flex items-center p-5 rounded-[2rem] bg-zinc-900/60 border border-white/5 active:scale-95 transition-all">
+                    <div class="w-12 h-12 rounded-2xl bg-zinc-800 flex items-center justify-center mr-4 border border-emerald-500/20">
+                        <i data-lucide="map-pin" class="text-emerald-400 w-5 h-5"></i>
+                    </div>
+                    <div class="flex-1">
+                        <h4 class="text-sm font-bold text-white/90 leading-none">${m.title}</h4>
+                        <p class="text-[10px] text-white/30 mt-2 font-medium tracking-tight">${m.dist} Away (${m.location}) · 오늘 ${m.time} 시작</p>
+                    </div>
+                    <span class="text-[10px] text-emerald-400 font-bold mr-4">${m.members}</span>
+                    <i data-lucide="chevron-right" class="text-white/10 w-5 h-5"></i>
+                </div>
+            `).join('');
+            if(window.lucide) lucide.createIcons();
+        }
+
+        renderGates();
+        loadLocalMeetings();
+    </script>
+</body>
+</html>

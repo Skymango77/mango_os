@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>MANGO HOBBY - THE CORE (HYPER-SCALE v3.5)</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;900&family=Noto+Sans+KR:wght@100;400;900&display=swap');
+        
+        :root { --neon-orange: #FF5F00; --neon-cyan: #00F2FF; }
+        body { font-family: 'Noto Sans KR', sans-serif; background: #000; color: white; overflow-x: hidden; }
+        .font-orbit { font-family: 'Orbitron', sans-serif; }
+
+        /* 입체적 차원 배경 */
+        .zen-dimmer {
+            position: fixed; inset: 0;
+            background: 
+                radial-gradient(circle at 10% 20%, rgba(255, 95, 0, 0.15) 0%, transparent 50%),
+                radial-gradient(circle at 90% 80%, rgba(0, 242, 255, 0.15) 0%, transparent 50%);
+            z-index: -1;
+        }
+
+        /* 하이퍼 카드 & 글래스모피즘 */
+        .hyper-card {
+            background: rgba(15, 15, 15, 0.6);
+            backdrop-filter: blur(25px) saturate(200%);
+            border: 1px solid rgba(255, 95, 0, 0.3);
+            box-shadow: 0 0 15px rgba(255, 95, 0, 0.1);
+            transition: all 0.5s cubic-bezier(0.23, 1, 0.32, 1);
+        }
+        .hyper-card:hover { border-color: var(--neon-orange); transform: translateY(-5px); }
+
+        /* 캐러셀 엔진 */
+        .carousel-viewport { width: 100%; overflow: hidden; position: relative; }
+        .carousel-track { display: flex; transition: transform 0.6s cubic-bezier(0.65, 0, 0.35, 1); gap: 1rem; }
+        .carousel-item { flex: 0 0 calc(100% / 3); max-width: calc(100% / 3); cursor: pointer; }
+        
+        @media (max-width: 640px) {
+            .carousel-item { flex: 0 0 calc(100% - 1rem); max-width: calc(100% - 1rem); }
+        }
+
+        /* 10대~30대 타겟 갤러리 썸네일 */
+        .gallery-thumb { aspect-ratio: 1; border-radius: 0.8rem; border: 1px solid rgba(255,255,255,0.1); overflow: hidden; background: #111; }
+        .gallery-thumb img { width: 100%; height: 100%; object-fit: cover; opacity: 0.8; transition: opacity 0.3s; }
+        .gallery-thumb:hover img { opacity: 1; }
+
+        @keyframes pulse-cyan {
+            0%, 100% { box-shadow: 0 0 0 0 rgba(0, 242, 255, 0.4); }
+            50% { box-shadow: 0 0 0 15px rgba(0, 242, 255, 0); }
+        }
+        .btn-hyper { animation: pulse-cyan 3s infinite; }
+        
+        /* 지문 인식 애니메이션 */
+        @keyframes finger-glow {
+            0%, 100% { filter: drop-shadow(0 0 5px #00F2FF); opacity: 0.7; }
+            50% { filter: drop-shadow(0 0 20px #00F2FF); opacity: 1; }
+        }
+        .animate-finger { animation: finger-glow 1.5s infinite; }
+
+        .category-en { color: #00F2FF; font-size: 8px; font-weight: 900; letter-spacing: 0.1em; }
+        .distance-badge { background: rgba(0, 242, 255, 0.2); border: 1px solid #00F2FF; color: #00F2FF; }
+
+        .custom-scrollbar::-webkit-scrollbar { width: 4px; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 10px; }
+    </style>
+</head>
+<body>
+    <div class="zen-dimmer"></div>
+
+    <nav class="p-6 flex justify-between items-center">
+        <div class="space-y-1">
+            <h1 class="font-orbit text-2xl font-black text-white">MANGO <span class="text-orange-500">CORE</span></h1>
+            <div class="flex items-center gap-2">
+                <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-ping"></span>
+                <span class="font-orbit text-[8px] text-emerald-500/80 tracking-[0.4em]">NODE_BUSAN_SYNC // YOUTH_ZONE</span>
+            </div>
+        </div>
+        <div class="text-right font-orbit">
+            <p class="text-[10px] text-white/40 uppercase">Generation Sync</p>
+            <p class="text-xs font-bold text-cyan-400 tracking-widest">17s - 23s ACTIVE</p>
+        </div>
+    </nav>
+
+    <main class="px-6 space-y-10 pb-40 max-h-[85vh] overflow-y-auto custom-scrollbar">
+
+        <!-- [모듈 2] 17-33세 타겟팅 캐러셀 시스템 -->
+        <section class="space-y-6">
+            <div class="flex justify-between items-end px-2">
+                <h2 class="text-xs font-orbit tracking-[0.5em] text-white/30 uppercase">Generation Sync_Live</h2>
+                <span class="text-[10px] text-orange-500 font-black tracking-tighter">17-33 TARGETED</span>
+            </div>
+
+            <div class="carousel-viewport">
+                <div id="highlight-track" class="carousel-track"></div>
+            </div>
+        </section>
+
+        <section class="space-y-6">
+            <h3 class="text-xs font-orbit tracking-[0.3em] text-white/30 px-2 uppercase">Core Gateway</h3>
+            <div id="gate-container" class="grid grid-cols-2 sm:grid-cols-4 gap-4 pb-20">
+            </div>
+        </section>
+
+        <!-- [단계 2 반영] Analytics Dimension: Highlighted Numbers & Charts -->
+        <section class="space-y-8 pb-20">
+            <div class="flex justify-between items-center px-2">
+                <h3 class="text-xs font-orbit tracking-[0.3em] text-white/30 uppercase">Generation Analytics</h3>
+                <div class="flex gap-2">
+                    <span class="w-2 h-2 rounded-full bg-cyan-400 shadow-[0_0_8px_#00F2FF]"></span>
+                    <span class="w-2 h-2 rounded-full bg-orange-500 shadow-[0_0_8px_#FF5F00]"></span>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-2 gap-4">
+                <!-- Highlighted Numbers -->
+                <div class="hyper-card p-6 rounded-[2.5rem] border-l-4 border-cyan-400">
+                    <p class="text-[10px] font-orbit text-cyan-400 tracking-widest uppercase mb-2">Sync Rate</p>
+                    <h4 class="text-4xl font-black text-white italic">98.5<span class="text-sm not-italic ml-1">%</span></h4>
+                    <p class="text-[9px] text-white/40 mt-2">Active Generation 17-33</p>
+                </div>
+                <div class="hyper-card p-6 rounded-[2.5rem] border-l-4 border-orange-500">
+                    <p class="text-[10px] font-orbit text-orange-500 tracking-widest uppercase mb-2">Active Nodes</p>
+                    <h4 class="text-4xl font-black text-white italic">1.2<span class="text-sm not-italic ml-1">K</span></h4>
+                    <p class="text-[9px] text-white/40 mt-2">Verified Youth Synergy</p>
+                </div>
+            </div>
+
+            <!-- Trend Chart: Bar/Area Comparisons -->
+            <div class="hyper-card p-8 rounded-[3rem] space-y-6">
+                <div class="flex justify-between items-center">
+                    <h4 class="text-sm font-black italic tracking-tight text-white/90 uppercase">Activity Trend_Log</h4>
+                    <i data-lucide="trending-up" class="w-4 h-4 text-cyan-400"></i>
+                </div>
+                <div class="h-32 flex items-end gap-3 px-2">
+                    <div class="flex-1 bg-orange-500/20 rounded-t-lg relative group" style="height: 40%">
+                        <div class="absolute inset-0 bg-orange-500 opacity-0 group-hover:opacity-100 transition-opacity rounded-t-lg shadow-[0_0_15px_#FF5F00]"></div>
+                    </div>
+                    <div class="flex-1 bg-orange-500/20 rounded-t-lg relative group" style="height: 65%">
+                        <div class="absolute inset-0 bg-orange-500 opacity-0 group-hover:opacity-100 transition-opacity rounded-t-lg shadow-[0_0_15px_#FF5F00]"></div>
+                    </div>
+                    <div class="flex-1 bg-cyan-400/40 rounded-t-lg relative group" style="height: 90%">
+                        <div class="absolute inset-0 bg-cyan-400 opacity-100 rounded-t-lg shadow-[0_0_20px_#00F2FF]"></div>
+                        <span class="absolute -top-6 left-1/2 -translate-x-1/2 text-[10px] font-black text-cyan-400">HOT</span>
+                    </div>
+                    <div class="flex-1 bg-orange-500/20 rounded-t-lg relative group" style="height: 55%">
+                        <div class="absolute inset-0 bg-orange-500 opacity-0 group-hover:opacity-100 transition-opacity rounded-t-lg shadow-[0_0_15px_#FF5F00]"></div>
+                    </div>
+                    <div class="flex-1 bg-orange-500/20 rounded-t-lg relative group" style="height: 75%">
+                        <div class="absolute inset-0 bg-orange-500 opacity-0 group-hover:opacity-100 transition-opacity rounded-t-lg shadow-[0_0_15px_#FF5F00]"></div>
+                    </div>
+                </div>
+                <div class="flex justify-between px-2 text-[8px] font-orbit text-white/20 uppercase tracking-widest">
+                    <span>Mon</span><span>Tue</span><span class="text-cyan-400/60">Wed</span><span>Thu</span><span>Fri</span>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- [모듈 3] Pi 결제 승인 모달 -->
+    <div id="pi-payment-modal" class="fixed inset-0 z-[100] hidden bg-black/90 backdrop-blur-xl flex items-center justify-center p-6">
+        <div class="hyper-card w-full max-w-sm p-10 rounded-[3rem] text-center space-y-8 border-cyan-400/30">
+            <div class="relative inline-block">
+                <i data-lucide="fingerprint" class="w-20 h-20 text-cyan-400 animate-finger mx-auto"></i>
+                <div class="absolute inset-0 bg-cyan-400/20 blur-2xl rounded-full"></div>
+            </div>
+            <div class="space-y-2">
+                <h3 class="text-xl font-black italic text-white font-orbit">3.14 Pi PAYMENT</h3>
+                <p class="text-xs text-white/40 font-bold tracking-widest uppercase">결제 승인 진행 중...</p>
+            </div>
+            <div class="flex justify-center gap-2">
+                <span class="w-2 h-2 rounded-full bg-cyan-400 animate-bounce" style="animation-delay: 0.1s"></span>
+                <span class="w-2 h-2 rounded-full bg-cyan-400 animate-bounce" style="animation-delay: 0.2s"></span>
+                <span class="w-2 h-2 rounded-full bg-cyan-400 animate-bounce" style="animation-delay: 0.3s"></span>
+            </div>
+        </div>
+    </div>
+
+    <footer class="fixed bottom-8 left-1/2 -translate-x-1/2 w-[92%] max-w-lg hyper-card rounded-[3rem] p-5 flex justify-around items-center z-50">
+        <button class="p-3 text-orange-500"><i data-lucide="home" class="w-6 h-6"></i></button>
+        <button class="p-3 text-white/30"><i data-lucide="compass" class="w-6 h-6"></i></button>
+        <div class="w-16 h-16 bg-orange-500 rounded-full flex items-center justify-center -translate-y-8 shadow-2xl shadow-orange-500/60 active:scale-95 transition-all cursor-pointer">
+            <i data-lucide="plus" class="text-black w-8 h-8"></i>
+        </div>
+        <button class="p-3 text-white/30"><i data-lucide="message-square" class="w-6 h-6"></i></button>
+        <button class="p-3 text-white/30"><i data-lucide="user" class="w-6 h-6"></i></button>
+    </footer>
+
+    <script>
+        lucide.createIcons();
+        
+        // [모듈 2/4 반영] 17-33세 타겟 이미지 리포지토리 및 메타데이터
+        const dimensionRegistry = [
+            { img: "1535525153412-5a42439a210d", meta: "19세 / 부산 서면", dist: "0.3km", title: "DANCE_CREW SYNC" },
+            { img: "1524117074681-31bd4bb22ad3", meta: "24세 / 부산 광안리", dist: "1.2km", title: "OUTDOOR VIBE" },
+            { img: "1521449298711-121d81ad1612", meta: "21세 / 부산 전포", dist: "0.5km", title: "READING LOG" },
+            { img: "1578310344722-da649646487e", meta: "27세 / 부산 해운대", dist: "4.5km", title: "GWANGAN NIGHT" },
+            { img: "1581291518633-83b4ebd1d83e", meta: "23세 / 부산 남포", dist: "2.1km", title: "WEBTOON CORE" },
+            { img: "1551632811-561732d1e306", meta: "29세 / 부산 금정", dist: "0.8km", title: "CLIMBING MASTER" },
+            { img: "1539635278303-d4002c07eae3", meta: "22세 / 부산 대연", dist: "1.5km", title: "BACKPACKER NODE" },
+            { img: "1517841905240-472988babdf9", meta: "20세 / 부산 장전", dist: "0.2km", title: "YOUTH SYNERGY" },
+            { img: "1529626455594-4ff0802cfb7b", meta: "25세 / 부산 사상", dist: "3.2km", title: "URBAN STYLE" },
+            { img: "1488161628813-04466f872be2", meta: "18세 / 부산 동래", dist: "0.7km", title: "ACTIVE MANGO" }
+        ];
+
+        // [모듈 1] 19가지 카테고리 KR/EN 병기 데이터
+        let hobbies = [
+            { kr: '독서 로그', en: 'READING', color: 'amber-200', icon: 'book' },
+            { kr: '사진 기록', en: 'PHOTOGRAPHY', color: 'cyan-400', icon: 'camera' },
+            { kr: '웹툰 창작', en: 'WEBTOON', color: 'pink-500', icon: 'layout-grid' },
+            { kr: '산악 탐험', en: 'MOUNTAINEERING', color: 'lime-500', icon: 'mountain' },
+            { kr: '댄스 비트', en: 'DANCE', color: 'rose-400', icon: 'music-2' },
+            { kr: '운동 시너지', en: 'SPORTS', color: 'orange-500', icon: 'trophy' },
+            { kr: '언어 교환', en: 'LANGUAGES', color: 'blue-400', icon: 'languages' },
+            { kr: '음악 연주', en: 'MUSIC', color: 'purple-400', icon: 'music' },
+            { kr: '수공예 공방', en: 'CRAFT', color: 'yellow-600', icon: 'hammer' },
+            { kr: '봉사 활동', en: 'VOLUNTEER', color: 'red-500', icon: 'heart' },
+            { kr: '사교 네트워킹', en: 'SOCIAL', color: 'indigo-400', icon: 'users' },
+            { kr: '바이크 크루', en: 'BIKE', color: 'zinc-400', icon: 'car' },
+            { kr: '게임 퀘스트', en: 'GAMING', color: 'emerald-400', icon: 'gamepad-2' },
+            { kr: '요리 실험실', en: 'COOKING', color: 'orange-300', icon: 'utensils' },
+            { kr: '반려동물 로그', en: 'PETS', color: 'orange-200', icon: 'dog' },
+            { kr: '자기계발', en: 'GROWTH', color: 'teal-400', icon: 'trending-up' },
+            { kr: '국내 여행', en: 'DOMESTIC TRIP', color: 'indigo-500', icon: 'map-pin' },
+            { kr: '해외 포탈', en: 'GLOBAL TRIP', color: 'fuchsia-500', icon: 'plane' },
+            { kr: '부산 로컬', en: 'BUSAN LOCAL', color: 'sky-400', icon: 'anchor' }
+        ];
+
+        document.getElementById('gate-container').innerHTML = hobbies.map(h => `
+            <div class="gate-card p-6 rounded-[2.5rem] border border-orange-500/40 bg-orange-500/5 text-orange-500 transition-all hover:scale-105 active:scale-95 cursor-pointer">
+                <i data-lucide="${h.icon}" class="w-7 h-7 mb-3"></i>
+                <div class="space-y-0.5">
+                    <h4 class="text-[13px] font-black text-white leading-none">${h.kr}</h4>
+                    <p class="category-en font-orbit uppercase">${h.en}</p>
+                </div>
+            </div>
+        `).join('');
+
+        // [모듈 2/4] 캐러셀 및 위치 기반 갤러리 렌더링
+        const track = document.getElementById('highlight-track');
+        track.innerHTML = dimensionRegistry.map((g, index) => `
+            <div class="carousel-item">
+                <div class="hyper-card rounded-[3.5rem] p-6 space-y-5 relative group overflow-hidden border-[#FF5F00]/30">
+                    <div class="relative aspect-square rounded-[2.5rem] overflow-hidden bg-zinc-800">
+                        <img src="https://images.unsplash.com/photo-${g.img}?w=400&q=80" class="w-full h-full object-cover">
+                        <div class="absolute top-4 right-4 distance-badge px-3 py-1 rounded-full text-[9px] font-black font-orbit">
+                            ${g.dist} Near You
+                        </div>
+                        <div class="absolute inset-x-0 bottom-0 p-5 bg-gradient-to-t from-black/90 to-transparent">
+                            <p class="text-[11px] font-black text-[#FF5F00] font-orbit italic">${g.meta}</p>
+                        </div>
+                    </div>
+                    <div class="space-y-4">
+                        <h3 class="text-md font-black text-white leading-tight uppercase font-orbit">${g.title}</h3>
+                        <button onclick="handleSmartJoin(this)" class="btn-hyper w-full py-4 rounded-2xl bg-[#FF5F00] text-black font-black text-xs uppercase tracking-widest active:scale-95 transition-all">가입하고 참여하기</button>
+                    </div>
+                </div>
+            </div>
+        `).join('');
+
+        // [모듈 3] 스마트 가입 버튼 핸들러
+        function handleSmartJoin(btn) {
+            const modal = document.getElementById('pi-payment-modal');
+            modal.classList.remove('hidden');
+            
+            setTimeout(() => {
+                modal.classList.add('hidden');
+                btn.classList.replace('bg-[#FF5F00]', 'bg-white');
+                btn.classList.replace('text-black', 'text-[#FF5F00]');
+                btn.innerText = "공간 활성화 완료";
+                btn.classList.remove('btn-hyper');
+                alert("Dimension Sync Complete: 3.14 Pi가 성공적으로 처리되었습니다.");
+            }, 3500);
+        }
+
+        lucide.createIcons();
+
+        // 캐러셀 엔진
+        let currentIndex = 0;
+        const totalItems = gatherArray.length;
+        function rotateCarousel() {
+            const itemWidth = document.querySelector('.carousel-item').offsetWidth;
+            const gap = 16;
+            let slideAmount = itemWidth + gap;
+            track.style.transform = `translateX(-${currentIndex * slideAmount}px)`;
+            currentIndex = (currentIndex + 1) % (totalItems - (window.innerWidth < 640 ? 0 : 2)); 
+        }
+        setInterval(rotateCarousel, 5000);
+        rotateCarousel();
+    </script>
+</body>
+</html>

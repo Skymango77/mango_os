@@ -72,14 +72,6 @@
             50% { box-shadow: 0 0 0 15px rgba(0, 242, 255, 0); }
         }
         .btn-hyper { animation: pulse-cyan 3s infinite; }
-
-        /* [초고도화] 홀로그래픽 스캔 라인 */
-        .hologram-scan {
-            position: absolute; inset: 0;
-            background: linear-gradient(to bottom, transparent, rgba(0, 242, 255, 0.1), transparent);
-            animation: scan-move 4s linear infinite;
-        }
-        @keyframes scan-move { 0% { transform: translateY(-100%); } 100% { transform: translateY(100%); } }
         
         /* 지문 인식 애니메이션 */
         @keyframes finger-glow {
@@ -149,35 +141,6 @@
 
             <div class="carousel-viewport">
                 <div id="highlight-track" class="carousel-track"></div>
-            </div>
-        </section>
-
-        <!-- [초고도화] Global Synergy Leaderboard -->
-        <section class="space-y-6">
-            <div class="flex justify-between items-center px-2">
-                <h3 class="text-xs font-orbit tracking-[0.3em] text-white/30 uppercase">Global Synergy Ranking</h3>
-                <span class="text-[9px] text-orange-500 font-black">REAL-TIME RANKING</span>
-            </div>
-            <div class="hyper-card p-6 rounded-[2.5rem] space-y-4">
-                <div class="flex items-center justify-between border-b border-white/5 pb-3">
-                    <div class="flex items-center gap-4">
-                        <span class="font-orbit text-orange-500 font-black italic">01</span>
-                        <div class="w-8 h-8 rounded-lg bg-rose-500/20 flex items-center justify-center text-rose-500"><i data-lucide="music-2" class="w-4 h-4"></i></div>
-                        <span class="text-sm font-bold">K-POP DANCE SYNC</span>
-                    </div>
-                    <span class="text-xs font-orbit font-black text-cyan-400">98.2%</span>
-                </div>
-                <div class="flex items-center justify-between border-b border-white/5 pb-3">
-                    <div class="flex items-center gap-4">
-                        <span class="font-orbit text-white/40 font-black italic">02</span>
-                        <div class="w-8 h-8 rounded-lg bg-cyan-500/20 flex items-center justify-center text-cyan-400"><i data-lucide="camera" class="w-4 h-4"></i></div>
-                        <span class="text-sm font-bold text-white/80">READING LOG</span>
-                    </div>
-                    <span class="text-xs font-orbit font-black text-white/40">85.4%</span>
-                </div>
-                <button class="w-full py-3 text-[10px] font-black text-white/20 uppercase tracking-[0.3em] hover:text-orange-500 transition-colors">
-                    View Full Leaderboard
-                </button>
             </div>
         </section>
 

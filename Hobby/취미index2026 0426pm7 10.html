@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>MANGO HOBBY - THE CORE (HYPER-SCALE v3.0)</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;900&family=Noto+Sans+KR:wght@100;400;900&display=swap');
+        
+        :root { --neon-orange: #FF5F00; --neon-cyan: #00F2FF; }
+        body { font-family: 'Noto Sans KR', sans-serif; background: #000; color: white; overflow: hidden; }
+        .font-orbit { font-family: 'Orbitron', sans-serif; }
+
+        /* 초고도화: 입체적 차원 배경 (부산 노드 동기화) */
+        .zen-dimmer {
+            position: fixed; inset: 0;
+            background: 
+                radial-gradient(circle at 10% 20%, rgba(255, 95, 0, 0.08) 0%, transparent 40%),
+                radial-gradient(circle at 90% 80%, rgba(0, 242, 255, 0.08) 0%, transparent 40%);
+            z-index: -1;
+            transform: translateZ(-100px); /* Parallax 준비 */
+        }
+
+        /* 글래스모피즘 & 네온 글로우 초고도화 */
+        .hyper-card {
+            background: rgba(15, 15, 15, 0.6);
+            backdrop-filter: blur(25px) saturate(200%);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            box-shadow: 0 30px 60px -15px rgba(0, 0, 0, 0.6);
+            transition: all 0.5s cubic-bezier(0.23, 1, 0.32, 1);
+        }
+        .hyper-card:hover { border-color: var(--neon-orange); transform: translateY(-5px); box-shadow: 0 40px 80px -10px rgba(255, 95, 0, 0.2); }
+
+        /* 초고도화 캐러셀 엔진 (5s Auto-Slide, 3-Visible) */
+        .carousel-viewport { width: 100%; overflow: hidden; position: relative; }
+        .carousel-track { display: flex; transition: transform 0.6s cubic-bezier(0.65, 0, 0.35, 1); will-change: transform; gap: 1rem; }
+        .carousel-item { flex: 0 0 calc(100% / 3); max-width: calc(100% / 3); cursor: pointer; }
+        
+        /* 모바일 뷰포트에서는 1개씩 보이게 자동 조정 */
+        @media (max-width: 640px) {
+            .carousel-item { flex: 0 0 calc(100% - 1rem); max-width: calc(100% - 1rem); }
+        }
+
+        /* 10장 이미지 갤러리 썸네일 스타일 */
+        .gallery-thumb { aspect-ratio: 1; border-radius: 1rem; border: 1px solid rgba(255,255,255,0.1); overflow: hidden; }
+        .gallery-thumb:hover { border-color: var(--neon-cyan); }
+        .gallery-thumb img { width: 100%; height: 100%; object-fit: cover; display: block; opacity: 0.6; }
+
+        /* 버튼 맥동 애니메이션 */
+        @keyframes pulse-cyan {
+            0% { box-shadow: 0 0 0 0 rgba(0, 242, 255, 0.5); }
+            70% { box-shadow: 0 0 0 20px rgba(0, 242, 255, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(0, 242, 255, 0); }
+        }
+        .btn-hyper { animation: pulse-cyan 3s infinite; }
+        
+        /* 게이트웨이 호버링 애니메이션 */
+        .gate-card:hover { transform: translateY(-10px) scale(1.03); border-color: currentColor; box-shadow: 0 15px 30px -5px currentColor; }
+    </style>
+</head>
+<body>
+    <div class="zen-dimmer"></div>
+
+    <nav class="p-6 pb-2 flex justify-between items-center z-50">
+        <div class="space-y-1">
+            <h1 class="font-orbit text-2xl font-black tracking-tighter text-white">MANGO <span class="text-orange-500 neon-glow">CORE</span></h1>
+            <div class="flex items-center gap-2">
+                <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-ping"></span>
+                <span class="font-orbit text-[8px] text-emerald-500/80 tracking-[0.4em]">NODE_BUSAN_SYNC // CREATIVE_SCALE_UP</span>
+            </div>
+        </div>
+        <div class="flex items-center gap-4">
+            <button class="hyper-card p-3 rounded-2xl text-white/50 hover:text-white"><i data-lucide="bell" class="w-5 h-5"></i></button>
+            <div class="flex flex-col items-end font-orbit">
+                <span class="text-[10px] text-white/40">WALLET BALANCE</span>
+                <span class="text-sm font-bold text-orange-500 tracking-wider">1,284.50 Pi</span>
+            </div>
+        </div>
+    </nav>
+
+    <main class="px-6 space-y-10 pb-40 max-h-[85vh] overflow-y-auto custom-scrollbar">
+        
+        <section class="space-y-6">
+            <div class="flex justify-between items-end px-2">
+                <h2 class="text-xs font-orbit tracking-[0.5em] text-white/30 uppercase">Today's Highlight Dimensions</h2>
+                <span class="text-[10px] text-orange-500 font-black tracking-tighter">TOTAL 10 ACTIVE</span>
+            </div>
+
+            <div class="carousel-viewport">
+                <div id="highlight-track" class="carousel-track">
+                    </div>
+            </div>
+        </section>
+
+        <section class="space-y-6">
+            <h3 class="text-xs font-orbit tracking-[0.3em] text-white/30 px-2 uppercase">Core Gateway Dimensions</h3>
+            <div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
+                <div onclick="openGate('독서')" class="gate-card p-6 rounded-[2.5rem] border border-pink-500/20 bg-pink-500/5 transition-all text-pink-500">
+                    <i data-lucide="book-open" class="w-8 h-8 mb-4"></i>
+                    <h4 class="text-sm font-black text-white">독서의 문</h4>
+                </div>
+
+                <div onclick="openGate('사진')" class="gate-card p-6 rounded-[2.5rem] border border-orange-500/20 bg-orange-500/5 transition-all text-orange-500">
+                    <i data-lucide="camera" class="w-8 h-8 mb-4"></i>
+                    <h4 class="text-sm font-black text-white">사진의 문</h4>
+                </div>
+
+                <div onclick="openGate('웹툰')" class="gate-card p-6 rounded-[2.5rem] border border-yellow-500/20 bg-yellow-500/5 transition-all text-yellow-500">
+                    <i data-lucide="layout-grid" class="w-8 h-8 mb-4"></i>
+                    <h4 class="text-sm font-black text-white">웹툰의 문</h4>
+                </div>
+
+                <div onclick="openGate('클라이밍')" class="gate-card p-6 rounded-[2.5rem] border border-lime-500/20 bg-lime-500/5 transition-all text-lime-500">
+                    <i data-lucide="mountain" class="w-8 h-8 mb-4"></i>
+                    <h4 class="text-sm font-black text-white">등산의 문</h4>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <footer class="fixed bottom-8 left-1/2 -translate-x-1/2 w-[92%] max-w-lg hyper-card rounded-[3rem] p-5 flex justify-around items-center z-50">
+        <button class="p-3 text-orange-500"><i data-lucide="home" class="w-6 h-6"></i></button>
+        <button class="p-3 text-white/30 hover:text-white"><i data-lucide="compass" class="w-6 h-6"></i></button>
+        <div class="w-16 h-16 bg-orange-500 rounded-full flex items-center justify-center -translate-y-8 shadow-2xl shadow-orange-500/60 active:scale-95 transition-all cursor-pointer">
+            <i data-lucide="plus" class="text-black w-8 h-8"></i>
+        </div>
+        <button class="p-3 text-white/30 hover:text-white"><i data-lucide="message-square" class="w-6 h-6"></i></button>
+        <button class="p-3 text-white/30 hover:text-white"><i data-lucide="user" class="w-6 h-6"></i></button>
+    </footer>
+
+    <script>
+        lucide.createIcons();
+        
+        // --- 초고도화 로직 1: 10개 모임 카드 데이터 & 위치 기반 10장 갤러리 ---
+        const gatherArray = [
+            { title: "서면 2026 DANCE 2.0<br>K-POP 커버 챌린지", icon: "music-2", color: "rose-500", loc: "SEOMYEON_SYNC", pi: "5.00 Pi", members: "+42", 
+              images: [ "https://i.pravatar.cc/100?u=d1", "https://i.pravatar.cc/100?u=d2", "https://i.pravatar.cc/100?u=d3", "https://i.pravatar.cc/100?u=d4", "https://i.pravatar.cc/100?u=d5", "https://i.pravatar.cc/100?u=d6", "https://i.pravatar.cc/100?u=d7", "https://i.pravatar.cc/100?u=d8", "https://i.pravatar.cc/100?u=d9", "https://i.pravatar.cc/100?u=d10" ] },
+            { title: "부산 전포동<br>망고 펄 사진전", icon: "camera", color: "orange-500", loc: "JEONPO_ART", pi: "2.80 Pi", members: "+28", 
+              images: [ "https://i.pravatar.cc/100?u=p1", "https://i.pravatar.cc/100?u=p2", "https://i.pravatar.cc/100?u=p3", "https://i.pravatar.cc/100?u=p4", "https://i.pravatar.cc/100?u=p5", "https://i.pravatar.cc/100?u=p6", "https://i.pravatar.cc/100?u=p7", "https://i.pravatar.cc/100?u=p8", "https://i.pravatar.cc/100?u=p9", "https://i.pravatar.cc/100?u=p10" ] },
+            { title: "해운대 배낭여행 모임<br>여름 정기 총회", icon: "plane", color: "sky-400", loc: "HAEUNDAE_BACKPACK", pi: "10.00 Pi", members: "+55", 
+              images: [ "https://i.pravatar.cc/100?u=b1", "https://i.pravatar.cc/100?u=b2", "https://i.pravatar.cc/100?u=b3", "https://i.pravatar.cc/100?u=b4", "https://i.pravatar.cc/100?u=b5", "https://i.pravatar.cc/100?u=b6", "https://i.pravatar.cc/100?u=b7", "https://i.pravatar.cc/100?u=b8", "https://i.pravatar.cc/100?u=b9", "https://i.pravatar.cc/100?u=b10" ] },
+            { title: "광안리 저녁 모임<br>미남미녀 정기런", icon: "users", color: "amber-300", loc: "GWANGAN_RUN", pi: "1.00 Pi", members: "+102", 
+              images: [ "https://i.pravatar.cc/100?u=r1", "https://i.pravatar.cc/100?u=r2", "https://i.pravatar.cc/100?u=r3", "https://i.pravatar.cc/100?u=r4", "https://i.pravatar.cc/100?u=r5", "https://i.pravatar.cc/100?u=r6", "https://i.pravatar.cc/100?u=r7", "https://i.pravatar.cc/100?u=r8", "https://i.pravatar.cc/100?u=r9", "https://i.pravatar.cc/100?u=r10" ] }
+        ];
+
+        // 부족한 6개 카드를 예시 데이터로 복제하여 10개 채움
+        for(let i=4; i<10; i++) { gatherArray.push({...gatherArray[i%4], title: `추가 모임 ${i+1}<br>차원 동기화 중`, loc: `NODE_BUSAN_${i+1}` }); }
+
+        const track = document.getElementById('highlight-track');
+        track.innerHTML = gatherArray.map((g, index) => `
+            <div class="carousel-item">
+                <div class="hyper-card rounded-[3.5rem] p-8 space-y-6 relative group overflow-hidden">
+                    <div class="absolute inset-0 opacity-10 group-hover:opacity-20 transition-all">
+                        <img src="${g.images[0]}" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700">
+                    </div>
+                    <div class="relative z-10 space-y-6">
+                        <div class="flex items-center gap-3">
+                            <i data-lucide="${g.icon}" class="w-7 h-7 text-${g.color}"></i>
+                            <span class="text-[10px] font-orbit text-white/50 tracking-[0.2em]">${g.loc} // LAT: 35.15 / LNG: 129.06</span>
+                        </div>
+                        <h3 class="text-xl font-black leading-tight text-white/90">${g.title}</h3>
+                        
+                        <div class="space-y-2">
+                            <p class="text-[9px] font-orbit text-${g.color} tracking-widest">Dimension Gallery (Max 10)</p>
+                            <div class="grid grid-cols-5 gap-1.5">
+                                ${g.images.map(img => `<div class="gallery-thumb"><img src="${img}"></div>`).join('')}
+                            </div>
+                        </div>
+
+                        <div class="flex justify-between items-end pt-4 border-t border-white/10">
+                            <div class="flex -space-x-3">
+                                <img class="w-10 h-10 rounded-full border-2 border-black" src="https://i.pravatar.cc/100?u=u${index}1">
+                                <img class="w-10 h-10 rounded-full border-2 border-black" src="https://i.pravatar.cc/100?u=u${index}2">
+                                <div class="w-10 h-10 rounded-full border-2 border-black bg-zinc-800 flex items-center justify-center text-[10px] font-bold">${g.members}</div>
+                            </div>
+                            <div class="text-right">
+                                <p class="text-[10px] text-white/40 uppercase tracking-widest">Synergy Fee</p>
+                                <p class="text-2xl font-orbit font-bold text-orange-500">${g.pi}</p>
+                            </div>
+                        </div>
+                        <button onclick="handleJoin('${g.title}', '${g.pi}')" class="btn-hyper w-full py-5 rounded-2xl bg-cyan-400 text-black font-black text-lg hover:bg-white transition-all active:scale-95 flex items-center justify-center gap-2">
+                            <i data-lucide="zap" class="w-5 h-5"></i>
+                            가입 및 공간 활성화
+                        </button>
+                    </div>
+                </div>
+            </div>
+        `).join('');
+
+        // Lucide 아이콘 다시 렌더링
+        lucide.createIcons();
+
+        // --- 초고도화 로직 2: 입체적 캐러셀 엔진 (Auto-Slide, 3-Visible) ---
+        let currentIndex = 0;
+        const totalItems = gatherArray.length;
+        const autoSlideInterval = 5000; // 5s
+
+        function rotateCarousel() {
+            const viewport = document.querySelector('.carousel-viewport');
+            const itemWidth = document.querySelector('.carousel-item').offsetWidth;
+            const gap = parseFloat(window.getComputedStyle(track).gap);
+            
+            // 모바일 뷰포트에서는 1개씩 보이므로 gap만 보정, 웹에서는 gap 포함 3개 보정
+            let slideAmount = itemWidth + gap;
+            
+            // 10개 카드를 무한 순환시키기 위한 로직
+            track.style.transform = `translateX(-${currentIndex * slideAmount}px)`;
+            
+            currentIndex = (currentIndex + 1) % (totalItems - (window.innerWidth < 640 ? 0 : 2)); 
+        }
+
+        let slideTimer = setInterval(rotateCarousel, autoSlideInterval);
+
+        // 사용자가 터치/호버 시 자동 슬라이드 일시 정지 로직
+        track.addEventListener('touchstart', () => clearInterval(slideTimer));
+        track.addEventListener('touchend', () => slideTimer = setInterval(rotateCarousel, autoSlideInterval));
+
+        // 초기 한 번 실행하여 위치 맞춤
+        rotateCarousel();
+
+        function handleJoin(title, pi) {
+            alert(`지문 인식 중... [PASS]\n${title} 모임에 ${pi}를 지불하고 영구 가입합니다.\n망고 펄 멤버십이 활성화되었습니다.`);
+        }
+
+        function openGate(name) {
+            alert(`${name} 차원 게이트를 열고 메타 공간으로 입장합니다.`);
+        }
+    </script>
+</body>
+</html>

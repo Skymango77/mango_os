@@ -253,12 +253,15 @@
 
         <!-- 1. 항공권 예매 섹션 (전체 클릭 가능) -->
         <a href="Flight_Ticket_mall.html" class="block hover:scale-105 hover:brightness-125 transition-all duration-300" style="display: block;">
-            <section class="premium-glass p-5 liquid-bg border-t-2 border-blue-500/50">
+            <section class="premium-glass p-5 liquid-bg border-2 border-blue-500/50 shadow-[0_0_20px_rgba(0,242,255,0.2)]">
             <div class="flex justify-between items-start mb-4">
                 <div>
-                    <p class="text-[9px] text-blue-400 font-black uppercase mb-1">00_SKY_SYNC</p>
-                    <h4 class="text-xl font-black italic">PUS → NRT</h4>
-                    <p id="flight-timer" class="text-lg font-orb text-white mt-1">01:55:00</p>
+                    <p class="text-[9px] text-blue-400 font-black uppercase mb-1 tracking-widest">00_SKY_SYNC_ACTIVE</p>
+                    <h4 class="text-xl font-black italic">US → NRT (Narita)</h4>
+                    <div class="flex items-center gap-2 mt-1">
+                        <p id="flight-timer" class="text-2xl font-orb text-white">54:44</p>
+                        <span class="text-[10px] text-teal-400 animate-pulse font-bold">SYNCING...</span>
+                    </div>
                 </div>
                 <div class="text-right">
                     <div class="w-12 h-12 bg-white/5 rounded-full flex items-center justify-center border border-white/10">
@@ -275,44 +278,44 @@
         </a>
 
         <!-- 2. 망고 택시 스캐너 (즉각적 이동 수단) -->
-        <section class="premium-glass p-5 border-l-4 border-yellow-500 cursor-pointer hover:bg-white/5 transition-all" onclick="scanMangoTaxi()">
+        <section class="premium-glass p-6 border-l-4 border-yellow-500 cursor-pointer hover:bg-white/5 transition-all" onclick="scanMangoTaxi()">
             <div class="flex items-center gap-4">
                 <div class="relative">
-                    <div id="taxi-node" class="w-16 h-16 bg-yellow-500/10 rounded-full flex items-center justify-center border border-yellow-500/30 transition-all duration-700">
+                    <div id="taxi-node" class="w-20 h-20 bg-yellow-500/10 rounded-full flex items-center justify-center border border-yellow-500/30 transition-all duration-700">
                         <i data-lucide="navigation" class="text-yellow-500 w-8 h-8"></i>
                     </div>
                     <div id="taxi-radar" class="absolute inset-0 border-2 border-yellow-500 rounded-full scale-100 opacity-0 transition-all"></div>
                 </div>
                 <div class="flex-1">
-                    <h4 class="text-sm font-black italic uppercase">Mango Taxi Match</h4>
-                    <p class="text-[10px] text-teal-400 font-orb uppercase tracking-tighter mt-1">대기 기사: 12명 | 최단 거리: 0.3km</p>
-                    <div class="flex gap-2 mt-2">
-                        <button class="flex-1 py-1.5 bg-yellow-500 text-black text-[10px] font-black rounded-lg active:scale-95 transition-transform">기사 호출</button>
-                        <button class="flex-1 py-1.5 bg-white/5 border border-white/10 text-[10px] font-black rounded-lg">예약</button>
+                    <h4 class="text-md font-black italic uppercase tracking-tighter">Mango Taxi Match</h4>
+                    <p class="text-xs text-white/60 mt-1">대기 기사: <span class="text-teal-400 font-bold">12명</span> | 최단 거리: <span class="text-yellow-400 font-bold">0.3KM</span></p>
+                    <div class="flex gap-2 mt-3">
+                        <button class="flex-1 py-2.5 bg-yellow-500 text-black text-xs font-black rounded-xl active:scale-95 transition-all animate-pulse">기사 호출</button>
+                        <button class="flex-1 py-2.5 bg-white/5 border border-white/10 text-xs font-black rounded-xl hover:bg-white/10 transition-all">예약</button>
                     </div>
                 </div>
             </div>
         </section>
 
         <!-- 3. 여행 부가 서비스 (계획형 이동 및 숙박) -->
-        <div class="flex gap-3 mt-4">
+        <div class="grid grid-cols-3 gap-3 mt-2">
             
-            <a href="Hotel_Book.html" class="flex-1 flex flex-col items-center justify-center p-4 rounded-2xl border border-pink-500/50 bg-zinc-900/50 hover:bg-zinc-800 active:scale-95 transition-all cursor-pointer group">
+            <a href="Hotel_Book.html" class="flex flex-col items-center justify-center p-4 rounded-3xl border border-pink-500/30 bg-white/5 hover:bg-pink-500/5 active:scale-95 transition-all cursor-pointer group">
                 <i data-lucide="bed" class="w-6 h-6 text-pink-500 mb-2 group-hover:scale-110 transition-transform"></i>
-                <span class="text-lg font-bold text-white tracking-wide">STAY</span>
-                <span class="text-sm font-semibold text-pink-500 mt-1">22.8 Pi</span>
+                <span class="text-xs font-black text-white/40 uppercase font-orb">Stay</span>
+                <span class="text-sm font-black text-pink-500 mt-1">22.8 Pi</span>
             </a>
 
-            <a href="Travel_mall.html" class="flex-1 flex flex-col items-center justify-center p-4 rounded-2xl border border-yellow-500/50 bg-zinc-900/50 hover:bg-zinc-800 active:scale-95 transition-all cursor-pointer group">
+            <a href="Travel_mall.html" class="flex flex-col items-center justify-center p-4 rounded-3xl border border-yellow-500/30 bg-white/5 hover:bg-yellow-500/5 active:scale-95 transition-all cursor-pointer group">
                 <i data-lucide="shopping-bag" class="w-6 h-6 text-yellow-500 mb-2 group-hover:scale-110 transition-transform"></i>
-                <span class="text-lg font-bold text-white tracking-wide">POP-UP</span>
-                <span class="text-sm font-semibold text-yellow-500 mt-1">Active</span>
+                <span class="text-xs font-black text-white/40 uppercase font-orb">Pop-up</span>
+                <span class="text-sm font-black text-yellow-500 mt-1">Active</span>
             </a>
 
-            <a href="Rent_Car.html" class="flex-1 flex flex-col items-center justify-center p-4 rounded-2xl border border-teal-500/50 bg-zinc-900/50 hover:bg-zinc-800 active:scale-95 transition-all cursor-pointer group">
+            <a href="Rent_Car.html" class="flex flex-col items-center justify-center p-4 rounded-3xl border border-teal-500/30 bg-white/5 hover:bg-teal-500/5 active:scale-95 transition-all cursor-pointer group">
                 <i data-lucide="car" class="w-6 h-6 text-teal-500 mb-2 group-hover:scale-110 transition-transform"></i>
-                <span class="text-lg font-bold text-white tracking-wide">RENT-A-CAR</span>
-                <span class="text-sm font-semibold text-teal-500 mt-1">Mango_Z</span>
+                <span class="text-xs font-black text-white/40 uppercase font-orb">Rent</span>
+                <span class="text-sm font-black text-teal-500 mt-1">Mango_Z</span>
             </a>
         </div>
 

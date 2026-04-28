@@ -9,13 +9,8 @@
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;900&family=Noto+Sans+KR:wght@100;400;900&display=swap');
         
-        :root { 
-            --neon-orange: #FF5F00; --neon-cyan: #00F2FF; 
-            /* [프롬프트 1] Pi Browser 전용 Safe Area (상단 10%, 하단 15%) */
-            --safe-top: 10vh;
-            --safe-bottom: 15vh;
-        }
-        body { font-family: 'Noto Sans KR', sans-serif; background: #000; color: white; overflow-x: hidden; padding-top: var(--safe-top); padding-bottom: var(--safe-bottom); /* 좌우 24px 패딩은 nav와 main의 px-6으로 적용 */ min-height: 100vh; display: flex; flex-direction: column; }
+        :root { --neon-orange: #FF5F00; --neon-cyan: #00F2FF; }
+        body { font-family: 'Noto Sans KR', sans-serif; background: #000; color: white; overflow-x: hidden; }
         .font-orbit { font-family: 'Orbitron', sans-serif; }
 
         /* 입체적 차원 배경 */
@@ -41,13 +36,6 @@
         .carousel-viewport { width: 100%; overflow: hidden; position: relative; }
         .carousel-track { display: flex; transition: transform 0.6s cubic-bezier(0.65, 0, 0.35, 1); gap: 1rem; }
         .carousel-item { flex: 0 0 calc(100% / 3); max-width: calc(100% / 3); cursor: pointer; }
-        .active-session { background: var(--neon-orange) !important; color: white !important; }
-
-        /* [K-POP 유닛 무한 슬라이드 애니메이션] */
-        @keyframes flow-left {
-            from { transform: translateX(0); }
-            to { transform: translateX(-50%); }
-        }
         
         @media (max-width: 640px) {
             .carousel-item { flex: 0 0 calc(100% - 1rem); max-width: calc(100% - 1rem); }
@@ -72,14 +60,6 @@
             50% { box-shadow: 0 0 0 15px rgba(0, 242, 255, 0); }
         }
         .btn-hyper { animation: pulse-cyan 3s infinite; }
-
-        /* [초고도화] 홀로그래픽 스캔 라인 */
-        .hologram-scan {
-            position: absolute; inset: 0;
-            background: linear-gradient(to bottom, transparent, rgba(0, 242, 255, 0.1), transparent);
-            animation: scan-move 4s linear infinite;
-        }
-        @keyframes scan-move { 0% { transform: translateY(-100%); } 100% { transform: translateY(100%); } }
         
         /* 지문 인식 애니메이션 */
         @keyframes finger-glow {
@@ -149,35 +129,6 @@
 
             <div class="carousel-viewport">
                 <div id="highlight-track" class="carousel-track"></div>
-            </div>
-        </section>
-
-        <!-- [초고도화] Global Synergy Leaderboard -->
-        <section class="space-y-6">
-            <div class="flex justify-between items-center px-2">
-                <h3 class="text-xs font-orbit tracking-[0.3em] text-white/30 uppercase">Global Synergy Ranking</h3>
-                <span class="text-[9px] text-orange-500 font-black">REAL-TIME RANKING</span>
-            </div>
-            <div class="hyper-card p-6 rounded-[2.5rem] space-y-4">
-                <div class="flex items-center justify-between border-b border-white/5 pb-3">
-                    <div class="flex items-center gap-4">
-                        <span class="font-orbit text-orange-500 font-black italic">01</span>
-                        <div class="w-8 h-8 rounded-lg bg-rose-500/20 flex items-center justify-center text-rose-500"><i data-lucide="music-2" class="w-4 h-4"></i></div>
-                        <span class="text-sm font-bold">K-POP DANCE SYNC</span>
-                    </div>
-                    <span class="text-xs font-orbit font-black text-cyan-400">98.2%</span>
-                </div>
-                <div class="flex items-center justify-between border-b border-white/5 pb-3">
-                    <div class="flex items-center gap-4">
-                        <span class="font-orbit text-white/40 font-black italic">02</span>
-                        <div class="w-8 h-8 rounded-lg bg-cyan-500/20 flex items-center justify-center text-cyan-400"><i data-lucide="camera" class="w-4 h-4"></i></div>
-                        <span class="text-sm font-bold text-white/80">READING LOG</span>
-                    </div>
-                    <span class="text-xs font-orbit font-black text-white/40">85.4%</span>
-                </div>
-                <button class="w-full py-3 text-[10px] font-black text-white/20 uppercase tracking-[0.3em] hover:text-orange-500 transition-colors">
-                    View Full Leaderboard
-                </button>
             </div>
         </section>
 
@@ -260,7 +211,7 @@
                 <div class="absolute inset-0 bg-cyan-400/20 blur-2xl rounded-full"></div>
             </div>
             <div class="space-y-2">
-                <h3 class="text-xl font-black italic text-white font-orbit">0.0000001 Pi PAYMENT</h3>
+                <h3 class="text-xl font-black italic text-white font-orbit">3.14 Pi PAYMENT</h3>
                 <p class="text-xs text-white/40 font-bold tracking-widest uppercase">결제 승인 진행 중...</p>
             </div>
             <div class="flex justify-center gap-2">
@@ -284,25 +235,36 @@
     <script>
         lucide.createIcons();
         
+        // [모듈 2/4 반영] 17-33세 타겟 이미지 리포지토리 및 메타데이터
         const dimensionRegistry = [
-            { id: "d1", img: "1535525153412-5a42439a210d", meta: "21세 / 은색 스트릿웨어 힙합 듀오", dist: "0.3km", title: "HIPHOP DUO / 힙합 듀오 // STREET SILVER", type: 'DANCE', units: "2인 유닛" },
-            { id: "d2", img: "1508700115892-45ecd05ae2ad", meta: "3인 유닛 / 퍼포먼스", dist: "0.8km", title: "스테이지 펄 / PERFORMANCE", type: 'DANCE' }
+            { img: "1535525153412-5a42439a210d", meta: "21세 / 은색 스트릿웨어 힙합 듀오", dist: "0.3km", title: "HIPHOP DUO / 힙합 듀오 // STREET SILVER", type: 'DANCE' },
+            { img: "1508700115892-45ecd05ae2ad", meta: "24세 / 연극적 안무 3인조 유닛", dist: "0.8km", title: "THEATRICAL 3-UNIT / 3인조 유닛 // DANCE DIMENSION", type: 'DANCE' },
+            { img: "1524117074681-31bd4bb22ad3", meta: "24세 / 부산 광안리", dist: "1.2km", title: "OUTDOOR VIBE", type: 'SPORTS' },
+            { img: "1521449298711-121d81ad1612", meta: "21세 / 부산 전포", dist: "0.5km", title: "READING LOG / 독서 로그 // DIMENSION 1", type: 'READING' },
+            { img: "1578310344722-da649646487e", meta: "27세 / 부산 해운대", dist: "4.5km", title: "K-POP 비트/펄 / DANCE DIMENSION", type: 'DANCE' },
+            { img: "1581291518633-83b4ebd1d83e", meta: "23세 / 부산 남포", dist: "2.1km", title: "WEBTOON CORE / 웹툰 코어 // GATEWAY", type: 'WEBTOON' },
+            { img: "1551632811-561732d1e306", meta: "29세 / 부산 금정", dist: "0.8km", title: "CLIMBING MASTER / 클라이밍 마스터", type: 'SPORTS' },
+            { img: "1539635278303-d4002c07eae3", meta: "22세 / 부산 대연", dist: "1.5km", title: "BACKPACKER NODE / 비대칭적 이상향 // ASYMMETRIC UTOPIA", type: 'SPORTS' },
+            { img: "1517841905240-472988babdf9", meta: "20세 / 부산 장전", dist: "0.2km", title: "YOUTH SYNERGY" },
+            { img: "1529626455594-4ff0802cfb7b", meta: "25세 / 부산 사상", dist: "3.2km", title: "URBAN STYLE" },
+            { img: "1488161628813-04466f872be2", meta: "18세 / 부산 동래", dist: "0.7km", title: "ACTIVE MANGO" }
         ];
 
+        // [모듈 1] 19가지 카테고리 KR/EN 병기 데이터
         let hobbies = [
-            { kr: '싱크 탱크/로그', en: 'THINK TANK', cat: '독서/인문학', color: 'amber-200', icon: 'book', units: ["심층 독론", "북 셰어링"], trend: "STABLE" },
+            { kr: '독서 로그', en: 'READING', color: 'amber-200', icon: 'book' },
             { kr: '사진 기록', en: 'PHOTOGRAPHY', color: 'cyan-400', icon: 'camera' },
-            { id: 'h1', kr: '싱크 탱크/로그', en: 'THINK TANK', cat: '독서/인문학', color: 'amber-200', icon: 'book', trend: "STABLE" },
-            { id: 'h2', kr: '사진 기록', en: 'PHOTOGRAPHY', color: 'cyan-400', icon: 'camera' },
-            { kr: '웹툰 창작', en: 'WEBTOON', cat: '웹툰/애니', color: 'pink-500', icon: 'layout-grid', trend: "NEW" },
+            { kr: '웹툰 창작', en: 'WEBTOON', color: 'pink-500', icon: 'layout-grid' },
             { kr: '산악 탐험', en: 'MOUNTAINEERING', color: 'lime-500', icon: 'mountain' },
-            { kr: 'K-POP 비트/펄', en: 'K-POP DANCE', cat: '댄스/무용', color: 'rose-400', icon: 'music-2', units: ["2인 유닛", "3인 퍼포먼스"], trend: "HOT" },
+            { kr: '댄스 비트', en: 'DANCE', color: 'rose-400', icon: 'music-2' },
             { kr: '운동 시너지', en: 'SPORTS', color: 'orange-500', icon: 'trophy' },
             { kr: '언어 교환', en: 'LANGUAGES', color: 'blue-400', icon: 'languages' },
             { kr: '음악 연주', en: 'MUSIC', color: 'purple-400', icon: 'music' },
             { kr: '수공예 공방', en: 'CRAFT', color: 'yellow-600', icon: 'hammer' },
             { kr: '봉사 활동', en: 'VOLUNTEER', color: 'red-500', icon: 'heart' },
             { kr: '사교 네트워킹', en: 'SOCIAL', color: 'indigo-400', icon: 'users' },
+            { kr: '바이크 크루', en: 'BIKE', color: 'zinc-400', icon: 'car' },
+            { kr: '게임 퀘스트', en: 'GAMING', color: 'emerald-400', icon: 'gamepad-2' },
             { kr: '요리 실험실', en: 'COOKING', color: 'orange-300', icon: 'utensils' },
             { kr: '반려동물 로그', en: 'PETS', color: 'orange-200', icon: 'dog' },
             { kr: '자기계발', en: 'GROWTH', color: 'teal-400', icon: 'trending-up' },
@@ -312,35 +274,40 @@
         ];
 
         document.getElementById('gate-container').innerHTML = hobbies.map(h => `
-            <div id="gate-${(h.id || h.en).toString().replace(/\s+/g,'-')}" class="gate-card p-6 rounded-[2.5rem] border border-orange-500/40 bg-orange-500/5 text-orange-500 transition-all hover:scale-105 active:scale-95 cursor-pointer">
-                <i data-lucide="${h.icon || 'circle'}" class="w-7 h-7 mb-3"></i>
-                <div class="space-y-0.5 flex flex-col justify-end">
-                    <h4 class="text-[13px] font-black text-white leading-none">${h.kr || ''}</h4>
-                    <p class="category-en font-orbit uppercase">${h.en || ''}</p>
+            <div class="gate-card p-6 rounded-[2.5rem] border border-orange-500/40 bg-orange-500/5 text-orange-500 transition-all hover:scale-105 active:scale-95 cursor-pointer">
+                <i data-lucide="${h.icon}" class="w-7 h-7 mb-3"></i>
+                <div class="space-y-0.5">
+                    <h4 class="text-[13px] font-black text-white leading-none">${h.kr}</h4>
+                    <p class="category-en font-orbit uppercase">${h.en}</p>
                 </div>
             </div>
         `).join('');
 
         // [모듈 2/4] 캐러셀 및 위치 기반 갤러리 렌더링
         const track = document.getElementById('highlight-track');
-        track.innerHTML = dimensionRegistry.map(g => `
-            <div class="carousel-item relative rounded-[1.5rem] overflow-hidden hyper-card p-4">
-                <img src="https://images.unsplash.com/photo-${g.img}?w=400&q=80" class="w-full h-40 object-cover" />
-                <div class="absolute top-4 left-4 flex gap-2">
-                    <div class="w-8 h-8 rounded-full holo-sync flex items-center justify-center text-cyan-400">
-                        <i data-lucide="wallet" class="w-4 h-4"></i>
+        track.innerHTML = dimensionRegistry.map((g, index) => `
+            <div class="carousel-item">
+                <div class="hyper-card rounded-[3.5rem] p-6 space-y-5 relative group overflow-hidden border-[#FF5F00]/30">
+                    <div class="relative aspect-square rounded-[2.5rem] overflow-hidden bg-zinc-900">
+                        <img src="https://images.unsplash.com/photo-${g.img}?w=400&q=80" class="w-full h-full object-cover">
+                        <div class="absolute top-4 right-4 distance-badge px-3 py-1 rounded-full text-[9px] font-black font-orbit">
+                            ${g.dist} Near You
+                        </div>
+                        <!-- 홀로그래픽 경제 생태계 연동 아이콘 -->
+                        <div class="absolute top-4 left-4 flex gap-2">
+                            <div class="w-8 h-8 rounded-full holo-sync flex items-center justify-center text-cyan-400">
+                                <i data-lucide="wallet" class="w-4 h-4"></i>
+                            </div>
+                            <span class="text-[7px] font-black text-cyan-400 self-center tracking-widest font-orbit">Pi ECONOMY SYNC</span>
+                        </div>
+                        <div class="absolute inset-x-0 bottom-0 p-5 bg-gradient-to-t from-black/90 to-transparent">
+                            <p class="text-[11px] font-black text-[#FF5F00] font-orbit italic">${g.meta}</p>
+                        </div>
                     </div>
-                    <span class="text-[7px] font-black text-cyan-400 self-center tracking-widest font-orbit">Pi ECONOMY SYNC</span>
-                </div>
-                <div class="absolute inset-x-0 bottom-0 p-5 bg-gradient-to-t from-black/90 to-transparent">
-                    <p class="text-[11px] font-black text-[#FF5F00] font-orbit italic">${g.meta || ''}</p>
-                </div>
-                <div class="absolute inset-x-0 bottom-0 p-5 bg-black/60 backdrop-blur-md">
-                    <h3 class="text-xs font-black text-white leading-tight uppercase font-orbit mb-1">${g.title || ''}</h3>
-                </div>
-                <div class="space-y-4 mt-2">
-                    <h3 class="text-md font-black text-white leading-tight uppercase font-orbit">${g.title || ''}</h3>
-                    <button onclick="handleSmartJoin(this, '${g.type || ''}')" class="btn-hyper w-full py-4 rounded-2xl bg-[#FF5F00] text-black font-black text-xs uppercase tracking-widest active:scale-95 transition-all">가입하고 참여하기</button>
+                    <div class="space-y-4">
+                        <h3 class="text-md font-black text-white leading-tight uppercase font-orbit">${g.title}</h3>
+                        <button onclick="handleSmartJoin(this)" class="btn-hyper w-full py-4 rounded-2xl bg-[#FF5F00] text-black font-black text-xs uppercase tracking-widest active:scale-95 transition-all">가입하고 참여하기</button>
+                    </div>
                 </div>
             </div>
         `).join('');
@@ -354,11 +321,12 @@
 
         function updateMarketAd(type = 'DANCE') {
             const ad = marketAds.find(a => a.type === type) || marketAds[0];
-            document.getElementById('market-sync-ad').innerHTML = `
+            const adBox = document.getElementById('market-sync-ad');
+            adBox.innerHTML = `
                 <div class="w-20 h-20 rounded-2xl overflow-hidden bg-zinc-800 flex-shrink-0">
-                    <img src="${ad.img}" class="w-full h-full object-cover opacity-80" />
+                    <img src="${ad.img}" class="w-full h-full object-cover opacity-80">
                 </div>
-                <div class="flex-1 min-w-0 ml-3">
+                <div class="flex-1 min-w-0">
                     <p class="text-[9px] text-cyan-400 font-black uppercase tracking-widest mb-1">Recommended for you</p>
                     <h4 class="text-sm font-bold text-white truncate">${ad.title}</h4>
                     <p class="text-xs font-orbit font-black text-orange-500 mt-1">${ad.price} <span class="text-[8px] text-white/40">Market Portal</span></p>
@@ -369,81 +337,37 @@
         }
         updateMarketAd();
 
-        // [모듈 3] Pi SDK 결제 연동 및 세션 관리
-        async function requestPayment(type) {
-            try {
-                const modal = document.getElementById('pi-payment-modal');
-
-                if(!window.Pi) {
-                    // Pi Browser not available — show mock modal and simulate success for development
-                    modal.classList.remove('hidden');
-                    setTimeout(() => {
-                        modal.classList.add('hidden');
-                        localStorage.setItem('mango_hobby_status', 'Active');
-                        alert("✅ Dimension Sync Complete: 게이트웨이가 활성화되었습니다.");
-                        activateCategoryUI(type);
-                    }, 1200);
-                    return;
-                }
-
-                // 실제 Pi SDK 호출 예시 (실제 환경에 맞게 조정)
-                modal.classList.remove('hidden');
-
-                const payment = await Pi.createPayment({
-                    amount: 0.0000001,
-                    metadata: { type: "dimension_activation" }
-                }, {
-                    onReadyForServerApproval: (id) => console.log("Approval:", id),
-                    onReadyForServerCompletion: (id, tx) => {
-                        modal.classList.add('hidden');
-                        localStorage.setItem('mango_hobby_status', 'Active');
-                        alert("✅ Dimension Sync Complete: 게이트웨이가 활성화되었습니다.");
-                        activateCategoryUI(type);
-                    },
-                    onCancel: (id) => modal.classList.add('hidden'),
-                });
-            } catch (err) {
-                console.error(err);
-            }
-        }
-
-        function activateCategoryUI(type) {
-            if(!type) return;
-            const normalizedId = `gate-${type.toString().replace(/\s+/g,'-')}`;
-            let targetCard = document.getElementById(normalizedId);
-            if(!targetCard) {
-                targetCard = Array.from(document.querySelectorAll('.gate-card')).find(c => c.textContent && c.textContent.includes(type));
-            }
-            if(targetCard) {
-                targetCard.classList.add('active-session');
-                const p = targetCard.querySelector('p');
-                if(p) p.innerText = "참여 중 (JOINED)";
-            }
-        }
-
-        function handleSmartJoin(btn, type) {
-            requestPayment(type);
+        // [모듈 3] 스마트 가입 버튼 핸들러
+        function handleSmartJoin(btn) {
+            const modal = document.getElementById('pi-payment-modal');
+            modal.classList.remove('hidden');
+            
+            setTimeout(() => {
+                modal.classList.add('hidden');
+                btn.classList.replace('bg-[#FF5F00]', 'bg-white');
+                btn.classList.replace('text-black', 'text-[#FF5F00]');
+                btn.innerText = "공간 활성화 완료";
+                btn.classList.remove('btn-hyper');
+                alert("Dimension Sync Complete: 3.14 Pi가 성공적으로 처리되었습니다.");
+            }, 3500);
         }
 
         lucide.createIcons();
 
         // 캐러셀 엔진
         let currentIndex = 0;
-        const totalItems = Math.max(1, dimensionRegistry.length);
+        const totalItems = dimensionRegistry.length;
         function rotateCarousel() {
-            const firstItem = document.querySelector('.carousel-item');
-            if(!firstItem) return;
-            const itemWidth = firstItem.offsetWidth;
+            const itemWidth = document.querySelector('.carousel-item').offsetWidth;
             const gap = 16;
-            const slideAmount = itemWidth + gap;
+            let slideAmount = itemWidth + gap;
             track.style.transform = `translateX(-${currentIndex * slideAmount}px)`;
-
+            
             // [알고리즘 연동] 현재 활성화된 아이템의 타입에 따라 마켓 광고 갱신
             const activeItem = dimensionRegistry[currentIndex % totalItems];
-            if(typeof updateMarketAd === 'function' && activeItem) updateMarketAd(activeItem.type);
+            if(typeof updateMarketAd === 'function') updateMarketAd(activeItem.type);
 
-            const visibleCount = (window.innerWidth < 640) ? 1 : 3;
-            currentIndex = (currentIndex + 1) % Math.max(1, totalItems - (visibleCount - 1));
+            currentIndex = (currentIndex + 1) % (totalItems - (window.innerWidth < 640 ? 0 : 2)); 
         }
         setInterval(rotateCarousel, 5000);
     </script>

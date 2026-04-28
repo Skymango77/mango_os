@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>MANGO HOBBY - THE CORE (HYPER-SCALE v3.5)</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;900&family=Noto+Sans+KR:wght@100;400;900&display=swap');
+        
+        :root { --neon-orange: #FF5F00; --neon-cyan: #00F2FF; }
+        body { font-family: 'Noto Sans KR', sans-serif; background: #000; color: white; overflow-x: hidden; }
+        .font-orbit { font-family: 'Orbitron', sans-serif; }
+
+        /* 입체적 차원 배경 */
+        .zen-dimmer {
+            position: fixed; inset: 0;
+            background: 
+                radial-gradient(circle at 10% 20%, rgba(255, 95, 0, 0.08) 0%, transparent 40%),
+                radial-gradient(circle at 90% 80%, rgba(0, 242, 255, 0.08) 0%, transparent 40%);
+            z-index: -1;
+        }
+
+        /* 하이퍼 카드 & 글래스모피즘 */
+        .hyper-card {
+            background: rgba(15, 15, 15, 0.6);
+            backdrop-filter: blur(25px) saturate(200%);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            transition: all 0.5s cubic-bezier(0.23, 1, 0.32, 1);
+        }
+        .hyper-card:hover { border-color: var(--neon-orange); transform: translateY(-5px); }
+
+        /* 캐러셀 엔진 */
+        .carousel-viewport { width: 100%; overflow: hidden; position: relative; }
+        .carousel-track { display: flex; transition: transform 0.6s cubic-bezier(0.65, 0, 0.35, 1); gap: 1rem; }
+        .carousel-item { flex: 0 0 calc(100% / 3); max-width: calc(100% / 3); cursor: pointer; }
+        
+        @media (max-width: 640px) {
+            .carousel-item { flex: 0 0 calc(100% - 1rem); max-width: calc(100% - 1rem); }
+        }
+
+        /* 10대~30대 타겟 갤러리 썸네일 */
+        .gallery-thumb { aspect-ratio: 1; border-radius: 0.8rem; border: 1px solid rgba(255,255,255,0.1); overflow: hidden; background: #111; }
+        .gallery-thumb img { width: 100%; height: 100%; object-fit: cover; opacity: 0.8; transition: opacity 0.3s; }
+        .gallery-thumb:hover img { opacity: 1; }
+
+        @keyframes pulse-cyan {
+            0%, 100% { box-shadow: 0 0 0 0 rgba(0, 242, 255, 0.4); }
+            50% { box-shadow: 0 0 0 15px rgba(0, 242, 255, 0); }
+        }
+        .btn-hyper { animation: pulse-cyan 3s infinite; }
+        
+        .custom-scrollbar::-webkit-scrollbar { width: 4px; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 10px; }
+    </style>
+</head>
+<body>
+    <div class="zen-dimmer"></div>
+
+    <nav class="p-6 flex justify-between items-center">
+        <div class="space-y-1">
+            <h1 class="font-orbit text-2xl font-black text-white">MANGO <span class="text-orange-500">CORE</span></h1>
+            <div class="flex items-center gap-2">
+                <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-ping"></span>
+                <span class="font-orbit text-[8px] text-emerald-500/80 tracking-[0.4em]">NODE_BUSAN_SYNC // YOUTH_ZONE</span>
+            </div>
+        </div>
+        <div class="text-right font-orbit">
+            <p class="text-[10px] text-white/40 uppercase">Generation Sync</p>
+            <p class="text-xs font-bold text-cyan-400 tracking-widest">10s - 30s ACTIVE</p>
+        </div>
+    </nav>
+
+    <main class="px-6 space-y-10 pb-40 max-h-[85vh] overflow-y-auto custom-scrollbar">
+        
+        <section class="space-y-6">
+            <div class="flex justify-between items-end px-2">
+                <h2 class="text-xs font-orbit tracking-[0.5em] text-white/30 uppercase">Youth Highlight Dimensions</h2>
+                <span class="text-[10px] text-orange-500 font-black">LIVE FEED</span>
+            </div>
+
+            <div class="carousel-viewport">
+                <div id="highlight-track" class="carousel-track"></div>
+            </div>
+        </section>
+
+        <section class="space-y-6">
+            <h3 class="text-xs font-orbit tracking-[0.3em] text-white/30 px-2 uppercase">Core Gateway</h3>
+            <div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
+                <div class="gate-card p-6 rounded-[2.5rem] border border-pink-500/20 bg-pink-500/5 text-pink-500">
+                    <i data-lucide="layout-grid" class="w-8 h-8 mb-4"></i>
+                    <h4 class="text-sm font-black text-white">웹툰/애니</h4>
+                </div>
+                <div class="gate-card p-6 rounded-[2.5rem] border border-orange-500/20 bg-orange-500/5 text-orange-500">
+                    <i data-lucide="camera" class="w-8 h-8 mb-4"></i>
+                    <h4 class="text-sm font-black text-white">망고 스냅</h4>
+                </div>
+                <div class="gate-card p-6 rounded-[2.5rem] border border-cyan-500/20 bg-cyan-500/5 text-cyan-500">
+                    <i data-lucide="music-2" class="w-8 h-8 mb-4"></i>
+                    <h4 class="text-sm font-black text-white">K-POP 댄스</h4>
+                </div>
+                <div class="gate-card p-6 rounded-[2.5rem] border border-lime-500/20 bg-lime-500/5 text-lime-500">
+                    <i data-lucide="mountain" class="w-8 h-8 mb-4"></i>
+                    <h4 class="text-sm font-black text-white">클라이밍</h4>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="fixed bottom-8 left-1/2 -translate-x-1/2 w-[92%] max-w-lg hyper-card rounded-[3rem] p-5 flex justify-around items-center z-50">
+        <button class="p-3 text-orange-500"><i data-lucide="home" class="w-6 h-6"></i></button>
+        <button class="p-3 text-white/30"><i data-lucide="compass" class="w-6 h-6"></i></button>
+        <div class="w-16 h-16 bg-orange-500 rounded-full flex items-center justify-center -translate-y-8 shadow-2xl shadow-orange-500/60 active:scale-95 transition-all cursor-pointer">
+            <i data-lucide="plus" class="text-black w-8 h-8"></i>
+        </div>
+        <button class="p-3 text-white/30"><i data-lucide="message-square" class="w-6 h-6"></i></button>
+        <button class="p-3 text-white/30"><i data-lucide="user" class="w-6 h-6"></i></button>
+    </footer>
+
+    <script>
+        lucide.createIcons();
+        
+        // 10대~30대 타겟팅된 이미지 소스 생성 함수 (Unsplash & Pravatar 조합)
+        function getYouthImg(id, category) {
+            // 연령대와 무드를 특정하는 키워드 조합
+            return `https://images.unsplash.com/photo-${id}?auto=format&fit=crop&q=60&w=200`;
+        }
+
+        // 10대~30대 초반 젊은 참여자 프로필 (랜덤 쿼리 최적화)
+        const youthProfiles = [
+            "https://i.pravatar.cc/150?u=teen1", "https://i.pravatar.cc/150?u=young2", 
+            "https://i.pravatar.cc/150?u=student3", "https://i.pravatar.cc/150?u=hip4",
+            "https://i.pravatar.cc/150?u=vibe5", "https://i.pravatar.cc/150?u=youth6",
+            "https://i.pravatar.cc/150?u=genz7", "https://i.pravatar.cc/150?u=mill8",
+            "https://i.pravatar.cc/150?u=busan9", "https://i.pravatar.cc/150?u=mango10"
+        ];
+
+        const gatherArray = [
+            { title: "서면 DANCE 2.0<br>K-POP 챌린지", icon: "music-2", color: "rose-500", loc: "SEOMYEON_SYNC", pi: "5.00 Pi", members: "+42", 
+              images: youthProfiles },
+            { title: "전포 망고 펄<br>스냅 사진전", icon: "camera", color: "orange-500", loc: "JEONPO_ART", pi: "2.80 Pi", members: "+28", 
+              images: youthProfiles.map(img => img + "&v=snap") },
+            { title: "광안리 미남미녀<br>나이트 러닝", icon: "users", color: "amber-300", loc: "GWANGAN_RUN", pi: "1.00 Pi", members: "+102", 
+              images: youthProfiles.map(img => img + "&v=run") }
+        ];
+
+        // 10개 카드 생성
+        for(let i=3; i<10; i++) { gatherArray.push({...gatherArray[i%3], title: `YOUTH GATE ${i+1}<br>동기화 중`, loc: `NODE_BUSAN_${i+1}` }); }
+
+        const track = document.getElementById('highlight-track');
+        track.innerHTML = gatherArray.map((g, index) => `
+            <div class="carousel-item">
+                <div class="hyper-card rounded-[3.5rem] p-7 space-y-5 relative group overflow-hidden border border-white/5">
+                    <div class="relative z-10 space-y-5">
+                        <div class="flex justify-between items-center">
+                            <div class="flex items-center gap-2">
+                                <i data-lucide="${g.icon}" class="w-5 h-5 text-${g.color}"></i>
+                                <span class="text-[8px] font-orbit text-white/40 tracking-[0.2em]">${g.loc}</span>
+                            </div>
+                            <span class="text-[8px] font-black bg-white/10 px-2 py-0.5 rounded text-cyan-400">10-30s ONLY</span>
+                        </div>
+                        <h3 class="text-lg font-black leading-tight text-white/90 h-12">${g.title}</h3>
+                        
+                        <div class="space-y-2">
+                            <div class="flex justify-between items-center">
+                                <p class="text-[8px] font-orbit text-white/30 uppercase tracking-widest">Recent Activity</p>
+                                <p class="text-[8px] font-bold text-orange-500 italic">LIVE</p>
+                            </div>
+                            <div class="grid grid-cols-5 gap-1.5">
+                                ${g.images.map(img => `<div class="gallery-thumb"><img src="${img}"></div>`).join('')}
+                            </div>
+                        </div>
+
+                        <div class="flex justify-between items-end pt-3 border-t border-white/5">
+                            <div class="text-left">
+                                <p class="text-[8px] text-white/40 uppercase">Synergy Fee</p>
+                                <p class="text-xl font-orbit font-bold text-orange-500">${g.pi}</p>
+                            </div>
+                            <div class="w-10 h-10 rounded-full bg-cyan-400/10 border border-cyan-400/30 flex items-center justify-center text-[10px] font-bold text-cyan-400">JOIN</div>
+                        </div>
+                        <button class="btn-hyper w-full py-4 rounded-2xl bg-cyan-400 text-black font-black text-sm uppercase tracking-tighter">Enter Dimension</button>
+                    </div>
+                </div>
+            </div>
+        `).join('');
+
+        lucide.createIcons();
+
+        // 캐러셀 엔진
+        let currentIndex = 0;
+        const totalItems = gatherArray.length;
+        function rotateCarousel() {
+            const itemWidth = document.querySelector('.carousel-item').offsetWidth;
+            const gap = 16;
+            let slideAmount = itemWidth + gap;
+            track.style.transform = `translateX(-${currentIndex * slideAmount}px)`;
+            currentIndex = (currentIndex + 1) % (totalItems - (window.innerWidth < 640 ? 0 : 2)); 
+        }
+        setInterval(rotateCarousel, 5000);
+        rotateCarousel();
+    </script>
+</body>
+</html>
