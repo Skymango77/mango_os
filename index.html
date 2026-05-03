@@ -986,6 +986,7 @@ style="width: 140px; height: 140px; aspect-ratio: 1/1; object-fit: cover; z-inde
                     class="mango-gold-power text-[34px] font-[900] tracking-tighter leading-none drop-shadow-md pr-2" 
                     style="color: #f97316; font-style: italic; margin: 0; position: relative; z-index: 10;">
                     MANGO
+                    MANGO HOBBY
                 </h1>
                 
                 <div id="gold-dust-container" 
@@ -1851,6 +1852,7 @@ const portalData = [
     { id: 'TRANSFER', icon: 'repeat', url: 'Transfer/index.html', desc: '안전한 이동 시스템.' },          // 2번째
     { id: 'TRAVEL', icon: 'plane', url: 'Travel/index.html', desc: '글로벌 여행 및 숙박 예약.' },       // 3번째
     { id: 'HOBBY', icon: 'heart', desc: '취미와 가치를 공유하는 커뮤니티.' }, // 4번째 (정확히 배치)
+    { id: 'HOBBY', icon: 'heart', url: 'Hobby/index.html', desc: '취미와 가치를 공유하는 커뮤니티.' }, // 4번째 (정확히 배치)
     { id: 'REALTY', icon: 'building', desc: '부동산 매물 확인 및 거래.' },        // 5번째 (리액트 연결 -> 모달)
     { id: 'MARKET', icon: 'shopping-cart', desc: '글로벌 파이 쇼핑몰.' },    // 6번째
     { id: 'CHAT', icon: 'message-circle', desc: '실시간 채팅 및 소통.' },     // 7번째 (SOCIAL 대체)
@@ -1879,12 +1881,18 @@ const portalData = [
             const iconFileName = `${data.id.toLowerCase()}_icon.png`;
             const iconSize = (data.id === 'FOOD') ? 'w-28 h-28' : 'w-24 h-24';
 
-            door.innerHTML = `
+            // build image HTML separately to avoid nested template-literal issues
+            const imgHtml = `
                 <img src="./assets/img/${iconFileName}" 
-                     class="${iconSize} object-contain" 
+                     class="${iconSize} object-contain pointer-events-none" 
                      alt="${data.id}"
                      onerror="this.src='https://via.placeholder.com/150/222/FFCC00?text=${data.id}'">
             `;
+
+            // [Hobby 내비게이션 활성화] 클릭 시 3D 회전 후 이동하도록 <a> 태그로 감싸고 터치 영역 확보
+            door.innerHTML = data.url ? 
+                `<a href="${data.url}" onclick="return false;" class="flex w-full h-full items-center justify-center cursor-pointer touch-manipulation">${imgHtml}</a>` : 
+                imgHtml;
 
             // 클릭 이벤트 (통합 제어 엔진)
 // --- [수정된 클릭 로직] ---

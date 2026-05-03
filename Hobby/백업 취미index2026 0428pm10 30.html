@@ -72,7 +72,7 @@
         }
         
         @media (max-width: 640px) {
-            .carousel-item { flex: 0 0 calc(100% - 1rem); max-width: calc(100% - 1rem); }
+            .kpop-card { width: calc(100% - 2rem); } /* 모바일에서 카드 너비 조정 */
         }
         
         /* 홀로그래픽 경제 동기화 효과 */
@@ -169,8 +169,58 @@
                 <span class="text-[10px] text-orange-500 font-black tracking-tighter">17-33 TARGETED</span>
             </div>
 
-            <div class="carousel-viewport">
-                <div id="highlight-track" class="carousel-track animate-flow-left"></div>
+            <div class="carousel-viewport"> 
+                <div id="highlight-track" class="carousel-track">
+                    <div class="kpop-card" style="background-image: url('../assets/img/mango_girls2.png');">
+                        <div class="absolute bottom-6 left-6 z-10">
+                            <h4 class="text-lg font-black text-cyan-400 font-orbit tracking-tight">퓨처 웨이브 / FUTURE WAVE</h4>
+                            <p class="text-[10px] text-white/60 font-bold uppercase mt-1 tracking-widest">K-POP DANCE / 17-23 YO</p>
+                        </div>
+                    </div>
+                    <div class="kpop-card" style="background-image: url('../assets/img/mango_girls2.png');">
+                        <div class="absolute bottom-6 left-6 z-10">
+                            <h4 class="text-lg font-black text-cyan-400 font-orbit tracking-tight">망고 비트 / MANGO BEAT</h4>
+                            <p class="text-[10px] text-white/60 font-bold uppercase mt-1 tracking-widest">PERFORMANCE / SYNC LIVE</p>
+                        </div>
+                    </div>
+                    <div class="kpop-card" style="background-image: url('../assets/img/mango_girls2.png');">
+                        <div class="absolute bottom-6 left-6 z-10">
+                            <h4 class="text-lg font-black text-cyan-400 font-orbit tracking-tight">넥스트 레벨 / NEXT STAGE</h4>
+                            <p class="text-[10px] text-white/60 font-bold uppercase mt-1 tracking-widest">BUSAN NODE / YOUTH ZONE</p>
+                        </div>
+                    </div>
+
+                    <div class="kpop-card" style="background-image: url('../assets/img/mango_girls2.png');">
+                        <div class="absolute bottom-6 left-6 z-10">
+                            <h4 class="text-lg font-black text-cyan-400 font-orbit tracking-tight">퓨처 웨이브 / FUTURE WAVE</h4>
+                            <p class="text-[10px] text-white/60 font-bold uppercase mt-1 tracking-widest">K-POP DANCE / 17-23 YO</p>
+                        </div>
+                    </div>
+                    <div class="kpop-card" style="background-image: url('../assets/img/mango_girls2.png');">
+                        <div class="absolute bottom-6 left-6 z-10">
+                            <h4 class="text-lg font-black text-cyan-400 font-orbit tracking-tight">망고 비트 / MANGO BEAT</h4>
+                            <p class="text-[10px] text-white/60 font-bold uppercase mt-1 tracking-widest">PERFORMANCE / SYNC LIVE</p>
+                        </div>
+                    </div>
+                    <div class="kpop-card" style="background-image: url('../assets/img/mango_girls2.png');">
+                        <div class="absolute bottom-6 left-6 z-10">
+                            <h4 class="text-lg font-black text-cyan-400 font-orbit tracking-tight">넥스트 레벨 / NEXT STAGE</h4>
+                            <p class="text-[10px] text-white/60 font-bold uppercase mt-1 tracking-widest">BUSAN NODE / YOUTH ZONE</p>
+                        </div>
+                    </div>
+                    <div class="kpop-card" style="background-image: url('../assets/img/mango_girls2.png');">
+                        <div class="absolute bottom-6 left-6 z-10">
+                            <h4 class="text-lg font-black text-cyan-400 font-orbit tracking-tight">퓨처 웨이브 / FUTURE WAVE</h4>
+                            <p class="text-[10px] text-white/60 font-bold uppercase mt-1 tracking-widest">K-POP DANCE / 17-23 YO</p>
+                        </div>
+                    </div>
+                    <div class="kpop-card" style="background-image: url('../assets/img/mango_girls2.png');">
+                        <div class="absolute bottom-6 left-6 z-10">
+                            <h4 class="text-lg font-black text-cyan-400 font-orbit tracking-tight">망고 비트 / MANGO BEAT</h4>
+                            <p class="text-[10px] text-white/60 font-bold uppercase mt-1 tracking-widest">PERFORMANCE / SYNC LIVE</p>
+                        </div>
+                    </div>
+                </div>
             </div>
         </section>
 
@@ -305,18 +355,18 @@
 
     <script>
         // [모듈 2] 17~23세 K-POP 유닛 슬라이더 엔진 데이터
-                const kpopUnits = [
-            { id: "kpop1", img: "../assets/img/mango_dance.PNG", kr: "퓨처 웨이브", en: "FUTURE WAVE", meta: "2인 유닛 / 사이버펑크", type: "DANCE" },
-                    { id: "kpop2", img: "../assets/img/mango_dance3.jpg", kr: "스타더스트", en: "STARDUST", meta: "3인 유닛 / 갤럭시 팝", type: "DANCE" },
-                    { id: "kpop3", img: "../assets/img/mango hobby background.PNG", kr: "네온 드리프트", en: "NEON DRIFT", meta: "4인 유닛 / 일렉트로 댄스", type: "DANCE" },
-                    { id: "kpop4", img: "1520219643964-5a42439a210d", kr: "크리스탈 비트", en: "CRYSTAL BEAT", meta: "2인 유닛 / 퓨처 베이스", type: "DANCE" },
-                    { id: "kpop5", img: "1521689043964-5a42439a210d", kr: "퀀텀 스텝", en: "QUANTUM STEP", meta: "5인 유닛 / 하이퍼 팝", type: "DANCE" },
-                    { id: "kpop6", img: "1522689043964-5a42439a210d", kr: "글리치 멜로디", en: "GLITCH MELODY", meta: "3인 유닛 / 신스웨이브", type: "DANCE" },
-                    { id: "kpop7", img: "1523689043964-5a42439a210d", kr: "코스믹 리듬", en: "COSMIC RHYTHM", meta: "4인 유닛 / 스페이스 팝", type: "DANCE" },
-                    { id: "kpop8", img: "1524689043964-5a42439a210d", kr: "에테르 사운드", en: "AETHER SOUND", meta: "2인 유닛 / 드림 팝", type: "DANCE" },
-                    { id: "kpop9", img: "1525689043964-5a42439a210d", kr: "인피니티 루프", en: "INFINITY LOOP", meta: "6인 유닛 / 테크노 댄스", type: "DANCE" },
-                    { id: "kpop10", img: "1526689043964-5a42439a210d", kr: "갤럭틱 하모니", en: "GALACTIC HARMONY", meta: "3인 유닛 / 퓨처리즘", type: "DANCE" }
-                ];
+        const kpopUnits = [
+            { id: "kpop1", img: "1514525153412-5a42439a210d", kr: "퓨처 웨이브", en: "FUTURE WAVE", meta: "2인 유닛 / 사이버펑크", type: "DANCE" },
+            { id: "kpop2", img: "1508700115892-45ecd05ae2ad", kr: "스타더스트", en: "STARDUST", meta: "3인 유닛 / 갤럭시 팝", type: "DANCE" },
+            { id: "kpop3", img: "1519689043964-5a42439a210d", kr: "네온 드리프트", en: "NEON DRIFT", meta: "4인 유닛 / 일렉트로 댄스", type: "DANCE" },
+            { id: "kpop4", img: "1520219643964-5a42439a210d", kr: "크리스탈 비트", en: "CRYSTAL BEAT", meta: "2인 유닛 / 퓨처 베이스", type: "DANCE" },
+            { id: "kpop5", img: "1521689043964-5a42439a210d", kr: "퀀텀 스텝", en: "QUANTUM STEP", meta: "5인 유닛 / 하이퍼 팝", type: "DANCE" },
+            { id: "kpop6", img: "1522689043964-5a42439a210d", kr: "글리치 멜로디", en: "GLITCH MELODY", meta: "3인 유닛 / 신스웨이브", type: "DANCE" },
+            { id: "kpop7", img: "1523689043964-5a42439a210d", kr: "코스믹 리듬", en: "COSMIC RHYTHM", meta: "4인 유닛 / 스페이스 팝", type: "DANCE" },
+            { id: "kpop8", img: "1524689043964-5a42439a210d", kr: "에테르 사운드", en: "AETHER SOUND", meta: "2인 유닛 / 드림 팝", type: "DANCE" },
+            { id: "kpop9", img: "1525689043964-5a42439a210d", kr: "인피니티 루프", en: "INFINITY LOOP", meta: "6인 유닛 / 테크노 댄스", type: "DANCE" },
+            { id: "kpop10", img: "1526689043964-5a42439a210d", kr: "갤럭틱 하모니", en: "GALACTIC HARMONY", meta: "3인 유닛 / 퓨처리즘", type: "DANCE" }
+        ];
 
         let hobbies = [
             { kr: '오프로드 디멘션', en: 'OFF-ROAD', icon: 'map-pin', color: 'lime-400' },
@@ -353,9 +403,9 @@
         // [모듈 2] K-POP 유닛 슬라이더 렌더링 (무한 캐러셀)
         const highlightTrack = document.getElementById('highlight-track');
         // 데이터를 두 번 반복하여 무한 스크롤 효과 구현
-        const carouselContent = [...kpopUnits, ...kpopUnits].map(unit => `
+        const carouselContent = [...kpopUnits, ...kpopUnits, ...kpopUnits].map(unit => `
             <div class="carousel-item relative rounded-[1.5rem] overflow-hidden hyper-card p-4">
-                <img src="${unit.img.includes('/') || unit.img.includes('http') ? unit.img : `https://images.unsplash.com/photo-${unit.img}?w=400&q=80`}" class="w-full h-40 object-cover" alt="${unit.kr}" />
+                <img src="https://images.unsplash.com/photo-${unit.img}?w=400&q=80" class="w-full h-40 object-cover" alt="${unit.kr}" />
                 <div class="absolute top-4 left-4 flex gap-2">
                     <div class="w-8 h-8 rounded-full holo-sync flex items-center justify-center text-cyan-400">
                         <i data-lucide="wallet" class="w-4 h-4"></i>
@@ -371,7 +421,7 @@
                     <button onclick="handleSmartJoin(this, '${unit.type || ''}')" class="btn-hyper w-full py-4 rounded-2xl bg-[#FF5F00] text-black font-black text-xs uppercase tracking-widest active:scale-95 transition-all">가입하고 참여하기</button>
                 </div> 
             </div>
-        `).join('');
+        `).join(''); // Removed the extra closing div here, as it was causing issues.
         highlightTrack.innerHTML = carouselContent;
         highlightTrack.style.animationDuration = `${kpopUnits.length * 5}s`; // 5초 * 10개 = 50초
 
