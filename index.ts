@@ -1,8 +1,43 @@
 // @ts-ignore: Deno 전용 라이브러리임을 명시
 /// <reference types="https://deno.land/x/deno_types/index.d.ts" />
 
-import { serve } from "https://deno.land/std@0.168.0/http/server.ts"
-import { createClient } from "https://esm.sh/@supabase/supabase-js@2"
+import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm"
+// runtime-safe `serve`: prefer global Deno serve, then std lib, otherwise Node fallback
+let serve: (handler: (req: Request) => Promise<Response>) => void
+
+if ((globalThis as any).serve) {
+  serve = (globalThis as any).serve
+} else if ((globalThis as any).Deno) {
+  // Deno runtime without global serve: import std serve dynamically
+  // @ts-ignore: ignore TypeScript resolution for remote std module in non-Deno editors
+  const mod = await import("https://deno.land/std@0.168.0/http/server.ts")
+  serve = mod.serve
+} else {
+  // Node.js fallback: adapt Node http to a Web Request/Response handler
+  const http = await import('http')
+  serve = (handler: (req: Request) => Promise<Response>) => {
+    const server = http.createServer(async (req, res) => {
+      try {
+        const { method, headers } = req
+        const url = `http://localhost${req.url ?? '/'}`
+        const chunks: Uint8Array[] = []
+        for await (const chunk of req) chunks.push(chunk as Uint8Array)
+        const body = chunks.length ? Buffer.concat(chunks as any).toString() : undefined
+        const request = new Request(url, { method, headers: headers as any, body })
+        const response = await handler(request)
+        res.writeHead(response.status, Object.fromEntries(response.headers as any))
+        const buffer = Buffer.from(await response.arrayBuffer())
+        res.end(buffer)
+      } catch (err) {
+        res.writeHead(500, { 'Content-Type': 'application/json' })
+        res.end(JSON.stringify({ success: false, error: String(err) }))
+      }
+    })
+    const port = process.env.PORT ? parseInt(process.env.PORT) : 8000
+    server.listen(port)
+    console.log('Server listening on port', port)
+  }
+}
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -16,9 +51,14 @@ serve(async (req: Request): Promise<Response> => {
   }
 
   try {
-    const supabaseUrl = Deno.env.get('SUPABASE_URL') ?? ''
-    const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
-    const supabaseAnonKey = Deno.env.get('SUPABASE_ANON_KEY') ?? ''
+    const getEnv = (key: string) =>
+      (globalThis as any).Deno?.env?.get(key) ??
+      (typeof process !== 'undefined' ? process.env[key] : undefined) ??
+      ''
+
+    const supabaseUrl = getEnv('SUPABASE_URL')
+    const supabaseServiceKey = getEnv('SUPABASE_SERVICE_ROLE_KEY')
+    const supabaseAnonKey = getEnv('SUPABASE_ANON_KEY')
 
     if (!supabaseUrl || !supabaseServiceKey) {
       throw new Error('서버 환경 변수 누락')
