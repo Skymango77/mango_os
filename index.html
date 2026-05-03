@@ -153,19 +153,30 @@
     100% { transform: translateY(40px) scale(0.5); opacity: 0; }
 }
 /* 금가루 입자 스타일 추가 */
-
 .gold-particle {
     position: absolute;
     background: radial-gradient(circle, #ffffff 0%, #ffcc00 60%, #ffaa00 100%);    border-radius: 50%;
     pointer-events: none;
     z-index: 1000; /* 글자보다 앞에 오도록 높은 숫자 부여 */
-    box-shadow: 0 0 5px rgba(255, 215, 0, 1); 
-    filter: blur(0.5px);/* 자체 발광 추가 */
+    box-shadow: 0 0 8px rgba(255, 215, 0, 0.8); 
+    filter: blur(0.3px);/* 자체 발광 최적화 */
 }
 /* 341행 부근: 금가루 입자 애니메이션 수정 */
 @keyframes fall-and-stack {
     0% { 
-        transform: translateY(-40px); /* 로고 안쪽에서 떨어지기 시작 */
+        transform: translateY(-20px) rotate(0deg); 
+        opacity: 0; 
+    }
+    20% { opacity: 1; }
+    100% { 
+        transform: translateY(35px) rotate(360deg) scale(0.5); 
+        opacity: 0;
+    }
+}
+/* 실제 글자 밑에 쌓이는 효과를 위한 보정 */
+@keyframes gold-settle {
+    0% { 
+        transform: translateY(-40px);
         opacity: 0; 
     }
     15% { opacity: 1; }
@@ -963,7 +974,7 @@ style="width: 140px; height: 140px; aspect-ratio: 1/1; object-fit: cover; z-inde
     <!-- 2. Realty Modal (규격 통일 및 상단 배치) -->
     <div id="realty-modal" class="hidden fixed inset-0 z-[10000] flex items-center justify-center p-4 bg-black/80 backdrop-blur-md">
         <div class="dashboard-content w-full max-w-[480px] bg-[#0a0a0a] border border-white/10 rounded-[2.5rem] overflow-hidden transform transition-all duration-300 scale-90 opacity-0 shadow-2xl">
-            <div class="p-6 border-b border-white/5 flex justify-between items-center bg-zinc-900/50">
+            <div class="p-6 border-b border-white/5 flex justify-between items-center bg-black/50">
                 <h2 class="text-xl font-black text-white italic tracking-tighter">REALTY <span class="text-orange-500 text-sm">PORTAL</span></h2>
                 <button onclick="closeRealty()" class="p-2 hover:bg-white/10 rounded-full text-white"><i data-lucide="x" class="w-6 h-6"></i></button>
             </div>
@@ -978,17 +989,17 @@ style="width: 140px; height: 140px; aspect-ratio: 1/1; object-fit: cover; z-inde
     </div>
 <div class="mango-container flex justify-between items-center px-4 pt-6">
     <div class="flex items-center gap-3">
-        <div class="logo-container" onclick="location.reload()" style="cursor: pointer;">
+        <div class="logo-container group relative" onclick="location.reload()" style="cursor: pointer;">
+            <div class="absolute -inset-1 bg-amber-500/20 rounded-2xl blur opacity-0 group-hover:opacity-100 transition duration-500"></div>
             <img id="mango-charging-logo" src="assets/img/mango.jpg" 
-     class="w-14 h-14 rounded-2xl border border-white/10 object-cover animate-mango-otogi transition-all duration-1000" 
-     alt="mango Logo">
+                 class="relative w-14 h-14 rounded-2xl border border-gold-500/30 object-cover animate-mango-otogi shadow-[0_0_15px_rgba(212,175,55,0.2)]" 
+                 alt="mango Logo">
         </div>
         
         <div class="flex flex-col">
             <div class="relative inline-block cursor-pointer" onclick="adminAccess()">
-                <h1 id="mango-text" 
-                    class="mango-gold-power text-[34px] font-[900] tracking-tighter leading-none drop-shadow-md pr-2" 
-                    style="color: #f97316; font-style: italic; margin: 0; position: relative; z-index: 10;">
+                <h1 class="mango-gold-power text-[34px] font-[900] tracking-tighter leading-none drop-shadow-[0_0_10px_rgba(212,175,55,0.5)] pr-2" 
+                    style="color: #ffffff; font-style: italic; margin: 0; position: relative; z-index: 10;">
                     MANGO
                 </h1>
                 
@@ -1978,7 +1989,7 @@ const portalData = [
             
             Object.assign(particle.style, {
                 width: size + 'px', height: size + 'px',
-                left: left + '%', top: '0px', position: 'absolute',
+                left: left + '%', top: '-10px', position: 'absolute',
                 animation: `fall-and-stack ${duration}s ease-in-out forwards`
             });
             container.appendChild(particle);

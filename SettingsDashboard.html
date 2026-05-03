@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Mango Settings | Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Kanit:ital,wght@1,900&display=swap');
+        
+        :root {
+            --mango-orange: #f97316;
+            --mango-gold: #D4AF37;
+            --bg-dark: #000000;
+            --unified-max-width: 750px;
+        }
+
+        body {
+            background-color: var(--bg-dark);
+            color: #ffffff;
+            font-family: 'Pretendard', sans-serif;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        .master-container {
+            width: 100%;
+            max-width: var(--unified-max-width);
+        }
+
+        .settings-container {
+            width: 92%;
+            max-width: var(--unified-max-width);
+            margin: 20px auto;
+        }
+
+        
+        .mango-logo {
+            font-family: 'Kanit', sans-serif;
+            font-style: italic;
+            font-weight: 900;
+            background: linear-gradient(to right, #f59e0b, #fbbf24, #ffffff, #fbbf24);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            filter: drop-shadow(0 0 8px rgba(255,170,0,0.4));
+        }
+
+        /* Toggle Switch Styling */
+        .switch, .toggle-switch {
+            position: relative;
+            display: inline-block;
+            width: 52px;
+            height: 28px;
+        }
+        .switch input, .toggle-switch input { opacity: 0; width: 0; height: 0; }
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background-color: #222;
+            transition: .4s;
+            border-radius: 34px;
+            border: 1px solid rgba(212,175,55,0.3);
+        }
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 20px; width: 20px;
+            left: 4px; bottom: 3px;
+            background: linear-gradient(135deg, #fff 0%, #D4AF37 100%);
+            transition: .4s;
+            border-radius: 50%;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.5);
+        }
+        input:checked + .slider { background-color: var(--mango-orange); border-color: var(--mango-gold); }
+        input:checked + .slider:before { transform: translateX(24px); background-color: #fff; }
+
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+
+        /* Gold Metallic Icon Upgrade */
+        .gold-icon-btn {
+            color: var(--mango-gold);
+            filter: drop-shadow(0 0 5px rgba(212, 175, 55, 0.5));
+            transition: all 0.3s ease;
+        }
+        .gold-icon-btn:hover {
+            transform: scale(1.1) rotate(5deg);
+            filter: drop-shadow(0 0 10px rgba(212, 175, 55, 0.8));
+        }
+    </style>
+</head>
+<body class="py-6">
+    <!-- Top Header -->
+    <header class="master-container flex justify-between items-center py-6 mb-4">
+        <button onclick="history.back()" class="w-12 h-12 rounded-xl bg-zinc-900 border border-white/10 flex items-center justify-center active:scale-90 transition-transform shadow-lg">
+            <i data-lucide="chevron-left" class="text-white w-6 h-6"></i>
+        </button>
+        <h1 class="text-[#f97316] text-4xl font-[900] italic tracking-tighter font-[Kanit]">MANGO</h1>
+        <div class="w-12"></div>
+    </header>
+
+        <main class="master-container space-y-6 pb-24">
+            <!-- Language Settings -->
+            <section class="glass-panel">
+                <div class="flex items-center gap-3 mb-6">
+                    <i data-lucide="globe" class="gold-icon w-7 h-7"></i>
+                    <h2 class="text-xl font-black italic uppercase tracking-tight">Language Center</h2>
+                    <i data-lucide="languages" class="gold-3d-icon w-7 h-7"></i>
+                    <h2 class="text-xl font-bold tracking-tight">언어 설정 (Language Packs)</h2>
+                </div>
+
+                <div class="relative mb-6">
+                    <input type="text" id="lang-search" placeholder="Search 18+ Languages..." class="w-full bg-black/40 border border-white/10 rounded-2xl py-4 pl-12 pr-4 text-sm focus:outline-none focus:border-amber-500 transition-all outline-none">
+                    <i data-lucide="search" class="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-white/30"></i>
+                </div>
+
+                <div id="lang-list" class="space-y-3 max-h-64 overflow-y-auto no-scrollbar pr-1">
+                    <div class="flex justify-between items-center p-4 bg-white/5 rounded-2xl border border-white/5">
+                        <div><p class="font-bold text-sm text-white">한국어 (Korean)</p><p class="text-[10px] text-white/40">Default Pack</p></div>
+                        <span class="text-[10px] font-black text-amber-500 uppercase tracking-widest">Active</span>
+                    </div>
+                    <div class="flex justify-between items-center p-4 bg-white/5 rounded-2xl border border-white/5">
+                        <div><p class="font-bold text-sm text-white">English (US/UK)</p><p class="text-[10px] text-white/40">2.4 MB</p></div>
+                        <button class="flex items-center gap-1.5 px-4 py-2 bg-amber-500 text-black text-[10px] font-black rounded-lg active:scale-95 transition-all"><i data-lucide="download" class="w-3 h-3"></i> DOWNLOAD</button>
+                    </div>
+                    <div class="flex justify-between items-center p-4 bg-white/5 rounded-2xl border border-white/5 opacity-60">
+                        <span class="text-sm font-medium">日本語 (Japanese)</span><i data-lucide="download" class="w-4 h-4 text-white/40"></i>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Display Settings -->
+            <section class="glass-panel">
+                <div class="flex items-center gap-3 mb-6">
+                    <i data-lucide="monitor" class="gold-icon w-7 h-7"></i>
+                    <h2 class="text-xl font-black italic uppercase tracking-tight">Display</h2>
+                    <i data-lucide="palette" class="gold-3d-icon w-7 h-7"></i>
+                    <h2 class="text-xl font-bold tracking-tight">화면 설정 (Interface)</h2>
+                </div>
+
+                <div class="flex items-center justify-between p-2">
+                    <div>
+                        <p class="font-bold text-sm">라이트 / 다크 모드</p>
+                        <p class="text-[10px] text-white/40">System-wide appearance</p>
+                    </div>
+                    <label class="switch"><input type="checkbox" checked><span class="slider"></span></label>
+                </div>
+            </section>
+
+            <!-- Network Settings -->
+            <section class="glass-panel">
+                <div class="flex items-center gap-3 mb-6">
+                    <i data-lucide="wifi" class="gold-icon w-7 h-7"></i>
+                    <h2 class="text-xl font-black italic uppercase tracking-tight">Network & Data</h2>
+                    <i data-lucide="wifi" class="gold-3d-icon w-7 h-7"></i>
+                    <h2 class="text-xl font-bold tracking-tight">네트워크 설정 (Data)</h2>
+                </div>
+
+                <div class="space-y-4">
+                    <div class="flex justify-between items-center">
+                        <span class="text-sm font-bold text-white/70">오프라인 모드</span>
+                        <label class="toggle-switch"><input type="checkbox"><span class="slider"></span></label>
+                    </div>
+
+                    <div class="flex justify-between items-center">
+                        <div>
+                            <span class="text-sm font-medium">셀룰러 데이터 스트리밍</span>
+                            <p class="text-[9px] text-white/40">High quality streaming on mobile networks</p>
+                        </div>
+                        <label class="switch"><input type="checkbox" checked><span class="slider"></span></label>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Activity History -->
+            <section class="glass-panel">
+                <div class="flex items-center gap-3 mb-6">
+                    <i data-lucide="history" class="gold-icon w-7 h-7"></i>
+                    <h2 class="text-xl font-black italic uppercase tracking-tight">Usage History</h2>
+                    <i data-lucide="activity" class="gold-3d-icon w-7 h-7"></i>
+                    <h2 class="text-xl font-bold tracking-tight">활동 관리 (Logs)</h2>
+                </div>
+
+                <div class="space-y-3">
+                    <div class="p-4 bg-white/5 rounded-2xl border border-white/5 flex justify-between items-center">
+                        <span class="text-xs font-bold text-white/50">Realty Portal Entry</span>
+                        <span class="text-xs text-gray-600">2026.03.11 14:20</span>
+                    </div>
+
+                    <a href="#" class="group flex items-center justify-between p-5 bg-white/5 border border-white/5 rounded-2xl hover:bg-white/10 transition-all">
+                        <div class="flex items-center gap-4">
+                            <div class="w-10 h-10 bg-zinc-800 rounded-xl flex items-center justify-center"><i data-lucide="history" class="w-5 h-5 text-amber-500"></i></div>
+                            <span class="text-sm font-bold">사용 기록 보기 (History)</span>
+                        </div>
+                        <div class="p-4 bg-white/5 rounded-2xl border border-white/5 flex flex-col items-end">
+                            <span class="text-xs font-bold text-white/50">Payment Success (0.01 π)</span>
+                            <span class="text-xs text-gray-600">2026.03.11 10:05</span>
+                        </div>
+                        <i data-lucide="chevron-right" class="w-5 h-5 text-white/20 group-hover:text-white transition-all"></i>
+                    </a>
+                </div>
+            </section>
+        </main>
+
+        <footer class="mt-10 mb-20 text-center opacity-20">
+            <p class="text-[10px] uppercase font-black tracking-[0.5em]">Mango Universe OS v3.1</p>
+        </footer>
+    </div>
+
+    <script>
+        // initial static icons
+        lucide.createIcons();
+
+        // Structured languages data
+        const languages = [
+            { name: "한국어 (Korean)", code: "KO", status: "Active", size: "Default" },
+            { name: "English (US/UK)", code: "EN", status: "Installed", size: "2.4 MB" },
+            { name: "日本語 (Japanese)", code: "JA", status: "Download", size: "3.1 MB" },
+            { name: "中文 (Chinese)", code: "ZH", status: "Download", size: "4.5 MB" },
+            { name: "Tiếng Việt (Vietnamese)", code: "VI", status: "Download", size: "2.8 MB" },
+            { name: "Español (Spanish)", code: "ES", status: "Download", size: "3.2 MB" },
+            { name: "Français (French)", code: "FR", status: "Download", size: "3.5 MB" },
+            { name: "Deutsch (German)", code: "DE", status: "Download", size: "3.8 MB" },
+            { name: "Bahasa Indonesia", code: "ID", status: "Download", size: "2.1 MB" },
+            { name: "ไทย (Thai)", code: "TH", status: "Download", size: "2.9 MB" },
+            { name: "Русский (Russian)", code: "RU", status: "Download", size: "4.2 MB" },
+            { name: "Português (Portuguese)", code: "PT", status: "Download", size: "3.4 MB" },
+            { name: "Italiano (Italian)", code: "IT", status: "Download", size: "3.0 MB" },
+            { name: "Türkçe (Turkish)", code: "TR", status: "Download", size: "2.7 MB" },
+            { name: "हिन्दी (Hindi)", code: "HI", status: "Download", size: "3.9 MB" },
+            { name: "العربية (Arabic)", code: "AR", status: "Download", size: "3.6 MB" },
+            { name: "Tagalog (Filipino)", code: "TL", status: "Download", size: "2.5 MB" },
+            { name: "Melayu (Malay)", code: "MS", status: "Download", size: "2.3 MB" },
+            { name: "Polski (Polish)", code: "PL", status: "Download", size: "3.1 MB" },
+            { name: "Nederlands (Dutch)", code: "NL", status: "Download", size: "2.9 MB" },
+            { name: "Svenska (Swedish)", code: "SV", status: "Download", size: "2.8 MB" },
+            { name: "Dansk (Danish)", code: "DA", status: "Download", size: "2.6 MB" },
+            { name: "Suomi (Finnish)", code: "FI", status: "Download", size: "2.5 MB" },
+            { name: "Norsk (Norwegian)", code: "NO", status: "Download", size: "2.4 MB" }
+        ];
+
+        // Render languages into the list, filtered by the provided text
+        const renderLangs = (filter = "") => {
+            const el = document.getElementById('lang-list');
+            if (!el) return;
+
+            el.innerHTML = languages
+                .filter(l => l.name.toLowerCase().includes(filter.toLowerCase()))
+                .map(l => `
+                    <div class="flex items-center justify-between p-4 bg-white/5 rounded-2xl border border-white/5 hover:bg-white/10 transition-all">
+                        <div>
+                            <p class="font-bold text-sm text-white">${l.name}</p>
+                            <p class="text-[10px] text-white/40">${l.size}</p>
+                        </div>
+                        ${l.status === 'Active' ? 
+                            `<span class="text-[10px] font-black text-amber-500 uppercase tracking-widest">Active</span>` :
+                            `<button class="gold-icon-btn"><i data-lucide="${l.status === 'Installed' ? 'check-circle' : 'download-cloud'}" class="w-5 h-5"></i></button>`
+                        }
+                    </div>
+                `).join('');
+
+            // recreate icons for dynamically added elements
+            lucide.createIcons();
+        };
+
+        const searchInput = document.getElementById('lang-search');
+        if (searchInput) {
+            searchInput.addEventListener('input', (e) => renderLangs(e.target.value));
+        }
+
+        // initial render
+        renderLangs();
+    </script>
+</body>
+</html>
