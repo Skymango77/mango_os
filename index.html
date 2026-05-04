@@ -718,8 +718,8 @@ body {
 <style>
     /* 1. 모든 카드 및 뉴스창 너비 430px 통일 (대표님 요청 사항 완벽 준수) */
     .mango-container, .glass, .banner-item, #detail-modal, #partner-modal > div, 
-    .food_portal, .transfer_portal, .travel_portal, .share_portal, 
-    .realty_portal, .market_portal, .social_portal, .admin_portal,
+    .Food_portal, .Transfer_portal, .Travel_portal, .Hobby_portal, 
+    .Realty_portal, .Market_portal, .Chat_portal, .Educaion_portal,
     #integrated-auth-modal > div, #realty-modal > div, .news-window {
         width: 92% !important;
         max-width: 430px !important;
@@ -1872,11 +1872,11 @@ const portalData = [
     { id: 'FOOD', icon: 'utensils', url: 'Food/index.html' },               // 1번째 (정면)
     { id: 'TRANSFER', icon: 'repeat', url: 'Transfer/index.html', desc: '안전한 이동 시스템.' },          // 2번째
     { id: 'TRAVEL', icon: 'plane', url: 'Travel/index.html', desc: '글로벌 여행 및 숙박 예약.' },       // 3번째
-    { id: 'HOBBY', icon: 'heart', desc: '취미와 가치를 공유하는 커뮤니티.' }, // 4번째 (정확히 배치)
-    { id: 'REALTY', icon: 'building', desc: '부동산 매물 확인 및 거래.' },        // 5번째 (리액트 연결 -> 모달)
-    { id: 'MARKET', icon: 'shopping-cart', desc: '글로벌 파이 쇼핑몰.' },    // 6번째
-    { id: 'CHAT', icon: 'message-circle', desc: '실시간 채팅 및 소통.' },     // 7번째 (SOCIAL 대체)
-    { id: 'EDUCATION', icon: 'graduation-cap', desc: '미래를 여는 교육 포털.' } // 8번째 (ADMIN 대체)
+    { id: 'HOBBY', icon: 'heart', url: 'Hobby/index.html', desc: '취미와 가치를 공유하는 커뮤니티.' }, // 4번째 (정확히 배치)
+    { id: 'REALTY', icon: 'building', url: 'Realty/index.html', desc: '부동산 매물 확인 및 거래.' },        // 5번째 (리액트 연결 -> 모달)
+    { id: 'MARKET', icon: 'shopping-cart', url: 'Market/index.html', desc: '글로벌 파이 쇼핑몰.' },    // 6번째
+    { id: 'CHAT', icon: 'message-circle', url: 'Chat/index.html', desc: '실시간 채팅 및 소통.' },     // 7번째 (SOCIAL 대체)
+    { id: 'EDUCATION', icon: 'graduation-cap', url: 'Educaion/index.html', desc: '미래를 여는 교육 포털.' } // 8번째 (ADMIN 대체)
 ];
 
     const pivot = document.getElementById('pivot');
@@ -2557,8 +2557,8 @@ function spawnHiddenTreasure() {
 
 /* 2. 모든 윈도우(뉴스, 포털, 배너) 너비 및 중앙 정렬 통일 */
 .news-window, 
-.food_portal, .transfer_portal, .travel_portal, .share_portal, 
-.realty_portal, .market_portal, .social_portal, .admin_portal,
+.food_portal, .transfer_portal, .travel_portal, .Hobby_portal, 
+.realty_portal, .market_portal, .Chat_portal, .Educaion_portal,
 .banner-ad {
     width: 92% !important;           /* 전체 화면의 90%로 고정 */
     max-width: 430px !important;     /* 너무 커지지 않게 제한 */
@@ -2740,8 +2740,8 @@ function spawnHiddenTreasure() {
 
     /* 오직 간격 조정에만 집중 */
     .news-window, 
-    .food_portal, .transfer_portal, .travel_portal, .share_portal, 
-    .realty_portal, .market_portal, .social_portal, .admin_portal,
+    .Food_portal, .Transfer_portal, .Travel_portal, .Hobby_portal, 
+    .Realty_portal, .Market_portal, .Chat_portal, .Educaion_portal,
     .banner-ad, .final-banner-fix {
         margin-bottom: 10px !important; /* 간격을 10px로 좁힘 */
     }
@@ -2866,9 +2866,9 @@ function spawnHiddenTreasure() {
         }
 
         /* 1. 모든 카드/윈도우 너비 강제 고정 */
-        .news-window, .food_portal, .transfer_portal, .travel_portal, 
-        .share_portal, .realty_portal, .market_portal, .social_portal, 
-        .admin_portal, .banner-ad, .mango-universal-width {
+        .news-window, .Food_portal, .Transfer_portal, .Travel_portal, 
+        .Hobby_portal, .Realty_portal, .Market_portal, .Chat_portal, 
+        .Educaion_portal, .banner-ad, .mango-universal-width {
             width: var(--mango-card-width) !important;
             max-width: var(--mango-card-max-width) !important;
             margin-left: auto !important;
