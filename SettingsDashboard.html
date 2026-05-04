@@ -13,7 +13,7 @@
             --mango-orange: #f97316;
             --mango-gold: #D4AF37;
             --bg-dark: #000000;
-            --unified-max-width: 750px;
+            --unified-max-width: 430px;
         }
 
         body {
@@ -94,6 +94,27 @@
         .gold-icon-btn:hover {
             transform: scale(1.1) rotate(5deg);
             filter: drop-shadow(0 0 10px rgba(212, 175, 55, 0.8));
+        }
+
+        /* Hobby Highlights Section Styling */
+        .hobby-card {
+            width: 280px;
+            height: 180px;
+            border-radius: 20px;
+            border: 1px solid rgba(212, 175, 55, 0.2);
+            position: relative;
+            flex-shrink: 0;
+            overflow: hidden;
+        }
+
+        .hobby-overlay {
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(to top, rgba(0, 0, 0, 0.9) 0%, transparent 70%);
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
+            padding: 20px;
         }
     </style>
 </head>
@@ -176,6 +197,40 @@
                             <p class="text-[9px] text-white/40">High quality streaming on mobile networks</p>
                         </div>
                         <label class="switch"><input type="checkbox" checked><span class="slider"></span></label>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Hobby Highlights Section -->
+            <section class="glass-panel">
+                <div class="flex items-center gap-3 mb-6">
+                    <i data-lucide="sparkles" class="gold-icon w-7 h-7"></i>
+                    <h2 class="text-xl font-black italic uppercase tracking-tight">Hobby Highlights</h2>
+                </div>
+
+                <div class="flex gap-4 overflow-x-auto no-scrollbar pb-2">
+                    <!-- Card 1: FUTURE WAVE -->
+                    <div class="hobby-card bg-cover bg-center" style="background-image: url('https://drive.google.com/uc?export=view&id=FILE_ID_FOR_background_mango_dance1');">
+                        <div class="hobby-overlay">
+                            <h4 class="text-[10px] font-black italic text-amber-400 uppercase tracking-widest mb-1">FUTURE WAVE</h4>
+                            <p class="text-[11px] text-white/70 font-medium">2인 유닛 / 사이버 펑크</p>
+                        </div>
+                    </div>
+
+                    <!-- Card 2: STARDUST -->
+                    <div class="hobby-card bg-cover bg-center" style="background-image: url('https://drive.google.com/uc?export=view&id=FILE_ID_FOR_background_mango_dance2');">
+                        <div class="hobby-overlay">
+                            <h4 class="text-[10px] font-black italic text-amber-400 uppercase tracking-widest mb-1">STARDUST</h4>
+                            <p class="text-[11px] text-white/70 font-medium">3인 유닛 / 갤럭시 팝</p>
+                        </div>
+                    </div>
+
+                    <!-- Card 3: NEON DRIFT -->
+                    <div class="hobby-card bg-cover bg-center" style="background-image: url('https://drive.google.com/uc?export=view&id=FILE_ID_FOR_background_mango_dance3');">
+                        <div class="hobby-overlay">
+                            <h4 class="text-[10px] font-black italic text-amber-400 uppercase tracking-widest mb-1">NEON DRIFT</h4>
+                            <p class="text-[11px] text-white/70 font-medium">4인 유닛 / 일렉트로 댄스</p>
+                        </div>
                     </div>
                 </div>
             </section>
