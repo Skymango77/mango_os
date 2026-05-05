@@ -3213,7 +3213,19 @@ function triggerMango9Shake() {
 setInterval(triggerMango9Shake, 60000);
 
 // 첫 로드 후 2초 뒤에 첫 퍼포먼스 시작
-window.addEventListener('load', () => setTimeout(triggerMango9Shake, 1000));</script>
+window.addEventListener('load', () => setTimeout(triggerMango9Shake, 1000));
+
+// 📱 모바일 전용 사운드 강제 활성화 (보강)
+['click', 'pointerdown', 'touchstart'].forEach(eventType => {
+    document.addEventListener(eventType, () => {
+        if (!isMangoAudioUnlocked) {
+            console.log("[Mango OS] 모바일 터치 감지 - 사운드 엔진 강제 기동");
+            bootMangoGlassExperience(); // 기존 성공 로직 호출[cite: 1]
+        }
+    }, { once: true }); // 딱 한 번만 실행해서 엔진을 깨움
+});
+
+</script>
 
 
 <style>
