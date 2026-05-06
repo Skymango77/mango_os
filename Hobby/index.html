@@ -124,24 +124,8 @@
         .custom-scrollbar::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 10px; }
     </style>
     <style>
-        /* 푸터 타원형 모달 최종 좌표 */
-        .mango-footer-modal {
-            position: fixed;
-            bottom: 20px;
-            left: 50%;
-            transform: translateX(-50%); /* 정확한 수평 중앙 정렬 */
-            width: 90%;
-            max-width: 400px; /* 430px 내부에서 여유를 둠 */
-            height: 64px;
-            background: rgba(20, 20, 20, 0.95);
-            backdrop-filter: blur(10px);
-            border-radius: 40px; /* 타원형 디자인 */
-            display: flex;
-            justify-content: space-evenly; /* 아이콘 간격 일정 유지 */
-            align-items: center;
-            z-index: 1000;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-        }
+        
+    
     </style>
 </head>
 <body>
@@ -302,12 +286,12 @@
                 <!-- Highlighted Numbers -->
                 <div class="hyper-card p-6 rounded-[2.5rem] border-l-4 border-cyan-400">
                     <p class="text-[10px] font-orbit text-cyan-400 tracking-widest uppercase mb-2">Sync Rate</p>
-                    <h4 class="text-4xl font-black text-white italic">98.5<span class="text-sm not-italic ml-1">%</span></h4>
+                    <h4 class="text-2xl font-black text-white italic">98.5<span class="text-xs not-italic ml-1">%</span></h4>
                     <p class="text-[9px] text-white/40 mt-2">Active Generation 17-33</p>
                 </div>
                 <div class="hyper-card p-6 rounded-[2.5rem] border-l-4 border-orange-500">
                     <p class="text-[10px] font-orbit text-orange-500 tracking-widest uppercase mb-2">Active Nodes</p>
-                    <h4 class="text-4xl font-black text-white italic">1.2<span class="text-sm not-italic ml-1">K</span></h4>
+                    <h4 class="text-2xl font-black text-white italic">1.2<span class="text-xs not-italic ml-1">K</span></h4>
                     <p class="text-[9px] text-white/40 mt-2">Verified Youth Synergy</p>
                 </div>
             </div>
@@ -362,15 +346,7 @@
         </div>
     </div>
 
-    <footer class="fixed bottom-[calc(env(safe-area-inset-bottom,0px)+20px)] left-1/2 -translate-x-1/2 w-[92%] max-w-[var(--portal-width)] hyper-card rounded-[3rem] p-5 flex justify-around items-center z-50 mb-4">
-        <button class="p-3 text-orange-500"><i data-lucide="home" class="w-6 h-6"></i></button>
-        <button class="p-3 text-white/30"><i data-lucide="compass" class="w-6 h-6"></i></button>
-        <div class="w-16 h-16 bg-orange-500 rounded-full flex items-center justify-center -translate-y-8 shadow-2xl shadow-orange-500/60 active:scale-95 transition-all cursor-pointer">
-            <i data-lucide="plus" class="text-black w-8 h-8"></i>
-        </div>
-        <button class="p-3 text-white/30"><i data-lucide="message-square" class="w-6 h-6"></i></button>
-        <button class="p-3 text-white/30"><i data-lucide="user" class="w-6 h-6"></i></button>
-    </footer>
+    
 
     <script>
         // [모듈 2] 17~23세 K-POP 유닛 슬라이더 엔진 데이터
@@ -578,5 +554,17 @@ document.addEventListener('DOMContentLoaded', renderKpopSlider);
             });
         });
     </script>
+    <!-- [AI 네비게이션 플로팅 버튼] -->
+    <!-- 클릭 시 Hobby_AI_Nav.html로 이동하여 네비게이션 서비스 제공 -->
+    <a href="Hobby_AI_Nav.html" class="fixed bottom-[calc(24px+env(safe-area-inset-bottom))] left-1/2 -translate-x-1/2 z-[1000] group flex justify-center items-center" style="-webkit-tap-highlight-color: transparent;">
+        <!-- 3D 골드 메탈릭 링 및 네온 글로우 -->
+        <div class="relative w-16 h-16 rounded-full border-2 border-yellow-500 p-[2px] bg-gradient-to-br from-yellow-300 via-orange-500 to-yellow-700 shadow-[0_0_20px_rgba(249,115,22,0.6)] transform transition-transform duration-300 hover:scale-110 active:scale-95 z-10">
+            <!-- Transfer 섹션과 동일한 AI 이미지 사용 -->
+            <img src="../assets/img/Mango_gold.jpg" alt="Mango AI" class="w-15 h-15 rounded-full border-2 border-orange-500 shadow-lg group-hover:rotate-12 transition-transform">
+        </div>
+        
+        <!-- 살아있는 AI 느낌을 위한 백그라운드 펄스 애니메이션 -->
+        <div class="absolute w-16 h-16 rounded-full border-2 border-orange-500 animate-ping opacity-30 z-0"></div>
+    </a>
 </body>
 </html>
