@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mango Local Gateway</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700&family=Pretendard:wght@400;700;900&display=swap" rel="stylesheet">
+    <style>body { background: #050505; color: #fff; font-family: 'Pretendard', sans-serif; }</style>
+</head>
+<body class="h-[100dvh] flex flex-col items-center justify-between p-6">
+    
+    <header class="w-full flex justify-between items-center pt-8">
+        <button onclick="history.back()"><i data-lucide="arrow-left" class="w-6 h-6 text-zinc-400"></i></button>
+        <span class="text-xs font-['Orbitron'] text-yellow-500 tracking-widest uppercase">Mango Bridge</span>
+        <div class="w-6"></div>
+    </header>
+
+    <main class="flex-1 w-full flex flex-col items-center justify-center text-center">
+        <div class="w-20 h-20 bg-white/5 border border-white/10 rounded-3xl flex items-center justify-center mb-6 shadow-[0_0_30px_rgba(255,255,255,0.05)]">
+            <i data-lucide="smartphone-nfc" class="w-10 h-10 text-yellow-500"></i>
+        </div>
+        
+        <h2 id="provider-name" class="text-2xl font-black mb-2">로컬 결제 연결 중...</h2>
+        <p class="text-sm text-zinc-400 mb-8">망고 에스크로에서 현지 결제망으로 안전하게 브릿징합니다.</p>
+        
+        <div class="bg-white/5 border border-white/10 rounded-2xl p-6 w-full max-w-sm backdrop-blur-md">
+            <p class="text-xs text-zinc-500 mb-1">결제 예정 금액</p>
+            <h3 class="text-3xl font-black italic text-white" id="amount-text">78,500 <span class="text-xl not-italic">KRW</span></h3>
+        </div>
+    </main>
+
+    <footer class="w-full pb-8">
+        <button onclick="startAuth()" id="auth-btn" class="w-full py-4 bg-gradient-to-r from-yellow-400 to-orange-500 text-black font-black text-lg rounded-2xl shadow-[0_0_20px_rgba(249,115,22,0.4)] flex items-center justify-center gap-2 hover:scale-[1.02] active:scale-95 transition-all">
+            <i data-lucide="scan-face" class="w-6 h-6"></i> Face ID로 승인
+        </button>
+    </footer>
+
+    <script>
+        lucide.createIcons();
+        // 이전 페이지에서 넘어온 파라미터 추출
+        const params = new URLSearchParams(window.location.search);
+        const provider = params.get('provider') || 'KakaoPay';
+        const currency = params.get('currency') || 'KRW';
+        
+        document.getElementById('provider-name').innerText = `${provider} 결제 연결`;
+        document.getElementById('amount-text').innerHTML = currency === 'KRW' ? '78,500 <span class="text-xl not-italic">KRW</span>' : 
+                                                           currency === 'THB' ? '1,280 <span class="text-xl not-italic">THB</span>' : 
+                                                           '475,000 <span class="text-xl not-italic">VND</span>';
+
+        function startAuth() {
+            const btn = document.getElementById('auth-btn');
+            btn.innerHTML = `<i data-lucide="loader-2" class="w-6 h-6 animate-spin"></i> 생체 인식 중...`;
+            lucide.createIcons();
+            setTimeout(() => {
+                btn.innerHTML = `<i data-lucide="check-circle-2" class="w-6 h-6"></i> 결제 승인 완료`;
+                btn.classList.replace('from-yellow-400', 'from-green-400');
+                btn.classList.replace('to-orange-500', 'to-green-600');
+                lucide.createIcons();
+                setTimeout(() => { history.back(); }, 1500);
+            }, 2000);
+        }
+    </script>
+</body>
+</html>

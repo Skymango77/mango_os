@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mango Pi QR Scanner</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        .scanner-line {
+            width: 100%; height: 2px; background: #f97316;
+            box-shadow: 0 0 15px #f97316, 0 0 30px #f97316;
+            animation: scan 2s infinite ease-in-out;
+            position: absolute; top: 0; left: 0;
+        }
+        @keyframes scan {
+            0% { top: 0; }
+            50% { top: 100%; }
+            100% { top: 0; }
+        }
+        .corner { width: 30px; height: 30px; position: absolute; border-color: #f59e0b; border-width: 4px; }
+    </style>
+</head>
+<body class="bg-[#050505] h-[100dvh] flex flex-col relative overflow-hidden">
+
+    <div class="absolute inset-0 bg-zinc-900/50 backdrop-blur-sm z-0"></div>
+
+    <header class="w-full flex justify-between items-center p-6 z-10">
+        <button onclick="history.back()" class="bg-black/50 p-3 rounded-full backdrop-blur-md border border-white/10 text-white">
+            <i data-lucide="x" class="w-6 h-6"></i>
+        </button>
+        <span class="text-white font-bold tracking-widest text-sm uppercase">Pi QR Scan</span>
+        <button class="bg-black/50 p-3 rounded-full backdrop-blur-md border border-white/10 text-white">
+            <i data-lucide="flashlight" class="w-6 h-6"></i>
+        </button>
+    </header>
+
+    <main class="flex-1 flex flex-col items-center justify-center z-10 px-8">
+        <p class="text-zinc-300 mb-8 text-center text-sm">가맹점의 Pi Network QR 코드 또는<br>망고 지갑 코드를 사각형 안에 맞춰주세요.</p>
+        
+        <div class="relative w-full max-w-[280px] aspect-square">
+            <div class="corner top-0 left-0 border-r-0 border-b-0 rounded-tl-2xl"></div>
+            <div class="corner top-0 right-0 border-l-0 border-b-0 rounded-tr-2xl"></div>
+            <div class="corner bottom-0 left-0 border-r-0 border-t-0 rounded-bl-2xl"></div>
+            <div class="corner bottom-0 right-0 border-l-0 border-t-0 rounded-br-2xl"></div>
+            
+            <div class="relative w-full h-full overflow-hidden">
+                <div class="scanner-line"></div>
+            </div>
+        </div>
+        
+        <div class="mt-12 bg-black/50 backdrop-blur-md border border-white/10 rounded-2xl p-4 flex items-center gap-4 text-white">
+            <div class="bg-orange-500/20 p-2 rounded-xl text-orange-400">
+                <i data-lucide="wallet" class="w-6 h-6"></i>
+            </div>
+            <div>
+                <p class="text-[10px] text-zinc-400">내 결제 바코드 열기</p>
+                <p class="font-bold text-sm">Mango Pi Wallet</p>
+            </div>
+            <i data-lucide="chevron-up" class="w-5 h-5 ml-4 text-zinc-500"></i>
+        </div>
+    </main>
+
+    <script> lucide.createIcons(); </script>
+</body>
+</html>

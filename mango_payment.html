@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mango Pay - Global Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Pretendard:wght@400;700;900&display=swap" rel="stylesheet">
+    <style>
+        body { background: #050505; color: #ffffff; font-family: 'Pretendard', sans-serif; }
+        .font-orb { font-family: 'Orbitron', sans-serif; }
+        .glass-panel { background: rgba(255, 255, 255, 0.03); backdrop-filter: blur(20px); border: 1px solid rgba(255, 255, 255, 0.05); }
+        .gold-glow-card {
+            background: linear-gradient(145deg, rgba(20,20,20,0.9), rgba(0,0,0,0.95));
+            border: 1px solid rgba(250, 204, 21, 0.3);
+            box-shadow: 0 0 30px rgba(250, 204, 21, 0.1), inset 0 0 20px rgba(250, 204, 21, 0.05);
+        }
+        ::-webkit-scrollbar { display: none; }
+        .modal-overlay { background-color: rgba(0, 0, 0, 0.7); backdrop-filter: blur(10px); }
+    </style>
+</head>
+<body class="h-[100dvh] flex flex-col overflow-hidden relative">
+
+    <div class="absolute top-0 left-1/2 -translate-x-1/2 w-[500px] h-[500px] bg-yellow-600/10 rounded-full blur-[100px] -z-10 pointer-events-none"></div>
+
+    <header class="pt-12 pb-4 px-6 z-10 bg-black/80 backdrop-blur-md border-b border-white/5 flex-shrink-0">
+        <div class="flex justify-between items-center mb-6">
+            <h1 class="font-orb text-yellow-500 font-bold text-xl tracking-wider">MANGO<span class="text-white">PAY</span></h1>
+            <div class="flex gap-3 items-center">
+                <div onclick="toggleCountrySelector()" class="glass-panel px-3 py-1.5 rounded-full flex items-center gap-2 cursor-pointer hover:bg-white/10 transition">
+                    <span id="current-flag">🇰🇷</span>
+                    <span id="current-currency" class="text-xs font-bold text-yellow-500">KRW</span>
+                    <i data-lucide="chevron-down" class="w-3 h-3 text-zinc-400"></i>
+                </div>
+                <button onclick="history.back()"><i data-lucide="x" class="w-6 h-6 text-zinc-400 hover:text-white transition-colors"></i></button>
+            </div>
+        </div>
+        <nav class="flex gap-6 text-sm font-bold">
+            <button class="text-white border-b-2 border-yellow-500 pb-2">글로벌홈</button>
+            <button class="text-zinc-500 pb-2 hover:text-zinc-300">결제</button>
+            <button class="text-zinc-500 pb-2 hover:text-zinc-300">자산</button>
+        </nav>
+    </header>
+
+    <main class="flex-1 overflow-y-auto px-5 pb-24 z-10 space-y-4 pt-4">
+        
+        <section class="gold-glow-card rounded-3xl p-6 relative overflow-hidden">
+            <div class="flex justify-between items-center mb-2">
+                <p class="text-xs text-zinc-400 font-orb uppercase tracking-widest">Global Balance</p>
+                <button class="text-xs text-zinc-400 hover:text-white flex items-center">내역 <i data-lucide="chevron-right" class="w-4 h-4"></i></button>
+            </div>
+            <h2 class="text-4xl font-black italic tracking-tighter font-orb">
+                1,250.00 <span class="text-yellow-500 text-2xl not-italic ml-1">π</span>
+            </h2>
+            <p class="text-sm font-bold text-zinc-400 mt-1 mb-6">≈ <span id="fiat-balance">53,562,500 ₩</span></p>
+
+            <div class="flex gap-3">
+                <button class="flex-1 py-3.5 bg-zinc-800 hover:bg-zinc-700 text-white font-bold rounded-2xl transition-colors">충전</button>
+                <button onclick="handlePayment()" class="flex-1 py-3.5 bg-gradient-to-r from-yellow-400 to-orange-500 text-black font-black rounded-2xl shadow-[0_0_15px_rgba(249,115,22,0.4)]">송금/결제</button>
+            </div>
+        </section>
+
+        <section class="glass-panel rounded-2xl p-4 border-l-4 border-teal-500">
+            <div class="flex justify-between items-center mb-3">
+                <span class="text-[10px] font-orb text-teal-400 tracking-widest uppercase">Escrow Active</span>
+                <span class="text-xs font-bold text-zinc-400" id="route-text">ICN ✈️ NRT</span>
+            </div>
+            <div class="flex gap-4 items-center">
+                <div class="relative w-12 h-12 rounded-xl overflow-hidden bg-zinc-800">
+                    <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Felix" alt="Driver" class="w-full h-full object-cover">
+                    <div class="absolute bottom-0 right-0 w-4 h-4 bg-green-500 rounded-full border-2 border-black"></div>
+                </div>
+                <div class="flex-1">
+                    <h4 class="font-bold text-sm">Somsak P. <span class="text-xs font-normal text-zinc-400 ml-1">Premium Driver</span></h4>
+                    <p class="text-[11px] text-zinc-500 mt-0.5">결제 대금 <span id="escrow-price" class="text-white font-bold">78,500 ₩</span> 안전 보관 중</p>
+                </div>
+            </div>
+        </section>
+
+        <section class="space-y-3 mt-6 relative z-10">
+    <div class="flex justify-between items-end px-1 mb-2">
+        <h3 class="text-[10px] font-orb text-zinc-500 tracking-[0.2em] uppercase">Multi-Service Escrow Status</h3>
+        <span class="text-[8px] bg-white/10 px-2 py-0.5 rounded-full text-zinc-400">8 Active Smart Contracts</span>
+    </div>
+
+    <div onclick="location.href='../Food/index.html'" class="glass-panel rounded-2xl p-4 border-l-4 border-pink-500 hover:bg-white/5 transition-all cursor-pointer group">
+        <div class="flex justify-between items-start">
+            <div class="flex items-center gap-3">
+                <div class="w-9 h-9 rounded-lg bg-pink-500/10 flex items-center justify-center">
+                    <i data-lucide="utensils" class="w-5 h-5 text-pink-500"></i>
+                </div>
+                <div>
+                    <h4 class="text-sm font-bold text-zinc-200">신라호텔 더 파크뷰</h4>
+                    <p class="text-[10px] text-zinc-500">테이블 예약 보증금</p>
+                </div>
+            </div>
+            <div class="text-right">
+                <span class="text-xs font-bold text-pink-400">0.45 π</span>
+                <p class="text-[9px] text-zinc-600 mt-1">에스크로 보호 중</p>
+            </div>
+        </div>
+    </div>
+
+    <div onclick="location.href='../Transfer/index.html'" class="glass-panel rounded-2xl p-4 border-l-4 border-yellow-400 hover:bg-white/5 transition-all cursor-pointer group">
+        <div class="flex justify-between items-start">
+            <div class="flex items-center gap-3">
+                <div class="w-9 h-9 rounded-lg bg-yellow-400/10 flex items-center justify-center">
+                    <i data-lucide="navigation" class="w-5 h-5 text-yellow-400"></i>
+                </div>
+                <div>
+                    <h4 class="text-sm font-bold text-zinc-200">Mango Taxi Match</h4>
+                    <p class="text-[10px] text-zinc-500">운행 대금 안전 예치</p>
+                </div>
+            </div>
+            <div class="text-right">
+                <span class="text-xs font-bold text-yellow-400">0.12 π</span>
+                <p class="text-[9px] text-zinc-600 mt-1">운행 중 (보호)</p>
+            </div>
+        </div>
+    </div>
+
+    <div onclick="location.href='../Travel/index.html'" class="glass-panel rounded-2xl p-4 border-l-4 border-cyan-400 hover:bg-white/5 transition-all cursor-pointer group">
+        <div class="flex justify-between items-start">
+            <div class="flex items-center gap-3">
+                <div class="w-9 h-9 rounded-lg bg-cyan-400/10 flex items-center justify-center">
+                    <i data-lucide="plane" class="w-5 h-5 text-cyan-400"></i>
+                </div>
+                <div>
+                    <h4 class="text-sm font-bold text-zinc-200">ICN → NRT (Narita)</h4>
+                    <p class="text-[10px] text-zinc-500">항공권 및 Stay 패키지</p>
+                </div>
+            </div>
+            <div class="text-right">
+                <span class="text-xs font-bold text-cyan-400">22.80 π</span>
+                <p class="text-[9px] text-zinc-600 mt-1">발권 대기 중</p>
+            </div>
+        </div>
+    </div>
+
+    <div onclick="location.href='../Hobby/index.html'" class="glass-panel rounded-2xl p-4 border-l-4 border-purple-500 hover:bg-white/5 transition-all cursor-pointer group">
+        <div class="flex justify-between items-start">
+            <div class="flex items-center gap-3">
+                <div class="w-9 h-9 rounded-lg bg-purple-500/10 flex items-center justify-center">
+                    <i data-lucide="users" class="w-5 h-5 text-purple-500"></i>
+                </div>
+                <div>
+                    <h4 class="text-sm font-bold text-zinc-200">망고 요트 클럽</h4>
+                    <p class="text-[10px] text-zinc-500">정기 멤버십 및 파티 회비</p>
+                </div>
+            </div>
+            <div class="text-right">
+                <span class="text-xs font-bold text-purple-400">2.10 π</span>
+                <p class="text-[9px] text-zinc-600 mt-1">납부 완료</p>
+            </div>
+        </div>
+    </div>
+
+    <div onclick="location.href='../Realty/index.html'" class="glass-panel rounded-2xl p-4 border-l-4 border-emerald-500 hover:bg-white/5 transition-all cursor-pointer group">
+        <div class="flex justify-between items-start">
+            <div class="flex items-center gap-3">
+                <div class="w-9 h-9 rounded-lg bg-emerald-500/10 flex items-center justify-center">
+                    <i data-lucide="home" class="w-5 h-5 text-emerald-500"></i>
+                </div>
+                <div>
+                    <h4 class="text-sm font-bold text-zinc-200">해운대 엘시티 104동</h4>
+                    <p class="text-[10px] text-zinc-500">월간 관리비 스마트 컨트랙트</p>
+                </div>
+            </div>
+            <div class="text-right">
+                <span class="text-xs font-bold text-emerald-400">15.80 π</span>
+                <p class="text-[9px] text-zinc-600 mt-1">결제 예정 (D-3)</p>
+            </div>
+        </div>
+    </div>
+
+    <div onclick="location.href='../Market/index.html'" class="glass-panel rounded-2xl p-4 border-l-4 border-orange-500 hover:bg-white/5 transition-all cursor-pointer group">
+        <div class="flex justify-between items-start">
+            <div class="flex items-center gap-3">
+                <div class="w-9 h-9 rounded-lg bg-orange-500/10 flex items-center justify-center">
+                    <i data-lucide="shopping-bag" class="w-5 h-5 text-orange-500"></i>
+                </div>
+                <div>
+                    <h4 class="text-sm font-bold text-zinc-200">Limited Edition Kicks</h4>
+                    <p class="text-[10px] text-zinc-500">중고거래 안심 결제</p>
+                </div>
+            </div>
+            <div class="text-right">
+                <span class="text-xs font-bold text-orange-400">1.85 π</span>
+                <p class="text-[9px] text-zinc-600 mt-1">배송 대기 중</p>
+            </div>
+        </div>
+    </div>
+
+    <div onclick="location.href='../Chat/index.html'" class="glass-panel rounded-2xl p-4 border-l-4 border-indigo-500 hover:bg-white/5 transition-all cursor-pointer group">
+        <div class="flex justify-between items-start">
+            <div class="flex items-center gap-3">
+                <div class="w-9 h-9 rounded-lg bg-indigo-500/10 flex items-center justify-center">
+                    <i data-lucide="message-square-text" class="w-5 h-5 text-indigo-500"></i>
+                </div>
+                <div>
+                    <h4 class="text-sm font-bold text-zinc-200">Global Synergy Channel</h4>
+                    <p class="text-[10px] text-zinc-500">프리미엄 채널 월간 구독료</p>
+                </div>
+            </div>
+            <div class="text-right">
+                <span class="text-xs font-bold text-indigo-400">0.05 π</span>
+                <p class="text-[9px] text-zinc-600 mt-1">자동 결제 활성</p>
+            </div>
+        </div>
+    </div>
+
+    <div onclick="location.href='../Education/index.html'" class="glass-panel rounded-2xl p-4 border-l-4 border-blue-500 hover:bg-white/5 transition-all cursor-pointer group">
+        <div class="flex justify-between items-start">
+            <div class="flex items-center gap-3">
+                <div class="w-9 h-9 rounded-lg bg-blue-500/10 flex items-center justify-center">
+                    <i data-lucide="graduation-cap" class="w-5 h-5 text-blue-500"></i>
+                </div>
+                <div>
+                    <h4 class="text-sm font-bold text-zinc-200">AI 디자인 마스터 클래스</h4>
+                    <p class="text-[10px] text-zinc-500">정규 과정 및 디지털 교재</p>
+                </div>
+            </div>
+            <div class="text-right">
+                <span class="text-xs font-bold text-blue-400">1.20 π</span>
+                <p class="text-[9px] text-zinc-600 mt-1">수강 중</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+        <section class="mt-6">
+            <h3 class="text-xs font-bold text-zinc-400 mb-3 px-1" id="local-pay-title">🇰🇷 한국 로컬 결제망 연동</h3>
+            <div class="grid grid-cols-3 gap-3" id="local-payment-grid">
+                </div>
+        </section>
+
+        <section class="space-y-2 mt-4 relative z-10">
+    <div onclick="location.href='mango_pi_wallet.html'" class="glass-panel rounded-2xl p-4 flex items-center gap-4 cursor-pointer hover:bg-white/5 transition-all group border border-transparent hover:border-orange-500/30">
+        <div class="w-10 h-10 rounded-xl bg-orange-500/10 flex items-center justify-center group-hover:bg-orange-500/20 transition-colors">
+            <i data-lucide="scan-line" class="w-5 h-5 text-orange-500 group-hover:scale-110 transition-transform"></i>
+        </div>
+        <div class="flex-1">
+            <h4 class="font-bold text-sm text-zinc-100">글로벌 QR 결제 <span class="text-[10px] bg-orange-500/20 text-orange-400 px-1.5 py-0.5 rounded ml-1">Pi Wallet</span></h4>
+            <p class="text-[10px] text-zinc-500">환전 없이 전 세계 Pi 생태계 즉시 스캔 결제</p>
+        </div>
+        <i data-lucide="chevron-right" class="w-4 h-4 text-zinc-600 group-hover:text-orange-500 transition-colors"></i>
+    </div>
+</section>
+    </main>
+
+    <div id="country-modal" class="fixed inset-0 z-[60] modal-overlay hidden flex items-end justify-center transition-opacity opacity-0">
+        <div class="bg-[#121212] w-full rounded-t-3xl p-6 border-t border-white/10 transition-transform transform translate-y-full" id="modal-content">
+            <h3 class="font-bold text-lg mb-4 text-white">결제 국가/통화 변경</h3>
+            <div class="grid gap-2">
+                <button onclick="changeCountry('KR')" class="flex items-center justify-between p-4 rounded-xl glass-panel hover:border-yellow-500/50">
+                    <div class="flex items-center gap-3"><span class="text-2xl">🇰🇷</span><div class="text-left"><p class="font-bold text-white">대한민국</p><p class="text-xs text-zinc-400">South Korea (KRW)</p></div></div>
+                </button>
+                <button onclick="changeCountry('TH')" class="flex items-center justify-between p-4 rounded-xl glass-panel hover:border-yellow-500/50">
+                    <div class="flex items-center gap-3"><span class="text-2xl">🇹🇭</span><div class="text-left"><p class="font-bold text-white">태국</p><p class="text-xs text-zinc-400">Thailand (THB)</p></div></div>
+                </button>
+                <button onclick="changeCountry('VN')" class="flex items-center justify-between p-4 rounded-xl glass-panel hover:border-yellow-500/50">
+                    <div class="flex items-center gap-3"><span class="text-2xl">🇻🇳</span><div class="text-left"><p class="font-bold text-white">베트남</p><p class="text-xs text-zinc-400">Vietnam (VND)</p></div></div>
+                </button>
+            </div>
+            <button onclick="toggleCountrySelector()" class="w-full mt-6 py-4 text-zinc-500 font-medium">닫기</button>
+        </div>
+    </div>
+
+    <div id="payment-loader" class="fixed inset-0 z-[100] bg-black/90 backdrop-blur-md hidden flex flex-col items-center justify-center p-8 text-center">
+        <div id="status-icon" class="mb-6 relative w-24 h-24 flex items-center justify-center">
+            <div class="absolute inset-0 border-4 border-yellow-500/20 border-t-yellow-500 rounded-full animate-spin"></div>
+            <i data-lucide="shield" class="w-8 h-8 text-yellow-500 animate-pulse"></i>
+        </div>
+        <h2 id="status-title" class="text-xl font-bold text-white mb-2 font-orb">ESCROW PROCESSING...</h2>
+        <p id="status-desc" class="text-zinc-400 text-sm">블록체인 네트워크에 거래를 기록하고 있습니다.</p>
+    </div>
+
+    <script>
+        const piBalance = 1250.00;
+        const countryData = {
+            'KR': { flag: '🇰🇷', currency: 'KRW', rate: 42850, route: '인천국제공항 ✈️ 신라호텔', escrow: '78,500 ₩', payments: [{ name: '카카오페이', icon: 'smartphone' }, { name: '토스', icon: 'zap' }, { name: '신용카드', icon: 'credit-card' }] },
+            'TH': { flag: '🇹🇭', currency: 'THB', rate: 1150, route: '수완나품 공항 ✈️ 메리어트', escrow: '1,280 ฿', payments: [{ name: 'GrabPay', icon: 'smartphone' }, { name: 'PromptPay', icon: 'qr-code' }, { name: 'GLN 결제', icon: 'globe' }] },
+            'VN': { flag: '🇻🇳', currency: 'VND', rate: 805000, route: '노이바이 공항 ✈️ 올드쿼터', escrow: '475,000 ₫', payments: [{ name: 'MoMo Wallet', icon: 'smartphone' }, { name: 'ZaloPay', icon: 'zap' }, { name: '현금(결제예약)', icon: 'banknote' }] }
+        };
+
+        function updateUI(code) {
+            const data = countryData[code];
+            document.getElementById('current-flag').textContent = data.flag;
+            document.getElementById('current-currency').textContent = data.currency;
+            document.getElementById('fiat-balance').textContent = `${(piBalance * data.rate).toLocaleString()} ${data.currency === 'KRW' ? '₩' : data.currency === 'THB' ? '฿' : '₫'}`;
+            document.getElementById('route-text').innerHTML = data.route;
+            document.getElementById('escrow-price').textContent = data.escrow;
+            document.getElementById('local-pay-title').textContent = `${data.flag} ${code === 'KR'?'한국':code==='TH'?'태국':'베트남'} 로컬 결제망 연동`;
+
+            const grid = document.getElementById('local-payment-grid');
+            grid.innerHTML = data.payments.map(pay => `
+                <div onclick="location.href='mango_local_gateway.html?provider=${encodeURIComponent(pay.name)}&currency=${data.currency}'" class="glass-panel rounded-2xl p-3 flex flex-col items-center gap-2 cursor-pointer hover:bg-white/10 transition border border-white/5 hover:border-yellow-500/30">
+                    <i data-lucide="${pay.icon}" class="w-5 h-5 text-zinc-300"></i>
+                    <span class="text-[10px] font-bold text-zinc-300">${pay.name}</span>
+                </div>
+            `).join('');
+            lucide.createIcons();
+        }
+
+        function toggleCountrySelector() {
+            const modal = document.getElementById('country-modal');
+            const content = document.getElementById('modal-content');
+            if (modal.classList.contains('hidden')) {
+                modal.classList.remove('hidden');
+                requestAnimationFrame(() => { modal.style.opacity = '1'; content.classList.remove('translate-y-full'); });
+            } else {
+                modal.style.opacity = '0'; content.classList.add('translate-y-full');
+                setTimeout(() => modal.classList.add('hidden'), 300);
+            }
+        }
+
+        function changeCountry(code) { updateUI(code); toggleCountrySelector(); }
+
+        function handlePayment() {
+            const loader = document.getElementById('payment-loader');
+            const icon = document.getElementById('status-icon');
+            const title = document.getElementById('status-title');
+            const desc = document.getElementById('status-desc');
+            
+            loader.classList.remove('hidden');
+            loader.style.display = 'flex';
+            
+            setTimeout(() => {
+                icon.innerHTML = `<i data-lucide="check-circle-2" class="w-16 h-16 text-green-400"></i>`;
+                title.textContent = "PAYMENT SECURED";
+                desc.textContent = "에스크로 예치가 완료되었습니다. 드라이버가 출발합니다.";
+                lucide.createIcons();
+                setTimeout(() => { 
+                    loader.classList.add('hidden'); 
+                    icon.innerHTML = `<div class="absolute inset-0 border-4 border-yellow-500/20 border-t-yellow-500 rounded-full animate-spin"></div><i data-lucide="shield" class="w-8 h-8 text-yellow-500 animate-pulse"></i>`;
+                    title.textContent = "ESCROW PROCESSING...";
+                }, 2000);
+            }, 2500);
+        }
+
+        window.onload = () => { updateUI('KR'); lucide.createIcons(); };
+    </script>
+</body>
+</html>
