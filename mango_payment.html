@@ -64,7 +64,7 @@
         <section class="glass-panel rounded-2xl p-4 border-l-4 border-teal-500">
             <div class="flex justify-between items-center mb-3">
                 <span class="text-[10px] font-orb text-teal-400 tracking-widest uppercase">Escrow Active</span>
-                <span class="text-xs font-bold text-zinc-400" id="route-text">ICN ✈️ NRT</span>
+                <span class="text-xs font-bold text-zinc-400 payment-summary-title" id="route-text">ICN ✈️ NRT</span>
             </div>
             <div class="flex gap-4 items-center">
                 <div class="relative w-12 h-12 rounded-xl overflow-hidden bg-zinc-800">
@@ -73,7 +73,7 @@
                 </div>
                 <div class="flex-1">
                     <h4 class="font-bold text-sm">Somsak P. <span class="text-xs font-normal text-zinc-400 ml-1">Premium Driver</span></h4>
-                    <p class="text-[11px] text-zinc-500 mt-0.5">결제 대금 <span id="escrow-price" class="text-white font-bold">78,500 ₩</span> 안전 보관 중</p>
+                    <p class="text-[11px] text-zinc-500 mt-0.5">결제 대금 <span id="escrow-price" class="text-white font-bold payment-amount-display">78,500 ₩</span> 안전 보관 중</p>
                 </div>
             </div>
         </section>
@@ -277,6 +277,26 @@
     </div>
 
     <script>
+        // URL에서 항공권 데이터 읽기
+        const urlParams = new URLSearchParams(window.location.search);
+        const itemName = urlParams.get('item');
+        const itemAmount = urlParams.get('amount');
+        const itemCurrency = urlParams.get('currency') || 'KRW';
+
+        // 결제 요약 UI 업데이트 함수
+        function syncPaymentInfo() {
+            if (itemName) {
+                // 상품명 표시 (예: 인천->방콕 항공권)
+                document.querySelector('.payment-summary-title').innerText = itemName; 
+            }
+            if (itemAmount) {
+                // 금액 표시 (예: 475,000)
+                const formattedAmount = Number(itemAmount).toLocaleString();
+                document.querySelector('.payment-amount-display').innerHTML = 
+                    `${formattedAmount} <span class="text-sm">${itemCurrency}</span>`;
+            }
+        }
+
         const piBalance = 1250.00;
         const countryData = {
             'KR': { flag: '🇰🇷', currency: 'KRW', rate: 42850, route: '인천국제공항 ✈️ 신라호텔', escrow: '78,500 ₩', payments: [{ name: '카카오페이', icon: 'smartphone' }, { name: '토스', icon: 'zap' }, { name: '신용카드', icon: 'credit-card' }] },
@@ -295,11 +315,11 @@
 
             const grid = document.getElementById('local-payment-grid');
             grid.innerHTML = data.payments.map(pay => `
-                <div onclick="location.href='mango_local_gateway.html?provider=${encodeURIComponent(pay.name)}&currency=${data.currency}'" class="glass-panel rounded-2xl p-3 flex flex-col items-center gap-2 cursor-pointer hover:bg-white/10 transition border border-white/5 hover:border-yellow-500/30">
-                    <i data-lucide="${pay.icon}" class="w-5 h-5 text-zinc-300"></i>
-                    <span class="text-[10px] font-bold text-zinc-300">${pay.name}</span>
-                </div>
-            `).join('');
+    <div onclick="location.href='mango_local_gateway.html?provider=${encodeURIComponent(pay.name)}&currency=${data.currency}'" class="glass-panel rounded-2xl p-3 flex flex-col items-center gap-2 cursor-pointer hover:bg-white/10 transition border border-white/5 hover:border-yellow-500/30">
+        <i data-lucide="${pay.icon}" class="w-5 h-5 text-zinc-300"></i>
+        <span class="text-[10px] font-bold text-zinc-300">${pay.name}</span>
+    </div>
+`).join('');
             lucide.createIcons();
         }
 
@@ -339,7 +359,12 @@
             }, 2500);
         }
 
-        window.onload = () => { updateUI('KR'); lucide.createIcons(); };
+        window.onload = () => { 
+            updateUI('KR'); 
+            // 항공권 등 외부 결제 요청 시 데이터를 화면에 즉시 동기화
+            syncPaymentInfo();
+            lucide.createIcons(); 
+        };
     </script>
 </body>
 </html>
