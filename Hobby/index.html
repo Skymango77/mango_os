@@ -120,8 +120,29 @@
         }
         .animate-sync { display: flex; width: max-content; animation: marquee-sync 20s linear infinite; }
 
+        /* [제8단계] 소셜 피드 애니메이션 */
+        @keyframes social-flow {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(-50%); }
+        }
+        .animate-social-flow { animation: social-flow 30s linear infinite; }
+
+        /* [제13단계] 레이더 스캔 애니메이션 */
+        @keyframes spin-slow {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+        .animate-spin-slow {
+            animation: spin-slow linear infinite;
+        }
+
         .custom-scrollbar::-webkit-scrollbar { width: 4px; }
         .custom-scrollbar::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 10px; }
+
+        @keyframes dash {
+            to { stroke-dashoffset: -100; }
+        }
+        .animate-dash { animation: dash 5s linear infinite; }
     </style>
     <style>
         
@@ -272,6 +293,352 @@
             </div>
         </section>
 
+        <!-- [모듈 5] K-POP Idol AI Agent: Phase 2 감성 엔진 v2.0 탑재 -->
+        <section id="ai-mango-agent" class="space-y-6 mb-12">
+            <div class="flex justify-between items-end px-4">
+                <div class="space-y-1">
+                    <h3 class="text-[10px] font-orbit tracking-[0.4em] text-white/40 uppercase font-black">AI Mango Idol Agent</h3>
+                    <div class="flex items-center gap-2">
+                        <div class="w-1.5 h-1.5 bg-orange-500 rounded-full animate-ping"></div>
+                        <span id="ai-status-text" class="text-[11px] text-orange-500 font-black uppercase tracking-widest">Emotional Engine Active</span>
+                    </div>
+                </div>
+                <div class="bg-black/60 backdrop-blur-xl px-4 py-2 rounded-2xl border border-orange-500/30 flex items-center gap-3">
+                    <span class="text-[9px] text-orange-300/60 font-bold uppercase tracking-tighter">Affection</span>
+                    <div class="flex items-center text-orange-500 text-xs font-black">
+                        <i data-lucide="heart" class="w-3.5 h-3.5 fill-current mr-1.5 animate-bounce"></i>
+                        <span id="fan-level" class="text-white text-sm">88</span><span class="text-orange-500 ml-0.5">%</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="relative w-full h-[680px] rounded-[3.5rem] overflow-hidden border-2 border-white/10 shadow-[0_0_80px_rgba(249,115,22,0.15)] bg-[#050505] group">
+                
+                <!-- AI Background with Neural Overlay -->
+                <div class="absolute inset-0 w-full h-full">
+                    <img src="../assets/img/AI_mango2.png" alt="Mango AI" 
+                         class="w-full h-full object-cover object-[center_15%] transition-transform duration-[15000ms] group-hover:scale-110 opacity-80 mix-blend-lighten">
+                    <div id="emotion-overlay" class="absolute inset-0 bg-gradient-to-t from-[#050505] via-transparent to-orange-900/10 transition-colors duration-1000"></div>
+                    <!-- Holographic Scan Lines -->
+                    <div class="absolute inset-0 pointer-events-none bg-[linear-gradient(rgba(18,16,16,0)_50%,rgba(0,0,0,0.1)_50%),linear-gradient(90deg,rgba(255,0,0,0.03),rgba(0,255,0,0.01),rgba(0,0,255,0.03))] bg-[length:100%_2px,3px_100%] z-10"></div>
+                </div>
+
+                <div id="heart-particles" class="absolute inset-0 pointer-events-none z-20"></div>
+
+                <div class="absolute top-8 left-8 z-30">
+                    <div class="flex items-center gap-3 px-4 py-2 bg-black/40 backdrop-blur-2xl rounded-full border border-white/10 shadow-2xl">
+                        <div class="relative">
+                            <div class="w-2.5 h-2.5 bg-red-600 rounded-full animate-pulse"></div>
+                            <div class="absolute inset-0 w-2.5 h-2.5 bg-red-600 rounded-full animate-ping opacity-75"></div>
+                        </div>
+                        <span class="text-[10px] text-white font-black tracking-[0.2em]">LIVE_CONNECT: 02:44:12</span>
+                    </div>
+                </div>
+
+                <!-- Interaction Zone with Extreme Glass UI -->
+                <div class="absolute bottom-0 left-0 right-0 p-8 flex flex-col gap-6 z-40 bg-gradient-to-t from-black via-black/80 to-transparent">
+                    
+                    <div id="ai-chat-window" class="max-h-40 overflow-y-auto space-y-4 no-scrollbar">
+                        <div class="flex items-start gap-3 animate-in slide-in-from-bottom-4 duration-700">
+                            <div id="ai-response-bubble" class="bg-orange-500/10 backdrop-blur-3xl border border-orange-500/40 p-5 rounded-[2rem] rounded-bl-none text-orange-50 text-[13px] shadow-2xl leading-relaxed font-medium">
+                                "수석 디자이너님, 오늘 날씨가 정말 망고처럼 달콤하네요! 🥭 <br>어떤 영감을 함께 나눠볼까요?"
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="space-y-4">
+                        <!-- Voice & Visualization Button -->
+                        <div class="flex justify-center">
+                            <button onclick="playMangoGreeting()" class="group flex items-center gap-3 px-6 py-3 bg-gradient-to-r from-orange-600 to-yellow-500 rounded-full text-white text-[12px] font-black shadow-[0_10px_30px_rgba(234,88,12,0.3)] hover:shadow-orange-500/50 hover:scale-105 transition-all active:scale-95">
+                                <div id="voice-wave" class="hidden flex items-center gap-0.5 h-3">
+                                    <span class="w-0.5 h-full bg-white animate-pulse"></span>
+                                    <span class="w-0.5 h-2 bg-white animate-pulse" style="animation-delay: 0.1s"></span>
+                                    <span class="w-0.5 h-4 bg-white animate-pulse" style="animation-delay: 0.2s"></span>
+                                </div>
+                                <i data-lucide="music" class="w-4 h-4 fill-current group-hover:rotate-12 transition-transform"></i> 
+                                망고 시그니처 보이스 재생
+                            </button>
+                            <audio id="mango-greeting-audio" src="../assets/audio/망고 망고 달달한 망고.mp3" preload="auto"></audio>
+                        </div>
+
+                        <!-- Input Field -->
+                        <div class="flex items-center gap-3">
+                            <div class="relative flex-1">
+                                <input type="text" id="ai-input" onkeypress="if(event.keyCode==13) sendToMango()" 
+                                       placeholder="메시지를 입력하세요..." 
+                                       class="w-full bg-white/5 backdrop-blur-3xl border border-white/10 rounded-[1.5rem] px-6 py-4 text-sm text-white focus:outline-none focus:border-orange-500 focus:bg-white/10 transition-all placeholder-white/30">
+                            </div>
+                            
+                            <button onclick="sendToMango()" 
+                                    class="group relative w-16 h-14 flex items-center justify-center bg-gradient-to-br from-orange-500 to-yellow-500 rounded-[1.5rem] shadow-lg shadow-orange-500/30 active:scale-90 transition-all overflow-hidden border border-white/20">
+                                
+                                <img src="../assets/img/AI_mango.png" 
+                                     alt="Send" 
+                                     class="w-full h-full object-cover opacity-90 group-hover:scale-125 transition-transform duration-500 mix-blend-luminosity group-hover:mix-blend-normal">
+                                
+                                <div class="absolute inset-0 bg-black/10 group-hover:bg-transparent transition-colors"></div>
+                                <i data-lucide="send-horizonal" class="absolute w-5 h-5 text-white drop-shadow-md group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform"></i>
+                                
+                                <div class="absolute inset-0 rounded-[1.5rem] border-2 border-white/0 group-active:border-white/50 transition-all"></div>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <script>
+                // 감성 엔진 v2.0 반응형 로직
+                function playMangoGreeting() {
+                    const audio = document.getElementById('mango-greeting-audio');
+                    const wave = document.getElementById('voice-wave');
+                    if(audio.paused) {
+                        audio.play();
+                        wave.classList.remove('hidden');
+                        audio.onended = () => wave.classList.add('hidden');
+                    }
+                }
+                
+                function initEmotionalEngine() {
+                    const fanLevel = parseInt(document.getElementById('fan-level').innerText) || 88;
+                    const agentCard = document.querySelector('#ai-mango-agent .relative');
+                    // 애정 수치에 따른 실시간 그림자 강도 조절
+                    if(agentCard) agentCard.style.boxShadow = `0 0 ${40 + fanLevel}px rgba(249, 115, 22, ${0.1 + (fanLevel/200)})`;
+                }
+                window.addEventListener('load', initEmotionalEngine);
+            </script>
+        </section>
+
+        <!-- [제12단계: Pi Network 하비 스테이킹 섹션] -->
+        <section id="hobby-staking-node" class="space-y-4 mb-8 px-2 mt-4">
+            <div class="flex justify-between items-center px-2">
+                <h3 class="text-xs font-orbit tracking-[0.3em] text-white/40 uppercase">Hobby Liquidity Pool</h3>
+                <div class="flex items-center gap-1.5">
+                    <div class="w-1.5 h-1.5 bg-[#F4B13E] rounded-full animate-ping"></div>
+                    <span class="text-[9px] text-[#F4B13E] font-black uppercase tracking-widest">Pi_Net Sync Active</span>
+                </div>
+            </div>
+
+            <div class="relative p-6 rounded-[3rem] border border-[#F4B13E]/30 bg-gradient-to-br from-[#1a150b] to-[#050505] overflow-hidden shadow-[0_0_40px_rgba(244,177,62,0.1)] group">
+                
+                <div class="absolute inset-0 bg-gradient-to-tr from-transparent via-white/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-1000 transform -skew-x-12"></div>
+
+                <div class="flex justify-between items-end mb-6 relative z-10">
+                    <div>
+                        <p class="text-[10px] text-white/50 font-bold uppercase tracking-wider mb-1">Total Value Locked</p>
+                        <h4 class="text-2xl font-black text-white font-orbit flex items-center gap-2">
+                            <span class="text-[#F4B13E]">π</span> 142,500.8
+                        </h4>
+                    </div>
+                    <div class="text-right">
+                        <p class="text-[10px] text-white/50 font-bold uppercase tracking-wider mb-1">Current APR</p>
+                        <span class="px-2.5 py-1 bg-[#F4B13E]/20 border border-[#F4B13E]/50 rounded-lg text-xs font-black text-[#F4B13E] shadow-[0_0_15px_rgba(244,177,62,0.3)]">
+                            18.5%
+                        </span>
+                    </div>
+                </div>
+
+                <div class="bg-black/40 backdrop-blur-md rounded-[2rem] p-4 border border-white/5 mb-5 relative z-10">
+                    <div class="flex justify-between items-center mb-3 px-2">
+                        <span class="text-[10px] text-white/60 font-medium">Available Balance</span>
+                        <span class="text-xs font-bold text-white">450.00 <span class="text-[#F4B13E]">Pi</span></span>
+                    </div>
+                    
+                    <div class="flex items-center gap-3">
+                        <div class="relative flex-1">
+                            <input type="number" placeholder="0.00" 
+                                   class="w-full bg-white/5 border border-white/10 rounded-2xl py-3 pl-4 pr-12 text-lg text-white font-black font-orbit focus:outline-none focus:border-[#F4B13E] transition-all">
+                            <div class="absolute right-3 top-1/2 -translate-y-1/2">
+                                <button class="text-[9px] font-black bg-white/10 text-[#F4B13E] px-2 py-1 rounded-md hover:bg-[#F4B13E]/20 transition-colors">MAX</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="flex justify-between items-center mb-6 px-2 relative z-10">
+                    <div>
+                        <p class="text-[10px] text-white/50 font-bold">Claimable Rewards</p>
+                        <p class="text-sm font-black text-lime-400 mt-0.5">+ 2.45 Pi</p>
+                    </div>
+                    <button class="px-4 py-2 bg-white/5 hover:bg-white/10 border border-white/10 rounded-xl text-[11px] text-white font-bold transition-all">
+                        Claim
+                    </button>
+                </div>
+
+                <button class="w-full relative group overflow-hidden rounded-2xl z-10">
+                    <div class="absolute inset-0 bg-gradient-to-r from-[#D48F25] via-[#F4B13E] to-[#D48F25] group-hover:scale-105 transition-transform duration-500"></div>
+                    <div class="absolute inset-0 border-t border-white/40 border-b-2 border-black/50 rounded-2xl"></div>
+                    <div class="relative py-4 flex items-center justify-center gap-2">
+                        <i data-lucide="lock" class="w-4 h-4 text-black/80 fill-current"></i>
+                        <span class="text-black font-black tracking-widest text-sm">STAKE TO HOBBY POOL</span>
+                    </div>
+                </button>
+            </div>
+        </section>
+
+        <!-- [제13단계: AI 매칭 레이더 섹션] -->
+        <section id="matching-radar-node" class="space-y-4 mb-8 px-2">
+            <div class="flex justify-between items-center px-2">
+                <h3 class="text-xs font-orbit tracking-[0.3em] text-white/30 uppercase">AI Matching Radar</h3>
+                <span class="text-[9px] text-lime-400 font-black animate-pulse">SCANNING_AREA: 5KM</span>
+            </div>
+
+            <div class="hyper-card rounded-[3.5rem] p-8 bg-[#080808] border border-white/5 relative overflow-hidden flex flex-col items-center">
+                <div class="relative w-64 h-64 rounded-full border border-lime-500/20 flex items-center justify-center">
+                    <div class="absolute w-48 h-48 rounded-full border border-lime-500/10"></div>
+                    <div class="absolute w-32 h-32 rounded-full border border-lime-500/10"></div>
+                    <div class="absolute w-16 h-16 rounded-full border border-lime-500/5"></div>
+                    
+                    <div id="radar-scanner" class="absolute inset-0 rounded-full border-l-2 border-lime-400/40 shadow-[0_0_20px_rgba(163,230,53,0.3)] animate-spin-slow origin-center" style="animation-duration: 4s;"></div>
+
+                    <!-- Blip 1: Han -->
+                    <div class="absolute top-10 right-12 group cursor-pointer" onclick="openMatchProfile('Han', 98)">
+                        <div class="w-3 h-3 bg-lime-400 rounded-full shadow-[0_0_10px_#a3e635] animate-pulse"></div>
+                        <div class="hidden group-hover:block absolute top-4 -left-12 bg-black/90 border border-lime-500/30 p-2 rounded-xl text-[9px] text-white whitespace-nowrap z-50">
+                            <p class="font-black">HAN (98% Match)</p>
+                            <p class="text-lime-400">DANCE / 450m</p>
+                        </div>
+                    </div>
+
+                    <!-- Blip 2: Min -->
+                    <div class="absolute bottom-16 left-8 group cursor-pointer" onclick="openMatchProfile('Min', 85)">
+                        <div class="w-3 h-3 bg-orange-500 rounded-full shadow-[0_0_10px_#f97316] animate-pulse"></div>
+                        <div class="hidden group-hover:block absolute top-4 -left-12 bg-black/90 border border-orange-500/30 p-2 rounded-xl text-[9px] text-white whitespace-nowrap z-50">
+                            <p class="font-black">MIN (85% Match)</p>
+                            <p class="text-orange-500">COOK / 1.2km</p>
+                        </div>
+                    </div>
+
+                    <!-- Blip 3: Joy -->
+                    <div class="absolute top-24 left-10 group cursor-pointer" onclick="openMatchProfile('Joy', 92)">
+                        <div class="w-3 h-3 bg-cyan-400 rounded-full shadow-[0_0_10px_#22d3ee] animate-pulse"></div>
+                        <div class="hidden group-hover:block absolute top-4 -left-12 bg-black/90 border border-cyan-500/30 p-2 rounded-xl text-[9px] text-white whitespace-nowrap z-50">
+                            <p class="font-black">JOY (92% Match)</p>
+                            <p class="text-cyan-400">PHOTO / 800m</p>
+                        </div>
+                    </div>
+
+                    <div class="relative w-4 h-4 bg-white rounded-full shadow-[0_0_15px_white] z-10"></div>
+                </div>
+
+                <div class="mt-8 w-full bg-white/5 border border-white/10 rounded-2xl p-4 flex items-center gap-4">
+                    <div class="w-10 h-10 rounded-full overflow-hidden border border-orange-500/50 flex-shrink-0">
+                        <img src="../assets/img/AI_mango.png" class="w-full h-full object-cover">
+                    </div>
+                    <p id="radar-status" class="text-[11px] text-white/80 font-bold leading-tight">
+                        "디자이너님과 취향이 99% 일치하는 크루원을 발견했어요! 🥭"
+                    </p>
+                </div>
+
+                <button onclick="triggerRadarScan()" class="mt-6 w-full py-4 bg-lime-500/10 border border-lime-500/30 rounded-2xl text-[11px] text-lime-400 font-black tracking-widest hover:bg-lime-500/20 transition-all uppercase">
+                    Scan Now
+                </button>
+            </div>
+            <script>
+                function triggerRadarScan() {
+                    const scanner = document.getElementById('radar-scanner');
+                    const status = document.getElementById('radar-status');
+                    scanner.style.animationDuration = '1s';
+                    status.innerText = "심층 스캔 중... 최적의 취미 파트너를 찾고 있어요! 🥭";
+                    setTimeout(() => {
+                        scanner.style.animationDuration = '4s';
+                        status.innerText = "스캔 완료! 상단 레이더의 노드를 클릭하여 프로필을 확인하세요.";
+                    }, 3000);
+                }
+                function openMatchProfile(name, rate) {
+                    alert(`${name}님과의 매칭률은 ${rate}% 입니다! 시너지를 시작할까요?`);
+                }
+            </script>
+        </section>
+
+        <!-- [제14단계: 하비 길드 커뮤니티 섹션 - Synergy Pulse Engine] -->
+        <section id="hobby-guild-hub" class="space-y-8 mb-16 px-2">
+            <div class="flex justify-between items-end px-4">
+                <div class="space-y-1">
+                    <h3 class="text-[10px] font-orbit tracking-[0.4em] text-white/30 uppercase font-black">Hobby Guild Ecosystem</h3>
+                    <div class="flex items-center gap-2">
+                        <div class="w-2 h-2 bg-orange-500 rounded-full animate-pulse shadow-[0_0_10px_#f97316]"></div>
+                        <span class="text-[11px] text-orange-500 font-black uppercase tracking-widest">Synergy Flow: High</span>
+                    </div>
+                </div>
+                <button class="text-[10px] text-white/40 font-bold border-b border-white/10 pb-1 hover:text-orange-500 transition-colors">View All Guilds</button>
+            </div>
+
+            <div class="relative group">
+                <!-- Synergy Pulse: Neon Line Animation & Glass Border -->
+                <div class="absolute -inset-1 bg-gradient-to-r from-orange-900/20 via-[#F4B13E]/20 to-orange-900/20 rounded-[3.5rem] blur-xl opacity-50 group-hover:opacity-100 transition duration-1000"></div>
+                
+                <div class="relative rounded-[3.2rem] bg-[#0a0a0a] border border-[#F4B13E]/20 p-8 overflow-hidden shadow-2xl">
+                    <!-- Synergy Pulse: Neon Line Animation -->
+                    <div class="absolute inset-0 opacity-20 pointer-events-none">
+                        <div class="absolute top-0 left-0 w-full h-full bg-[radial-gradient(circle_at_50%_50%,#F4B13E10,transparent_70%)] animate-pulse"></div>
+                        <svg class="w-full h-full" viewBox="0 0 400 200">
+                            <path d="M0 100 Q 100 80 200 100 T 400 100" fill="none" stroke="#F4B13E" stroke-width="0.5" class="animate-dash" stroke-dasharray="10 20" />
+                        </svg>
+                    </div>
+
+                    <div class="flex justify-between items-start relative z-10">
+                        <div class="flex items-center gap-5">
+                            <!-- Metallic Icon Node -->
+                            <div class="w-20 h-20 rounded-[2rem] bg-gradient-to-br from-[#2a1f0d] to-[#120e07] border border-[#F4B13E]/40 flex items-center justify-center shadow-[inset_0_2px_10px_rgba(255,255,255,0.1),0_10px_25px_rgba(0,0,0,0.5)] transform group-hover:rotate-6 transition-transform duration-500">
+                                <i data-lucide="zap" class="w-10 h-10 text-[#F4B13E] fill-current drop-shadow-[0_0_15px_rgba(244,177,62,0.5)]"></i>
+                            </div>
+                            <div>
+                                <h4 class="text-xl font-black text-white tracking-tight uppercase italic">Centum Dance Crew</h4>
+                                <div class="flex items-center gap-2 mt-1">
+                                    <span class="px-2 py-0.5 bg-[#F4B13E]/10 rounded text-[9px] font-black text-[#F4B13E] border border-[#F4B13E]/20 uppercase">Pro Tier</span>
+                                    <span class="text-[10px] text-white/40 font-bold uppercase tracking-widest">Rank #3</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="text-right">
+                            <p class="text-[9px] text-white/30 font-black uppercase tracking-tighter">Current Pool</p>
+                            <p class="text-lg font-orbit font-black text-[#F4B13E]">2,480 π</p>
+                        </div>
+                    </div>
+
+                    <div class="mt-8 grid grid-cols-3 gap-4 relative z-10">
+                        <div class="bg-white/5 rounded-2xl p-3 border border-white/5">
+                            <p class="text-[8px] text-white/30 font-black uppercase mb-1">Activity</p>
+                            <p class="text-xs font-black text-lime-400">92%</p>
+                        </div>
+                        <div class="bg-white/5 rounded-2xl p-3 border border-white/5">
+                            <p class="text-[8px] text-white/30 font-black uppercase mb-1">Members</p>
+                            <p class="text-xs font-black text-white">128+</p>
+                        </div>
+                        <div class="bg-white/5 rounded-2xl p-3 border border-[#F4B13E]/20 border-dashed">
+                            <p class="text-[8px] text-[#F4B13E] font-black uppercase mb-1">Daily Pi</p>
+                            <p class="text-xs font-black text-[#F4B13E]">+ 12.5</p>
+                        </div>
+                    </div>
+
+                    <!-- Holographic Member Board & Real-time Status -->
+                    <div class="mt-6 flex items-center justify-between border-t border-white/5 pt-4 relative z-10">
+                        <div class="flex -space-x-3">
+                            <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Sarah" class="w-8 h-8 rounded-full border-2 border-[#0a0a0a] bg-zinc-800 shadow-[0_0_10px_rgba(255,255,255,0.1)]">
+                            <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Kevin" class="w-8 h-8 rounded-full border-2 border-[#0a0a0a] bg-zinc-800 shadow-[0_0_10px_rgba(255,255,255,0.1)]">
+                            <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=John" class="w-8 h-8 rounded-full border-2 border-[#0a0a0a] bg-zinc-800 shadow-[0_0_10px_rgba(255,255,255,0.1)]">
+                            <div class="w-8 h-8 rounded-full border-2 border-[#0a0a0a] bg-[#F4B13E]/20 flex items-center justify-center text-[10px] text-[#F4B13E] font-black shadow-[0_0_10px_rgba(244,177,62,0.2)]">+12</div>
+                        </div>
+                        <p class="text-[10px] text-white/60 italic font-medium">현재 12명의 멤버가 실시간 시너지 발생 중...</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 4. Create Button: 입체 엠보싱 강화 -->
+            <button class="w-full relative py-6 rounded-[2.2rem] group active:scale-95 transition-all duration-300 shadow-[0_20px_40px_rgba(0,0,0,0.4)] overflow-hidden">
+                <div class="absolute inset-0 bg-gradient-to-b from-[#A67C52] via-[#634832] to-[#3E2C1E] border-t-2 border-white/30 border-b-4 border-black/60 rounded-[2.2rem]"></div>
+                <div class="absolute inset-[2px] bg-gradient-to-b from-white/10 to-transparent rounded-[2.1rem] pointer-events-none opacity-50"></div>
+                <div class="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000 skew-x-12"></div>
+                
+                <div class="relative flex items-center justify-center gap-4">
+                    <div class="w-8 h-8 rounded-full bg-black/30 flex items-center justify-center shadow-inner">
+                        <i data-lucide="shield-plus" class="w-5 h-5 text-[#F4B13E]"></i>
+                    </div>
+                    <span class="text-[15px] font-black text-[#F4B13E] tracking-[0.2em] drop-shadow-[0_2px_4px_rgba(0,0,0,0.5)]">CREATE NEW GUILD</span>
+                </div>
+            </button>
+        </section>
+
         <!-- [단계 2 반영] Analytics Dimension: Highlighted Numbers & Charts -->
         <section class="space-y-8 pb-20">
             <div class="flex justify-between items-center px-2">
@@ -325,6 +692,258 @@
                 </div>
             </div>
         </section>
+
+        <!-- [제7단계] PoH Rewards Hub: 보상 및 성취 대시보드 -->
+        <section id="poh-rewards-hub" class="space-y-6">
+            <div class="flex justify-between items-center px-2">
+                <h3 class="text-xs font-orbit tracking-[0.3em] text-white/30 uppercase">PoH Rewards Hub</h3>
+                <span class="text-[9px] text-cyan-400 font-black animate-pulse">PROOF OF HOBBY ACTIVE</span>
+            </div>
+            <div class="hyper-card p-6 rounded-[3rem] border-orange-500/20 relative overflow-hidden">
+                <div class="absolute -right-20 -bottom-20 w-40 h-40 bg-orange-500/5 rounded-full blur-3xl"></div>
+                <div class="flex justify-between items-center mb-6 relative z-10">
+                    <div class="flex flex-col gap-1">
+                        <p class="text-[10px] text-yellow-500/80 font-bold uppercase tracking-widest">Mastery Status</p>
+                        <h4 class="text-xl font-black text-white italic">LV. <span id="user-level">1</span> <span class="text-[10px] not-italic ml-2 text-orange-500 font-orbit tracking-tighter">ELITE PIONEER</span></h4>
+                    </div>
+                    <div class="text-right">
+                        <p class="text-[9px] text-yellow-500/80 font-bold uppercase tracking-widest">Mango Energy</p>
+                        <p class="text-lg font-orbit font-black text-cyan-400"><span id="energy-val">0</span> <span class="text-[8px] text-white">MNG</span></p>
+                    </div>
+                </div>
+                <!-- Progress Bar -->
+                <div class="h-1.5 w-full bg-white/5 rounded-full overflow-hidden mb-8 border border-white/10">
+                    <div id="energy-progress" class="h-full bg-gradient-to-r from-orange-600 via-orange-400 to-yellow-400 transition-all duration-1000" style="width: 0%"></div>
+                </div>
+                <!-- Achievement Badges: 홀로그래픽 스타일 -->
+                <div id="achievement-badges" class="grid grid-cols-4 gap-4">
+                    <div id="badge-DANCE" class="badge-item flex flex-col items-center gap-2 opacity-20 grayscale transition-all duration-700">
+                        <div class="w-12 h-12 rounded-2xl bg-zinc-800 flex items-center justify-center border border-white/10 shadow-inner"><i data-lucide="music-2" class="w-5 h-5" style="color: #FF007F; filter: drop-shadow(0 0 5px #FF007F);"></i></div>
+                        <span class="text-[8px] font-black text-white/40 uppercase">Dance</span>
+                    </div>
+                    <div id="badge-COOKING" class="badge-item flex flex-col items-center gap-2 opacity-20 grayscale transition-all duration-700">
+                        <div class="w-12 h-12 rounded-2xl bg-zinc-800 flex items-center justify-center border border-white/10 shadow-inner"><i data-lucide="utensils" class="w-5 h-5" style="color: #FFD700; filter: drop-shadow(0 0 5px #FFD700);"></i></div>
+                        <span class="text-[8px] font-black text-white/40 uppercase">Cook</span>
+                    </div>
+                    <div id="badge-TRAVEL" class="badge-item flex flex-col items-center gap-2 opacity-20 grayscale transition-all duration-700">
+                        <div class="w-12 h-12 rounded-2xl bg-zinc-800 flex items-center justify-center border border-white/10 shadow-inner"><i data-lucide="map" class="w-5 h-5" style="color: #00FFFF; filter: drop-shadow(0 0 5px #00FFFF);"></i></div>
+                        <span class="text-[8px] font-black text-white/40 uppercase">Travel</span>
+                    </div>
+                    <div id="badge-OFF-ROAD" class="badge-item flex flex-col items-center gap-2 opacity-20 grayscale transition-all duration-700">
+                        <div class="w-12 h-12 rounded-2xl bg-zinc-800 flex items-center justify-center border border-white/10 shadow-inner"><i data-lucide="map-pin" class="w-5 h-5" style="color: #ADFF2F; filter: drop-shadow(0 0 5px #ADFF2F);"></i></div>
+                        <span class="text-[8px] font-black text-white/40 uppercase">Road</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- [제17단계: 시너지 마켓플레이스 섹션 - Market Dimension Node] -->
+        <section id="synergy-marketplace-node" class="space-y-6 mb-24 px-2">
+            <div class="flex justify-between items-center px-4">
+                <h3 class="text-xs font-orbit tracking-[0.3em] text-white/30 uppercase">Market Dimension Node</h3>
+                <div class="flex items-center gap-2">
+                    <span class="w-1.5 h-1.5 bg-cyan-400 rounded-full animate-pulse"></span>
+                    <span class="text-[9px] text-cyan-400 font-black uppercase">Algo_Sync Active</span>
+                </div>
+            </div>
+
+            <!-- 상품 카드 1: 실버 오버사이즈 스트릿 후드 -->
+            <div class="relative group cursor-pointer" onclick="initiatePiPayment('Silver Oversized Hoodie', 2.5)">
+                <div class="absolute -inset-0.5 bg-gradient-to-r from-cyan-500/0 via-cyan-500/30 to-cyan-500/0 rounded-[2.5rem] opacity-0 group-hover:opacity-100 transition duration-500"></div>
+                <div class="relative flex items-center gap-6 p-5 bg-[#080808] border border-white/5 rounded-[2.5rem] overflow-hidden group-hover:scale-[1.02] transition-transform duration-300">
+                    <div class="w-24 h-24 rounded-2xl overflow-hidden flex-shrink-0 border border-white/10">
+                        <img src="https://images.unsplash.com/photo-1556906781-9a412961c28c?w=300" class="w-full h-full object-cover">
+                    </div>
+                    <div class="flex-1 space-y-1">
+                        <div class="flex items-center gap-1.5">
+                            <span class="text-[8px] font-black text-cyan-400 uppercase tracking-tighter">Recommended For You</span>
+                            <i data-lucide="sparkles" class="w-3 h-3 text-yellow-400"></i>
+                        </div>
+                        <h4 class="text-[15px] font-black text-white italic tracking-tight">실버 오버사이즈 스트릿 후드</h4>
+                        <div class="flex items-center gap-2">
+                            <span class="text-[16px] font-orbit font-black text-orange-500">2.5 Pi</span>
+                            <span class="text-[9px] text-white/30 font-bold uppercase">Market Portal</span>
+                        </div>
+                    </div>
+                    <div class="pr-2 opacity-30 group-hover:opacity-100 group-hover:translate-x-1 transition-all">
+                        <i data-lucide="chevron-right" class="w-6 h-6 text-white"></i>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 상품 카드 2: 망고 에디션 댄스 슈즈 -->
+            <div class="relative group cursor-pointer" onclick="initiatePiPayment('Mango Edition Dance Shoes', 12.0)">
+                <div class="absolute -inset-0.5 bg-gradient-to-r from-orange-500/0 via-orange-500/30 to-orange-500/0 rounded-[2.5rem] opacity-0 group-hover:opacity-100 transition duration-500"></div>
+                <div class="relative flex items-center gap-6 p-5 bg-[#080808] border border-white/5 rounded-[2.5rem] overflow-hidden group-hover:scale-[1.02] transition-transform duration-300">
+                    <div class="w-24 h-24 rounded-2xl overflow-hidden flex-shrink-0 border border-white/10">
+                        <img src="https://images.unsplash.com/photo-1547153760-18fc86324498?w=300" class="w-full h-full object-cover">
+                    </div>
+                    <div class="flex-1 space-y-1">
+                        <div class="flex items-center gap-1.5">
+                            <span class="text-[8px] font-black text-orange-500 uppercase tracking-tighter">AI 최적가 분석 완료</span>
+                            <i data-lucide="sparkles" class="w-3 h-3 text-yellow-400"></i>
+                        </div>
+                        <h4 class="text-[15px] font-black text-white italic tracking-tight">망고 에디션 댄스 슈즈</h4>
+                        <div class="flex items-center gap-2">
+                            <span class="text-[16px] font-orbit font-black text-orange-500">12.0 Pi</span>
+                            <span class="text-[9px] text-white/30 font-bold uppercase">Market Portal</span>
+                        </div>
+                    </div>
+                    <div class="pr-2 opacity-30 group-hover:opacity-100 group-hover:translate-x-1 transition-all">
+                        <i data-lucide="chevron-right" class="w-6 h-6 text-white"></i>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 현재 잔액 확인 바 -->
+            <div class="py-4 px-6 bg-gradient-to-r from-[#1a130a] to-[#0a0a0a] border border-orange-900/30 rounded-2xl flex justify-between items-center">
+                <div>
+                    <p class="text-[9px] text-orange-500 font-black uppercase">Current Balance</p>
+                    <p class="text-sm font-orbit font-black text-white">425.50 π</p>
+                </div>
+                <button class="px-4 py-2 bg-orange-500/10 border border-orange-500/30 rounded-full text-[9px] font-black text-orange-500 hover:bg-orange-500 hover:text-black transition-colors">EXCHANGE GXP</button>
+            </div>
+        </section>
+
+        <!-- [제18단계: 길드 거버넌스 투표 섹션 - Guild Governance Node] -->
+        <section id="guild-governance-node" class="space-y-6 mb-24 px-2">
+            <div class="flex justify-between items-end px-4">
+                <div class="space-y-1">
+                    <h3 class="text-xs font-orbit tracking-[0.3em] text-white/30 uppercase">Guild Governance Node</h3>
+                    <p class="text-[9px] text-white/20 font-bold uppercase">Decentralized Decision Making</p>
+                </div>
+                <span class="text-[9px] text-rose-500 font-black animate-pulse">VOTING_ACTIVE</span>
+            </div>
+
+            <div class="hyper-card rounded-[3rem] p-8 border-rose-500/20 bg-gradient-to-b from-[#0a0a0a] to-transparent relative overflow-hidden">
+                <div class="absolute top-0 right-0 p-6">
+                    <div class="w-12 h-12 rounded-full border border-rose-500/30 flex items-center justify-center bg-rose-500/5 shadow-[0_0_15px_rgba(244,63,94,0.1)]">
+                        <i data-lucide="timer" class="w-5 h-5 text-rose-500"></i>
+                    </div>
+                </div>
+
+                <div class="space-y-4 relative z-10">
+                    <div class="flex items-center gap-2">
+                        <span class="px-2 py-1 bg-rose-500/10 rounded text-[8px] font-black text-rose-500 border border-rose-500/20 uppercase tracking-widest">Urgent Proposal</span>
+                        <div class="w-1.5 h-1.5 bg-rose-500 rounded-full animate-ping"></div>
+                    </div>
+                    <h4 class="text-lg font-black text-white italic leading-tight tracking-tight">제3회 광안리 댄스 배틀 <br>개최 장소 최종 확정의 건</h4>
+                    <p class="text-[11px] text-white/40 font-medium">참여 시 <span class="text-rose-400 font-bold">5.0 MNG</span> 에너지가 보상으로 지급됩니다.</p>
+                </div>
+
+                <div class="mt-8 space-y-6">
+                    <!-- 옵션 A -->
+                    <button class="w-full group relative text-left" onclick="castVote('민락수변공원')">
+                        <div class="flex justify-between items-center mb-2 px-1">
+                            <span class="text-[11px] font-bold text-white/70 group-hover:text-white transition-colors">A. 민락수변공원</span>
+                            <span class="text-[11px] font-orbit text-cyan-400">64%</span>
+                        </div>
+                        <div class="h-1.5 w-full bg-white/5 rounded-full overflow-hidden border border-white/5">
+                            <div class="h-full bg-cyan-400 shadow-[0_0_10px_#00F2FF] transition-all duration-1000" style="width: 64%"></div>
+                        </div>
+                    </button>
+
+                    <!-- 옵션 B -->
+                    <button class="w-full group relative text-left" onclick="castVote('광안리 해수욕장 특설무대')">
+                        <div class="flex justify-between items-center mb-2 px-1">
+                            <span class="text-[11px] font-bold text-white/70 group-hover:text-white transition-colors">B. 광안리 해수욕장 특설무대</span>
+                            <span class="text-[11px] font-orbit text-white/30">36%</span>
+                        </div>
+                        <div class="h-1.5 w-full bg-white/5 rounded-full overflow-hidden border border-white/5">
+                            <div class="h-full bg-white/20 transition-all duration-1000" style="width: 36%"></div>
+                        </div>
+                    </button>
+                </div>
+
+                <div class="mt-8 pt-6 border-t border-white/5 flex justify-between items-center relative z-10">
+                    <div class="flex items-center gap-2">
+                        <i data-lucide="users" class="w-4 h-4 text-white/20"></i>
+                        <span class="text-[10px] text-white/30 font-bold uppercase">1,204 Members Voted</span>
+                    </div>
+                    <p class="text-[10px] font-orbit text-rose-500 font-black">Ends in 02:45:12</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- [제19단계: AI Hobby Concierge - MANGO A.I. HUB] -->
+        <section id="ai-concierge-hub" class="space-y-6 mb-24 px-2">
+            <div class="flex justify-between items-center px-4">
+                <h3 class="text-xs font-orbit tracking-[0.3em] text-white/30 uppercase font-black">Mango A.I. Intelligence</h3>
+                <div class="flex items-center gap-2">
+                    <div class="w-1.5 h-1.5 bg-lime-400 rounded-full animate-ping"></div>
+                    <span class="text-[9px] text-lime-400 font-black">NEURAL_LINK: ONLINE</span>
+                </div>
+            </div>
+
+            <div class="relative group">
+                <div class="absolute -inset-1 bg-gradient-to-r from-orange-500/10 via-cyan-500/10 to-orange-500/10 rounded-[3.5rem] blur-2xl opacity-50"></div>
+                
+                <div class="hyper-card relative rounded-[3.2rem] bg-[#080808]/80 backdrop-blur-xl border border-white/10 p-8 overflow-hidden shadow-2xl">
+                    
+                    <div class="flex items-center gap-6 mb-8">
+                        <div class="relative">
+                            <div class="w-20 h-20 rounded-full border-2 border-[#F4B13E] p-1 animate-spin-slow" style="animation-duration: 8s;">
+                                <div class="w-full h-full rounded-full border border-dashed border-[#F4B13E]/50"></div>
+                            </div>
+                            <div class="absolute inset-0 flex items-center justify-center">
+                                <div class="w-16 h-16 rounded-full overflow-hidden border-2 border-white/20 shadow-[0_0_20px_rgba(244,177,62,0.3)]">
+                                    <img src="../assets/img/AI_mango.png" class="w-full h-full object-cover">
+                                </div>
+                            </div>
+                            <div class="absolute -bottom-1 -right-1 w-6 h-6 bg-lime-500 rounded-full border-4 border-[#080808] flex items-center justify-center">
+                                <i data-lucide="check" class="w-3 h-3 text-white"></i>
+                            </div>
+                        </div>
+                        
+                        <div class="space-y-1">
+                            <h4 class="text-xl font-black text-white italic tracking-tight">AI MANGO <span class="text-[10px] not-italic text-orange-500 font-orbit ml-1">v3.0.4</span></h4>
+                            <p class="text-[11px] text-white/40 font-bold uppercase tracking-widest">Personal Hobby Concierge</p>
+                        </div>
+                    </div>
+
+                    <div class="bg-white/5 rounded-3xl p-6 border border-white/5 mb-8 relative">
+                        <div class="absolute top-4 left-4">
+                            <i data-lucide="quote" class="w-4 h-4 text-[#F4B13E]/20"></i>
+                        </div>
+                        <p id="ai-message-text" class="text-[13px] text-white/90 font-medium leading-relaxed min-h-[60px]">
+                            "반가워요, 디자이너님! 현재 부산 서면 지역의 댄스 시너지가 평소보다 40% 높습니다. 지금 크루에 합류하여 1.5 Pi 보너스를 획득해볼까요? 🥭"
+                        </p>
+                        <div class="mt-4 flex justify-end">
+                            <span class="text-[9px] text-cyan-400 font-orbit animate-pulse">THINKING...</span>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-3 gap-2">
+                        <button onclick="aiAction('route')" class="relative py-4 rounded-2xl bg-gradient-to-b from-[#2a1f0d] to-[#120e07] border border-[#F4B13E]/30 shadow-lg active:scale-95 transition-all">
+                            <div class="flex flex-col items-center gap-2">
+                                <i data-lucide="map-pin" class="w-4 h-4 text-[#F4B13E]"></i>
+                                <span class="text-[8px] font-black text-white/80 uppercase tracking-tighter">추천 경로</span>
+                            </div>
+                        </button>
+                        <button onclick="aiAction('buddy')" class="relative py-4 rounded-2xl bg-gradient-to-b from-[#121212] to-[#050505] border border-white/10 shadow-lg active:scale-95 transition-all">
+                            <div class="flex flex-col items-center gap-2">
+                                <i data-lucide="users" class="w-4 h-4 text-cyan-400"></i>
+                                <span class="text-[8px] font-black text-white/80 uppercase tracking-tighter">버디 매칭</span>
+                            </div>
+                        </button>
+                        <button onclick="aiAction('analysis')" class="relative py-4 rounded-2xl bg-gradient-to-b from-[#121212] to-[#050505] border border-white/10 shadow-lg active:scale-95 transition-all">
+                            <div class="flex flex-col items-center gap-2">
+                                <i data-lucide="bar-chart-3" class="w-4 h-4 text-lime-400"></i>
+                                <span class="text-[8px] font-black text-white/80 uppercase tracking-tighter">숙련도 분석</span>
+                            </div>
+                        </button>
+                    </div>
+
+                    <div class="mt-6 relative">
+                        <input type="text" placeholder="무엇이든 물어보세요 (예: '춤추기 좋은 카페 추천해줘')" 
+                               class="w-full bg-black/40 border border-white/5 rounded-full py-4 px-6 text-[11px] text-white placeholder:text-white/20 focus:outline-none focus:border-[#F4B13E]/50 transition-all">
+                        <button class="absolute right-2 top-1/2 -translate-y-1/2 w-10 h-10 bg-[#F4B13E] rounded-full flex items-center justify-center shadow-[0_0_15px_rgba(244,177,62,0.4)]">
+                            <i data-lucide="arrow-right" class="w-5 h-5 text-black"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
     </main>
 
     <!-- [모듈 3] Pi 결제 승인 모달 -->
@@ -349,7 +968,131 @@
     
 
     <script>
+        // Pi Network 결제 시뮬레이션 엔진
+        function initiatePiPayment(item, price) {
+            const confirmPay = confirm(`[Pi Wallet Connect]\n\n${item}을(를) ${price} Pi로 구매하시겠습니까?\n\n이 결제는 Pi Mainnet을 통해 안전하게 에스크로 처리됩니다.`);
+            if(confirmPay) {
+                alert("✅ 결제 및 주문이 완료되었습니다! 🥭\n\n바우처와 배송 정보는 'Market Portal > My Orders'에서 확인하실 수 있습니다.");
+            }
+        }
+
+        // [제18단계] 길드 거버넌스 투표 시스템
+        function castVote(option) {
+            // Pi Signature 인증 시뮬레이션 애니메이션 처리
+            const modal = document.getElementById('pi-payment-modal');
+            if(!modal) return;
+
+            const modalTitle = modal.querySelector('h3');
+            const modalText = modal.querySelector('p');
+            
+            const originalTitle = modalTitle.innerText;
+            const originalText = modalText.innerText;
+
+            const confirmVote = confirm(`[Pi Governance Auth]\n\n'${option}' 항목에 투표하시겠습니까?\n\n이 결정은 취소할 수 없으며 Pi 블록체인에 거버넌스 기록으로 영구 저장됩니다.`);
+            
+            if(confirmVote) {
+                // 모달을 시그니처 인증용으로 일시 변경
+                modalTitle.innerText = "GOVERNANCE SIGNATURE";
+                modalText.innerText = "의결권 행사 인증 중...";
+                modal.classList.remove('hidden');
+
+                setTimeout(() => {
+                    modal.classList.add('hidden');
+                    // 모달 텍스트 원상복구
+                    modalTitle.innerText = originalTitle;
+                    modalText.innerText = originalText;
+                    
+                    alert(`✅ 투표가 성공적으로 블록체인에 기록되었습니다! 🥭\n\n거버넌스 참여 보상으로 5.0 MNG 에너지가 즉시 지급되었습니다.`);
+                    
+                    userMangoEnergy += 50; // 예시 보상 수치 가산
+                    if(typeof updateRewardUI === 'function') updateRewardUI();
+                }, 2000);
+            }
+        }
+
+        // [제19단계] AI Concierge 인터랙션 로직
+        function aiAction(type) {
+            const msg = document.getElementById('ai-message-text');
+            if(!msg) return;
+            
+            // 타이핑 효과 연출을 위해 메시지 비우기
+            msg.innerText = "";
+            let targetText = "";
+
+            if(type === 'route') {
+                targetText = "분석 완료! 현재 위치에서 5분 거리의 '서면 댄스 스튜디오 V'로의 최단 경로와 할인 바우처를 생성했습니다.";
+            } else if(type === 'buddy') {
+                targetText = "주변 1km 내에 디자이너님과 취향이 비슷한 'Han'님과 'Joy'님이 활동 중입니다. 시너지 링크를 보낼까요?";
+            } else if(type === 'analysis') {
+                targetText = "현재 디자이너님의 DANCE 숙련도는 상위 12%입니다. 이번 챌린지 성공 시 'PRO' 등급으로 승격이 가능합니다.";
+            }
+
+            // 실시간 타이핑 효과 시뮬레이션
+            let i = 0;
+            const typingInterval = setInterval(() => {
+                if (i < targetText.length) {
+                    msg.innerText += targetText.charAt(i);
+                    i++;
+                } else {
+                    clearInterval(typingInterval);
+                    lucide.createIcons();
+                }
+            }, 30);
+        }
+
         // [모듈 2] 17~23세 K-POP 유닛 슬라이더 엔진 데이터
+        // [제7단계] 사용자 보상 상태 관리
+        let userMangoEnergy = parseInt(localStorage.getItem('user_mango_energy')) || 0;
+
+        // [제8단계] 실시간 소셜 피드 데이터
+        const dummyFeeds = [
+            { icon: 'wallet', text: 'K-User님이 0.5 Pi를 DANCE 노드에 후원했습니다.', color: 'text-orange-500' },
+            { icon: 'zap', text: '지금 부산 서면 노드에 15명의 댄서가 모였습니다!', color: 'text-cyan-400' },
+            { icon: 'star', text: 'SkyMango님의 디자인 숙련도가 LV.9로 상승했습니다!', color: 'text-yellow-400' },
+            { icon: 'heart', text: 'AI 망고의 팬 레벨이 전체 1위를 기록 중입니다.', color: 'text-rose-500' },
+            { icon: 'wallet', text: '망고님 1.2 Pi 결제 완료', color: 'text-orange-400' },
+            { icon: 'zap', text: 'SkyMango님 DANCE 숙련도 상승!', color: 'text-cyan-400' }
+        ];
+
+        function renderSocialFeed() {
+            const track = document.getElementById('social-feed-track');
+            if (!track) return;
+            const content = [...dummyFeeds, ...dummyFeeds].map(item => `
+                <div class="flex items-center gap-3">
+                    <div class="w-8 h-8 rounded-full bg-white/5 flex items-center justify-center border border-white/10 shadow-inner">
+                        <i data-lucide="${item.icon}" class="w-3.5 h-3.5 ${item.color}"></i>
+                    </div>
+                    <span class="text-[11px] font-bold text-white/90 tracking-tight">${item.text}</span>
+                </div>
+            `).join('');
+            track.innerHTML = content;
+            lucide.createIcons();
+        }
+        
+        // [Phase 3] 하이퍼-로컬 취미 데이터셋 (부산 지역 특화)
+        const LOCAL_ACTIVITY_DB = {
+            'OFF-ROAD': [
+                { name: '황령산 야간 오프로드 투어', dist: '4.2km', active: '5명 주행중', pi: '1.5 Pi', img: 'https://images.unsplash.com/photo-1533473359331-0135ef1b58bf?w=300' },
+                { name: '기장 해안가 샌드 드라이빙', dist: '12.5km', active: '3명 대기', pi: '2.0 Pi', img: 'https://images.unsplash.com/photo-1469474968028-56623f02e42e?w=300' }
+            ],
+            'DANCE': [
+                { name: '서면 댄스 스튜디오 V: 커버댄스', dist: '1.2km', active: '15명 접속중', pi: '0.5 Pi', img: 'https://images.unsplash.com/photo-1547153760-18fc86324498?w=300' },
+                { name: '해운대 야외 K-POP 버스킹', dist: '5.8km', active: '42명 참여', pi: 'Free', img: 'https://images.unsplash.com/photo-1535525153412-5a42439a210d?w=300' },
+                { name: '광안리 비치 사이드 스트릿 배틀', dist: '3.1km', active: '8명 배틀중', pi: '0.2 Pi', img: 'https://images.unsplash.com/photo-1508700115892-45ecd05ae2ad?w=300' }
+            ],
+            'COOKING': [
+                { name: '망고 쿠킹 클래스 부산: 태국 요리', dist: '0.5km', active: '8명 대기', pi: '1.2 Pi', img: 'https://images.unsplash.com/photo-1556910103-1c02745a30d3?w=300' },
+                { name: '전포 디저트 랩: 수제 초콜릿', dist: '1.8km', active: '4명 실습중', pi: '0.8 Pi', img: 'https://images.unsplash.com/photo-1547512111-c7aef935817c?w=300' }
+            ],
+            'TRAVEL': [
+                { name: '광안리 심야 워킹 투어', dist: '3.1km', active: '12명 이동중', pi: '0.8 Pi', img: 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=300' },
+                { name: '영도 영도 흰여울길 스냅 투어', dist: '7.4km', active: '6명 참여', pi: '1.0 Pi', img: 'https://images.unsplash.com/photo-1512100356956-c1b47efd9263?w=300' }
+            ],
+            'PHOTOGRAPHY': [
+                { name: '해운대 시티뷰 출사 모임', dist: '4.5km', active: '10명 출사중', pi: 'Free', img: 'https://images.unsplash.com/photo-1516035069371-29a1b244cc32?w=300' }
+            ]
+        };
+
         const kpopUnits = [
             { id: "kpop1", driveImg: "https://drive.google.com/uc?export=view&id=FILE_ID_1", localImg: "../assets/img/background_mango_dance.png", kr: "퓨처 웨이브", en: "FUTURE WAVE", meta: "2인 유닛 / 사이버펑크", type: "DANCE" },
 
@@ -508,18 +1251,131 @@ document.addEventListener('DOMContentLoaded', renderKpopSlider);
             }
         }
 
-        function activateCategoryUI(type, btnElement) { // btnElement 인자 추가
+        function activateCategoryUI(type) {
             if(!type) return;
             const normalizedId = `gate-${type.toString().replace(/\s+/g,'-')}`;
             let targetCard = document.getElementById(normalizedId);
             if(!targetCard) {
                 targetCard = Array.from(document.querySelectorAll('.gate-card')).find(c => c.textContent && c.textContent.includes(type));
             }
+            
+            // 1. 시각적 활성화 피드백
             if(targetCard) {
                 targetCard.classList.add('active-session');
-                const p = targetCard.querySelector('p');
-                if(p) p.innerText = "참여 중 (JOINED)";
             }
+
+            // 2. Zen-Dimension 시각적 동기화
+            const dimmer = document.querySelector('.zen-dimmer');
+            dimmer.classList.add('zen-active');
+            dimmer.style.filter = `hue-rotate(${Math.random() * 360}deg) brightness(0.7)`;
+
+            // 3. 상태 관리 (localStorage 저장)
+            localStorage.setItem('last_hobby_category', type);
+
+            // 4. 성취 배지 시스템: 선택한 카테고리 배지 활성화
+            const badge = document.getElementById(`badge-${type}`);
+            if(badge) {
+                badge.classList.remove('opacity-20', 'grayscale');
+                badge.classList.add('opacity-100', 'grayscale-0');
+                badge.querySelector('div').classList.add('border-cyan-400', 'shadow-[0_0_15px_rgba(0,242,255,0.3)]');
+            }
+
+            // 4. 로컬 액티비티 렌더링
+            renderLocalNodes(type);
+        }
+
+        function renderLocalNodes(categoryEn) {
+            const container = document.getElementById('gate-container');
+            const activities = LOCAL_ACTIVITY_DB[categoryEn] || [
+                { name: `${categoryEn} New Activity`, dist: '1.0km 내', active: '참여 대기 중', pi: '0.1 Pi', img: 'https://images.unsplash.com/photo-1514525253361-bee8718a300a?w=300' }
+            ];
+
+            const contentHtml = `
+                <div id="local-node-section" class="col-span-full mt-10 space-y-6 animate-in fade-in slide-in-from-bottom-5 duration-700">
+                    <div class="flex items-center gap-4">
+                        <div class="h-[1px] flex-1 bg-gradient-to-r from-transparent via-cyan-500/50 to-transparent"></div>
+                        <h3 class="text-[10px] font-orbit font-black text-cyan-400 tracking-[0.4em] uppercase">Local Synergy Nodes</h3>
+                        <div class="h-[1px] flex-1 bg-gradient-to-r from-transparent via-cyan-500/50 to-transparent"></div>
+                    </div>
+                    <div class="grid grid-cols-1 gap-4">
+                        ${activities.map(act => `
+                            <div class="hyper-card p-5 rounded-[2rem] border-cyan-400/20 flex items-center gap-5 group hover:border-cyan-400 transition-all">
+                                <div class="w-16 h-16 rounded-2xl bg-zinc-800 overflow-hidden shadow-inner flex-shrink-0 relative">
+                                    <div class="hologram-scan opacity-30"></div>
+                                    <img src="${act.img}" class="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all">
+                                </div>
+                                <div class="flex-1 space-y-1">
+                                    <div class="flex justify-between items-start">
+                                        <h4 class="text-sm font-black text-white">${act.name}</h4>
+                                        <span class="px-2 py-0.5 rounded text-[8px] font-black bg-cyan-400/20 text-cyan-400 border border-cyan-400/30">${act.dist}</span>
+                                    </div>
+                                    <p class="text-[10px] text-white/40 font-bold tracking-tight italic">${act.active}</p>
+                                    <div class="flex items-center gap-3 mt-2">
+                                        <span class="text-[9px] font-orbit text-orange-500 font-black tracking-widest uppercase italic">${act.pi} PAYMENT</span>
+                                        <button onclick="triggerPiPayment()" class="ml-auto px-4 py-1.5 bg-cyan-500 text-black text-[10px] font-black rounded-full hover:bg-white transition-colors">JOIN NODE</button>
+                                    </div>
+                                </div>
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+            `;
+
+            const oldSection = document.getElementById('local-node-section');
+            if (oldSection) oldSection.remove();
+            container.insertAdjacentHTML('afterend', contentHtml);
+            lucide.createIcons();
+        }
+
+        function triggerPiPayment() {
+            const modal = document.getElementById('pi-payment-modal');
+            if(!modal) return;
+            modal.classList.remove('hidden');
+            setTimeout(() => {
+                modal.classList.add('hidden');
+                processReward(); // 보상 엔진 가동
+            }, 3000);
+        }
+
+        function processReward() {
+            // 1. 포인트 및 레벨 업데이트
+            userMangoEnergy += 10;
+            localStorage.setItem('user_mango_energy', userMangoEnergy);
+            
+            // 2. 화면 중앙 동기화 완료 애니메이션 (파티클 효과 대용 화려한 토스트)
+            const toast = document.createElement('div');
+            toast.className = "fixed inset-0 z-[200] flex items-center justify-center pointer-events-none p-6";
+            toast.innerHTML = `
+                <div class="animate-in zoom-in spin-in-1 duration-700 bg-black/80 backdrop-blur-3xl p-10 rounded-[3.5rem] border-2 border-cyan-400 shadow-[0_0_100px_rgba(0,242,255,0.4)] text-center">
+                    <div class="w-20 h-20 bg-cyan-400 rounded-full flex items-center justify-center mx-auto mb-4 animate-bounce">
+                        <i data-lucide="check" class="text-black w-10 h-10"></i>
+                    </div>
+                    <h2 class="font-orbit text-3xl font-black text-white italic tracking-tighter">SYNC COMPLETE!</h2>
+                    <p class="text-cyan-400 font-black mt-2 text-xl">+10 MANGO ENERGY 🥭</p>
+                </div>
+            `;
+            document.body.appendChild(toast);
+            lucide.createIcons();
+            setTimeout(() => toast.remove(), 3000);
+
+            // 3. AI 망고의 칭찬 & 팬 레벨 상승
+            const aiBubble = document.getElementById('ai-response-bubble');
+            const fanLevel = document.getElementById('fan-level');
+            const userName = localStorage.getItem('mango_user_name') || '수석 디자이너님';
+            
+            aiBubble.innerHTML = `와! 역시 최고예요! 🥭 우리 ${userName} 실력이 쑥쑥 늘고 있어요! 저랑 더 가까워진 거 느껴지시나요? ✨`;
+            
+            let currentFan = parseInt(fanLevel.innerText);
+            fanLevel.innerText = Math.min(currentFan + 5, 100);
+            
+            updateRewardUI();
+        }
+
+        function updateRewardUI() {
+            document.getElementById('energy-val').innerText = userMangoEnergy;
+            const progress = (userMangoEnergy % 100);
+            document.getElementById('energy-progress').style.width = `${progress}%`;
+            document.getElementById('user-level').innerText = Math.floor(userMangoEnergy / 100) + 1;
         }
 
         // 캐러셀 엔진 (CSS 애니메이션으로 대체, JS 로직 제거)
@@ -529,6 +1385,26 @@ document.addEventListener('DOMContentLoaded', renderKpopSlider);
         document.addEventListener('DOMContentLoaded', () => {
             renderKpopSlider();
             renderCoreGateway(); // 새로 추가된 게이트웨이 렌더링 함수 실행
+            updateRewardUI(); // 보상 UI 초기화
+            renderSocialFeed(); // 소셜 피드 가동
+
+            // [제8단계] AI 망고의 소셜 피드 감지 반응
+            if(dummyFeeds.some(f => f.text.includes('SkyMango'))) {
+                setTimeout(() => {
+                    const aiBubble = document.getElementById('ai-response-bubble');
+                    if(aiBubble) {
+                        aiBubble.innerHTML = "어머! 수석 디자이너님(SkyMango) 이름이 전광판에 나왔어요! 🥭 너무 멋져요! 역시 우리의 자랑이세요! ✨";
+                    }
+                }, 4000);
+            }
+            
+            // [Phase 3] AI 망고의 기억 로직
+            const lastHobby = localStorage.getItem('last_hobby_category');
+            if(lastHobby) {
+                setTimeout(() => {
+                    alert(`🥭 AI 망고: "아까 보던 ${lastHobby} 취미 계속 같이 볼까요? 새로운 로컬 노드도 찾아뒀어요!"`);
+                }, 2000);
+            }
 
             const kpopImageIds = [
                 '1547152301193-4e010777e0d3', // K-POP Girls Style

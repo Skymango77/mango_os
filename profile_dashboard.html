@@ -337,7 +337,7 @@
                 const pEx = localStorage.getItem(`ping_${m.id}`); const isPinged = pEx && Date.now() < parseInt(pEx);
                 const html = `<div class="flex items-center justify-between bg-white/[0.03] p-4 rounded-3xl border border-white/5 hover:border-amber-500/20 transition-all">
                     <div class="flex items-center gap-3">
-                        <div class="relative"><img src="https://api.dicebear.com/7.x/avataaars/svg?seed=${m.avatarSeed}" class="w-10 h-10 rounded-full bg-slate-800 ${isActive?'':'grayscale'}"><span class="absolute bottom-0 right-0 w-2.5 h-2.5 ${isActive?'bg-green-500':'bg-red-500'} rounded-full border-2 border-[#0f172a]"></span></div>
+                        <div class="relative"><img src="https://api.dicebear.com/8.x/bottts/svg?seed=${m.avatarSeed}" class="w-10 h-10 rounded-full bg-zinc-900 border-2 border-orange-500 shadow-[0_0_10px_rgba(249,115,22,0.3)] ${isActive?'':'grayscale'}"><span class="absolute bottom-0 right-0 w-2.5 h-2.5 ${isActive?'bg-green-500':'bg-red-500'} rounded-full border-2 border-[#0f172a]"></span></div>
                         <div><p class="text-xs font-bold text-white">${m.name}</p><p class="text-[8px] ${isActive?'text-gray-500':'text-red-500/70'} uppercase italic tracking-tighter">${isActive?'Mining: '+m.contribution:'Inactive'}</p></div>
                     </div>
                     ${!isActive ? `<button onclick="pingUser('${m.id}')" ${isPinged?'disabled':''} class="px-3 py-1 bg-amber-500/10 text-amber-500 text-[8px] font-bold rounded-full border border-amber-500/20 ${isPinged?'opacity-50 cursor-not-allowed':''}">${isPinged?'Ping Sent':'Ping'}</button>` : ''}
