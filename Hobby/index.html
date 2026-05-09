@@ -14,7 +14,7 @@
             /* [모듈 4] Pi Browser Safe Area 최적화 (상단 40px, 하단 100px) */
             --safe-top: calc(40px + env(safe-area-inset-top, 0px));
             --safe-bottom: calc(100px + env(safe-area-inset-bottom, 0px));
-            --portal-width: 450px; /* 480px -> 450px로 변경하여 전체 포털 앱과 규격 통일 */
+            --portal-width: 480px; /* 480px -> 450px로 변경하여 전체 포털 앱과 규격 통일 */
         }
         body { 
             font-family: 'Noto Sans KR', sans-serif; 
@@ -27,6 +27,7 @@
             display: flex; 
             flex-direction: column;
             align-items: center; /* [모듈 4] 중앙 정렬 엔진 가동 */
+            -webkit-font-smoothing: antialiased;            
         }
         .font-orbit { font-family: 'Orbitron', sans-serif; }
 
@@ -34,8 +35,8 @@
         .zen-dimmer {
             position: fixed; inset: 0;
             background: 
-                radial-gradient(circle at 10% 20%, rgba(255, 95, 0, 0.15) 0%, transparent 50%),
-                radial-gradient(circle at 90% 80%, rgba(0, 242, 255, 0.15) 0%, transparent 50%);
+                radial-gradient(circle at 10% 20%, rgba(255, 95, 0, 0.08) 0%, transparent 50%),
+                radial-gradient(circle at 90% 80%, rgba(0, 242, 255, 0.08) 0%, transparent 50%);
             z-index: -1;
         }
         /* [모듈 3] Zen-Dimension 활성화 시 스타일 */
@@ -46,12 +47,35 @@
 
         /* 하이퍼 카드 & 글래스모피즘 */
         .hyper-card {
-            background: rgba(15, 15, 15, 0.6);
-            backdrop-filter: blur(25px) saturate(200%);
+            background: rgba(10, 10, 10, 0.65);
+            backdrop-filter: blur(30px) saturate(200%);
             border: 1px solid rgba(255, 95, 0, 0.3);
             box-shadow: 0 0 15px rgba(255, 95, 0, 0.1);
             transition: all 0.5s cubic-bezier(0.23, 1, 0.32, 1);
         }
+        /* 3D 메탈릭 엠보싱 버튼 엔진 */
+    .btn-metallic {
+        background: linear-gradient(180deg, #A67C52 0%, #634832 50%, #3E2C1E 100%);
+        border-top: 1px solid rgba(255,255,255,0.3);
+        border-bottom: 3px solid rgba(0,0,0,0.8);
+        box-shadow: 0 10px 20px rgba(0,0,0,0.5), inset 0 2px 5px rgba(255,255,255,0.2);
+        transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    .btn-metallic:active { transform: translateY(2px); border-bottom-width: 1px; }
+
+    /* 애니메이션 유틸리티 */
+    @keyframes marquee-sync { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
+    .animate-sync { display: flex; width: max-content; animation: marquee-sync 20s linear infinite; }
+    
+    @keyframes scan-move { 0% { transform: translateY(-100%); } 100% { transform: translateY(100%); } }
+    .hologram-scan {
+        position: absolute; inset: 0; pointer-events: none;
+        background: linear-gradient(to bottom, transparent, rgba(0, 242, 255, 0.1), transparent);
+        animation: scan-move 4s linear infinite;
+    }
+
+    .custom-scrollbar::-webkit-scrollbar { width: 0px; background: transparent; } /* 모바일 클린 뷰 */
+
         .hyper-card:hover { border-color: var(--neon-orange); transform: translateY(-5px); }
 
         /* 캐러셀 엔진 */
@@ -693,47 +717,81 @@
             </div>
         </section>
 
-        <!-- [제7단계] PoH Rewards Hub: 보상 및 성취 대시보드 -->
-        <section id="poh-rewards-hub" class="space-y-6">
-            <div class="flex justify-between items-center px-2">
-                <h3 class="text-xs font-orbit tracking-[0.3em] text-white/30 uppercase">PoH Rewards Hub</h3>
-                <span class="text-[9px] text-cyan-400 font-black animate-pulse">PROOF OF HOBBY ACTIVE</span>
-            </div>
-            <div class="hyper-card p-6 rounded-[3rem] border-orange-500/20 relative overflow-hidden">
-                <div class="absolute -right-20 -bottom-20 w-40 h-40 bg-orange-500/5 rounded-full blur-3xl"></div>
-                <div class="flex justify-between items-center mb-6 relative z-10">
-                    <div class="flex flex-col gap-1">
-                        <p class="text-[10px] text-yellow-500/80 font-bold uppercase tracking-widest">Mastery Status</p>
-                        <h4 class="text-xl font-black text-white italic">LV. <span id="user-level">1</span> <span class="text-[10px] not-italic ml-2 text-orange-500 font-orbit tracking-tighter">ELITE PIONEER</span></h4>
+        <!-- [제7단계 고도화] PoH Rewards Hub: The Forge -->
+        <section id="poh-rewards-hub" class="py-20 px-6 bg-[#050505] relative overflow-hidden">
+            <!-- Background Decor -->
+            <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full h-full bg-[radial-gradient(circle_at_center,#FF8C0005_0%,transparent_70%)] pointer-events-none"></div>
+
+            <div class="max-w-md mx-auto relative z-10">
+                <div class="flex items-end justify-between mb-12 border-b border-white/5 pb-6">
+                    <div class="space-y-1">
+                        <h2 class="text-[10px] font-black text-[#FF8C00] tracking-[0.5em] uppercase">The Forge Protocol</h2>
+                        <h3 class="text-3xl font-black text-white italic tracking-tighter uppercase font-orbit">PoH REWARDS <span class="text-[#FF8C00]">HUB</span></h3>
                     </div>
-                    <div class="text-right">
-                        <p class="text-[9px] text-yellow-500/80 font-bold uppercase tracking-widest">Mango Energy</p>
-                        <p class="text-lg font-orbit font-black text-cyan-400"><span id="energy-val">0</span> <span class="text-[8px] text-white">MNG</span></p>
-                    </div>
-                </div>
-                <!-- Progress Bar -->
-                <div class="h-1.5 w-full bg-white/5 rounded-full overflow-hidden mb-8 border border-white/10">
-                    <div id="energy-progress" class="h-full bg-gradient-to-r from-orange-600 via-orange-400 to-yellow-400 transition-all duration-1000" style="width: 0%"></div>
-                </div>
-                <!-- Achievement Badges: 홀로그래픽 스타일 -->
-                <div id="achievement-badges" class="grid grid-cols-4 gap-4">
-                    <div id="badge-DANCE" class="badge-item flex flex-col items-center gap-2 opacity-20 grayscale transition-all duration-700">
-                        <div class="w-12 h-12 rounded-2xl bg-zinc-800 flex items-center justify-center border border-white/10 shadow-inner"><i data-lucide="music-2" class="w-5 h-5" style="color: #FF007F; filter: drop-shadow(0 0 5px #FF007F);"></i></div>
-                        <span class="text-[8px] font-black text-white/40 uppercase">Dance</span>
-                    </div>
-                    <div id="badge-COOKING" class="badge-item flex flex-col items-center gap-2 opacity-20 grayscale transition-all duration-700">
-                        <div class="w-12 h-12 rounded-2xl bg-zinc-800 flex items-center justify-center border border-white/10 shadow-inner"><i data-lucide="utensils" class="w-5 h-5" style="color: #FFD700; filter: drop-shadow(0 0 5px #FFD700);"></i></div>
-                        <span class="text-[8px] font-black text-white/40 uppercase">Cook</span>
-                    </div>
-                    <div id="badge-TRAVEL" class="badge-item flex flex-col items-center gap-2 opacity-20 grayscale transition-all duration-700">
-                        <div class="w-12 h-12 rounded-2xl bg-zinc-800 flex items-center justify-center border border-white/10 shadow-inner"><i data-lucide="map" class="w-5 h-5" style="color: #00FFFF; filter: drop-shadow(0 0 5px #00FFFF);"></i></div>
-                        <span class="text-[8px] font-black text-white/40 uppercase">Travel</span>
-                    </div>
-                    <div id="badge-OFF-ROAD" class="badge-item flex flex-col items-center gap-2 opacity-20 grayscale transition-all duration-700">
-                        <div class="w-12 h-12 rounded-2xl bg-zinc-800 flex items-center justify-center border border-white/10 shadow-inner"><i data-lucide="map-pin" class="w-5 h-5" style="color: #ADFF2F; filter: drop-shadow(0 0 5px #ADFF2F);"></i></div>
-                        <span class="text-[8px] font-black text-white/40 uppercase">Road</span>
+                    <div class="text-right flex flex-col items-end">
+                        <div class="flex items-center gap-1.5">
+                            <div class="w-1.5 h-1.5 bg-green-500 rounded-full animate-pulse"></div>
+                            <span class="text-[9px] text-green-500 font-bold font-orbit">SYNCED</span>
+                        </div>
+                        <span class="text-[10px] text-white/30 font-orbit tracking-widest mt-1">MULT: x1.45</span>
                     </div>
                 </div>
+
+                <!-- 3D Pressed Card (Summary) -->
+                <div class="relative mb-10">
+                    <div class="absolute -inset-0.5 bg-[#FF8C00] opacity-10 blur-2xl"></div>
+                    <div class="relative rounded-[3rem] bg-[#080808] p-12 border border-white/5 shadow-[inset_0_10px_30px_rgba(0,0,0,0.8),0_1px_1px_rgba(255,255,255,0.05)] flex flex-col items-center">
+                        <p class="text-[11px] text-white/40 font-bold uppercase tracking-[0.3em] mb-4">Accumulated Synergy</p>
+                        
+                        <!-- Counter with Neon Effect -->
+                        <div class="flex items-baseline gap-3">
+                            <span class="text-7xl font-black text-white font-orbit drop-shadow-[0_0_20px_rgba(255,255,255,0.4)] tracking-tighter" id="reward-counter">842.12</span>
+                            <span class="text-2xl font-black text-[#FF8C00] font-orbit drop-shadow-[0_0_10px_#FF8C00]">Pi</span>
+                        </div>
+                        
+                        <!-- LaTeX Style Formula -->
+                        <div class="mt-10 px-6 py-2.5 rounded-full bg-white/[0.02] border border-white/5">
+                            <p class="text-[9px] text-white/20 font-serif italic tracking-wide">
+                                \mathcal{R} = \sum (\text{Activity}_{p} \cdot \omega_{t}) \times 1.45
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Embossed Claim Button -->
+                <div class="grid grid-cols-2 gap-4">
+                    <button onclick="processReward()" class="col-span-2 group relative py-6 rounded-[2.5rem] overflow-hidden transition-all duration-300 active:scale-95 shadow-[0_20px_40px_rgba(0,0,0,0.4)]">
+                        <!-- Embossed Texture layers -->
+                        <div class="absolute inset-0 bg-[#FF8C00] border-t-2 border-white/40 border-b-4 border-black/50 rounded-[2.5rem]"></div>
+                        <div class="absolute inset-0 bg-gradient-to-tr from-black/20 via-transparent to-white/10 opacity-50"></div>
+                        <div class="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000 skew-x-12"></div>
+                        
+                        <div class="relative flex justify-center items-center gap-3">
+                            <i data-lucide="zap" class="w-6 h-6 text-black fill-current"></i>
+                            <span class="text-[15px] font-black text-black uppercase tracking-[0.2em] drop-shadow-[0_1px_2px_rgba(255,255,255,0.3)]">Claim Rewards</span>
+                        </div>
+                    </button>
+
+                    <div class="bg-[#0a0a0a] border border-white/5 p-6 rounded-[2.5rem] shadow-xl">
+                        <p class="text-[9px] text-white/30 font-bold mb-2 uppercase tracking-widest">Today's Streak</p>
+                        <div class="flex items-center gap-3">
+                            <span class="text-xl font-black text-white font-orbit italic">12 <span class="text-[10px] not-italic text-gray-500">DAYS</span></span>
+                            <div class="w-2 h-2 bg-[#FF8C00] rounded-full animate-ping"></div>
+                        </div>
+                    </div>
+                    
+                    <div class="bg-[#0a0a0a] border border-white/5 p-6 rounded-[2.5rem] shadow-xl">
+                        <p class="text-[9px] text-white/30 font-bold mb-2 uppercase tracking-widest">Global Rank</p>
+                        <div class="flex items-center gap-2">
+                            <span class="text-xl font-black text-white font-orbit italic tracking-tighter">TOP 0.2%</span>
+                        </div>
+                    </div>
+                </div>
+
+                <p class="mt-10 text-center text-[10px] text-white/10 leading-relaxed font-medium">
+                    * Rewards are calculated in real-time based on the Pi Network Mainnet protocol. <br>
+                    Forge integrity checks are performed every 24 hours.
+                </p>
             </div>
         </section>
 
@@ -944,6 +1002,86 @@
                 </div>
             </div>
         </section>
+
+        <!-- [제20단계: Global Synergy Real-time Map] -->
+        <section id="global-synergy-map" class="relative py-20 px-4 bg-black overflow-hidden">
+            <div class="max-w-7xl mx-auto mb-12 text-center">
+                <h2 class="text-[10px] font-orbit tracking-[0.5em] text-[#F4B13E] uppercase mb-2">Global Connectivity</h2>
+                <h3 class="text-3xl font-black text-white italic tracking-tighter">MANGO SYNERGY WORLD <span class="text-orange-400">MAP</span></h3>
+            </div>
+
+            <div class="relative max-w-5xl mx-auto aspect-video rounded-[4rem] border border-white/10 bg-[#0a0a0a] overflow-hidden shadow-[0_0_100px_rgba(244,177,62,0.1)]">
+                
+                <div class="absolute top-4 left-4 right-4 z-20 flex justify-between items-start pointer-events-none">
+                    
+                    <div class="space-y-2 pointer-events-auto">
+                        <div class="glass-widget p-2.5 px-4 rounded-2xl border border-white/10 bg-black/40 backdrop-blur-md shadow-[0_5px_15px_rgba(0,0,0,0.5)]">
+                            <p class="text-[8px] text-white/40 font-bold uppercase tracking-widest mb-1">Active Nodes</p>
+                            <p class="text-sm font-orbit text-white leading-none">1,284,502 <span class="text-[9px] text-lime-400 ml-1">▲ 12%</span></p>
+                        </div>
+                        <div class="glass-widget p-2.5 px-4 rounded-2xl border border-white/10 bg-black/40 backdrop-blur-md shadow-[0_5px_15px_rgba(0,0,0,0.5)]">
+                            <p class="text-[8px] text-white/40 font-bold uppercase tracking-widest mb-1">Synergy Volume</p>
+                            <p class="text-sm font-orbit text-[#F4B13E] leading-none">42,901.8 Pi</p>
+                        </div>
+                    </div>
+
+                    <div class="pointer-events-auto text-right">
+                        <div class="glass-widget p-2.5 px-4 rounded-2xl border border-white/10 bg-black/40 backdrop-blur-md shadow-[0_5px_15px_rgba(0,0,0,0.5)] flex flex-col items-end">
+                            <p class="text-[8px] text-white/40 font-bold uppercase tracking-widest mb-1">Popular Category</p>
+                            <div class="flex items-center gap-1.5">
+                                <i data-lucide="music-2" class="w-3 h-3 text-rose-400"></i>
+                                <p class="text-sm font-orbit text-white leading-none">K-POP DANCE</p>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+                <!-- SVG Map with Connections -->
+                <div class="absolute inset-0 opacity-40 mix-blend-screen">
+                    <svg viewBox="0 0 1000 500" class="w-full h-full">
+                        <!-- Simplified World Map Outline (Abstract Representation) -->
+                        <path d="M100,250 C 200,100 400,100 500,250 S 800,400 900,250" fill="none" stroke="rgba(255,255,255,0.05)" stroke-width="0.5"/>
+                        <path d="M150,350 C 250,450 450,450 550,350 S 850,50 950,150" fill="none" stroke="rgba(255,255,255,0.05)" stroke-width="0.5"/>
+                        
+                        <!-- Gold Gradient Definition -->
+                        <defs>
+                            <linearGradient id="goldGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                                <stop offset="0%" style="stop-color:#F4B13E;stop-opacity:0" />
+                                <stop offset="50%" style="stop-color:#F4B13E;stop-opacity:1" />
+                                <stop offset="100%" style="stop-color:#F4B13E;stop-opacity:0" />
+                            </linearGradient>
+                        </defs>
+
+                        <!-- Nodes (Circles) -->
+                        <circle cx="200" cy="280" r="4" fill="#00f2ff" class="map-node-pulse" onmouseover="showMapTooltip(event, 'Busan, KR', '1,240 Users Dancing')" onmouseout="hideMapTooltip()" />
+                        <circle cx="150" cy="180" r="4" fill="#00f2ff" class="map-node-pulse" style="animation-delay: 0.5s;" onmouseover="showMapTooltip(event, 'New York, US', '890 Active Traders')" onmouseout="hideMapTooltip()" />
+                        <circle cx="700" cy="150" r="4" fill="#00f2ff" class="map-node-pulse" style="animation-delay: 1s;" onmouseover="showMapTooltip(event, 'London, UK', '500 Hobby Matchmaking')" onmouseout="hideMapTooltip()" />
+                        <circle cx="850" cy="300" r="4" fill="#00f2ff" class="map-node-pulse" style="animation-delay: 1.5s;" onmouseover="showMapTooltip(event, 'Tokyo, JP', '1,500 Anime Creators')" onmouseout="hideMapTooltip()" />
+                        <circle cx="500" cy="400" r="4" fill="#00f2ff" class="map-node-pulse" style="animation-delay: 2s;" onmouseover="showMapTooltip(event, 'Paris, FR', '700 Fashion Designers')" onmouseout="hideMapTooltip()" />
+
+                        <!-- Connections (Paths) -->
+                        <path d="M200,280 Q 175,230 150,180" fill="none" stroke="url(#goldGradient)" stroke-width="1" stroke-dasharray="1000" stroke-dashoffset="1000" class="animate-draw-line" style="animation-delay: 0s;" />
+                        <path d="M150,180 Q 425,100 700,150" fill="none" stroke="url(#goldGradient)" stroke-width="1" stroke-dasharray="1000" stroke-dashoffset="1000" class="animate-draw-line" style="animation-delay: 1s;" />
+                        <path d="M700,150 Q 675,275 500,400" fill="none" stroke="url(#goldGradient)" stroke-width="1" stroke-dasharray="1000" stroke-dashoffset="1000" class="animate-draw-line" style="animation-delay: 2s;" />
+                        <path d="M500,400 Q 675,350 850,300" fill="none" stroke="url(#goldGradient)" stroke-width="1" stroke-dasharray="1000" stroke-dashoffset="1000" class="animate-draw-line" style="animation-delay: 3s;" />
+                        <path d="M850,300 Q 525,325 200,280" fill="none" stroke="url(#goldGradient)" stroke-width="1" stroke-dasharray="1000" stroke-dashoffset="1000" class="animate-draw-line" style="animation-delay: 4s;" />
+                    </svg>
+                </div>
+
+                <!-- Live Stream Ticker -->
+                <div class="absolute bottom-8 left-1/2 -translate-x-1/2 w-[90%] flex justify-between items-center px-8 py-4 rounded-full bg-white/5 border border-white/10 backdrop-blur-xl">
+                    <div class="flex items-center gap-3">
+                        <div class="w-2 h-2 bg-cyan-400 rounded-full animate-pulse shadow-[0_0_10px_#00f2ff]"></div>
+                        <span class="text-[10px] text-white/60 font-black uppercase tracking-widest">Live Stream: New Node from London joined Hobby Hub</span>
+                    </div>
+                    <button class="text-[9px] font-black text-[#F4B13E] border-b border-[#F4B13E]/40 pb-0.5">VIEW ALL NODES</button>
+                </div>
+
+                <!-- Map Tooltip -->
+                <div id="map-tooltip" class="hidden absolute z-30 p-2 rounded-lg bg-black/70 backdrop-blur-md border border-white/20 text-white text-xs pointer-events-none"></div>
+            </div>
+        </section>
     </main>
 
     <!-- [모듈 3] Pi 결제 승인 모달 -->
@@ -1134,19 +1272,42 @@
             const container = document.getElementById('gate-container');
             if (!container) return;
             
-            container.innerHTML = hobbies.map(hobby => `
+            container.innerHTML = hobbies.map(hobby => {
+                const colorMap = {
+                    'lime-400': '#a3e635', 'orange-500': '#f97316', 'amber-200': '#fcd34d', 
+                    'blue-400': '#60a5fa', 'pink-500': '#ec4899', 'purple-400': '#c084fc', 
+                    'yellow-600': '#eab308', 'rose-400': '#fb7185', 'red-500': '#ef4444', 
+                    'indigo-400': '#818cf8', 'zinc-400': '#a1a1aa', 'cyan-400': '#22d3ee', 
+                    'emerald-400': '#10b981', 'orange-300': '#fdba74', 'orange-200': '#fed7aa', 
+                    'teal-400': '#2dd4bf', 'sky-400': '#38bdf8', 'indigo-500': '#6366f1', 
+                    'fuchsia-500': '#d946ef'
+                };
+                const hex = colorMap[hobby.color] || '#FF8C00';
+
+                return `
                 <div id="gate-${hobby.en.replace(/\s+/g, '-')}" 
-                     class="gate-card hyper-card p-4 rounded-[1.5rem] flex flex-col items-center justify-center gap-3 cursor-pointer text-center group hover:border-${hobby.color} transition-all duration-300"
+                     class="gate-card hyper-card p-4 rounded-3xl flex flex-col items-center justify-center gap-3 cursor-pointer text-center group transition-all duration-500 relative overflow-hidden"
+                     style="--glow-color: ${hex}"
                      onclick="activateCategoryUI('${hobby.en}')">
-                    <div class="w-12 h-12 rounded-full bg-white/5 flex items-center justify-center group-hover:scale-110 transition-transform shadow-[0_0_15px_rgba(255,255,255,0.05)] border border-white/10">
-                        <i data-lucide="${hobby.icon}" class="w-6 h-6 text-${hobby.color}"></i>
+                    
+                    <!-- Refined Neon Backdrop -->
+                    <div class="absolute inset-0 bg-[var(--glow-color)] opacity-0 group-hover:opacity-[0.04] transition-opacity"></div>
+                    <div class="hologram-scan opacity-0 group-hover:opacity-10"></div>
+                    
+                    <!-- Icon Container with Multi-layer Glow -->
+                    <div class="w-12 h-12 rounded-2xl bg-white/5 flex items-center justify-center group-hover:scale-110 transition-transform shadow-[0_0_15px_rgba(255,255,255,0.05)] border border-white/10 group-hover:border-[var(--glow-color)] group-hover:shadow-[0_0_20px_var(--glow-color),inset_0_0_10px_var(--glow-color)] transition-all">
+                        <i data-lucide="${hobby.icon}" class="w-6 h-6 text-white/70 group-hover:text-[var(--glow-color)] group-hover:drop-shadow-[0_0_8px_var(--glow-color)] transition-all"></i>
                     </div>
-                    <div>
-                        <h4 class="text-[11px] font-black text-white font-orbit leading-tight">${hobby.kr}</h4>
-                        <p class="text-[8px] text-white/40 font-bold tracking-[0.2em] mt-1 uppercase">${hobby.en}</p>
+                    
+                    <div class="relative z-10">
+                        <h4 class="text-[10px] font-black text-white/90 font-orbit leading-tight group-hover:text-white transition-colors">${hobby.kr}</h4>
+                        <p class="text-[7px] text-white/30 font-bold tracking-[0.2em] mt-1 uppercase group-hover:text-[var(--glow-color)] transition-colors">${hobby.en}</p>
                     </div>
+                    
+                    <!-- Interaction Border -->
+                    <div class="absolute inset-0 border border-white/0 group-hover:border-[var(--glow-color)] opacity-20 rounded-3xl transition-all"></div>
                 </div>
-            `).join('');
+            `}).join('');
             
             lucide.createIcons();
         }
