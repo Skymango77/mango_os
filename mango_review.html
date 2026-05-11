@@ -9,11 +9,26 @@
     
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Noto+Sans+KR:wght@300;400;700;900&display=swap');
 
         body {
-            font-family: 'Inter', sans-serif;
+            font-family: 'Noto Sans KR', sans-serif;
             background-color: #050505;
+        }
+
+        .font-orb { font-family: 'Orbitron', sans-serif; letter-spacing: 0.05em; }
+
+        /* [20단계] 3D Metallic Button Engine */
+        .btn-metallic {
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            border-top: 1px solid rgba(255,255,255,0.3);
+            border-bottom: 3px solid rgba(0,0,0,0.8);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.5);
+        }
+        .btn-metallic:active { 
+            transform: translateY(3px) scale(0.98); 
+            border-bottom-width: 1px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
         }
 
         /* [핵심] 영수증 하단 지그재그 컷 - 절대 생략 없는 정밀 좌표 */
@@ -85,14 +100,14 @@
         
       <header class="text-center space-y-8 mb-12">
     <div class="mango-float inline-block">
-        <div class="w-32 h-32 bg-[#FFCC00] rounded-full flex items-center justify-center border-[8px] border-black shadow-[0_0_50px_rgba(255,204,0,0.3)] overflow-hidden relative">
+        <div class="w-32 h-32 bg-[#FFCC00] rounded-full flex items-center justify-center border-[8px] border-black shadow-[0_0_50px_rgba(255,204,0,0.3)] overflow-hidden relative btn-metallic">
             <img src="mango_icon.jpg" alt="Mango Logo" class="w-full h-full object-cover">
         </div>
     </div>
 
     <div class="space-y-4">
-        <h1 class="text-5xl font-black italic tracking-tighter leading-tight text-white">
-            SWEET <span class="text-[#FFCC00]">COMPLETE!</span>
+        <h1 class="text-5xl font-black italic tracking-tighter leading-tight text-white font-orb">
+            SWEET <span class="text-[#FFCC00]">DONE!</span>
         </h1>
         <p class="text-white/40 text-[11px] font-bold uppercase tracking-[0.5em]">
             배송이 망고처럼 달콤하게 완료되었습니다
@@ -110,19 +125,19 @@
         <article class="bg-[#141414] receipt-cut p-12 border-x border-t border-white/5 shadow-2xl relative">
             <div class="flex justify-between items-start mb-16">
                 <div class="space-y-2">
-                    <p class="text-[12px] text-[#FFCC00] font-black uppercase tracking-[0.4em]">Transaction OK</p>
-                    <h2 class="text-4xl font-black italic tracking-tighter text-white">MANGO <span class="text-[#FFCC00]">PAY</span></h2>
+                    <p class="text-[12px] text-[#FFCC00] font-black uppercase tracking-[0.4em] font-orb">Transaction OK</p>
+                    <h2 class="text-4xl font-black italic tracking-tighter text-white font-orb">MANGO <span class="text-[#FFCC00]">PAY</span></h2>
                 </div>
                 <div class="text-right font-mono text-[10px] text-white/20 leading-loose">
                     <p id="receipt-date">DATE: Loading...</p>
-                    <p id="receipt-id">TRANS: Loading...</p>
+                    <p id="receipt-id" class="font-orb">TRANS: Loading...</p>
 
-                    <p class="text-[#FFCC00]/50 font-bold">● PREMIUM SERVICE</p>
+                    <p class="text-[#FFCC00]/50 font-bold font-orb">● PREMIUM SERVICE</p>
                 </div>
             </div>
 
             <div class="space-y-6 border-y border-white/5 py-10 my-10">
-    <div class="flex justify-between text-sm uppercase tracking-widest text-white/30">
+    <div class="flex justify-between text-sm uppercase tracking-widest text-white/30 font-orb">
         <span>Delivery Service</span>
         <span>Standard</span>
     </div>
@@ -130,26 +145,26 @@
     <div class="space-y-4 pt-4 border-t border-white/5">
         <div class="flex justify-between text-lg">
             <span class="text-white/60 font-medium italic">Premium Thai Mango (3kg)</span>
-            <span class="font-bold text-white/90 tracking-tight">65,000 원</span>
+            <span class="font-bold text-white/90 tracking-tight font-orb">65,000 KRW</span>
         </div>
         <div class="flex justify-between text-lg">
             <span class="text-white/60 font-medium italic">Honey Apple Mango (2ea)</span>
-            <span class="font-bold text-white/90 tracking-tight">35,000 원</span>
+            <span class="font-bold text-white/90 tracking-tight font-orb">35,000 KRW</span>
         </div>
         <div class="flex justify-between text-lg">
             <span class="text-white/20 font-medium">Base Fare & Distance</span>
-            <span class="font-bold text-white/80 tracking-tight">30,000 원</span>
+            <span class="font-bold text-white/80 tracking-tight font-orb">30,000 KRW</span>
         </div>
     </div>
 
     <div class="flex justify-between text-lg text-[#FFCC00] font-bold pt-4 border-t border-white/5">
-        <span class="flex items-center gap-3 italic">✨ Member Discount</span>
-        <span>-6,500 원</span>
+        <span class="flex items-center gap-3 italic">✨ VIP Discount</span>
+        <span class="font-orb">-6,500 KRW</span>
     </div>
     
-    <div class="flex justify-between font-black text-4xl pt-10 mt-6 border-t-2 border-dashed border-white/10">
-        <span class="text-white/20 uppercase text-xs self-center tracking-widest">Grand Total</span>
-        <span class="text-[#FFCC00] drop-shadow-[0_0_15px_rgba(255,204,0,0.4)]">123,500 원</span>
+    <div class="flex justify-between font-black text-4xl pt-10 mt-6 border-t-2 border-dashed border-white/10 font-orb">
+        <span class="text-white/20 uppercase text-xs self-center tracking-widest">Total</span>
+        <span class="text-[#FFCC00] drop-shadow-[0_0_15px_rgba(255,204,0,0.4)]">123,500</span>
     </div>
 </div>
 
@@ -166,8 +181,8 @@
         
         <section class="glass-box rounded-[4rem] p-12 text-center space-y-10">
             <div class="space-y-6">
-                <h3 class="text-[12px] font-black text-[#FFCC00] uppercase tracking-[0.5em]">Rate Your Experience</h3>
-                <div class="star-group flex justify-center gap-5 text-6xl">
+                <h3 class="text-[12px] font-black text-[#FFCC00] uppercase tracking-[0.5em] font-orb">Rate Your Experience</h3>
+                <div class="star-group flex justify-center gap-5 text-6xl select-none">
                     <span class="star-item" onclick="handleRating(1)">★</span>
                     <span class="star-item" onclick="handleRating(2)">★</span>
                     <span class="star-item" onclick="handleRating(3)">★</span>
@@ -186,10 +201,10 @@
 </div>
 
             <div class="grid grid-cols-2 gap-6 pt-6">
-               <button onclick="handleSave()" class="py-7 rounded-[3rem] bg-white/5 text-[12px] font-black uppercase tracking-[0.2em] border border-white/10 hover:bg-white/10 transition-all active:scale-95 shadow-xl">
+               <button onclick="handleSave()" class="py-7 rounded-[3rem] bg-white/5 text-[12px] font-black uppercase tracking-[0.2em] border border-white/10 hover:bg-white/10 btn-metallic font-orb">
     Save
 </button>
-                <button onclick="handleComplete()" class="py-7 rounded-[3rem] bg-[#FFCC00] text-black text-[12px] font-black uppercase tracking-[0.2em] shadow-[0_25px_50px_rgba(255,204,0,0.25)] hover:opacity-90 transition-all active:scale-95">
+                <button onclick="handleComplete()" class="py-7 rounded-[3rem] bg-[#FFCC00] text-black text-[12px] font-black uppercase tracking-[0.2em] btn-metallic font-orb">
                     Complete
                 </button>
             </div>
@@ -267,29 +282,43 @@ function handleSave() {
                         <div class="absolute inset-0 border-4 border-[#FFCC00] rounded-full border-t-transparent animate-spin"></div>
                     </div>
                     <h2 class="text-2xl font-black tracking-[0.3em] uppercase animate-pulse">Sending Data...</h2>
-                    <p class="text-white/30 text-xs mt-4 font-mono">망고 서버로 별점을 전송하고 있습니다.</p>
+                    <p class="text-white/30 text-xs mt-4 font-mono">리뷰 에너지를 생성하고 있습니다...</p>
                 </div>
             `;
 
-            // [Step 2] 전송 완료 후 최종 화면 표시
+            // [Step 2] [17단계] Review Synergy: 전송 완료 후 상생 보상(MNG) 표시
             setTimeout(() => {
                 document.body.style.backgroundColor = "#FFCC00";
                 document.body.innerHTML = `
-                    <div class="flex flex-col items-center justify-center min-h-screen text-black p-6 text-center">
-                        <div class="w-40 h-40 bg-black rounded-[4rem] flex items-center justify-center shadow-2xl mb-12 animate-bounce">
-                            <svg class="w-20 h-20 text-[#FFCC00]" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="4">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"></path>
-                            </svg>
+                    <div class="flex flex-col items-center justify-center min-h-screen text-black p-6 text-center animate-in fade-in duration-500">
+                        <div class="w-32 h-32 bg-black rounded-[2.5rem] flex items-center justify-center shadow-2xl mb-8 animate-bounce border-4 border-black">
+                            <span class="text-6xl">🥭</span>
                         </div>
-                        <h2 class="text-7xl font-black italic tracking-tighter mb-4">SWEET!</h2>
-                        <p class="text-black/50 font-bold tracking-widest uppercase text-sm mb-16">리뷰가 성공적으로 전송되었습니다</p>
+                        <h2 class="text-5xl font-[1000] italic tracking-tighter mb-2 uppercase">REVIEW SYNERGY</h2>
+                        <div class="w-20 h-1 bg-black/20 mb-6 mx-auto rounded-full"></div>
+                        <p class="text-black font-black tracking-widest uppercase text-[11px] mb-12 max-w-[280px] leading-relaxed">
+                            소비자와 업체가 함께 웃는 시간!<br>
+                            <span class="bg-black text-white px-2 py-0.5 rounded">Mango Energy (MNG)</span> 보상이<br>
+                            양쪽 계정에 즉시 지급되었습니다.
+                        </p>
+                        
+                        <div class="grid grid-cols-2 gap-4 w-full max-w-[360px] mb-12">
+                            <div class="bg-black/5 border border-black/10 p-6 rounded-[2rem] backdrop-blur-sm">
+                                <p class="text-[10px] font-black opacity-50 uppercase mb-2">Consumer Reward</p>
+                                <p class="text-3xl font-black italic">+5.0 <span class="text-sm font-bold">MNG</span></p>
+                            </div>
+                            <div class="bg-black/5 border border-black/10 p-6 rounded-[2rem] backdrop-blur-sm">
+                                <p class="text-[10px] font-black opacity-50 uppercase mb-2">Partner Reward</p>
+                                <p class="text-3xl font-black italic">+5.0 <span class="text-sm font-bold">MNG</span></p>
+                            </div>
+                        </div>
                         
                         <div class="flex flex-col gap-4 w-full max-w-[300px] mx-auto">
-                            <button onclick="location.href='index.html'" class="px-12 py-6 bg-black text-[#FFCC00] rounded-full font-black text-lg hover:scale-105 transition-all shadow-2xl">
+                            <button onclick="location.href='index.html'" class="py-5 bg-black text-[#FFCC00] rounded-2xl font-black text-sm uppercase tracking-[0.2em] shadow-xl active:scale-95 transition-all">
                                 메인으로 돌아가기
                             </button>
                             <button onclick="location.reload()" class="text-black/40 font-bold text-xs uppercase tracking-widest">
-                                다시 작성하기
+                                CLOSE
                             </button>
                         </div>
                     </div>

@@ -10,7 +10,8 @@
 
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<!-- <link rel="manifest" href="/manifest.json"> -->    <title>MANGO Universe Final - Intuitive UX</title>
+<!-- <link rel="manifest" href="/manifest.json"> -->    
+    <title>MANGO Universe Final - Intuitive UX</title>
     <link rel="apple-touch-icon" href="https://mango-os-6xu2.vercel.app/mango.jpg?v=final_check">
 <link rel="icon" type="image/jpeg" href="https://mango-os-6xu2.vercel.app/mango.jpg?v=final_check">
 </head>
@@ -21,13 +22,30 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         /* 폰트 로드 최상단 배치 */
-        @import url('https://fonts.googleapis.com/css2?family=Kanit:ital,wght@1,900&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Kanit:ital,wght@1,900&family=Noto+Sans+KR:wght@300;400;700;900&display=swap');
         
         :root {
         --mango-neon: #ffaa00;
         --unified-max-width: 430px;
         --bg-dark: #000000;
     }
+
+        .font-orb { font-family: 'Orbitron', sans-serif; letter-spacing: 0.05em; }
+        .font-noto { font-family: 'Noto Sans KR', sans-serif; }
+
+        /* [20단계] Code Master Polish: 3D Metallic Button Engine */
+        .btn-metallic {
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            border-top: 1px solid rgba(255,255,255,0.3);
+            border-bottom: 3px solid rgba(0,0,0,0.8);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.5);
+        }
+        .btn-metallic:active { 
+            transform: translateY(3px) scale(0.98); 
+            border-bottom-width: 1px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+        }
+
         /* 1. 기본 레이아웃 및 PC 중앙 정렬 */
     body {
         background-color: var(--bg-dark);
@@ -98,36 +116,36 @@
     }
         
 
-.animate-scan {
+    .animate-scan {
     animation: scan 2s infinite ease-in-out;
-}
+    }
 
-/* 스크롤바 숨기기 */
+    /* 스크롤바 숨기기 */
     .no-scrollbar::-webkit-scrollbar { display: none; }
     .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
       /* 피드 창의 기본 디자인 : 너비는 mango-container가 92%로 잡아줍니다 */
-.glass { 
+    .glass { 
     background: rgba(255, 255, 255, 0.03); 
     backdrop-filter: blur(10px); 
     border: 1px solid rgba(255, 170, 0, 0.2); 
     border-radius: 20px; 
     transition: transform 0.2s;
-}
-.glass:active { transform: scale(0.98); } /* 클릭 시 눌리는 효과 */
+  }
+    .glass:active { transform: scale(0.98); } /* 클릭 시 눌리는 효과 */
 
-.feed-img-box { 
+    .feed-img-box { 
     width: 80px; 
     height: 80px; 
     flex-shrink: 0; 
     overflow: hidden; 
     border-radius: 20px; 
     border: 1px solid rgba(255,255,255,0.1);
-}
-.feed-img-box img { width: 100%; height: 100%; object-fit: cover; }  
-        /* 1. 구글에서 '도톰하고 둥근' Kanit 폰트를 빌려오는 코드입니다. */
+    }
+    .feed-img-box img { width: 100%; height: 100%; object-fit: cover; }  
+    /* 1. 구글에서 '도톰하고 둥근' Kanit 폰트를 빌려오는 코드입니다. */
 
 
-/* 클래스 필요 없이 이 애니메이션만 있으면 됩니다 */
+    /* 클래스 필요 없이 이 애니메이션만 있으면 됩니다 */
 @keyframes gold-shine {
     0% { background-position: -200% center; }
     100% { background-position: 200% center; }
@@ -618,9 +636,9 @@ body {
                 </div>
             </div>
 
-            <button onclick="submitAd()" class="w-full py-4 bg-gradient-to-r from-orange-500 to-yellow-500 text-black font-black rounded-2xl shadow-lg shadow-orange-500/20 hover:scale-[1.02] active:scale-95 transition-all flex items-center justify-center gap-2">
+            <button onclick="submitAd()" class="w-full py-4 bg-gradient-to-r from-orange-500 to-yellow-500 text-black font-black rounded-2xl flex items-center justify-center gap-2 btn-metallic font-orb">
                 <i data-lucide="rocket" class="w-5 h-5"></i>
-                광고 캠페인 시작하기
+                START CAMPAIGN
             </button>
 
             <!-- Premium Upgrade Section -->
@@ -1065,29 +1083,42 @@ style="width: 140px; height: 140px; min-width: 140px; min-height: 140px; aspect-
 </div>
 
 
-<div class="mango-container mb-10 overflow-hidden rounded-[2.5rem] relative">
+<div class="mango-container mb-3 overflow-hidden rounded-[2.5rem] relative">
     <div class="absolute inset-0 z-0">
         <img src="https://images.unsplash.com/photo-1513151233558-d860c5398176?w=800" class="w-full h-full object-cover opacity-20">
         <div class="absolute inset-0 bg-gradient-to-b from-black/80 via-black/40 to-black/80"></div>
     </div>
 
-    <div class="relative z-10 p-4">
-        <div class="flex justify-between items-center mb-4 px-1">
-            <h3 class="text-[14px] font-black text-yellow-500 tracking-widest uppercase flex items-center gap-2">
-                <i data-lucide="sparkles" class="w-4 h-4 text-yellow-400"></i>
+   <div class="relative z-10 p-4">
+    <div class="flex justify-between items-end mb-4 px-1 border-b border-white/10 pb-2">
+        <div>
+            <h3 class="text-[14px] font-black text-yellow-500 tracking-widest uppercase flex items-center gap-2 drop-shadow-[0_0_10px_rgba(234,179,8,0.4)]">
+                <i id="random-premium-icon" data-lucide="crown" class="w-5 h-5 text-yellow-400"></i>
                 Premium Selection
             </h3>
-            <span class="text-[10px] text-white/30 font-bold uppercase tracking-tighter">Special Flirting</span>
+            <p class="text-[9px] text-white/40 mt-1">망고 파트너스 제공: 파이(π) 결제 전용 혜택</p>
         </div>
+        
+        <a href="Biz_Flirting_Dashboard.html" class="group flex flex-col items-end cursor-pointer">
+            <span id="live-flirting-badge" class="animate-bounce bg-gradient-to-r from-orange-500 to-red-600 text-white text-[8px] font-black px-2 py-0.5 rounded-full mb-1 shadow-[0_0_10px_rgba(255,0,0,0.5)] transition-all duration-500">
+                LIVE FLIRTING: 4건
+            </span>
+            <span class="text-[10px] text-yellow-400 font-bold uppercase tracking-tighter border border-yellow-400/30 px-2 py-1 rounded bg-yellow-400/10 group-hover:bg-yellow-400/30 transition-all">
+                업체 입점 / 혜택 등록 👉
+            </span>
+        </a>
+    </div>
 
-        <div class="relative h-[100px] overflow-hidden rounded-2xl bg-white/[0.03] backdrop-blur-md border border-white/10 shadow-2xl">
+        <!-- [14단계] FOMO Engine: 수량 바 및 카운트다운 시각화 -->
+        <div class="relative h-[120px] overflow-hidden rounded-2xl bg-white/[0.03] backdrop-blur-md border border-white/10 shadow-2xl">
             <div id="premiumRollingBoard" class="absolute w-full transition-all duration-700 ease-in-out">
                 
-              <div class="h-[100px] flex items-center gap-4 px-5 cursor-pointer hover:bg-white/5" onclick="openAdVideo('hospital')">
+              <div class="h-[120px] flex items-center gap-4 px-5 cursor-pointer hover:bg-white/5 transition-all duration-300 relative overflow-hidden" 
+                   onclick="openAdVideo('hospital')" 
+                   ontouchstart="handleSwipeStart(event)" 
+                   ontouchend="handleSwipeEnd(event, '망고치과')">
     <div class="w-14 h-14 flex-shrink-0 bg-blue-500/20 rounded-2xl flex items-center justify-center border border-blue-400/30 relative overflow-hidden">
-        
         <span class="absolute text-3xl opacity-50">🩺</span>
-
         <img src="assets/img/dental.png" 
              onerror="this.src='https://images.unsplash.com/photo-1629909613654-28e377c37b09?w=200'; this.onerror=function(){this.style.opacity='0'};" 
              alt="망고치과" 
@@ -1096,15 +1127,27 @@ style="width: 140px; height: 140px; min-width: 140px; min-height: 140px; aspect-
              
     </div>
     <div class="flex-1">
-        <div class="flex items-center gap-2 mb-1">
+        <div class="flex items-center justify-between mb-1">
             <span class="text-[9px] text-blue-400 font-bold border border-blue-00/50 px-2 py-0.5 rounded-full uppercase">Exclusive π Benefit</span>
+            <span class="text-[9px] text-blue-400/80 font-black flex items-center gap-1">
+                <i data-lucide="navigation" class="w-2.5 h-2.5 fill-current animate-pulse"></i> 현재 위치에서 300m 앞
+            </span>
         </div>
-        <h4 class="text-[14px] font-bold text-white leading-tight">"망고치과: 오스템 임플란트 π 결제 시 10% 할인가"</h4>
-        <p class="text-[10px] text-white/40 mt-1">과잉진료 없는 정직한 플러팅 · 당일 예약제 운영</p>
+        <h4 class="text-[14px] font-bold text-white leading-tight truncate">"망고치과: 임플란트 π 결제 10% 할인"</h4>
+        <p class="text-[10px] text-white/40 mt-0.5 truncate">과잉진료 없는 정직한 플러팅</p>
+        
+        <!-- FOMO Engine: Progress Bar -->
+        <div class="mt-2 w-full h-1 bg-white/5 rounded-full overflow-hidden">
+            <div class="h-full bg-blue-500 w-[80%]"></div>
+        </div>
+        <p class="text-[8px] text-blue-400/60 mt-1 uppercase font-black italic">8 slots left / Closing Soon</p>
     </div>
 </div>
 
-<div class="h-[100px] flex items-center gap-4 px-5 cursor-pointer hover:bg-white/5 transition-all" onclick="openAdVideo('bakery')">
+<div class="h-[120px] flex items-center gap-4 px-5 cursor-pointer hover:bg-white/5 transition-all duration-300 relative overflow-hidden" 
+     onclick="openPiPaymentModal('bakery')" 
+     ontouchstart="handleSwipeStart(event)" 
+     ontouchend="handleSwipeEnd(event, '망고브레드')">
     <div class="w-14 h-14 flex-shrink-0 rounded-2xl bg-gradient-to-br from-orange-400 to-orange-700 flex items-center justify-center border border-orange-400/50 shadow-lg relative overflow-hidden">
         <span class="absolute text-3xl">🥐</span>
         <img src="assets/img/bread.png" 
@@ -1113,28 +1156,49 @@ style="width: 140px; height: 140px; min-width: 140px; min-height: 140px; aspect-
              class="absolute inset-0 w-full h-full object-cover z-10">
     </div>
     <div class="flex-1">
-        <div class="flex items-center gap-2 mb-1">
+        <div class="flex items-center justify-between mb-1">
             <span class="text-[9px] text-orange-400 font-bold border border-orange-400/50 px-2 py-0.5 rounded-full uppercase">Daily Fresh 14:00</span>
+            <span class="text-[9px] text-orange-400/80 font-black flex items-center gap-1">
+                <i data-lucide="navigation" class="w-2.5 h-2.5 fill-current animate-pulse"></i> 현재 위치에서 850m 앞
+            </span>
         </div>
-        <h4 class="text-[14px] font-bold text-white leading-tight">"망고브레드: 명장 소금빵 14시 갓 구워져 나옵니다"</h4>
-        <p class="text-[10px] text-white/40 mt-1">매일 한정 50개 · 결제 금액의 10% π 적립</p>
+        <h4 class="text-[14px] font-bold text-white leading-tight truncate">"망고브레드: 명장 소금빵 14시 출고"</h4>
+        <p class="text-[10px] text-white/40 mt-0.5 truncate">매일 한정 50개 · 10% π 적립</p>
+        
+        <!-- FOMO Engine: Animated Alert Bar -->
+        <div class="mt-2 w-full h-1 bg-white/5 rounded-full overflow-hidden">
+            <div class="h-full bg-orange-500 w-[20%] animate-pulse"></div>
+        </div>
+        <p class="text-[8px] text-orange-400/60 mt-1 uppercase font-black italic">Only 3 Left! / Hurry Up</p>
     </div>
 </div>
 
-<div class="h-[100px] flex items-center gap-4 px-5 cursor-pointer hover:bg-white/5" onclick="openAdVideo('kindergarten')">
+<div class="h-[120px] flex items-center gap-4 px-5 cursor-pointer hover:bg-white/5 transition-all duration-300 relative overflow-hidden" 
+     onclick="openPiPaymentModal('kindergarten')" 
+     ontouchstart="handleSwipeStart(event)" 
+     ontouchend="handleSwipeEnd(event, '망고유치원')">
     <div class="w-14 h-14 flex-shrink-0 bg-emerald-500/20 rounded-xl flex items-center justify-center border border-emerald-400/30">
         <span class="text-3xl">🌸</span>
     </div>
     <div class="flex-1">
-        <div class="flex items-center gap-2 mb-1">
+        <div class="flex items-center justify-between mb-1">
             <span class="text-[9px] text-emerald-400 font-bold border border-emerald-400/50 px-2 py-0.5 rounded-full uppercase">Spring Season / March</span>
+            <span class="text-[9px] text-emerald-400/80 font-black flex items-center gap-1">
+                <i data-lucide="navigation" class="w-2.5 h-2.5 fill-current animate-pulse"></i> 현재 위치에서 1.2km 앞
+            </span>
         </div>
-        <h4 class="text-[14px] font-bold text-white leading-tight">"망고유치원: 2026학년도 신입생 모집 중"</h4>
-        <p class="text-[10px] text-white/40 mt-1">아이들의 꿈이 자라는 공간 · π 결제 원비 할인</p>
+        <h4 class="text-[14px] font-bold text-white leading-tight truncate">"망고유치원: 2026학년도 신입생 모집"</h4>
+        <p class="text-[10px] text-white/40 mt-0.5 truncate">아이들의 꿈이 자라는 공간</p>
+        
+        <!-- FOMO Engine -->
+        <div class="mt-2 w-full h-1 bg-white/5 rounded-full overflow-hidden">
+            <div class="h-full bg-emerald-500 w-[45%]"></div>
+        </div>
+        <p class="text-[8px] text-emerald-400/60 mt-1 uppercase font-black italic">Admission Open / Inquire Now</p>
     </div>
 </div>
 
-<div class="h-[100px] flex items-center gap-4 px-5 cursor-pointer hover:bg-white/5 transition-all" onclick="openAdVideo('mobile')">
+<div class="h-[120px] flex items-center gap-4 px-5 cursor-pointer hover:bg-white/5 transition-all duration-300 relative overflow-hidden" onclick="openPiPaymentModal('mobile')" ontouchstart="handleSwipeStart(event)" ontouchend="handleSwipeEnd(event, '망고 모바일')">
     <div class="w-14 h-14 flex-shrink-0 rounded-2xl bg-gradient-to-br from-zinc-700 to-black flex items-center justify-center border border-white/20 shadow-lg relative overflow-hidden">
         <span class="absolute text-3xl">📱</span>
         <img src="assets/img/phone.png" 
@@ -1153,7 +1217,7 @@ style="width: 140px; height: 140px; min-width: 140px; min-height: 140px; aspect-
     </div>
 </div>
 
-<div class="h-[100px] flex items-center gap-4 px-5 cursor-pointer hover:bg-white/5 transition-all">
+<div class="h-[100px] flex items-center gap-4 px-5 cursor-pointer hover:bg-white/5 transition-all" onclick="openPiPaymentModal('beer')">
     <div class="w-14 h-14 flex-shrink-0 rounded-2xl bg-gradient-to-br from-amber-400 to-amber-700 flex items-center justify-center border border-amber-400/50 shadow-lg relative overflow-hidden">
         <span class="absolute text-3xl">🍺</span>
         <img src="assets/img/kirin.png" 
@@ -1162,28 +1226,34 @@ style="width: 140px; height: 140px; min-width: 140px; min-height: 140px; aspect-
              class="absolute inset-0 w-full h-full object-cover z-10">
     </div>
     <div class="flex-1">
-        <div class="flex items-center gap-2 mb-1">
+        <div class="flex items-center justify-between mb-1">
             <span class="text-[9px] text-amber-400 font-bold border border-amber-400/50 px-2 py-0.5 rounded-full uppercase">Mango Mart Only</span>
+            <span class="text-[9px] text-amber-400/80 font-black flex items-center gap-1">
+                <i data-lucide="navigation" class="w-2.5 h-2.5 fill-current animate-pulse"></i> 현재 위치에서 150m 앞
+            </span>
         </div>
         <h4 class="text-[14px] font-bold text-white leading-tight">"기린 이치방 500ml 4캔 9,800원 특가"</h4>
         <p class="text-[10px] text-white/40 mt-1">망고마트 본점 · 파이결제 시 5% 추가 적립</p>
     </div>
 </div>
 
-<div class="h-[100px] flex items-center gap-4 px-5 cursor-pointer hover:bg-white/5">
+<div class="h-[100px] flex items-center gap-4 px-5 cursor-pointer hover:bg-white/5" onclick="openPiPaymentModal('meat')">
     <div class="w-14 h-14 flex-shrink-0 bg-red-500/20 rounded-2xl flex items-center justify-center border border-red-400/30">
         <span class="text-3xl">🥩</span>
     </div>
     <div class="flex-1">
-        <div class="flex items-center gap-2 mb-1">
+        <div class="flex items-center justify-between mb-1">
             <span class="text-[9px] text-red-400 font-bold border border-red-400/50 px-2 py-0.5 rounded-full uppercase">Butcher's Cut</span>
+            <span class="text-[9px] text-red-400/80 font-black flex items-center gap-1">
+                <i data-lucide="navigation" class="w-2.5 h-2.5 fill-current animate-pulse"></i> 현재 위치에서 400m 앞
+            </span>
         </div>
         <h4 class="text-[14px] font-bold text-white leading-tight">"횡성 한우 1++ 등심 구이용 20% 할인"</h4>
         <p class="text-[10px] text-white/40 mt-1">망고마트 정육코너 · 당일 도축 물량 한정</p>
     </div>
 </div>
 
-<div class="h-[100px] flex items-center gap-4 px-5 cursor-pointer hover:bg-white/5 transition-all">
+<div class="h-[100px] flex items-center gap-4 px-5 cursor-pointer hover:bg-white/5 transition-all" onclick="openPiPaymentModal('kimchi')">
     <div class="w-14 h-14 flex-shrink-0 rounded-2xl bg-gradient-to-br from-red-600 to-red-900 flex items-center justify-center border border-red-400/50 shadow-lg shadow-red-900/40 relative overflow-hidden">
         
         <span class="absolute text-3xl">🥬</span>
@@ -1197,8 +1267,11 @@ style="width: 140px; height: 140px; min-width: 140px; min-height: 140px; aspect-
     </div>
     
     <div class="flex-1">
-        <div class="flex items-center gap-2 mb-1">
+        <div class="flex items-center justify-between mb-1">
             <span class="text-[9px] text-red-400 font-bold border border-red-400/50 px-2 py-0.5 rounded-full uppercase tracking-tighter">Fresh K-Food</span>
+            <span class="text-[9px] text-red-400/80 font-black flex items-center gap-1">
+                <i data-lucide="navigation" class="w-2.5 h-2.5 fill-current animate-pulse"></i> 현재 위치에서 1.5km 앞
+            </span>
         </div>
         <h4 class="text-[14px] font-bold text-white leading-tight">"종가집 전라도 포기김치 3.3kg 특가"</h4>
         <p class="text-[10px] text-white/40 mt-1 italic">망고마트 산지직송 · 32.5 π 결제 가능</p>
@@ -1272,7 +1345,7 @@ function openAuth(tab = 'login') {
     switchTab(tab);
 }
 
-function closeAuth() {
+function closeAuth() { 
     document.getElementById('integrated-auth-modal').classList.add('hidden');
     document.body.style.overflow = 'auto'; // 배경 스크롤 해제
 }
@@ -3528,6 +3601,38 @@ document.addEventListener('click', (e) => {
         menuToggleBtn.classList.remove('opacity-0', 'invisible');
     }
 });
+
+// [제5단계 추가] Premium Selection 랜덤 아이콘 엔진
+function initRandomPremiumIcon() {
+    const iconNames = ['gem', 'crown', 'trophy', 'award', 'badge-check', 'zap', 'star']; // 7가지 프리미엄 아이콘 목록
+    const iconElement = document.getElementById('random-premium-icon');
+    
+    if (!iconElement || !window.lucide) return;
+
+    function changeIcon() {
+        // 이전 아이콘과 다른 아이콘이 선택되도록 로직 추가
+        const currentIcon = iconElement.getAttribute('data-lucide');
+        let newIcon;
+        do {
+            newIcon = iconNames[Math.floor(Math.random() * iconNames.length)];
+        } while (newIcon === currentIcon);
+
+        // data-lucide 속성 업데이트 및 Lucide 아이콘 다시 생성
+        iconElement.setAttribute('data-lucide', newIcon);
+        lucide.createIcons();
+        
+        // 부드러운 애니메이션 효과 (확대 후 축소)
+        iconElement.classList.add('scale-125');
+        setTimeout(() => iconElement.classList.remove('scale-125'), 300);
+    }
+
+    // 초기 아이콘 설정 및 2초마다 변경
+    changeIcon(); 
+    setInterval(changeIcon, 2000); 
+}
+
+// 페이지 로드 시 엔진 가동
+window.addEventListener('load', initRandomPremiumIcon);
     </script>
 </body>
 </html>

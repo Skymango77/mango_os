@@ -1,0 +1,460 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Mango Biz | Flirting Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Noto+Sans+KR:wght@300;400;700;900&display=swap');
+        :root { --mango-gold: #A67C52; --neon-orange: #FF5F00; --bg-dark: #050505; }
+        
+        body { 
+            background: var(--bg-dark); 
+            color: white; 
+            font-family: 'Noto Sans KR', sans-serif; 
+            overflow-x: hidden; 
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* Typography Engine */
+        .font-orb { font-family: 'Orbitron', sans-serif; letter-spacing: 0.05em; }
+        .font-noto { font-family: 'Noto Sans KR', sans-serif; }
+        
+        .glass { background: rgba(255, 255, 255, 0.03); backdrop-filter: blur(25px); border: 1px solid rgba(166, 124, 82, 0.2); }
+
+        /* [20단계] Code Master Polish: 3D Metallic Button Engine */
+        .btn-metallic, .cat-btn, .purchase-btn {
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            border-radius: 1rem;
+            border-top: 1px solid rgba(255,255,255,0.3);
+            border-bottom: 3px solid rgba(0,0,0,0.8);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.5);
+        }
+        .btn-metallic:active, .cat-btn:active, .purchase-btn:active { 
+            transform: translateY(3px) scale(0.98); 
+            border-bottom-width: 1px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+        }
+
+        .btn-gold { background: linear-gradient(180deg, #A67C52 0%, #634832 50%, #3E2C1E 100%); }
+        .btn-dark { background: linear-gradient(180deg, #2a2a2a 0%, #1a1a1a 100%); }
+        
+        .kpi-card { border: 1px solid rgba(255, 95, 0, 0.2); box-shadow: 0 0 15px rgba(255, 95, 0, 0.05); }
+        
+        /* [7단계] 3D 황금 티켓 홀로그램 엔진 */
+        .ticket-3d-wrap { perspective: 1200px; }
+        .ticket-3d-card {
+            width: 300px; height: 180px;
+            transform-style: preserve-3d;
+            animation: ticket-float-rotate 8s cubic-bezier(0.45, 0.05, 0.55, 0.95) infinite;
+            position: relative;
+        }
+        @keyframes ticket-float-rotate {
+            0% { transform: translateY(0) rotateY(0deg) rotateX(10deg); }
+            50% { transform: translateY(-30px) rotateY(180deg) rotateX(-10deg); }
+            100% { transform: translateY(0) rotateY(360deg) rotateX(10deg); }
+        }
+        .hologram-sheen {
+            position: absolute; inset: 0;
+            background: linear-gradient(125deg, transparent 0%, rgba(255,255,255,0) 40%, rgba(255,255,255,0.4) 50%, rgba(255,255,255,0) 60%, transparent 100%);
+            background-size: 200% 200%;
+            animation: sheen-move 3s infinite;
+        }
+        @keyframes sheen-move { 0% { background-position: 200% 200%; } 100% { background-position: -100% -100%; } }
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .custom-scrollbar::-webkit-scrollbar { display: none; }
+        .custom-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+    </style>
+</head>
+<body class="pb-24">
+    <!-- 1. KYC & Auth Node Header -->
+    <header class="p-6 flex justify-between items-center glass border-b border-white/5 sticky top-0 z-50">
+        <div class="flex items-center gap-4">
+            <div class="w-12 h-12 rounded-2xl border-2 border-orange-500 overflow-hidden bg-zinc-900">
+                <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Store" class="w-full h-full object-cover">
+            </div>
+            <div>
+                <h1 class="text-lg font-black italic gold-gradient font-orb tracking-tighter">PARTNER_NODE</h1>
+                <p class="text-[10px] text-orange-500 font-bold uppercase tracking-widest">Verified Merchant</p>
+            </div>
+        </div>
+        <button onclick="history.back()" class="p-2 text-white/30 hover:text-white"><i data-lucide="x"></i></button>
+    </header>
+
+    <main class="p-6 space-y-8 max-w-[480px] mx-auto">
+        <!-- 2. KPI Analytics Widget -->
+        <section class="grid grid-cols-4 gap-3">
+            <div class="glass kpi-card p-4 rounded-[2rem] text-center">
+                <p class="text-[8px] text-gray-500 font-black uppercase mb-1">Views</p>
+                <p class="text-[12px] font-orb font-bold text-orange-500 leading-none">1.2K</p>
+            </div>
+            <div class="glass kpi-card p-4 rounded-[2rem] text-center border-orange-500/40">
+                <p class="text-[8px] text-gray-500 font-black uppercase mb-1">Sales (π)</p>
+                <p class="text-[12px] font-orb font-bold text-white leading-none">45.5</p>
+            </div>
+            <div class="glass kpi-card p-4 rounded-[2rem] text-center">
+                <p class="text-[8px] text-gray-500 font-black uppercase mb-1">Conv.</p>
+                <p class="text-[12px] font-orb font-bold text-emerald-400 leading-none">8.2%</p>
+            </div>
+            <!-- [17단계] Review Synergy KPI: 상생 보상 포인트 -->
+            <div class="glass kpi-card p-4 rounded-[2rem] text-center border-yellow-500/30 relative group">
+                <p class="text-[8px] text-yellow-500 font-black uppercase mb-1">Synergy (MNG)</p>
+                <p class="text-[12px] font-orb font-bold text-yellow-500 leading-none animate-pulse">125</p>
+                <!-- Synergy Info Popover -->
+                <div class="absolute -top-10 left-1/2 -translate-x-1/2 bg-yellow-500 text-black text-[7px] font-bold px-2 py-1 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none shadow-xl">
+                    소비자 리뷰 시 공동 지급되는 상생 에너지
+                </div>
+            </div>
+        </section>
+
+        <!-- [18단계] A.I Curation: 지역 트렌드 분석 AI 컨시어지 창 -->
+        <section id="ai-concierge-window" class="relative group animate-in fade-in duration-1000">
+            <div class="absolute -inset-0.5 bg-gradient-to-r from-orange-500/20 to-yellow-500/20 rounded-[2.5rem] blur opacity-75"></div>
+            <div class="relative glass p-7 rounded-[2.5rem] border-orange-500/30 overflow-hidden shadow-2xl">
+                <div class="flex items-center gap-3 mb-4">
+                    <div class="w-11 h-11 rounded-full bg-orange-500/20 flex items-center justify-center border border-orange-500/40 shadow-[0_0_15px_rgba(249,115,22,0.2)]">
+                        <i data-lucide="star" class="w-5 h-5 text-orange-30 animate-pulse"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-[13px] font-black italic text-white uppercase tracking-tight">MANGO A.I CONCIERGE</h3>
+                        <p class="text-[9px] text-yellow-500 font-bold uppercase tracking-widest">Real-time Local Synergy Analysis</p>
+                    </div>
+                </div>
+                
+                <div class="bg-black/60 rounded-2xl p-5 border border-white/5 shadow-inner">
+                    <p class="text-[12px] text-white/95 leading-relaxed font-bold tracking-tight">
+                        "분석 결과, 현재 <span class="text-yellow-400">부산 서면</span> 지역은 <span class="text-orange-400 underline decoration-orange-500/30 underline-offset-4">#K-POP댄스</span>와 <span class="text-orange-400 underline decoration-orange-500/30 underline-offset-4">#야간러닝</span> 키워드 반응이 급증하고 있습니다. 
+                        <br/><span class="mt-2 block text-gray-400 font-medium">추천: '에너지 드링크 증정' 또는 '크루 특별 할인' 혜택을 구성해보세요! 🥭</span>"
+                    </p>
+                </div>
+                
+                <div class="mt-5 flex gap-2 overflow-x-auto no-scrollbar pb-1">
+                    <span class="text-[8px] font-black text-white/30 uppercase self-center mr-2">Top Keywords:</span>
+                    <span class="flex-none px-3 py-1 bg-orange-500/10 border border-orange-500/30 rounded-full text-[9px] font-black text-orange-500">#갓구운소금빵</span>
+                    <span class="flex-none px-3 py-1 bg-orange-500/10 border border-orange-500/30 rounded-full text-[9px] font-black text-orange-500">#무료음료권</span>
+                    <span class="flex-none px-3 py-1 bg-orange-500/10 border border-orange-500/30 rounded-full text-[9px] font-black text-orange-500">#1+1쿠폰</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- 3. Industry Selection -->
+        <section class="space-y-4">
+            <h3 class="text-xs font-orbit tracking-[0.3em] uppercase px-2 text-white/50">Category Auth</h3>
+            
+            <div id="category-container" class="flex gap-3 overflow-x-auto custom-scrollbar pb-4 px-2">
+                <button type="button" onclick="setCategory(this, 'FOOD')" class="cat-btn flex-none px-6 py-3 rounded-full border border-orange-500 bg-orange-500/10 text-[10px] font-black text-orange-500 transition-all shadow-[0_0_10px_rgba(249,115,22,0.3)]">FOOD</button>
+                
+                <button type="button" onclick="setCategory(this, 'TRANSFER')" class="cat-btn flex-none px-6 py-3 rounded-full glass border border-white/10 text-[10px] font-black text-white/40 transition-all hover:bg-white/10">TRANSFER</button>
+                <button type="button" onclick="setCategory(this, 'TRAVEL')" class="cat-btn flex-none px-6 py-3 rounded-full glass border border-white/10 text-[10px] font-black text-white/40 transition-all hover:bg-white/10">TRAVEL</button>
+                <button type="button" onclick="setCategory(this, 'HOBBY')" class="cat-btn flex-none px-6 py-3 rounded-full glass border border-white/10 text-[10px] font-black text-white/40 transition-all hover:bg-white/10">HOBBY</button>
+                <button type="button" onclick="setCategory(this, 'REALTY')" class="cat-btn flex-none px-6 py-3 rounded-full glass border border-white/10 text-[10px] font-black text-white/40 transition-all hover:bg-white/10">REALTY</button>
+                <button type="button" onclick="setCategory(this, 'MARKET')" class="cat-btn flex-none px-6 py-3 rounded-full glass border border-white/10 text-[10px] font-black text-white/40 transition-all hover:bg-white/10">MARKET</button>
+                <button type="button" onclick="setCategory(this, 'CHAT')" class="cat-btn flex-none px-6 py-3 rounded-full glass border border-white/10 text-[10px] font-black text-white/40 transition-all hover:bg-white/10">CHAT</button>
+                <button type="button" onclick="setCategory(this, 'EDUCATION')" class="cat-btn flex-none px-6 py-3 rounded-full glass border border-white/10 text-[10px] font-black text-white/40 transition-all hover:bg-white/10">EDUCATION</button>
+            </div>
+
+            <input type="hidden" id="selected-category" value="FOOD">
+        </section>
+
+        <!-- 4. Flirting Maker Form -->
+        <section class="glass rounded-[3rem] p-8 space-y-5 border-white/5">
+            <div class="flex justify-between items-center">
+                <h2 class="text-xl font-black italic">FLIRTING <span class="text-orange-500">MAKER</span></h2>
+                <i data-lucide="star" class="text-orange-300 w-5 h-5 animate-pulse"></i>
+            </div>
+            
+            <div class="space-y-5">
+                <!-- Image Engine: 3D Embossing Upload Box -->
+                <div class="relative group cursor-pointer w-full h-40 rounded-2xl border-2 border-dashed border-white/20 bg-black/50 flex flex-col items-center justify-center overflow-hidden hover:border-orange-500 transition-all shadow-[inset_0_0_20px_rgba(0,0,0,0.8)]">
+                    <input type="file" id="f-image" accept="image/*" class="absolute inset-0 opacity-0 cursor-pointer z-10" onchange="previewImage(event)">
+                    <div id="upload-placeholder" class="text-center transition-transform group-hover:scale-110">
+                        <i data-lucide="image-plus" class="w-8 h-8 text-orange-500/50 mx-auto mb-2"></i>
+                        <p class="text-[10px] text-white/40 font-bold uppercase tracking-widest">Tap to Upload Image</p>
+                    </div>
+                    <img id="image-preview" src="" class="absolute inset-0 w-full h-full object-cover hidden transition-all duration-500 z-0">
+                </div>
+
+                <div class="space-y-2">
+                    <label class="text-[10px] font-black text-gray-500 uppercase tracking-widest ml-2">Headline</label>
+                    <input id="f-title" type="text" placeholder="예: 14시 한정 타임세일!" class="w-full bg-white/5 border border-white/10 rounded-2xl p-4 text-sm outline-none focus:border-orange-500 transition-all">
+                </div>
+
+                <div class="space-y-2">
+                    <label class="text-[10px] font-black text-gray-500 uppercase tracking-widest ml-2">Target Value (π)</label>
+                    <input id="f-price" type="number" step="0.1" oninput="calculateSmartFee(this.value)" placeholder="예: 10.0" class="w-full bg-white/5 border border-white/10 rounded-2xl p-4 text-sm outline-none focus:border-orange-500 transition-all text-orange-400 font-orb font-bold">
+                </div>
+
+                <div class="space-y-2">
+                    <label class="text-[10px] font-black text-gray-500 uppercase tracking-widest ml-2">Benefit Content</label>
+                    <textarea id="f-desc" placeholder="예: 아메리카노 1+1 및 파이 10% 적립" class="w-full bg-white/5 border border-white/10 rounded-2xl p-4 text-sm h-24 outline-none focus:border-orange-500 transition-all font-noto"></textarea>
+                </div>
+                
+                <div class="grid grid-cols-2 gap-4">
+                    <div class="bg-orange-500/10 p-4 rounded-2xl border border-orange-500/20 shadow-[inset_0_0_15px_rgba(249,115,22,0.1)]">
+                        <p class="text-[10px] text-orange-500 font-bold mb-1 uppercase font-orb">Smart Fee (3%)</p>
+                        <p id="fee-calc" class="text-lg font-orb font-black text-white">0.00 <span class="text-xs text-orange-500">π</span></p>
+                    </div>
+                    <div class="bg-zinc-900 p-4 rounded-2xl border border-white/10">
+                        <p class="text-[10px] text-gray-500 font-bold mb-1 uppercase font-orb">Target Selection</p>
+                        <select id="f-guild" class="bg-transparent text-xs font-bold text-white outline-none w-full font-noto" onchange="toggleGuildDiscount(this.value)">
+                            <option value="all">전체 공개 (Public)</option>
+                            <option value="dance">K-POP 댄스 길드 (Exclusive)</option>
+                            <option value="offroad">오프로드 크루 (Exclusive)</option>
+                            <option value="reading">독서 로그 길드 (Exclusive)</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- [19단계] Guild Exclusive Discount Box -->
+                <div id="guild-discount-box" class="hidden bg-indigo-500/10 p-5 rounded-2xl border border-indigo-500/30 animate-in slide-in-from-top-2 duration-300">
+                    <div class="flex justify-between items-center mb-3">
+                        <p class="text-[10px] text-indigo-400 font-black uppercase tracking-widest font-orb">Guild Group Benefit</p>
+                        <span class="text-[8px] bg-indigo-500 text-white px-1.5 py-0.5 rounded font-black italic font-orb">SYNERGY BOOST</span>
+                    </div>
+                    <div class="flex items-center gap-3">
+                        <input id="f-guild-discount" type="number" placeholder="15" class="w-20 bg-black/40 border border-white/10 rounded-lg p-2 text-sm text-center text-indigo-400 font-black outline-none focus:border-indigo-500 font-orb">
+                        <span class="text-xs font-bold text-white/90 font-noto">% 단체 할인 적용 (5인 이상)</span>
+                    </div>
+                    <p class="text-[9px] text-white/30 mt-3 leading-relaxed font-noto">해당 길드 멤버들이 '팀'으로 방문 시 적용되는<br/>특별 시너지 혜택입니다. 🥭</p>
+                </div>
+            </div>
+
+            <button onclick="publishFlirting()" class="w-full py-5 btn-metallic btn-gold rounded-2xl text-white font-black italic tracking-widest text-sm mt-4 font-orb uppercase">PUBLISH FLIRTING NOW</button>
+        </section>
+
+        <!-- 5. Priority Ticket System -->
+        <section class="glass rounded-[3rem] p-8 border-yellow-500/30 bg-yellow-500/[0.02] space-y-6">
+            <div class="flex justify-between items-center mb-6">
+                <div>
+                    <h3 class="text-lg font-black italic text-yellow-500 font-orb uppercase">GOLD PRIORITY TICKET</h3>
+                    <p class="text-[10px] text-gray-500 uppercase tracking-widest mt-1">지역 메인 화면 최상단 노출</p>
+                </div>
+            </div>
+
+            <!-- Business Info (Moved from togglePremium) -->
+            <div class="space-y-4 bg-black/40 p-5 rounded-2xl border border-white/5">
+                <div class="grid grid-cols-2 gap-3">
+                    <div class="space-y-1">
+                        <label class="text-[8px] text-gray-500 font-bold uppercase ml-1">Contact</label>
+                        <input type="text" id="biz-phone" placeholder="매장 전화번호" class="w-full bg-white/5 border border-white/10 rounded-xl p-3 text-[11px] text-white outline-none focus:border-yellow-500 font-orb">
+                    </div>
+                    <div class="space-y-1">
+                        <label class="text-[8px] text-gray-500 font-bold uppercase ml-1">Hours</label>
+                        <input type="text" id="biz-hours" placeholder="10:00 ~ 22:00" class="w-full bg-white/5 border border-white/10 rounded-xl p-3 text-[11px] text-white outline-none focus:border-yellow-500 font-orb">
+                    </div>
+                </div>
+                <div class="space-y-1">
+                    <label class="text-[8px] text-gray-500 font-bold uppercase ml-1">Premium Message</label>
+                    <textarea id="biz-detail" rows="2" placeholder="사장님 한마디 (최상단 광고 노출 문구)" class="w-full bg-white/5 border border-white/10 rounded-xl p-3 text-[11px] text-white outline-none focus:border-yellow-500 resize-none"></textarea>
+                </div>
+            </div>
+
+            <!-- [10단계] Auto-Renewal: iOS Style Toggle -->
+            <div class="flex justify-between items-center px-5 py-4 bg-white/5 rounded-2xl border border-white/5">
+                <div>
+                    <p class="text-xs font-bold text-white">만료 전 자동 연장</p>
+                    <p class="text-[9px] text-white/40 uppercase tracking-tighter">만료 24시간 전 10.0 π 자동 차감</p>
+                </div>
+                <label class="relative inline-flex items-center cursor-pointer">
+                    <input type="checkbox" id="auto-renew-toggle" class="sr-only peer" checked>
+                    <div class="w-11 h-6 bg-zinc-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-orange-500 shadow-inner"></div>
+                </label>
+            </div>
+
+            <!-- [9단계] Waiting List UI: Neon Typography (Visible when slots are full) -->
+            <div class="p-6 rounded-[2rem] bg-black/60 border border-red-500/20 text-center space-y-2 shadow-[inset_0_0_20px_rgba(239,68,68,0.1)]">
+                <p class="text-[10px] text-gray-500 font-black uppercase tracking-[0.2em] font-orb">Current Slot Status</p>
+                <h4 class="text-2xl font-black italic text-red-500 drop-shadow-[0_0_10px_rgba(239,68,68,0.8)] leading-none font-orb">SLOTS FULL</h4>
+                <div class="pt-2">
+                    <p class="text-[13px] font-orb font-black text-cyan-400 drop-shadow-[0_0_5px_rgba(34,211,238,0.4)]">YOUR RANK: #12</p>
+                    <p class="text-[9px] text-white/30 uppercase mt-1">Est. Wait: 02:44:12</p>
+                </div>
+            </div>
+
+            <button onclick="purchaseTicket()" class="w-full py-5 btn-metallic btn-gold text-black font-[1000] text-xs uppercase tracking-[0.2em] font-orb">GET GOLD TICKET (10.0 π)</button>
+        </section>
+    </main>
+
+    <!-- 6. Ticket 3D Animation Overlay (Enhanced) -->
+    <div id="ticket-overlay" class="fixed inset-0 z-[100] hidden bg-black/95 backdrop-blur-xl flex flex-col items-center justify-center p-10 text-center">
+        <div class="ticket-3d-wrap">
+            <div class="ticket-3d-card">
+                <div class="absolute inset-0 bg-gradient-to-br from-yellow-300 via-yellow-500 to-yellow-700 rounded-2xl shadow-[0_0_100px_rgba(234,179,8,0.4)] p-[2px]">
+                    <div class="w-full h-full bg-zinc-950 rounded-[14px] flex flex-col items-center justify-center p-6 relative overflow-hidden">
+                        <div class="hologram-sheen"></div>
+                        <div class="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/stardust.png')] opacity-20"></div>
+                        <p class="font-orb text-yellow-500 text-[10px] font-black tracking-[0.5em] mb-4">MANGO PREMIUM NODE</p>
+                        <p class="text-white font-black text-3xl italic tracking-tighter drop-shadow-2xl">GOLD TICKET</p>
+                        <div class="mt-6 pt-4 border-t border-white/10 w-full">
+                            <p class="text-[9px] text-yellow-500/50 font-mono">SERIAL: #MGO-VERIFIED-2026</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <h2 class="text-3xl font-black italic text-white mt-12 mb-4 font-orb">ACCESS GRANTED!</h2>
+        <p class="text-gray-400 text-sm mb-12 font-noto">귀하의 업체가 지역 프리미엄 대기열 1순위로 등록되었습니다.</p>
+        <button onclick="closeTicketOverlay()" class="px-12 py-4 btn-metallic btn-dark text-white font-bold uppercase tracking-widest font-orb">Back to Dashboard</button>
+    </div>
+
+    <!-- 7. A.I Curation Concierge -->
+    <div class="fixed bottom-6 right-6 z-40">
+        <div class="group relative">
+            <div class="absolute -inset-1 bg-gradient-to-r from-orange-600 to-yellow-400 rounded-full blur opacity-25 group-hover:opacity-100 transition duration-1000"></div>
+            <button onclick="toggleAIConsult()" class="relative w-14 h-14 bg-zinc-900 border border-orange-500/30 rounded-full flex items-center justify-center shadow-2xl">
+                <i data-lucide="bot" class="w-6 h-6 text-orange-500"></i>
+            </button>
+        </div>
+    </div>
+
+    <div id="ai-curation-panel" class="fixed bottom-24 right-6 w-72 glass rounded-[2rem] p-6 border-orange-500/40 hidden z-50 transform transition-all duration-500 translate-y-10 opacity-0">
+        <p class="text-[10px] font-black text-orange-500 uppercase tracking-widest mb-3 font-orb">Mango A.I Advisor</p>
+        <p class="text-xs text-white/80 leading-relaxed font-bold font-noto">
+            "현재 부산 서면 지역에서는 <span class="text-yellow-400">#K-POP댄스</span>와 <span class="text-yellow-400">#야간러닝</span> 키워드가 급상승 중입니다. '운동 후 시원한 파이 할인' 혜택을 제안해보세요! 🥭"
+        </p>
+    </div>
+
+    <script>
+        lucide.createIcons();
+
+        // [카테고리 스위칭 엔진]
+        function setCategory(btnElement, categoryName) {
+            // 1. 모든 버튼을 찾아서 비활성화 스타일로 초기화
+            const allBtns = document.querySelectorAll('.cat-btn');
+            const inactiveClass = "cat-btn btn-metallic btn-dark flex-none px-6 py-3 text-[10px] font-black text-white/40 font-orb";
+            
+            allBtns.forEach(btn => {
+                btn.className = inactiveClass;
+            });
+
+            // 2. 클릭된 버튼에만 활성화(네온 오렌지) 스타일 적용
+            const activeClass = "cat-btn btn-metallic btn-gold flex-none px-6 py-3 text-[10px] font-black text-white tracking-widest font-orb";
+            btnElement.className = activeClass;
+
+            // 3. 선택된 값 업데이트
+            document.getElementById('selected-category').value = categoryName;
+            console.log("플러팅 카테고리 선택 완료:", categoryName);
+
+            // 4. 클릭 물리 효과 (살짝 눌렸다 튕겨나옴)
+            btnElement.style.transform = "scale(0.92)";
+            setTimeout(() => {
+                btnElement.style.transform = "scale(1)";
+            }, 150);
+
+            if (typeof showMangoToast === 'function') {
+                showMangoToast(`${categoryName} 업종으로 설정되었습니다.`);
+            }
+        }
+
+        // [5단계] 이미지 미리보기 엔진
+        function previewImage(event) {
+            const reader = new FileReader();
+            reader.onload = function() {
+                const output = document.getElementById('image-preview');
+                const placeholder = document.getElementById('upload-placeholder');
+                
+                output.src = reader.result;
+                output.classList.remove('hidden'); // 이미지 보이기
+                placeholder.classList.add('hidden'); // 글자 숨기기
+                
+                // 업로드 완료 시 컨테이너 디자인 3D 변경
+                const container = output.parentElement;
+                container.classList.remove('border-dashed', 'border-white/20');
+                container.classList.add('border-solid', 'border-orange-500', 'shadow-[0_10px_20px_rgba(249,115,22,0.3)]');
+            }
+            if(event.target.files[0]) {
+                reader.readAsDataURL(event.target.files[0]);
+            }
+        }
+
+        // [8단계] 스마트 수수료 실시간 계산 (3%)
+        function calculateSmartFee(value) {
+            const feeDisplay = document.getElementById('fee-calc');
+            const numValue = parseFloat(value);
+            
+            if (isNaN(numValue) || numValue <= 0) {
+                feeDisplay.innerHTML = `0.00 <span class="text-xs text-orange-500">π</span>`;
+                return;
+            }
+            
+            const fee = (numValue * 0.03).toFixed(3); // 3% 계산 후 소수점 3자리까지
+            feeDisplay.innerHTML = `${fee} <span class="text-xs text-orange-500">π</span>`;
+        }
+
+        function publishFlirting() {
+            const title = document.getElementById('f-title').value;
+            const desc = document.getElementById('f-desc').value;
+            const price = document.getElementById('f-price').value;
+            const category = document.getElementById('selected-category').value;
+            const imgPreview = document.getElementById('image-preview');
+            const autoRenew = document.getElementById('auto-renew-toggle').checked;
+            const guild = document.getElementById('f-guild').value;
+            const guildDiscount = document.getElementById('f-guild-discount').value;
+
+            if(!title || !desc) return alert("플러팅 내용을 입력해주세요.");
+
+            // [Phase 3] Sync Logic: LocalStorage를 이용한 메인화면 연동
+            const newFlirting = { 
+                title, desc, price, category,
+                autoRenew,
+                guild, // [19단계] 타겟 길드 정보
+                guildDiscount: guild !== 'all' ? guildDiscount : null, // [19단계] 길드 할인율
+                img: imgPreview.classList.contains('hidden') ? null : imgPreview.src,
+                timestamp: Date.now(), id: Date.now() 
+            };
+            let list = JSON.parse(localStorage.getItem('mango_flirtings')) || [];
+            list.unshift(newFlirting);
+            localStorage.setItem('mango_flirtings', JSON.stringify(list));
+            
+            // 실시간 이벤트 브로드캐스트
+            window.dispatchEvent(new Event('storage'));
+
+            alert("🚀 플러팅이 전 세계 망고 네트워크에 송출되었습니다!");
+            location.reload();
+        }
+
+        function purchaseTicket() {
+            const phone = document.getElementById('biz-phone').value;
+            if(!phone) {
+                alert("티켓 발급을 위해 매장 연락처를 입력해주세요.");
+                document.getElementById('biz-phone').focus();
+                return;
+            }
+
+            if(confirm(`10.0 π를 지불하고 골드 티켓을 발급하시겠습니까?\n발급 즉시 'Premium Selection' 1순위로 노출됩니다.`)) {
+                const overlay = document.getElementById('ticket-overlay');
+                overlay.classList.remove('hidden');
+            }
+        }
+
+        /* [19단계] Guild Exclusive Targeting UI Logic */
+        function toggleGuildDiscount(value) {
+            const box = document.getElementById('guild-discount-box');
+            if (value !== 'all') {
+                box.classList.remove('hidden');
+            } else {
+                box.classList.add('hidden');
+            }
+        }
+
+        function closeTicketOverlay() {
+            document.getElementById('ticket-overlay').classList.add('hidden');
+        }
+
+        function toggleAIConsult() {
+            const panel = document.getElementById('ai-curation-panel');
+            panel.classList.toggle('hidden');
+            setTimeout(() => {
+                panel.classList.toggle('translate-y-0');
+                panel.classList.toggle('opacity-100');
+            }, 10);
+        }
+
+        function showMangoToast(msg) {
+            console.log("Toast:", msg);
+        }
+    </script>
+</body>
+</html>
