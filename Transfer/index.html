@@ -57,13 +57,24 @@
 
         .mango-window {
             width: 100%;
-            max-width: 450px;
-            background-color: rgba(0, 0, 0, 0.85); /* 배경을 조금 더 진하게 하여 가독성 확보 */
-            backdrop-filter: blur(15px);
-            border: 2px solid rgba(202, 138, 4, 0.5);
+            max-width: 430px; /* 망고 메인 스크린 규격(430px)과 동일하도록 고정 */
+            background-color: transparent; /* 그라데이션 배경 처리를 위해 투명화 */
+            backdrop-filter: blur(20px); /* 프리미엄 글래스모피즘 강화 */
+            -webkit-backdrop-filter: blur(20px);
+            border: 2px solid transparent;
+            /* Brown Gold Metallic 테마: 상단에서 하단으로 흐르는 메탈릭 골드 그라데이션 스펙트럼 */
+            background-image: linear-gradient(rgba(5, 5, 5, 0.85), rgba(5, 5, 5, 0.85)), 
+                              linear-gradient(to bottom, #fbbf24, #b45309, #451a03);
+            background-origin: border-box;
+            background-clip: padding-box, border-box;
             border-radius: 2.5rem;
-            padding: 2rem 1.5rem;            padding-bottom: 5rem; /* 하단 버튼 뒤 여유 공간 확보 */
-            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            padding: 2rem 1.5rem;
+            padding-bottom: 6rem; /* [Scroll Safety] 하단 패딩 pb-24(6rem) 확보로 터치 간섭 방지 */
+            /* [3D Embossing] 외측 광채와 내측 그림자의 정교한 레이어링 */
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.7),
+                        0 0 30px rgba(251, 191, 36, 0.15),
+                        inset 0 2px 4px rgba(255, 255, 255, 0.1),
+                        inset 0 -2px 4px rgba(0, 0, 0, 0.4);
             position: relative;
             overflow: visible;
             margin-bottom: 40px;   /* 추가 */
@@ -90,16 +101,19 @@
         <h1 class="font-orbitron leading-none uppercase overflow-visible pr-4">
             <span class="mango-pulsar-wrapper">
                 <span class="mango-pulsing-text text-metallic-gold text-xl font-[900] italic tracking-[0.15em] inline-block"
-                      style="-webkit-text-stroke: 1.2px rgba(255, 215, 0, 0.4);">
+                      style="-webkit-text-stroke: 1px rgba(251, 191, 36, 0.5);">
                     MANGO
                 </span>
             </span>
         </h1>
-<h1 class="text-metallic-gold text-1xl font-black italic font-orbitron leading-none tracking-tighter uppercase mt-1">            TRANSFER
+        <h1 class="text-metallic-gold text-1xl font-black italic font-orbitron leading-none tracking-tighter uppercase mt-1 flex items-center gap-2">
+            TRANSFER
+            <!-- [Neon Pulsar Effect] 네온 오렌지 인디케이터 -->
+            <span class="neon-indicator"></span>
         </h1>
     <div class="flex flex-col overflow-visible mt-1 w-full">
-        <p class="text-gray-400 text-[8.5px] uppercase tracking-[0.25em] font-bold whitespace-nowrap mb-1" 
-       style="font-family: 'Syncopate', sans-serif; text-shadow: 0 0 5px rgba(255,255,255,0.1);">
+        <p class="text-gray-400 text-[8.5px] uppercase tracking-[0.4em] font-bold whitespace-nowrap mb-1" 
+       style="font-family: 'Syncopate', sans-serif; text-shadow: 0 0 5px rgba(255,255,255,0.1); width: max-content; padding-right: 60px;">
        Global Logistics
     </p>
     <div class="w-[120px] h-[1px] bg-gradient-to-r from-orange-500/80 via-yellow-400/50 to-transparent"></div>
@@ -130,6 +144,22 @@
         }
     }
 
+    /* [Neon Pulsar Effect] 인디케이터 애니메이션 */
+    .neon-indicator {
+        width: 6px;
+        height: 6px;
+        background-color: #f97316;
+        border-radius: 50%;
+        display: inline-block;
+        box-shadow: 0 0 8px #f97316, 0 0 15px #f97316;
+        animation: neon-pulsar 1.5s ease-in-out infinite;
+    }
+
+    @keyframes neon-pulsar {
+        0%, 100% { box-shadow: 0 0 8px #f97316, 0 0 12px #f97316; opacity: 0.7; transform: scale(1); }
+        50% { box-shadow: 0 0 18px #f97316, 0 0 30px #f97316, 0 0 45px #ea580c; opacity: 1; transform: scale(1.2); }
+    }
+
     /* 효과를 적용할 컨테이너 (금가루를 가리기 위해) */
     .mango-pulsar-wrapper {
         position: relative;
@@ -156,6 +186,7 @@
         border-radius: 50%;
         opacity: 0;
         z-index: 5;
+        will-change: transform; /* [Gold Dust Optimization] 하드웨어 가속으로 애니메이션 성능 최적화 */
     }
 
     .mango-pulsar-wrapper::before {
@@ -187,52 +218,52 @@
 
 </style>
 
-    <div class="grid grid-cols-2 gap-4">
+    <!-- [Card Equalization] auto-rows-fr을 통한 그리드 높이 균형 및 완벽 대칭 스케일 적용 -->
+    <div class="grid grid-cols-2 gap-4 auto-rows-fr">
              <!-- 망고 택시 서비스 -->
-
-    <a href="/Transfer/mango_taxi_dashboard.html" class="group block bg-gray-800/40 p-4 rounded-2xl border border-gray-700 hover:border-orange-500 transition-all" style="touch-action: manipulation;">
-        <div class="w-24 h-24 mx-auto mb-2 flex items-center justify-center overflow-hidden">
+    <a href="mango_taxi_dashboard.html" class="group flex flex-col items-center justify-center bg-gray-800/40 p-5 rounded-3xl border border-gray-700 hover:border-orange-500 transition-all" style="touch-action: manipulation;">
+        <div class="w-24 h-24 mb-3 flex items-center justify-center overflow-hidden">
             <img src="/assets/img/Mango-Taxi.png" alt="Taxi" class="w-full h-full object-contain group-hover:scale-110 transition-transform">
         </div>
         <p class="text-white text-xs font-bold text-center">망고택시</p>
     </a>
-         <!-- 퀵서비스 -->
-    <a href="/Transfer/mango_quick_dashboard.html" class="group block bg-gray-800/40 p-4 rounded-2xl border border-gray-700 hover:border-orange-500 transition-all" style="touch-action: manipulation;">
-        <div class="w-24 h-24 mx-auto mb-2 flex items-center justify-center overflow-hidden">
-            <img src="/assets/img/Quick-Service.png" class="w-full h-full object-contain group-hover:scale-110 transition-transform">
+
+    <!-- 퀵서비스 -->
+    <a href="mango_quick_dashboard.html" class="group flex flex-col items-center justify-center bg-gray-800/40 p-5 rounded-3xl border border-gray-700 hover:border-orange-500 transition-all" style="touch-action: manipulation;">
+        <div class="w-24 h-24 mb-3 flex items-center justify-center overflow-hidden">
+            <img src="/assets/img/Quick-Service.png" alt="Quick" class="w-full h-full object-contain group-hover:scale-110 transition-transform">
         </div>
         <p class="text-white text-xs font-bold text-center">퀵서비스</p>
     </a>
 
-
     <!-- 포장이사 -->
-    <a href="/Transfer/mango_moving_dashboard.html" class="group block bg-gray-800/40 p-4 rounded-2xl border border-gray-700 hover:border-orange-500 transition-all" style="touch-action: manipulation;">
-        <div class="w-24 h-24 mx-auto mb-2 flex items-center justify-center overflow-hidden">
-            <img src="/assets/img/packing_mover.png" class="w-full h-full object-contain group-hover:scale-110 transition-transform">
+    <a href="mango_moving_dashboard.html" class="group flex flex-col items-center justify-center bg-gray-800/40 p-5 rounded-3xl border border-gray-700 hover:border-orange-500 transition-all" style="touch-action: manipulation;">
+        <div class="w-24 h-24 mb-3 flex items-center justify-center overflow-hidden">
+            <img src="/assets/img/packing_mover.png" alt="Moving" class="w-full h-full object-contain group-hover:scale-110 transition-transform">
         </div>
         <p class="text-white text-xs font-bold text-center">포장이사</p>
     </a>
 
     <!-- 화물운송 -->
-    <a href="/Transfer/mango_freight_dashboard.html" class="group block bg-gray-800/40 p-4 rounded-2xl border border-gray-700 hover:border-orange-500 transition-all" style="touch-action: manipulation;">
-        <div class="w-24 h-24 mx-auto mb-2 flex items-center justify-center overflow-hidden">
-            <img src="/assets/img/Freight.png" class="w-full h-full object-contain group-hover:scale-110 transition-transform">
+    <a href="mango_freight_dashboard.html" class="group flex flex-col items-center justify-center bg-gray-800/40 p-5 rounded-3xl border border-gray-700 hover:border-orange-500 transition-all" style="touch-action: manipulation;">
+        <div class="w-24 h-24 mb-3 flex items-center justify-center overflow-hidden">
+            <img src="/assets/img/Freight.png" alt="Freight" class="w-full h-full object-contain group-hover:scale-110 transition-transform">
         </div>
         <p class="text-white text-xs font-bold text-center">화물운송</p>
     </a>
 
     <!-- 구매대행 -->
-    <a href="/Transfer/mango_proxy_dashboard.html" class="group block bg-gray-800/40 p-4 rounded-2xl border border-gray-700 hover:border-orange-500 transition-all" style="touch-action: manipulation;">
-        <div class="w-24 h-24 mx-auto mb-2 flex items-center justify-center overflow-hidden">
-            <img src="/assets/img/Proxy-Buy.png" class="w-full h-full object-contain group-hover:scale-110 transition-transform">
+    <a href="mango_proxy_dashboard.html" class="group flex flex-col items-center justify-center bg-gray-800/40 p-5 rounded-3xl border border-gray-700 hover:border-orange-500 transition-all" style="touch-action: manipulation;">
+        <div class="w-24 h-24 mb-3 flex items-center justify-center overflow-hidden">
+            <img src="/assets/img/Proxy-Buy.png" alt="Proxy" class="w-full h-full object-contain group-hover:scale-110 transition-transform">
         </div>
         <p class="text-white text-xs font-bold text-center">구매대행</p>
     </a>
 
     <!-- 중장비 -->
-    <a href="/Transfer/mango_heavy_dashboard.html" class="group block bg-gray-800/40 p-4 rounded-2xl border border-gray-700 hover:border-orange-500 transition-all" style="touch-action: manipulation;">
-        <div class="w-24 h-24 mx-auto mb-2 flex items-center justify-center overflow-hidden">
-            <img src="/assets/img/Heavy-Equipment.png" class="w-full h-full object-contain group-hover:scale-110 transition-transform">
+    <a href="mango_heavy_dashboard.html" class="group flex flex-col items-center justify-center bg-gray-800/40 p-5 rounded-3xl border border-gray-700 hover:border-orange-500 transition-all" style="touch-action: manipulation;">
+        <div class="w-24 h-24 mb-3 flex items-center justify-center overflow-hidden">
+            <img src="/assets/img/Heavy-Equipment.png" alt="Heavy" class="w-full h-full object-contain group-hover:scale-110 transition-transform">
         </div>
         <p class="text-white text-xs font-bold text-center">중장비 배차</p>
     </a>
@@ -249,13 +280,13 @@
 
         <div class="flex gap-2 mb-4">
 <button id="btn-testnet"
-        onclick="setMode('testnet')"
+        onclick="handleNetworkSwitch('testnet')"
         class="flex-1 py-3 rounded-xl text-[10px] font-black transition-all bg-orange-500 text-black shadow-[0_0_15px_rgba(249,115,22,0.4)]">
         TESTNET
     </button>
 
     <button id="btn-mainnet"
-        onclick="setMode('mainnet')"
+        onclick="handleNetworkSwitch('mainnet')"
         class="flex-1 py-3 rounded-xl text-[10px] font-black transition-all bg-gray-800 text-gray-500 border border-gray-700">
         MAINNET
     </button>
@@ -266,7 +297,8 @@
         </button>
     </div>
 
-    <div id="toast" class="absolute bottom-6 left-1/2 -translate-x-1/2 bg-orange-600/90 backdrop-blur-md text-white px-6 py-2 rounded-full opacity-0 pointer-events-none transition-opacity duration-300 z-50 text-[10px] font-bold whitespace-nowrap"></div>
+    <!-- [Toast Queue Management] 다중 메시지 처리를 위한 동적 스택 컨테이너 -->
+    <div id="toast-container" class="fixed bottom-24 left-1/2 -translate-x-1/2 z-[300] flex flex-col-reverse items-center gap-2 pointer-events-none w-full max-w-[430px]"></div>
     </div>
         </div>
     </div>
@@ -306,76 +338,92 @@
         const Pi = window.Pi;
         let isSandbox = true; // 기본값은 테스트넷
 
-        // 1. 결제 모드 스위칭 함수
-        function setPaymentMode(mode) {
-            isSandbox = mode;
+        // [Dual-Method Convergence] 통합 네트워크 전환 제어 함수
+        function handleNetworkSwitch(networkType) {
+            isSandbox = (networkType === 'testnet');
+            localStorage.setItem('mango_network_mode', networkType);
+
             const testBtn = document.getElementById('btn-testnet');
             const mainBtn = document.getElementById('btn-mainnet');
 
-            if(mode) {
-                testBtn.className = "flex-1 py-2 rounded-lg text-[10px] font-black transition-all bg-orange-500 text-black shadow-[0_0_10px_rgba(249,115,22,0.5)]";
-                mainBtn.className = "flex-1 py-2 rounded-lg text-[10px] font-black transition-all bg-gray-800 text-gray-400 border border-gray-700";
+            if (isSandbox) {
+                testBtn.className = "flex-1 py-3 rounded-xl text-[10px] font-black transition-all bg-orange-500 text-black shadow-[0_0_15px_rgba(249,115,22,0.6)] border-t border-white/30";
+                mainBtn.className = "flex-1 py-3 rounded-xl text-[10px] font-black transition-all bg-zinc-900 text-zinc-600 border border-zinc-800 opacity-50";
             } else {
-                mainBtn.className = "flex-1 py-2 rounded-lg text-[10px] font-black transition-all bg-yellow-500 text-black shadow-[0_0_10px_rgba(234,179,8,0.5)]";
-                testBtn.className = "flex-1 py-2 rounded-lg text-[10px] font-black transition-all bg-gray-800 text-gray-400 border border-gray-700";
+                mainBtn.className = "flex-1 py-3 rounded-xl text-[10px] font-black transition-all bg-yellow-500 text-black shadow-[0_0_15px_rgba(234,179,8,0.6)] border-t border-white/30";
+                testBtn.className = "flex-1 py-3 rounded-xl text-[10px] font-black transition-all bg-zinc-900 text-zinc-600 border border-zinc-800 opacity-50";
             }
-            showToast(mode ? "테스트넷 결제 모드 활성" : "메인넷 결제 모드 활성");
+            showToast(isSandbox ? "테스트넷 결제 모드 활성" : "메인넷 결제 모드 활성");
         }
 
-        // 2. 통합 결제 실행 함수
         async function processMangoPayment() {
             try {
-                // 초기화 (선택한 모드에 따라)
-                await Pi.init({ version: "2.0", sandbox: isSandbox });
+                // [Security] Strict Boolean Check for Sandbox
+                await Pi.init({ version: "2.0", sandbox: !!isSandbox }).catch(e => {
+                    throw new Error("SDK 초기화 지연 (네트워크 확인 요망)");
+                });
                 
                 showToast("사용자 인증 확인 중...");
-                await Pi.authenticate(['payments'], (p) => { console.log("미완료 결제:", p); });
+                await Pi.authenticate(['payments'], (p) => { 
+                    console.warn("Incomplete payment found:", p); 
+                }).catch(e => {
+                    throw new Error("인증 세션 오류");
+                });
 
                 showToast("🚀 파이 결제창을 호출합니다...");
                 
                 await Pi.createPayment({
                     amount: 0.02,
-                    memo: isSandbox ? "[TEST] Mango Logistics Fee" : "Mango Logistics Service Fee",
+                    memo: isSandbox ? "[SANDBOX] Mango Logistics Fee" : "Mango Logistics Service Fee",
                     metadata: { portal: "transfer", network: isSandbox ? "testnet" : "mainnet" }
                 }, {
                     onReadyForServerApproval: (paymentId) => {
                         return fetch('https://mango-os-6xu2.vercel.app/api/approve', {
                             method: 'POST',
                             headers: { 'Content-Type': 'application/json' },
-                            body: JSON.stringify({ paymentId })
-                        });
+                            body: JSON.stringify({ paymentId, network: isSandbox ? "testnet" : "mainnet" })
+                        }).catch(e => { throw new Error("Approval 서버 통신 장애"); });
                     },
                     onReadyForServerCompletion: (paymentId, txid) => {
-    return fetch('https://mango-os-6xu2.vercel.app/api/complete', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ paymentId, txid })
-    }).then(() => {
-
-        // 🔥 포인트 지급 UI 반영
-        let point = parseFloat(localStorage.getItem("mangoPoint") || "0");
-        point += 0.001;  // 👉 예: 0.001 포인트 지급
-        localStorage.setItem("mangoPoint", point);
-
-        updatePointUI();
-
-        showToast("✅ 결제 완료 + 0.001P 지급!");
-    });
-},
+                        return fetch('https://mango-os-6xu2.vercel.app/api/complete', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ paymentId, txid, network: isSandbox ? "testnet" : "mainnet" })
+                        }).then(async (res) => {
+                            if(!res.ok) throw new Error("결제 완료 검증 실패");
+                            
+                            // 포인트 즉시 동기화
+                            const currentPoint = parseFloat(localStorage.getItem("mangoPoint") || "0");
+                            const newPoint = (currentPoint + 0.001).toFixed(3);
+                            localStorage.setItem("mangoPoint", newPoint);
+                            updatePointUI();
+                            showToast(`✅ 결제 완료 + 0.001P 적립!`);
+                        });
+                    },
                     onCancel: (pId) => showToast("❌ 결제 취소"),
-                    onError: (err) => showToast("⚠️ 에러: " + err.message)
+                    onError: (err) => showToast(`⚠️ 결제 오류: ${err.message}`)
                 });
             } catch (err) {
-                showToast("⚠️ 인증/시스템 오류");
+                showToast(`⚠️ 시스템 오류: ${err.message}`);
             }
         }
 
         function showToast(msg) {
-            const t = document.getElementById("toast");
-            if(!t) return;
-            t.textContent = msg;
-            t.style.opacity = "1";
-            setTimeout(() => { t.style.opacity = "0"; }, 3000);
+            const container = document.getElementById("toast-container");
+            if(!container) return;
+
+            const t = document.createElement("div");
+            t.className = "bg-orange-600/95 backdrop-blur-md text-white px-6 py-2.5 rounded-full shadow-2xl text-[10px] font-bold whitespace-nowrap animate-toast-up border border-white/10 pointer-events-none transition-all duration-500 mb-1";
+            t.innerHTML = msg; 
+            
+            container.appendChild(t);
+
+            // 3초 후 순차적 소멸 로직
+            setTimeout(() => {
+                t.style.opacity = "0";
+                t.style.transform = "translateY(-20px)";
+                setTimeout(() => t.remove(), 500);
+            }, 3000);
         }
 
         // [시작점] Transfer AI 컨시어지 스크립트 로직
@@ -419,54 +467,30 @@
 document.querySelectorAll('a').forEach(el => {
     el.addEventListener('touchstart', function(){}, {passive:true});
 });
-</script>
 
-
-<script>
-let mode = "testnet";
-
-function setMode(selected) {
-    mode = selected;
-
-    const testBtn = document.getElementById("btn-testnet");
-    const mainBtn = document.getElementById("btn-mainnet");
-
-    if (selected === "testnet") {
-        testBtn.classList.add("bg-orange-500", "text-black");
-        testBtn.classList.remove("bg-gray-800", "text-gray-500");
-
-        mainBtn.classList.add("bg-gray-800", "text-gray-500");
-        mainBtn.classList.remove("bg-orange-500", "text-black");
-    } else {
-        mainBtn.classList.add("bg-orange-500", "text-black");
-        mainBtn.classList.remove("bg-gray-800", "text-gray-500");
-
-        testBtn.classList.add("bg-gray-800", "text-gray-500");
-        testBtn.classList.remove("bg-orange-500", "text-black");
-    }
-}
-</script>
-<script>
 function goPayment() {
-    alert("현재 모드: " + mode);
-
-    if (mode === "testnet") {
-        processMangoPayment();  // 👉 실제 Pi 결제 실행
-    } else {
-        processMangoPayment();  // 👉 동일 (sandbox false로 처리됨)
-    }
+    processMangoPayment();
 }
 
 function updatePointUI() {
     const el = document.getElementById("point-balance");
     if(!el) return;
 
-    const point = localStorage.getItem("mangoPoint") || "0";
-    el.textContent = point + " P";
+    const point = parseFloat(localStorage.getItem("mangoPoint") || "0");
+    el.textContent = (isNaN(point) ? 0 : point).toFixed(3) + " P";
 }
 
+// [Initialization Trigger] 메인 이니셜라이저 엔진 가동
+document.addEventListener('DOMContentLoaded', () => {
+    // 1. 포인트 정보 동기화
+    updatePointUI();
 
+    // 2. 네트워크 상태 복원 및 UI 반영
+    const savedMode = localStorage.getItem('mango_network_mode') || 'testnet';
+    handleNetworkSwitch(savedMode);
 
+    console.log("Mango Portal: Runtime System Initialized");
+});
 </script>
 </body>
 </html>
