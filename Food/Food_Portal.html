@@ -1,0 +1,621 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>MANGO FOOD PORTAL</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;900&family=Noto+Sans+KR:wght@300;400;700;900&display=swap');
+        
+        :root {
+            --mango-orange: #f97316;
+            --neon-orange: #ff6b00;
+        }
+
+        body {
+            font-family: 'Noto Sans KR', sans-serif;
+            background-color: #000;
+            color: white;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+        }
+
+        .font-orb { font-family: 'Orbitron', sans-serif; }
+
+        /* [핵심] 다크 글래스모피즘 스타일 */
+        .glass-panel {
+            background: rgba(24, 24, 27, 0.9); /* bg-zinc-900/90 */
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 107, 0, 0.2);
+            box-shadow: 0 0 40px rgba(0, 0, 0, 0.5);
+        }
+
+        /* [포인트] 네온 오렌지 효과 */
+        .neon-border {
+            border-color: var(--neon-orange);
+            box-shadow: 0 0 15px rgba(255, 107, 0, 0.4), inset 0 0 10px rgba(255, 107, 0, 0.2);
+        }
+
+        .neon-text {
+            color: var(--neon-orange);
+            text-shadow: 0 0 10px rgba(255, 107, 0, 0.5);
+        }
+
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+
+        @keyframes pulse-orange {
+            0%, 100% { box-shadow: 0 0 0 0 rgba(255, 107, 0, 0.4); }
+            50% { box-shadow: 0 0 0 10px rgba(255, 107, 0, 0); }
+        }
+        .animate-pulse-orange { animation: pulse-orange 2s infinite; }
+
+        /* [추가] 3D 엠보싱 카드 엔진 */
+        .embossed-card {
+            background: linear-gradient(145deg, #1e1e21, #121214);
+            box-shadow: 12px 12px 25px #050505, 
+                        -8px -8px 20px rgba(255, 255, 255, 0.02),
+                        inset 0 1px 1px rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 107, 0, 0.15);
+        }
+        .embossed-card:active {
+            box-shadow: inset 6px 6px 12px #050505, 
+                        inset -6px -6px 12px rgba(255, 255, 255, 0.01);
+        }
+
+        /* [추가] QR 스캐너 전용 애니메이션 및 스타일 */
+        @keyframes scan-line-move {
+            0% { top: 0%; opacity: 0; }
+            15% { opacity: 1; }
+            85% { opacity: 1; }
+            100% { top: 100%; opacity: 0; }
+        }
+        .animate-scan-line { 
+            animation: scan-line-move 2.5s infinite ease-in-out; 
+        }
+
+        .scanner-mask {
+            background: rgba(0, 0, 0, 0.7);
+            mask: radial-gradient(circle at center, transparent 150px, black 151px);
+            -webkit-mask: radial-gradient(circle at center, transparent 150px, black 151px);
+        }
+        /* 더 정교한 사각형 구멍을 위한 클립패스 방식 활용 */
+        .scanner-overlay {
+            background-color: rgba(0, 0, 0, 0.6);
+            clip-path: polygon(0% 0%, 0% 100%, 15% 100%, 15% 25%, 85% 25%, 85% 75%, 15% 75%, 15% 100%, 100% 100%, 100% 0%);
+        }
+    </style>
+</head>
+<body class="overflow-x-hidden pb-24">
+    <!-- Mango OS 규격을 따르는 메인 컨테이너 -->
+    <div class="w-full max-w-[430px] min-h-screen flex flex-col relative px-4 py-6 space-y-6">
+        
+        <!-- 상단 헤더: 뒤로가기 및 프로필 -->
+        <header class="flex justify-between items-center bg-zinc-900/50 backdrop-blur-md p-4 rounded-3xl border border-white/5 sticky top-0 z-50">
+            <button onclick="history.back()" class="w-10 h-10 rounded-full flex items-center justify-center bg-white/5 hover:bg-white/10 transition-colors">
+                <i data-lucide="arrow-left" class="w-6 h-6 text-white"></i>
+            </button>
+            <div class="text-center">
+                <h1 class="font-orb text-lg font-black italic tracking-tighter text-white">FOOD <span class="text-orange-500">PORTAL</span></h1>
+                <p class="text-[8px] text-white/40 font-bold tracking-[2px] uppercase">Mango Eco-System</p>
+            </div>
+            <div class="w-10 h-10 rounded-full flex items-center justify-center bg-zinc-900 border border-orange-500/30 overflow-hidden">
+                <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Foodie" class="w-full h-full object-cover">
+            </div>
+        </header>
+
+        <!-- "Ah! That Place!" (망고 스티커 UI) -->
+        <section class="space-y-3 pt-2">
+            <div class="flex justify-between items-center px-2">
+                <h2 class="text-[10px] font-black text-white/40 uppercase tracking-[2px] flex items-center gap-2 font-orb">
+                    <i data-lucide="bookmark" class="w-3 h-3 text-orange-500"></i> My Mango Stickers
+                </h2>
+                <span class="text-[8px] text-orange-500 font-black tracking-tighter animate-pulse uppercase">Ah! That Place!</span>
+            </div>
+            <div class="flex gap-5 overflow-x-auto no-scrollbar px-2 py-1">
+                <!-- Sticker 1 -->
+                <div class="flex flex-col items-center gap-2 shrink-0 cursor-pointer group active:scale-95 transition-all">
+                    <div class="w-16 h-16 rounded-full p-[2px] bg-gradient-to-tr from-orange-500 via-yellow-400 to-orange-600 shadow-lg shadow-orange-500/20">
+                        <div class="w-full h-full rounded-full border-2 border-black overflow-hidden relative">
+                            <img src="https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=150" class="w-full h-full object-cover group-hover:scale-110 transition-transform">
+                        </div>
+                    </div>
+                    <span class="text-[10px] font-black text-white/70 tracking-tighter">망고포차</span>
+                </div>
+                <!-- Sticker 2 -->
+                <div class="flex flex-col items-center gap-2 shrink-0 cursor-pointer group active:scale-95 transition-all">
+                    <div class="w-16 h-16 rounded-full p-[2px] bg-gradient-to-tr from-orange-500 via-yellow-400 to-orange-600 shadow-lg shadow-orange-500/20">
+                        <div class="w-full h-full rounded-full border-2 border-black overflow-hidden relative">
+                            <img src="https://images.unsplash.com/photo-1554118811-1e0d58224f24?w=150" class="w-full h-full object-cover group-hover:scale-110 transition-transform">
+                        </div>
+                    </div>
+                    <span class="text-[10px] font-black text-white/70 tracking-tighter">해운대 카페V</span>
+                </div>
+                <!-- Sticker 3 -->
+                <div class="flex flex-col items-center gap-2 shrink-0 cursor-pointer group active:scale-95 transition-all">
+                    <div class="w-16 h-16 rounded-full p-[2px] bg-gradient-to-tr from-orange-500 via-yellow-400 to-orange-600 shadow-lg shadow-orange-500/20">
+                        <div class="w-full h-full rounded-full border-2 border-black overflow-hidden relative">
+                            <img src="https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=150" class="w-full h-full object-cover group-hover:scale-110 transition-transform">
+                        </div>
+                    </div>
+                    <span class="text-[10px] font-black text-white/70 tracking-tighter">암소갈비</span>
+                </div>
+                <!-- Sticker 4 -->
+                <div class="flex flex-col items-center gap-2 shrink-0 cursor-pointer group active:scale-95 transition-all">
+                    <div class="w-16 h-16 rounded-full p-[2px] bg-gradient-to-tr from-orange-500 via-yellow-400 to-orange-600 shadow-lg shadow-orange-500/20">
+                        <div class="w-full h-full rounded-full border-2 border-black overflow-hidden relative text-zinc-700 flex items-center justify-center bg-zinc-900">
+                            <i data-lucide="plus" class="w-6 h-6"></i>
+                        </div>
+                    </div>
+                    <span class="text-[10px] font-black text-white/30 tracking-tighter">추가</span>
+                </div>
+            </div>
+            <!-- 스티커 하단 구분선 -->
+            <div class="mx-2 h-[1px] bg-gradient-to-r from-transparent via-orange-500/20 to-transparent"></div>
+        </section>
+
+        <!-- 스마트 검색 바 -->
+        <div class="glass-panel p-2 rounded-2xl flex items-center border border-orange-500/20">
+            <i data-lucide="search" class="w-5 h-5 ml-3 text-white/30"></i>
+            <input type="text" placeholder="메뉴 또는 매장 검색..." class="bg-transparent flex-1 px-3 py-3 text-sm outline-none placeholder:text-white/20">
+            <button class="bg-orange-500 text-black p-2.5 rounded-xl transition-transform active:scale-95 shadow-lg shadow-orange-500/20">
+                <i data-lucide="sliders-horizontal" class="w-4 h-4 font-bold"></i>
+            </button>
+        </div>
+
+        <!-- AI Curation Feed: Real-time Recommendation -->
+        <section id="ai-curation-feed" class="space-y-4">
+            <div class="flex justify-between items-center px-2">
+                <h2 class="text-[10px] font-black text-cyan-400 uppercase tracking-[2px] flex items-center gap-2 font-orb">
+                    <i data-lucide="sparkles" class="w-3 h-3"></i> AI Smart Selection
+                </h2>
+                <span id="current-location-tag" class="text-[8px] text-white/30 font-bold uppercase tracking-tighter">Syncing Location...</span>
+            </div>
+            <div id="ai-recommendation-container" class="relative min-h-[140px]">
+                <!-- JS에서 3D 엠보싱 카드를 동적으로 주입합니다 -->
+            </div>
+        </section>
+
+        <!-- 추천 섹션 (Trending) -->
+        <section class="space-y-4">
+            <div class="flex justify-between items-center px-2">
+                <h2 class="text-sm font-black text-white flex items-center gap-2 uppercase tracking-tighter">
+                    <span class="text-orange-500 animate-pulse">⚡</span> Trending Now
+                </h2>
+                <span class="text-[10px] text-orange-500 font-bold cursor-pointer hover:underline">SEE ALL</span>
+            </div>
+            <div class="overflow-x-auto flex gap-4 no-scrollbar">
+                <!-- 메뉴 카드 1 -->
+                <div class="min-w-[200px] bg-zinc-900 rounded-3xl overflow-hidden border border-white/5 relative group cursor-pointer">
+                    <img src="https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=400" class="w-full h-32 object-cover opacity-60 group-hover:opacity-80 transition-opacity">
+                    <div class="p-4 space-y-1">
+                        <span class="text-[8px] bg-orange-500 text-black px-1.5 py-0.5 rounded font-black italic uppercase">Popular</span>
+                        <h3 class="text-xs font-bold text-white truncate">망고 샐러드 보울</h3>
+                        <p class="text-[10px] text-orange-400 font-black font-orb">2.5 Pi</p>
+                    </div>
+                </div>
+                <!-- 메뉴 카드 2 -->
+                <div class="min-w-[200px] bg-zinc-900 rounded-3xl overflow-hidden border border-white/5 relative group cursor-pointer">
+                    <img src="https://images.unsplash.com/photo-1559339352-11d035aa65de?w=400" class="w-full h-32 object-cover opacity-60 group-hover:opacity-80 transition-opacity">
+                    <div class="p-4 space-y-1">
+                        <span class="text-[8px] bg-cyan-500 text-white px-1.5 py-0.5 rounded font-black italic uppercase">Premium</span>
+                        <h3 class="text-xs font-bold text-white truncate">디저트 샘플러</h3>
+                        <p class="text-[10px] text-orange-400 font-black font-orb">1.8 Pi</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 카테고리 그리드 -->
+        <section class="grid grid-cols-2 gap-4">
+            <div class="glass-panel p-6 rounded-3xl flex flex-col items-center gap-3 cursor-pointer hover:neon-border transition-all">
+                <div class="w-12 h-12 rounded-2xl bg-orange-500/10 flex items-center justify-center text-orange-500">
+                    <i data-lucide="truck" class="w-6 h-6"></i>
+                </div>
+                <span class="text-[11px] font-black text-white/80 uppercase">딜리버리</span>
+            </div>
+            <div class="glass-panel p-6 rounded-3xl flex flex-col items-center gap-3 cursor-pointer hover:neon-border transition-all">
+                <div class="w-12 h-12 rounded-2xl bg-cyan-500/10 flex items-center justify-center text-cyan-400">
+                    <i data-lucide="shopping-bag" class="w-6 h-6"></i>
+                </div>
+                <span class="text-[11px] font-black text-white/80 uppercase">테이크아웃</span>
+            </div>
+        </section>
+
+        <!-- 홍보 배너 -->
+        <div class="relative rounded-3xl overflow-hidden h-32 group cursor-pointer border border-white/5 shadow-2xl">
+            <img src="https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=600" class="w-full h-full object-cover">
+            <div class="absolute inset-0 bg-gradient-to-r from-black/80 to-transparent flex flex-col justify-center px-8 space-y-1">
+                <p class="text-[10px] font-black text-orange-500 italic">SEASON SPECIAL</p>
+                <h3 class="text-lg font-black text-white leading-tight uppercase font-orb">망고 시즌 메뉴<br><span class="text-orange-500">π</span> 결제 시 50% 할인</h3>
+            </div>
+        </div>
+
+        <!-- 내 주변 맛집 리스트 -->
+        <section class="space-y-4">
+            <div class="flex justify-between items-center px-2">
+                <h2 class="text-sm font-black text-white flex items-center gap-2 uppercase tracking-tighter">
+                    <i data-lucide="map-pin" class="w-4 h-4 text-orange-500"></i> Nearby Restaurants
+                </h2>
+            </div>
+            <div class="space-y-3">
+                <div class="glass-panel p-4 rounded-3xl flex items-center gap-4 cursor-pointer hover:bg-white/5 transition-all">
+                    <div class="w-16 h-16 rounded-2xl overflow-hidden border border-white/10 shrink-0">
+                        <img src="https://images.unsplash.com/photo-1512838243191-e81e8f66f1fd?w=200" class="w-full h-full object-cover">
+                    </div>
+                    <div class="flex-1 min-w-0">
+                        <h4 class="text-xs font-black text-white truncate">망고 헤븐 해운대점</h4>
+                        <p class="text-[10px] text-white/40 mt-1 flex items-center gap-1 font-medium italic">
+                            <i data-lucide="star" class="w-2.5 h-2.5 fill-orange-500 text-orange-500 border-none"></i> 4.9 · 1.2km
+                        </p>
+                        <div class="flex gap-2 mt-2">
+                            <span class="text-[8px] bg-orange-500/20 text-orange-500 border border-orange-500/30 px-2 py-0.5 rounded-full font-bold uppercase tracking-tighter">Pi Accepted</span>
+                        </div>
+                    </div>
+                    <i data-lucide="chevron-right" class="w-5 h-5 text-white/20"></i>
+                </div>
+            </div>
+        </section>
+
+        <!-- 사장님을 위한 배너 섹션 (Join Mango Partners) -->
+        <section class="pb-10">
+            <div onclick="openPartnerGuide()" class="bg-zinc-900/90 border-2 border-orange-500 p-6 rounded-[2.5rem] flex flex-col items-center text-center gap-3 cursor-pointer group active:scale-95 transition-all shadow-2xl shadow-orange-500/20">
+                <div class="w-14 h-14 rounded-2xl bg-orange-500 flex items-center justify-center text-black shadow-lg shadow-orange-500/40 group-hover:scale-110 transition-transform">
+                    <i data-lucide="store" class="w-8 h-8 font-black"></i>
+                </div>
+                <div class="space-y-1">
+                    <h3 class="text-lg font-black text-white italic tracking-tighter uppercase">π 생태계의 중심</h3>
+                    <p class="text-sm font-black text-orange-500 tracking-tight">수수료 0%로 시작하세요</p>
+                </div>
+                <div class="mt-2 px-6 py-2 bg-white text-black text-[10px] font-black rounded-full uppercase tracking-widest group-hover:bg-orange-500 transition-all shadow-md">
+                    Open Partner Guide
+                </div>
+            </div>
+        </section>
+
+    </div>
+
+    <!-- Quick Action Bar: Floating Navigation -->
+    <nav class="fixed bottom-0 left-0 right-0 z-[90] bg-zinc-950/80 backdrop-blur-2xl border-t border-white/5 px-6 py-4 flex justify-between items-center pb-8">
+        <button class="flex flex-col items-center gap-1 text-orange-500">
+            <i data-lucide="home" class="w-6 h-6 fill-current"></i>
+            <span class="text-[8px] font-black uppercase">Home</span>
+        </button>
+        
+        <div class="relative -mt-14">
+            <button onclick="openQRScanner()" class="w-20 h-20 bg-orange-500 rounded-full flex flex-col items-center justify-center border-4 border-black shadow-2xl animate-pulse active:scale-90 transition-all">
+                <i data-lucide="qr-code" class="text-black w-8 h-8 font-black mb-1"></i>
+                <span class="text-[8px] text-black font-black leading-none text-center uppercase">Scan<br>Order</span>
+            </button>
+        </div>
+
+        <button class="flex flex-col items-center gap-1 text-white/40 group">
+            <div class="relative">
+                <i data-lucide="shopping-cart" class="w-6 h-6 group-hover:text-white transition-colors"></i>
+                <span class="absolute -top-1 -right-1 w-4 h-4 bg-orange-500 text-black text-[8px] font-black rounded-full flex items-center justify-center">2</span>
+            </div>
+            <span class="text-[8px] font-black uppercase">Cart</span>
+        </button>
+    </nav>
+
+    <!-- QR Camera Modal -->
+    <div id="qrScannerModal" class="fixed inset-0 z-[200] hidden bg-black flex flex-col transition-transform duration-500 transform translate-y-full">
+        <!-- Camera View Area -->
+        <div class="flex-1 relative flex items-center justify-center overflow-hidden">
+            <!-- Simulated Camera Feed -->
+            <div class="absolute inset-0 bg-zinc-900 flex items-center justify-center">
+                <i data-lucide="aperture" class="w-20 h-20 text-white/5 animate-spin"></i>
+            </div>
+
+            <!-- 7. Scanner Overlay UI: Dark Backdrop with Cutout -->
+            <div class="absolute inset-0 bg-black/60 z-10">
+                <!-- Center Target Frame -->
+                <div onclick="handleMockScan()" 
+                     class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-72 h-72 rounded-[3rem] border-2 border-orange-500/50 flex items-center justify-center shadow-[0_0_0_1000px_rgba(0,0,0,0.6)] cursor-pointer active:scale-95 transition-transform">
+                    <!-- Corner Accents -->
+                    <div class="absolute top-0 left-0 w-8 h-8 border-t-4 border-l-4 border-orange-500 rounded-tl-3xl"></div>
+                    <div class="absolute top-0 right-0 w-8 h-8 border-t-4 border-r-4 border-orange-500 rounded-tr-3xl"></div>
+                    <div class="absolute bottom-0 left-0 w-8 h-8 border-b-4 border-l-4 border-orange-500 rounded-bl-3xl"></div>
+                    <div class="absolute bottom-0 right-0 w-8 h-8 border-b-4 border-r-4 border-orange-500 rounded-br-3xl"></div>
+
+                    <!-- Neon Scanning Line -->
+                    <div class="absolute left-4 right-4 h-0.5 bg-orange-400 shadow-[0_0_15px_#f97316] animate-scan-line"></div>
+                </div>
+            </div>
+
+            <div class="absolute top-12 left-0 right-0 text-center z-20">
+                <p class="text-white/80 font-orb text-[10px] tracking-[0.5em] font-black uppercase">Scanning Table QR</p>
+            </div>
+        </div>
+
+        <!-- Close Bar -->
+        <div class="p-10 bg-zinc-950/90 backdrop-blur-xl border-t border-white/5 flex justify-center">
+            <button onclick="closeQRScanner()" class="w-16 h-16 rounded-full bg-white/5 border border-white/10 flex items-center justify-center active:scale-90 transition-all">
+                <i data-lucide="x" class="text-white w-8 h-8"></i>
+            </button>
+        </div>
+    </div>
+
+    <!-- 3. Partner Guide Modal -->
+    <div id="partnerGuideModal" class="fixed inset-0 z-[250] hidden bg-black/95 backdrop-blur-3xl flex flex-col transition-transform duration-500 transform translate-y-full">
+        <!-- Scrollable Content Area -->
+        <div class="flex-1 overflow-y-auto no-scrollbar p-8">
+            <!-- Modal Header -->
+            <div class="flex justify-between items-center mb-10">
+                <div class="w-10 h-10"></div>
+                <div class="text-center">
+                    <h2 class="font-orb text-xl font-black italic tracking-tighter text-white uppercase">Partner <span class="text-orange-500">Guide</span></h2>
+                    <p class="text-[8px] text-white/40 font-bold tracking-[2px] uppercase">Business Onboarding</p>
+                </div>
+                <button onclick="closePartnerGuide()" class="w-10 h-10 rounded-full flex items-center justify-center bg-white/5 text-white/40 hover:text-white transition-colors">
+                    <i data-lucide="x" class="w-6 h-6"></i>
+                </button>
+            </div>
+
+            <!-- 4. Hero Section -->
+            <div class="relative h-56 rounded-[2.5rem] overflow-hidden mb-12 border border-white/10 shadow-2xl">
+                <img src="https://images.unsplash.com/photo-1556910103-1c02745a30b5?auto=format&fit=crop&q=80&w=1200" 
+                     class="w-full h-full object-cover grayscale brightness-[0.35]" alt="Kitchen Hero">
+                <div class="absolute inset-0 bg-gradient-to-br from-orange-600/50 via-transparent to-black/80 mix-blend-multiply"></div>
+                <div class="absolute inset-0 flex flex-col items-center justify-center text-center p-6">
+                    <h2 class="font-orb text-2xl font-black text-white italic tracking-tighter uppercase drop-shadow-2xl">MANGO FOOD PARTNER</h2>
+                    <p class="neon-text text-sm font-black tracking-tight mt-3">1분 만에 끝나는 파이(π) 맛집 등록</p>
+                </div>
+            </div>
+
+            <!-- 5. Onboarding Steps Timeline -->
+            <div id="guideContentArea" class="space-y-12 pb-20 relative before:absolute before:left-5 before:top-2 before:bottom-12 before:w-px before:border-l-2 before:border-dashed before:border-orange-500/30">
+                
+                <!-- Step 1: Basic Info -->
+                <div class="relative pl-12 group animate-in fade-in slide-in-from-bottom-4 duration-700">
+                    <div class="absolute left-0 w-10 h-10 rounded-full bg-orange-500 flex items-center justify-center text-black font-black italic shadow-lg shadow-orange-500/20 z-10 group-hover:scale-110 transition-transform">1</div>
+                    <div class="flex flex-col gap-4">
+                        <div class="space-y-1">
+                            <h3 class="text-sm font-black text-white uppercase tracking-wider italic">기본 정보 입력</h3>
+                            <p class="text-[11px] text-white/50 leading-relaxed font-medium">가게 이름 및 부산 센텀/해운대 정밀 위치 등록</p>
+                        </div>
+                        <div class="w-full aspect-[16/9] rounded-[2rem] overflow-hidden border border-white/10 bg-zinc-900 shadow-2xl transition-all group-hover:border-orange-500/30">
+                            <img src="https://images.unsplash.com/photo-1569336415962-a4bd9f6dfc0f?auto=format&fit=crop&q=80&w=600" 
+                                 class="w-full h-full object-cover grayscale-[0.3] group-hover:grayscale-0 transition-all duration-500" alt="Map UI">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Step 2: Pi Wallet -->
+                <div class="relative pl-12 group animate-in fade-in slide-in-from-bottom-4 duration-700 delay-150">
+                    <div class="absolute left-0 w-10 h-10 rounded-full bg-orange-500 flex items-center justify-center text-black font-black italic shadow-lg shadow-orange-500/20 z-10 group-hover:scale-110 transition-transform">2</div>
+                    <div class="flex flex-col gap-4">
+                        <div class="space-y-1">
+                            <h3 class="text-sm font-black text-white uppercase tracking-wider italic">파이(π) 지갑 연동</h3>
+                            <p class="text-[11px] text-white/50 leading-relaxed font-medium">수익을 즉시 정산받을 메인넷 지갑 주소 연결</p>
+                        </div>
+                        <div class="w-full aspect-[16/9] rounded-[2rem] overflow-hidden border border-white/10 bg-zinc-900 shadow-2xl transition-all group-hover:border-orange-500/30">
+                            <img src="https://images.unsplash.com/photo-1621416894569-0f39ed31d247?auto=format&fit=crop&q=80&w=600" 
+                                 class="w-full h-full object-cover grayscale-[0.3] group-hover:grayscale-0 transition-all duration-500" alt="Wallet UI">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Step 3: Digital Menu -->
+                <div class="relative pl-12 group animate-in fade-in slide-in-from-bottom-4 duration-700 delay-300">
+                    <div class="absolute left-0 w-10 h-10 rounded-full bg-orange-500 flex items-center justify-center text-black font-black italic shadow-lg shadow-orange-500/20 z-10 group-hover:scale-110 transition-transform">3</div>
+                    <div class="flex flex-col gap-4">
+                        <div class="space-y-1">
+                            <h3 class="text-sm font-black text-white uppercase tracking-wider italic">디지털 메뉴판 구성</h3>
+                            <p class="text-[11px] text-white/50 leading-relaxed font-medium">시그니처 메뉴 이미지 및 파이(π) 가격 설정</p>
+                        </div>
+                        <div class="w-full aspect-[16/9] rounded-[2rem] overflow-hidden border border-white/10 bg-zinc-900 shadow-2xl transition-all group-hover:border-orange-500/30">
+                            <img src="https://images.unsplash.com/photo-1476224483451-b8449c2560b4?auto=format&fit=crop&q=80&w=600" 
+                                 class="w-full h-full object-cover grayscale-[0.3] group-hover:grayscale-0 transition-all duration-500" alt="Menu UI">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Step 4: QR Stand -->
+                <div class="relative pl-12 group animate-in fade-in slide-in-from-bottom-4 duration-700 delay-500">
+                    <div class="absolute left-0 w-10 h-10 rounded-full bg-orange-500 flex items-center justify-center text-black font-black italic shadow-lg shadow-orange-500/20 z-10 group-hover:scale-110 transition-transform">4</div>
+                    <div class="flex flex-col gap-4">
+                        <div class="space-y-1">
+                            <h3 class="text-sm font-black text-white uppercase tracking-wider italic">망고 QR 스탠드 발급</h3>
+                            <p class="text-[11px] text-white/50 leading-relaxed font-medium">오프라인 테이블용 전용 QR 자동 생성 및 배포</p>
+                        </div>
+                        <div class="w-full aspect-[16/9] rounded-[2rem] overflow-hidden border border-white/10 bg-zinc-900 shadow-2xl transition-all group-hover:border-orange-500/30">
+                            <img src="https://images.unsplash.com/photo-1595079676339-1534801ad6cf?auto=format&fit=crop&q=80&w=600" 
+                                 class="w-full h-full object-cover grayscale-[0.3] group-hover:grayscale-0 transition-all duration-500" alt="QR UI">
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- 6. Partner Benefits Grid -->
+            <section class="mt-12 space-y-6 pb-12">
+                <div class="px-2 border-l-2 border-orange-500 pl-4">
+                    <h3 class="text-[10px] font-black text-orange-500 uppercase tracking-[3px] font-orb">Partner Benefits</h3>
+                    <p class="text-[14px] font-black text-white italic mt-1">망고 파트너만이 누리는 독보적 혜택</p>
+                </div>
+                <div class="grid grid-cols-2 gap-4">
+                    <div class="embossed-card p-6 rounded-[2.5rem] flex flex-col items-center text-center gap-4 group active:scale-95 transition-all">
+                        <i data-lucide="percent" class="w-8 h-8 text-orange-500 group-hover:scale-110 transition-transform"></i>
+                        <p class="text-[11px] font-black text-white/90 leading-tight">중개 수수료<br/>ZERO</p>
+                    </div>
+                    <div class="embossed-card p-6 rounded-[2.5rem] flex flex-col items-center text-center gap-4 group active:scale-95 transition-all">
+                        <i data-lucide="crosshair" class="w-8 h-8 text-orange-500 group-hover:scale-110 transition-transform"></i>
+                        <p class="text-[11px] font-black text-white/90 leading-tight">내 주변 π 유저<br/>타겟팅</p>
+                    </div>
+                    <div class="embossed-card p-6 rounded-[2.5rem] flex flex-col items-center text-center gap-4 group active:scale-95 transition-all">
+                        <i data-lucide="flame" class="w-8 h-8 text-orange-500 group-hover:scale-110 transition-transform"></i>
+                        <p class="text-[11px] font-black text-white/90 leading-tight">바이럴 스티커<br/>마케팅</p>
+                    </div>
+                    <div class="embossed-card p-6 rounded-[2.5rem] flex flex-col items-center text-center gap-4 group active:scale-95 transition-all">
+                        <i data-lucide="line-chart" class="w-8 h-8 text-orange-500 group-hover:scale-110 transition-transform"></i>
+                        <p class="text-[11px] font-black text-white/90 leading-tight">실시간 매출<br/>대시보드</p>
+                    </div>
+                </div>
+            </section>
+
+        </div>
+
+        <!-- Fixed Bottom Action Area -->
+        <div class="p-8 bg-zinc-950/50 backdrop-blur-xl border-t border-white/5 flex justify-center">
+            <button onclick="location.href='Biz_Flirting_Dashboard.html'" class="w-full py-6 bg-orange-500 text-black font-[1000] rounded-[2rem] text-sm uppercase tracking-widest active:scale-95 transition-all shadow-2xl shadow-orange-500/40 animate-pulse-orange">
+                지금 입점 신청하기 (무료)
+            </button>
+        </div>
+    </div>
+
+    <script>
+        function openQRScanner() {
+            const modal = document.getElementById('qrScannerModal');
+            modal.classList.remove('hidden');
+            setTimeout(() => modal.classList.remove('translate-y-full'), 10);
+        }
+
+        function closeQRScanner() {
+            const modal = document.getElementById('qrScannerModal');
+            modal.classList.add('translate-y-full');
+            setTimeout(() => modal.classList.add('hidden'), 500);
+        }
+
+        // 8 & 9. Mock Scanning & Routing Logic
+        function handleMockScan() {
+            const statusText = document.querySelector('#qrScannerModal .font-orb');
+            if (statusText) statusText.innerText = "VERIFYING DATA...";
+
+            setTimeout(() => {
+                const mockData = { shopId: 'mango_bakery', tableNo: 4 };
+
+                // 10. Haptic Feedback: 스캔 성공 시 진동 발생 (촉각 피드백)
+                if (navigator.vibrate) {
+                    navigator.vibrate(100); 
+                }
+
+                // 9. Route to Digital Menu: 즉시 라우팅 실행
+                window.location.href = `Restaurant_Menu.html?shop=${mockData.shopId}&table=${mockData.tableNo}`;
+            }, 1500);
+        }
+
+        // AI 큐레이션 데이터셋 (위치 및 시간 기반)
+        const AI_DATA = [
+            {
+                id: 'busan_01',
+                name: '센텀 프리미엄 스시 V',
+                location: '부산 센텀시티',
+                type: 'Lunch',
+                benefit: 'π 결제 시 15% 추가 적립',
+                img: 'https://images.unsplash.com/photo-1579871494447-9811cf80d66c?w=400',
+                icon: 'zap',
+                color: 'text-cyan-400'
+            },
+            {
+                id: 'haeundae_02',
+                name: '해운대 밤바다 포차',
+                location: '부산 해운대',
+                type: 'Dinner/Night',
+                benefit: '첫 π 결제 시 안주 1+1',
+                img: 'https://images.unsplash.com/photo-1514933651103-005eec06c04b?w=400',
+                icon: 'flame',
+                color: 'text-orange-500'
+            }
+        ];
+
+        function renderAICuration() {
+            const container = document.getElementById('ai-recommendation-container');
+            const locationTag = document.getElementById('current-location-tag');
+            const now = new Date();
+            const hour = now.getHours();
+            
+            // 시간대에 따른 데이터 필터링 (간단한 로직)
+            let selected = (hour >= 11 && hour < 17) ? AI_DATA[0] : AI_DATA[1];
+            
+            locationTag.innerText = `현재 위치: ${selected.location} / ${hour}:00`;
+
+            container.innerHTML = `
+                <div class="embossed-card p-5 rounded-[2.5rem] flex items-center gap-5 cursor-pointer group transition-all animate-in fade-in slide-in-from-right-4 duration-700">
+                    <!-- 3D 효과를 강조하는 이미지 프레임 -->
+                    <div class="w-24 h-24 rounded-[2rem] overflow-hidden shrink-0 border-2 border-black shadow-lg relative">
+                        <img src="${selected.img}" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
+                        <div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
+                        <div class="absolute bottom-2 left-0 right-0 text-center">
+                            <span class="text-[7px] font-black text-white/80 uppercase">${selected.type} Pick</span>
+                        </div>
+                    </div>
+
+                    <div class="flex-1 space-y-2">
+                        <div class="flex items-center gap-1.5">
+                            <span class="w-1.5 h-1.5 rounded-full bg-green-500 animate-ping"></span>
+                            <p class="text-[9px] font-black text-white/40 uppercase tracking-widest">Perfect for Now</p>
+                        </div>
+                        
+                        <h3 class="text-[15px] font-black text-white italic tracking-tight leading-tight">
+                            ${selected.name}
+                        </h3>
+                        
+                        <div class="bg-black/30 backdrop-blur-sm px-3 py-2 rounded-xl border border-white/5 inline-block">
+                            <p class="text-[10px] font-bold ${selected.color} flex items-center gap-1.5 italic">
+                                <i data-lucide="${selected.icon}" class="w-3 h-3"></i>
+                                ${selected.benefit}
+                            </p>
+                        </div>
+
+                        <div class="flex items-center justify-between pt-1">
+                            <div class="flex -space-x-2">
+                                <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=1" class="w-5 h-5 rounded-full border border-black bg-zinc-800">
+                                <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=2" class="w-5 h-5 rounded-full border border-black bg-zinc-800">
+                                <div class="w-5 h-5 rounded-full border border-black bg-zinc-900 flex items-center justify-center text-[6px] font-black">+12</div>
+                            </div>
+                            <span class="text-[8px] font-black text-white/20 uppercase font-orb tracking-widest">Mango Intelligence</span>
+                        </div>
+                    </div>
+
+                    <!-- 화살표 인디케이터 -->
+                    <div class="w-10 h-10 rounded-full flex items-center justify-center text-white/10 group-hover:text-cyan-400 group-hover:translate-x-1 transition-all">
+                        <i data-lucide="chevron-right" class="w-6 h-6"></i>
+                    </div>
+                </div>
+            `;
+            
+            lucide.createIcons();
+        }
+
+        /**
+         * [Step 4: Sticker DB Schema] 
+         * localStorage에서 스티커 데이터를 로드하거나 초기화합니다.
+         */
+        function initStickerDB() {
+            const defaultStickers = [
+                { id: 'p1', name: '망고포차', img: 'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=150' },
+                { id: 'p2', name: '해운대 카페V', img: 'https://images.unsplash.com/photo-1554118811-1e0d58224f24?w=150' },
+                { id: 'p3', name: '암소갈비', img: 'https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=150' }
+            ];
+            
+            if (!localStorage.getItem('mango_food_stickers')) {
+                localStorage.setItem('mango_food_stickers', JSON.stringify(defaultStickers));
+            }
+            console.log("Sticker DB Standardized.");
+        }
+
+        function openPartnerGuide() {
+            const modal = document.getElementById('partnerGuideModal');
+            modal.classList.remove('hidden');
+            setTimeout(() => modal.classList.remove('translate-y-full'), 10);
+            lucide.createIcons();
+        }
+
+        function closePartnerGuide() {
+            const modal = document.getElementById('partnerGuideModal');
+            modal.classList.add('translate-y-full');
+            setTimeout(() => modal.classList.add('hidden'), 500);
+        }
+
+        // 초기 실행
+        renderAICuration();
+        initStickerDB();
+        lucide.createIcons();
+    </script>
+</body>
+</html>

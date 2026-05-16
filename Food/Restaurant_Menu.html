@@ -1,0 +1,663 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>MANGO MENU</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;900&family=Noto+Sans+KR:wght@300;400;700;900&display=swap');
+        
+        :root {
+            --mango-orange: #f97316;
+            --neon-orange: #ff6b00;
+        }
+
+        body {
+            font-family: 'Noto Sans KR', sans-serif;
+            background-color: #000;
+            color: white;
+            min-height: 100vh;
+        }
+
+        .font-orb { font-family: 'Orbitron', sans-serif; }
+
+        /* [핵심] 풀 블리드 섹션 스타일 */
+        .hero-full-bleed {
+            width: 100%;
+            height: 40vh;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .glass-panel {
+            background: rgba(24, 24, 27, 0.9); /* bg-zinc-900/90 */
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 107, 0, 0.2);
+            box-shadow: 0 0 40px rgba(0, 0, 0, 0.5);
+        }
+
+        .neon-text {
+            color: var(--neon-orange);
+            text-shadow: 0 0 10px rgba(255, 107, 0, 0.5);
+        }
+
+        /* 스크롤바 숨기기 */
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+
+        @keyframes pulse-orange {
+            0%, 100% { box-shadow: 0 0 0 0 rgba(249, 115, 22, 0.4); }
+            50% { box-shadow: 0 0 0 10px rgba(249, 115, 22, 0); }
+        }
+        .animate-pulse-orange { animation: pulse-orange 2s infinite; }
+    </style>
+</head>
+<body class="overflow-x-hidden pb-32">
+
+    <!-- 11. Full-bleed Hero Visual Area -->
+    <div class="hero-full-bleed">
+        <!-- 시그니처 메뉴 영상/이미지 (실제 서비스 시 비디오 태그 권장) -->
+        <img id="shop-hero-image" src="https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=1200" 
+             class="w-full h-full object-cover brightness-75 transition-transform duration-1000 hover:scale-105" 
+             alt="Signature Menu">
+        
+        <!-- 하단 그라데이션 오버레이 -->
+        <div class="absolute inset-0 bg-gradient-to-t from-[#050505] via-transparent to-black/30"></div>
+
+        <!-- 상단 액션 버튼 -->
+        <div class="absolute top-6 left-6 right-6 flex justify-between items-center z-20">
+            <button onclick="history.back()" class="w-10 h-10 rounded-full bg-black/40 backdrop-blur-md border border-white/10 flex items-center justify-center active:scale-90 transition-all">
+                <i data-lucide="arrow-left" class="w-5 h-5 text-white"></i>
+            </button>
+
+            <!-- 3 & 4. Dynamic Header Center Text -->
+            <div class="flex-1 text-center">
+                <span class="neon-text font-black text-xs italic tracking-tighter uppercase">Table <span id="header-table-number">--</span> - 주문 중</span>
+            </div>
+
+            <button class="w-10 h-10 rounded-full bg-black/40 backdrop-blur-md border border-white/10 flex items-center justify-center active:scale-90 transition-all">
+                <i data-lucide="share-2" class="w-5 h-5 text-white"></i>
+            </button>
+        </div>
+
+        <!-- 매장 기본 정보 플로팅 -->
+        <div class="absolute bottom-6 left-6 right-6 z-20">
+            <div class="flex items-end justify-between">
+                <div class="space-y-1">
+                    <div class="flex items-center gap-2">
+                        <span class="bg-orange-500 text-black text-[9px] font-black px-2 py-0.5 rounded italic uppercase">Table <span id="table-number">--</span></span>
+                        <span class="text-[10px] text-white/60 font-bold uppercase tracking-widest font-orb">Verified Shop</span>
+                    </div>
+                    <h1 id="shop-name" class="text-3xl font-black italic tracking-tighter text-white drop-shadow-xl uppercase">Loading...</h1>
+                </div>
+                <div onclick="saveAsSticker()" class="bg-black/60 backdrop-blur-xl p-3 rounded-2xl border border-white/10 flex items-center gap-3 cursor-pointer active:scale-95 transition-all group">
+                    <i data-lucide="star" class="w-4 h-4 fill-orange-500 text-orange-500"></i>
+                    <span id="shop-rating" class="font-black text-sm group-hover:text-orange-500 transition-colors">4.9</span>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- 메뉴 콘텐츠 영역 -->
+    <div class="w-full max-w-[430px] mx-auto px-6 mt-8 space-y-8">
+        <section class="mb-10">
+            <h2 class="text-xs font-black text-white/30 uppercase tracking-[0.3em] font-orb mb-4">Master Selection</h2>
+            <div id="menu-list" class="space-y-4">
+                <!-- 메뉴 카드가 여기에 렌더링됩니다 -->
+                <div class="p-6 text-center border border-dashed border-white/10 rounded-3xl opacity-30">
+                    <p class="text-xs italic font-medium">Fetching exclusive menu data...</p>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <!-- 13. Cart & Smart Order: 하단 고정 주문서 -->
+    <footer class="fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-[430px] p-4 bg-black/40 backdrop-blur-xl border-t border-white/5 z-[100] flex flex-col gap-3">
+        
+        <!-- 14-1. 소셜 플러팅 스위치 토글 (N빵 모드 입구) -->
+        <div class="flex justify-end px-2 mb-1">
+            <div onclick="toggleSplit()" class="flex items-center gap-2 cursor-pointer group">
+                <span class="text-[10px] font-black text-white/30 group-hover:text-orange-500 transition-colors uppercase tracking-widest italic">친구와 파이(π) 나누기 (N빵)</span>
+                <div id="splitToggleBg" class="w-8 h-4 bg-zinc-700 rounded-full relative transition-colors duration-300">
+                    <div id="splitToggleCircle" class="absolute left-0.5 top-0.5 w-3 h-3 bg-white rounded-full transition-transform duration-300"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 14. Dutch Pay (N빵) Control Area -->
+        <div id="splitControl" class="hidden flex items-center justify-between px-6 py-2 bg-white/5 rounded-2xl border border-white/10 animate-in fade-in slide-in-from-bottom-2 duration-300">
+            <span class="text-[10px] font-black uppercase tracking-widest text-white/40 font-orb">Split Bill (N-Person)</span>
+            <div class="flex items-center gap-5">
+                <button onclick="changeSplit(-1)" class="w-8 h-8 rounded-full bg-white/5 flex items-center justify-center text-white active:bg-orange-500 transition-colors">-</button>
+                <span id="splitCountText" class="font-orb font-black text-orange-500 text-sm w-4 text-center">1</span>
+                <button onclick="changeSplit(1)" class="w-8 h-8 rounded-full bg-white/5 flex items-center justify-center text-white active:bg-orange-500 transition-colors">+</button>
+            </div>
+        </div>
+
+        <div class="flex gap-2">
+            <!-- Dutch Pay Toggle Button -->
+            <button id="splitBtn" onclick="toggleSplit()" 
+                    class="w-16 h-14 rounded-2xl flex items-center justify-center border border-white/10 text-white/30 transition-all active:scale-95">
+                <i data-lucide="users" class="w-6 h-6"></i>
+            </button>
+
+            <button id="placeOrderBtn" 
+                    onclick="placeOrder()" 
+                    class="flex-1 py-4 rounded-[2rem] flex items-center justify-between px-8 text-black font-black italic shadow-2xl transition-all duration-300
+                           bg-gray-700 cursor-not-allowed opacity-50"
+                    disabled>
+                <div class="flex items-center gap-3">
+                    <i data-lucide="shopping-cart" class="w-5 h-5 text-white"></i>
+                    <span id="cartCountBadge" class="bg-black text-orange-500 px-2 py-0.5 rounded text-[10px] not-italic font-orb">0</span>
+                </div>
+                <span id="orderBtnText" class="text-sm tracking-widest uppercase font-orb text-white">주방으로 주문 전송</span>
+                <span id="totalPiPrice" class="text-base text-white font-orb">0.00 π</span>
+            </button>
+        </div>
+    </footer>
+
+    <!-- 15. Payment Success Flirting: Confetti Overlay -->
+    <div id="confetti-overlay" class="fixed inset-0 z-[102] pointer-events-none"></div>
+
+    <!-- 16. Share Trigger Button -->
+    <div id="shareTrigger" 
+         class="fixed bottom-36 left-1/2 -translate-x-1/2 bg-gradient-to-r from-orange-500 to-yellow-500 text-black px-6 py-3 rounded-full shadow-lg opacity-0 transition-all duration-300 z-[101] cursor-pointer flex items-center gap-2" 
+         onclick="shareRestaurant()">
+        <i data-lucide="share-2" class="w-5 h-5 text-black"></i>
+        <span class="text-sm font-black italic font-orb">이 맛집을 친구 머릿속에 스티커로 붙여주세요!</span>
+    </div>
+
+    <!-- 17. Dynamic Share Card Modal -->
+    <div id="polaroidModal" class="fixed inset-0 z-[300] hidden flex flex-col items-center justify-center p-6 bg-black/90 backdrop-blur-xl animate-in fade-in duration-300">
+        <div class="relative bg-white p-4 pb-12 shadow-[0_20px_50px_rgba(0,0,0,0.5)] rotate-1 max-w-[320px] w-full transform transition-transform hover:rotate-0">
+            <!-- Image Area -->
+            <div class="bg-zinc-100 aspect-square overflow-hidden mb-5 border border-zinc-200">
+                <img id="polaroidImage" src="" class="w-full h-full object-cover grayscale-[10%] hover:grayscale-0 transition-all duration-500">
+            </div>
+            
+            <!-- Info Area -->
+            <div class="px-1 space-y-3">
+                <div class="flex justify-between items-start text-left">
+                    <div>
+                        <h3 id="polaroidTitle" class="text-zinc-900 font-black italic text-xl tracking-tighter leading-tight uppercase truncate max-w-[180px]"></h3>
+                        <p class="text-orange-500 text-[10px] font-black uppercase tracking-[0.2em] mt-1">Excellent Choice!</p>
+                    </div>
+                    <div class="flex flex-col items-end gap-1">
+                        <div class="flex text-orange-500 gap-0.5" id="polaroidStars"></div>
+                        <span class="text-zinc-300 text-[8px] font-orb tracking-tighter">Verified 4.9/5.0</span>
+                    </div>
+                </div>
+
+                <div class="py-3 px-4 bg-orange-50 rounded-2xl border border-orange-100 text-left">
+                    <p id="polaroidBenefit" class="text-orange-600 text-[11px] font-black italic leading-tight"></p>
+                </div>
+
+                <div class="pt-4 border-t border-zinc-100 flex justify-between items-center">
+                    <div class="flex items-center gap-2">
+                        <img src="https://mango-os-6xu2.vercel.app/mango.jpg" class="w-6 h-6 rounded-lg border border-orange-500/20">
+                        <span class="text-zinc-400 text-[9px] font-orb font-bold uppercase tracking-widest">Mango OS Verified</span>
+                    </div>
+                    <span class="text-zinc-300 text-[8px] font-mono">#2026_BUSAN</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="mt-10 flex gap-4 w-full max-w-[320px]">
+            <button onclick="closePolaroid()" class="flex-1 py-4 bg-white/10 border border-white/20 rounded-2xl text-white font-bold text-[10px] uppercase tracking-widest hover:bg-white/20 transition-all">
+                닫기
+            </button>
+            <button onclick="executeNativeShare()" class="flex-[2] py-4 bg-orange-500 text-black font-black rounded-2xl text-[10px] uppercase tracking-widest shadow-lg shadow-orange-500/20 active:scale-95 transition-all flex items-center justify-center gap-2">
+                <i data-lucide="send" class="w-4 h-4"></i>
+                공유하기
+            </button>
+            <button onclick="shareToMangoChat(lastOrderSnapshot)" class="flex-[2] py-4 bg-blue-500 text-white font-black rounded-2xl text-[10px] uppercase tracking-widest shadow-lg shadow-blue-500/20 active:scale-95 transition-all flex items-center justify-center gap-2">
+                <i data-lucide="message-circle" class="w-4 h-4"></i>
+                채팅으로 보내기
+            </button>
+        </div>
+    </div>
+
+    <!-- 15. Push Notification Toast (Top Style) -->
+    <div id="pushNotification" class="fixed top-[-100px] left-1/2 -translate-x-1/2 w-[90%] max-w-[400px] bg-zinc-900/90 backdrop-blur-xl border border-white/10 p-4 rounded-[2rem] z-[200] transition-all duration-500 shadow-2xl flex items-center gap-4">
+        <div class="w-10 h-10 bg-orange-500 rounded-2xl flex items-center justify-center shadow-lg shadow-orange-500/20">
+            <i data-lucide="chef-hat" class="w-6 h-6 text-black"></i>
+        </div>
+        <div class="flex-1">
+            <p class="text-[9px] text-orange-500 font-black uppercase tracking-widest font-orb">Order Verified</p>
+            <p id="pushMessage" class="text-sm font-bold text-white"></p>
+        </div>
+    </div>
+
+    <!-- Toast Notification -->
+    <div id="mangoToast" class="fixed bottom-28 left-1/2 -translate-x-1/2 bg-zinc-800 text-white px-5 py-3 rounded-full shadow-lg opacity-0 transition-opacity duration-300 z-[101]">
+        <p id="toastMessage" class="text-sm font-medium"></p>
+    </div>
+
+
+
+
+    <script>
+        lucide.createIcons();
+
+        /**
+         * [함수: 페이지 초기설정]
+         * URL 쿼리 파라미터(shop, table)를 분석하여 매장 정보와 테이블 번호를 추출합니다.
+         * 데이터가 누락되었을 경우 기본값인 'MANGO_DINING'과 '--'를 사용하여 레이아웃이 깨지는 것을 방지합니다.
+         * @description Step 2: URL 데이터 수신 및 UI 바인딩 로직
+         */
+        function initMenuPage() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const shopId = urlParams.get('shop') || 'MANGO_DINING';
+            const tableNo = urlParams.get('table') || '--';
+
+            // 매장명(언더바를 공백으로 치환)과 테이블 번호 DOM 업데이트
+            document.getElementById('shop-name').innerText = shopId.replace(/_/g, ' ');
+            document.getElementById('table-number').innerText = tableNo;
+        }
+
+        /**
+         * [시스템 상태 관리]
+         * 장바구니 아이템 리스트, 분할 결제 여부, 인원수 등 전역 상태 변수들을 정의합니다.
+         */
+        let cart = [];
+        let isSplit = false;
+        let splitCount = 1;
+        let lastOrderSnapshot = null;
+        const PI_PER_KRW = 0.00005; // 예시 환율: 1원 = 0.00005 Pi (20,000원 = 1 Pi)
+
+        /**
+         * [메뉴 데이터베이스]
+         * 매장에서 판매 중인 메뉴 리스트입니다. (ID, 이름, 설명, 파이 가격, 원화 가격, 이미지 포함)
+         * @description 12. Pi Menu Rendering 소스 데이터
+         */
+        const menuItems = [
+            {
+                id: 'mango_shrimp_taco',
+                name: '망고 쉬림프 타코',
+                desc: '신선한 망고 살사와 매콤한 쉬림프',
+                pi_price: 2.5,
+                krw_price: 22000,
+                img: 'https://images.unsplash.com/photo-1512838243191-e81e8f66f1fd?w=400',
+                tags: ['Signature', 'Spicy']
+            },
+            {
+                id: 'avocado_cream_noodle',
+                name: '아보카도 크림 누들',
+                desc: '부드러운 아보카도 무스의 풍미',
+                pi_price: 3.0,
+                krw_price: 25000,
+                img: 'https://images.unsplash.com/photo-1473093226795-af9932fe5856?w=400',
+                tags: ['Vegan', 'New']
+            },
+            {
+                id: 'tropical_rice',
+                name: '트로피컬 라이스',
+                desc: '파인애플과 특제 소스의 볶음밥',
+                pi_price: 2.0,
+                krw_price: 18000,
+                img: 'https://images.unsplash.com/photo-1512058564366-18510be2db19?w=400',
+                tags: ['Popular']
+            }
+        ];
+
+        /**
+         * [함수: 메뉴 화면 출력]
+         * 정의된 메뉴 데이터를 바탕으로 HTML 카드를 생성하여 화면의 메뉴 리스트 영역에 렌더링합니다.
+         * 프리미엄 다크 테마 디자인 규격을 따르며 호버 및 터치 인터랙션을 포함합니다.
+         */
+        function renderMenu() { // 기존 renderMenu 함수 수정
+            const menuListContainer = document.getElementById('menu-list');
+            menuListContainer.innerHTML = ''; // 기존 로딩 메시지 제거
+        
+            menuItems.forEach(item => {
+                menuListContainer.innerHTML += ` 
+                    <div class="bg-zinc-900 rounded-[2rem] p-4 flex items-center gap-4 border border-white/5 hover:border-orange-500/20 transition-all group">
+                        <div class="w-20 h-20 rounded-2xl overflow-hidden flex-shrink-0 border border-white/10 shadow-lg">
+                            <img src="${item.img}" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
+                        </div>
+                        <div class="flex-1 min-w-0">
+                            <h4 class="text-sm font-black text-white truncate uppercase italic tracking-tighter">${item.name}</h4>
+                            <p class="text-[10px] text-white/40 line-clamp-1 mb-2 font-medium">${item.desc}</p>
+                            <div class="flex items-center gap-2">
+                                <span class="text-lg font-orb font-black text-orange-500">${item.pi_price} <span class="text-xs italic">π</span></span>
+                                <span class="text-[9px] text-white/20 font-bold">${item.krw_price.toLocaleString()}원</span>
+                            </div>
+                        </div>
+                        <button onclick="addToCart('${item.id}')" 
+                                class="bg-orange-500 text-black px-4 py-2.5 rounded-xl text-[10px] font-[1000] uppercase tracking-wider active:scale-90 transition-all shadow-lg shadow-orange-500/20">
+                            + 담기
+                        </button>
+                    </div>
+                `;
+            });
+        }
+
+        /**
+         * [함수: 장바구니 아이템 추가]
+         * 사용자가 선택한 메뉴의 ID를 확인하여 장바구니 배열에 신규 추가하거나 기존 수량을 증가시킵니다.
+         * 사용자에게 즉각적인 안내 피드백(Toast)을 제공합니다.
+         */
+        function addToCart(itemId) {
+            const selectedItem = menuItems.find(item => item.id === itemId);
+            if (!selectedItem) return;
+
+            const existingItem = cart.find(item => item.id === itemId);
+            if (existingItem) {
+                existingItem.quantity++;
+            } else {
+                cart.push({ ...selectedItem, quantity: 1 });
+            }
+
+            showToast(`✅ ${selectedItem.name}이(가) 장바구니에 추가되었습니다.`);
+            updateCartUI();
+        }
+
+        /**
+         * [함수: 더치페이 모드 전환]
+         * '친구와 파이 나누기(N빵)' 스위치 및 버튼을 클릭할 때 실행됩니다.
+         * 활성화 시 인원 조절 패널이 나타나고, 스위치 토글 애니메이션이 작동합니다.
+         */
+        function toggleSplit() {
+            isSplit = !isSplit;
+            const splitControl = document.getElementById('splitControl');
+            const splitBtn = document.getElementById('splitBtn');
+            const toggleBg = document.getElementById('splitToggleBg');
+            const toggleCircle = document.getElementById('splitToggleCircle');
+            
+            if (isSplit) {
+                splitControl.classList.remove('hidden');
+                splitBtn.classList.add('bg-orange-500', 'text-black', 'border-orange-500');
+                splitBtn.classList.remove('text-white/30');
+                
+                // 스위치 On 애니메이션
+                toggleBg.classList.replace('bg-zinc-700', 'bg-orange-500');
+                toggleCircle.style.transform = 'translateX(16px)';
+
+                showToast("👥 친구와 파이 나누기(Dutch Pay) 모드 활성화");
+            } else {
+                splitControl.classList.add('hidden');
+                splitBtn.classList.remove('bg-orange-500', 'text-black', 'border-orange-500');
+                splitBtn.classList.add('text-white/30');
+                
+                // 스위치 Off 애니메이션
+                toggleBg.classList.replace('bg-orange-500', 'bg-zinc-700');
+                toggleCircle.style.transform = 'translateX(0)';
+
+                splitCount = 1;
+                document.getElementById('splitCountText').innerText = "1";
+            }
+            updateCartUI();
+        }
+
+        /**
+         * [함수: 분할 인원수 조절]
+         * 더치페이 모드에서 결제 금액을 나누어 가질 인원수를 증감시킵니다. (최소 1명)
+         */
+        function changeSplit(val) {
+            splitCount = Math.max(1, splitCount + val);
+            document.getElementById('splitCountText').innerText = splitCount;
+            updateCartUI();
+        }
+
+        /**
+         * [함수: 장바구니 UI 최적화]
+         * 현재 담긴 메뉴의 수량과 총 금액을 계산하여 하단 결제 바의 배지와 텍스트를 실시간으로 업데이트합니다.
+         */
+        function updateCartUI() {
+            const cartCountBadge = document.getElementById('cartCountBadge');
+            const totalPiPrice = document.getElementById('totalPiPrice');
+            const placeOrderBtn = document.getElementById('placeOrderBtn');
+            const orderBtnText = document.getElementById('orderBtnText');
+
+            const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
+            const totalKrw = cart.reduce((sum, item) => sum + (item.krw_price * item.quantity), 0);
+            const totalPiValue = totalKrw * PI_PER_KRW;
+
+            cartCountBadge.innerText = totalItems;
+            
+            updatePriceDisplay(totalPiValue);
+
+            if (totalItems > 0) {
+                placeOrderBtn.disabled = false;
+                placeOrderBtn.classList.remove('bg-gray-700', 'cursor-not-allowed', 'opacity-50');
+                placeOrderBtn.classList.add('bg-gradient-to-r', 'from-orange-500', 'to-yellow-500', 'hover:scale-[1.02]', 'animate-pulse-orange');
+                cartCountBadge.classList.add('animate-bounce'); // 애니메이션 추가
+            } else {
+                placeOrderBtn.disabled = true;
+                placeOrderBtn.classList.add('bg-gray-700', 'cursor-not-allowed', 'opacity-50');
+                placeOrderBtn.classList.remove('bg-gradient-to-r', 'from-orange-500', 'to-yellow-500', 'hover:scale-[1.02]', 'animate-pulse-orange');
+            }
+            setTimeout(() => cartCountBadge.classList.remove('animate-bounce'), 500); // 애니메이션 제거
+        }
+
+        /**
+         * [함수: 금액 렌더링]
+         * 일반 모드에서는 총 합계 Pi를, 더치페이 모드에서는 1인당 분담해야 할 Pi 가격을 계산하여 표시합니다.
+         */
+        function updatePriceDisplay(totalPi) {
+            const totalPiPrice = document.getElementById('totalPiPrice');
+            if (isSplit && splitCount > 1) {
+                const perPerson = (totalPi / splitCount).toFixed(2);
+                // 1인당 가격을 강조하는 UI
+                totalPiPrice.innerHTML = `<span class="text-[10px] text-white/50 mr-1">1인당</span>${perPerson} π`;
+            } else {
+                totalPiPrice.innerText = `${totalPi.toFixed(2)} π`;
+            }
+        }
+
+        /**
+         * [함수: 최종 주문 전송]
+         * 사용자가 결제 버튼을 누르면 장바구니 스냅샷을 저장하고, 축하 애니메이션(Confetti)과 상단 알림을 트리거합니다.
+         * 주문 완료 후 2.5초 뒤에 소셜 공유(바이럴 스티커)를 유도하는 공유 버튼이 노출됩니다.
+         */
+        function placeOrder() {
+            if (cart.length === 0) {
+                showToast("장바구니가 비어 있습니다.");
+                return;
+            }
+
+            // 햅틱 피드백 (진동)
+            if (navigator.vibrate) {
+                navigator.vibrate(100);
+            }
+
+            // 17. Save order snapshot for dynamic share card
+            lastOrderSnapshot = [...cart];
+
+            // 15. Payment Success Flirting: Confetti & Push Toast
+            spawnConfetti();
+            showPushNotification("주방에서 조리를 시작했습니다! 👨‍🍳");
+
+            // Show share button after a delay
+            setTimeout(() => {
+                const shareTrigger = document.getElementById('shareTrigger');
+                shareTrigger.classList.add('opacity-100', 'translate-y-[-20px]'); // Slide up slightly
+                setTimeout(() => {
+                    shareTrigger.classList.remove('opacity-100', 'translate-y-[-20px]');
+                    shareTrigger.classList.add('opacity-0');
+                }, 5000); // Hide after 5 seconds
+            }, 2500); // Show after confetti/toast animation
+
+            cart = []; // 장바구니 비우기
+            updateCartUI(); // UI 업데이트
+        }
+
+        /**
+         * [함수: 시스템 푸시 알림]
+         * 주문 상태 변경이나 보상 적립 등 중요한 정보를 시스템 상단에서 내려오는 알림바로 시각화합니다.
+         */
+        function showPushNotification(message) {
+            const push = document.getElementById('pushNotification');
+            const msg = document.getElementById('pushMessage');
+            msg.innerText = message;
+            
+            // 아이콘 재생성 (동적 삽입 대응)
+            lucide.createIcons();
+
+            push.style.top = '24px';
+            
+            setTimeout(() => {
+                push.style.top = '-100px';
+            }, 4000);
+        }
+
+        /**
+         * [함수: 화려한 폭죽 효과]
+         * 결제나 보상 시 획득의 즐거움을 극대화하기 위해 화면 중앙에서 화려한 금가루(Confetti)가 터지는 애니메이션을 실행합니다.
+         */
+        function spawnConfetti() {
+            const overlay = document.getElementById('confetti-overlay');
+            const colors = ['#f97316', '#fbbf24', '#ffffff', '#ff6b00', '#2dd4bf'];
+            
+            // 60개의 입자 생성 (중앙에서 폭발하는 형태)
+            for(let i=0; i<60; i++) {
+                const confetti = document.createElement('div');
+                confetti.style.position = 'absolute';
+                confetti.style.width = Math.random() * 8 + 4 + 'px';
+                confetti.style.height = confetti.style.width;
+                confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+                confetti.style.left = '50%';
+                confetti.style.top = '50%';
+                confetti.style.borderRadius = '2px';
+                confetti.style.zIndex = '102';
+                overlay.appendChild(confetti);
+
+                const angle = Math.random() * Math.PI * 2;
+                const velocity = Math.random() * 150 + 50;
+                const destinationX = Math.cos(angle) * velocity * 3;
+                const destinationY = Math.sin(angle) * velocity * 3;
+
+                confetti.animate([
+                    { transform: 'translate(-50%, -50%) scale(1)', opacity: 1 },
+                    { transform: `translate(${destinationX}px, ${destinationY}px) scale(0) rotate(${Math.random() * 720}deg)`, opacity: 0 }
+                ], {
+                    duration: Math.random() * 1000 + 1500,
+                    easing: 'cubic-bezier(0, .9, .57, 1)',
+                    delay: Math.random() * 200
+                }).onfinish = () => confetti.remove();
+            }
+        }
+
+        /**
+         * [함수: 하단 토스트 메시지]
+         * 사용자 동작에 대한 가벼운 안내 메시지를 화면 하단 중앙에 일시적으로 띄웁니다.
+         */
+        function showToast(message) {
+            const toast = document.getElementById('mangoToast');
+            document.getElementById('toastMessage').innerText = message;
+            toast.classList.add('opacity-100');
+            setTimeout(() => toast.classList.remove('opacity-100'), 2000);
+        }
+
+        /**
+         * [함수: 공유 카드 모달 닫기]
+         * 생성된 맛집 폴라로이드 카드 모달 창을 화면에서 제거합니다.
+         */
+        function closePolaroid() {
+            document.getElementById('polaroidModal').classList.add('hidden');
+        }
+
+        /**
+         * [함수: 소셜 플러팅 공유 카드 생성]
+         * 주문한 내역을 기반으로 동적인 폴라로이드 형태의 디자인 카드를 생성하여 모달로 노출합니다.
+         * @description 17. Dynamic Share Card Modal 시스템 연동
+         */
+        function shareRestaurant() {
+            // 폴라로이드 모달을 현재 주문 스냅샷으로 업데이트 후 노출
+            const modal = document.getElementById('polaroidModal');
+            const title = document.getElementById('polaroidTitle');
+            const img = document.getElementById('polaroidImage');
+            const benefit = document.getElementById('polaroidBenefit');
+            const shopName = document.getElementById('shop-name').innerText;
+
+            title.innerText = shopName;
+            // 첫 번째 메뉴 이미지를 대표 이미지로 설정
+            img.src = (lastOrderSnapshot && lastOrderSnapshot.length > 0) 
+                ? lastOrderSnapshot[0].img 
+                : "https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=600";
+            
+            benefit.innerText = `총 ${lastOrderSnapshot?.length || 0}개의 메뉴 주문이 완료되었습니다.`;
+            
+            modal.classList.remove('hidden');
+            lucide.createIcons();
+        }
+
+        /**
+         * [함수: 시스템 기본 공유 호출]
+         * 스마트폰의 기본 공유 시트를 열어 친구들에게 매장 링크나 이미지를 전송할 수 있는 기능을 호출합니다.
+         */
+        function executeNativeShare() {
+            showToast("📲 시스템 공유 기능을 호출합니다...");
+        }
+
+        /**
+         * [함수: 망고 채팅 포털로 공유]
+         * 생성된 공유 카드를 로컬 스토리지 메시지 큐를 통해 Chat_Portal.html로 즉시 전송하여 친구와 소통할 수 있게 합니다.
+         * @description 18. Chat Portal Integration 로직 담당
+         */
+        function shareToMangoChat(cardData) {
+            if (!cardData || cardData.length === 0) {
+                showToast("❌ 전송할 주문 데이터가 없습니다.");
+                return;
+            }
+
+            // [Step 1] 전송할 메시지 페이로드 준비
+            const shopName = document.getElementById('shop-name').innerText;
+            const imageUrl = document.getElementById('polaroidImage').src;
+            
+            const chatMessage = {
+                type: 'polaroid_card',
+                sender: 'Me', // 추후 로그인 유저 정보로 대체 가능
+                content: {
+                    shopName: shopName,
+                    image: imageUrl,
+                    orderSummary: cardData.map(i => `${i.name} x ${i.quantity}`).join(', '),
+                    timestamp: new Date().getTime()
+                }
+            };
+
+            // [Step 2] LocalStorage Queueing (채팅 포털과의 브릿지 역할)
+            // Chat_Portal.html에서 이 큐를 모니터링하여 새 메시지로 렌더링하도록 설계합니다.
+            const chatQueue = JSON.parse(localStorage.getItem('mango_chat_queue') || '[]');
+            chatQueue.push(chatMessage);
+            localStorage.setItem('mango_chat_queue', JSON.stringify(chatQueue));
+
+            // [Step 3] 사용자 피드백 제공
+            showToast("💬 망고 채팅으로 폴라로이드를 보냈습니다!");
+            
+            // 전송 후 모달 자동 닫기 (UX 최적화)
+            setTimeout(closePolaroid, 1000);
+        }
+
+        /**
+         * [함수: 바이럴 보상 시뮬레이션]
+         * 내가 공유한 카드를 본 친구가 해당 맛집을 '스티커(찜)'로 저장했을 때 나에게 발생하는 보상 적립 과정을 시각화합니다.
+         * @description 19. Viral Reward Simulation 로직 담당
+         */
+        function saveAsSticker() {
+            const shopName = document.getElementById('shop-name').innerText;
+            showToast(`⭐ '${shopName}' 매장이 망고 스티커로 저장되었습니다!`);
+            
+            // 햅틱 피드백 (진동)
+            if (navigator.vibrate) navigator.vibrate([50, 30, 50]);
+
+            // [Simulation] 추천인(나)에게 리워드가 적립되는 상황을 시뮬레이션
+            setTimeout(() => {
+                const reward = 0.001;
+                const pushMessage = `💰 친구가 맛집을 저장했습니다! 보상 ${reward} π 적립 완료!`;
+                showPushNotification(pushMessage);
+                spawnConfetti(); // 축하 금가루 효과
+                console.log(`[Reward Engine] Viral bonus ${reward} Pi credited to referrer.`);
+            }, 2000);
+        }
+
+        // 페이지 로드 시 메뉴 렌더링 실행
+        window.addEventListener('DOMContentLoaded', initMenuPage);
+        window.addEventListener('DOMContentLoaded', renderMenu);
+        window.addEventListener('DOMContentLoaded', updateCartUI); // 초기 UI 업데이트
+    </script>
+</body>
+</html>
