@@ -3,6 +3,10 @@
   "trailingSlash": false,
   "rewrites": [
     {
+      "source": "/validation-key.txt",
+      "destination": "/validation-key.txt"
+    },
+    {
       "source": "/profile",
       "destination": "/profile_dashboard.html"
     },
