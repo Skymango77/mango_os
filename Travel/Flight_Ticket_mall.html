@@ -6,48 +6,75 @@
     <title>Mango Travel | Flight Tickets</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700;900&family=Inter:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../shared/styles/mango-core.css">
     <style>
-        :root { --mango-gold: #f59e0b; --bg-dark: #0f172a; }
-        body { background-color: #050505; font-family: 'Inter', sans-serif; color: white; -webkit-tap-highlight-color: transparent; }
-        .glass { background: rgba(255, 255, 255, 0.03); backdrop-filter: blur(20px); border: 1px solid rgba(255, 255, 255, 0.08); }
-        .mango-gradient { background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%); }
-        .no-scrollbar::-webkit-scrollbar { display: none; }
-        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
-        @keyframes slideUp { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
-        .animate-slide-up { animation: slideUp 0.5s ease forwards; }
-        .flight-card { transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); border-left: 4px solid transparent; }
+        /* Step 6: 3D Teal Input Styling */
+        .neo-input-container {
+            background: rgba(15, 23, 42, 0.6);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: inset 2px 2px 5px rgba(0,0,0,0.5), inset -2px -2px 5px rgba(255,255,255,0.05);
+            transition: all 0.3s ease;
+        }
+        .neo-input-container:focus-within {
+            border-color: #00f2ff;
+            box-shadow: 0 0 15px rgba(0, 242, 255, 0.3), inset 2px 2px 5px rgba(0,0,0,0.5);
+        }
+
+        /* Step 10: Flight Card Layout */
+        /* Step 8: Custom Date Picker Styles */
+        .custom-date-wrapper input[type="date"] {
+            color-scheme: dark;
+            color: #f59e0b;
+            font-weight: 900;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+        }
+        .custom-date-wrapper input[type="date"]::-webkit-calendar-picker-indicator {
+            filter: invert(65%) sepia(87%) saturate(495%) hue-rotate(352deg) brightness(101%) contrast(104%);
+            cursor: pointer;
+        }
+
+        /* Step 10: Flight Card Layout */
+        .flight-card { transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); border-left: 4px solid transparent; cursor: pointer; position: relative; }
         .flight-card:active { transform: scale(0.98); }
         .flight-card:hover { border-left-color: var(--mango-gold); background: rgba(255, 255, 255, 0.05); }
 
-        /* Calendar Indicator Color (Yellow) */
-        input[type="date"]::-webkit-calendar-picker-indicator {
+        /* Step 13: Metallic Gold Button */
+        .btn-metallic-gold {
+            background: linear-gradient(145deg, #ffd700, #b8860b);
+            box-shadow: 3px 3px 6px #000, -1px -1px 3px rgba(255,255,255,0.2);
+            color: #000;
+            font-weight: 900;
+            transition: transform 0.1s;
+        }
+        .btn-metallic-gold:active { transform: scale(0.96); box-shadow: inset 2px 2px 5px rgba(0,0,0,0.5); }
+
+        /* Step 7: Autocomplete Dropdown */
+        .autocomplete-list {
+            position: absolute; top: 100%; left: 0; right: 0;
+            background: #0f172a; border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 0 0 1rem 1rem; z-index: 50; max-height: 200px; overflow-y: auto;
+        }
+        .autocomplete-item { padding: 12px; font-size: 11px; border-bottom: 1px solid rgba(255,255,255,0.05); cursor: pointer; }
+        .autocomplete-item:hover { background: rgba(255,255,255,0.05); color: #00f2ff; }
+
+        /* Step 8: Custom Calendar Overlay */
+        .custom-calendar-indicator {
             filter: invert(72%) sepia(93%) saturate(464%) hue-rotate(352deg) brightness(101%) contrast(104%);
+            cursor: pointer;
         }
-
-        /* AI 컨시어지 애니메이션 로직 (Hotel_Book과 동일) */
-        @keyframes gold-dust-fall {
-            0% { transform: translateY(-20px) translateX(0); opacity: 0; }
-            20% { opacity: 1; }
-            100% { transform: translateY(30px) translateX(15px); opacity: 0; }
-        }
-        @keyframes mango-pulse {
-            0%, 100% { text-shadow: 0 0 10px rgba(255, 215, 0, 0.4); filter: drop-shadow(0 0 5px rgba(255, 115, 0, 0.3)); }
-            50% { text-shadow: 0 0 25px rgba(255, 215, 0, 0.8); filter: drop-shadow(0 0 10px rgba(255, 115, 0, 0.6)); }
-        }
-        .mango-pulsar-wrapper { position: relative; overflow: visible; display: inline-block; }
-        .mango-pulsing-text { animation: mango-pulse 1.8s ease-in-out infinite; position: relative; z-index: 10; }
-        .mango-pulsar-wrapper::before, .mango-pulsar-wrapper::after {
-            content: ""; position: absolute; width: 3px; height: 3px; background-color: #ffd700; border-radius: 50%; opacity: 0; z-index: 5;
-        }
-        .mango-pulsar-wrapper::before { top: 0; left: 10%; animation: gold-dust-fall 2.5s linear infinite; box-shadow: 0 0 5px #ffd700, -10px 15px 8px #ffd700, 10px 25px 3px #ffa500; }
-        .mango-pulsar-wrapper::after { top: -10px; right: 20%; animation: gold-dust-fall 3s linear infinite 0.5s; box-shadow: 0 0 5px #ffd700, 5px 12px 6px #ffd700, -15px 22px 4px #ffa500; }
-
-        .font-orbitron { font-family: 'Orbitron', sans-serif; }
-        .text-metallic-gold { background: linear-gradient(135deg, #FFD700 0%, #FFA500 50%, #FF8C00 100%); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; }
+        
+        .accordion-content { max-height: 0; overflow: hidden; transition: max-height 0.4s ease-out; }
+        .accordion-content.active { max-height: 300px; }
     </style>
+    <script type="module" src="../services/piPricingEngine.js"></script>
+    <script type="module" src="../services/uiController.js"></script>
+    <script type="module" src="../services/bookingEngine.js"></script>
 </head>
-<body class="max-w-[480px] mx-auto min-h-screen relative pb-24 overflow-x-hidden bg-gradient-to-br from-gray-950 to-gray-800">
+<body class="max-w-[var(--portal-width)] mx-auto min-h-screen relative pb-24 overflow-x-hidden bg-gradient-to-br from-gray-950 to-gray-800">
+    <!-- Step 1: Architecture Modularization - Standardize Header -->
 
     <!-- AI Concierge Header (Premium Edition) -->
     <div class="flex items-center gap-4 mb-6 pt-6 px-5 w-full overflow-visible">
@@ -72,11 +99,15 @@
 
         <div class="ml-auto text-right">
             <div class="text-[10px] text-yellow-500/60 font-bold mb-1 uppercase tracking-tighter">POINT BALANCE</div>
-            <div class="text-sm text-yellow-400 font-black" id="point-balance">0 P</div>
+            <div class="text-sm text-yellow-400 font-black" id="point-balance">0.00 π</div>
+            <!-- Live Pi Value Ticker -->
+            <div class="pi-ticker mt-2">
+                <i data-lucide="dollar-sign" class="w-4 h-4"></i> <span id="pi-value-ticker">1 π = 0.00 KRW</span>
+            </div>
         </div>
     </div>
 
-    <!-- 3. SLIDE MENU (Drawer) -->
+    <!-- Slide Menu (Drawer) - Part of Step 1: Architecture Modularization -->
     <div id="sidebar-overlay" onclick="toggleMenu(false)" class="fixed inset-0 bg-black/60 z-[60] hidden backdrop-blur-sm opacity-0 transition-opacity"></div>
     <aside id="sidebar-menu" class="fixed top-0 left-0 w-[80%] max-w-[340px] h-full bg-[#0f172a] z-[70] -translate-x-full shadow-2xl border-r border-white/5 transition-transform duration-300">
         <div class="p-6">
@@ -101,7 +132,7 @@
         </div>
     </aside>
 
-    <!-- 2. SEARCH FLIGHTS SECTION (Internalized v4) -->
+    <!-- Step 3: Flight Intelligence Engine - Enhance Flight Search UI -->
     <section class="mt-2 px-4 mb-8 animate-slide-up">
         <div id="flight-app-container" class="space-y-6">
             <div id="search-form" class="glass rounded-[2.5rem] p-6 border-t border-white/10 shadow-2xl relative overflow-hidden">
@@ -120,27 +151,47 @@
 
                 <div class="space-y-4">
                     <div class="grid grid-cols-1 gap-3">
-                        <div class="bg-white/5 border border-white/10 rounded-2xl p-4 flex items-center gap-4">
+                        <div class="neo-input-container rounded-2xl p-4 flex items-center gap-4 relative">
                             <i data-lucide="map-pin" class="w-5 h-5 text-amber-500/50"></i>
                             <div class="flex-1">
                                 <p class="text-[9px] text-white/30 font-black uppercase tracking-tighter">Departure</p>
-                                <input type="text" id="dep-city" value="PUS" placeholder="From (e.g. Busan)" class="bg-transparent border-none outline-none text-sm font-bold w-full text-white uppercase">
+                                <input type="text" id="dep-city" value="PUS" placeholder="From (e.g. Busan)" autocomplete="off" class="bg-transparent border-none outline-none text-sm font-bold w-full text-white uppercase">
                             </div>
+                            <div id="dep-autocomplete" class="autocomplete-list hidden"></div>
                         </div>
-                        <div class="bg-white/5 border border-white/10 rounded-2xl p-4 flex items-center gap-4">
+                        <div class="neo-input-container rounded-2xl p-4 flex items-center gap-4 relative">
                             <i data-lucide="navigation" class="w-5 h-5 text-amber-500/50"></i>
                             <div class="flex-1">
                                 <p class="text-[9px] text-white/30 font-black uppercase tracking-tighter">Arrival</p>
-                                <input type="text" id="arr-city" value="NRT" placeholder="To (e.g. Tokyo)" class="bg-transparent border-none outline-none text-sm font-bold w-full text-white uppercase">
+                                <input type="text" id="arr-city" value="NRT" placeholder="To (e.g. Tokyo)" autocomplete="off" class="bg-transparent border-none outline-none text-sm font-bold w-full text-white uppercase">
                             </div>
+                            <div id="arr-autocomplete" class="autocomplete-list hidden"></div>
+                        </div>
+                    </div> 
+
+                    <div class="grid grid-cols-1 gap-3 custom-date-wrapper">
+                        <div class="bg-yellow-400/5 border border-yellow-400/20 rounded-2xl p-3 custom-date-wrapper">
+                            <span class="text-[9px] text-white font-black block mb-1 uppercase tracking-widest">Date</span>
+                            <input type="date" id="flight-date" class="bg-transparent text-sm w-full outline-none text-yellow-400 font-black" value="2026-04-22">
+                        </div>
+                        <!-- New: Return Date -->
+                        <div class="bg-yellow-400/5 border border-yellow-400/20 rounded-2xl p-3 custom-date-wrapper">
+                            <span class="text-[9px] text-white font-black block mb-1 uppercase tracking-widest">Return Date</span>
+                            <input type="date" id="return-date" class="bg-transparent text-sm w-full outline-none text-yellow-400 font-black" value="2026-04-29">
                         </div>
                     </div>
 
                     <div class="grid grid-cols-2 gap-3">
-                        <div class="bg-yellow-400/5 border border-yellow-400/20 rounded-2xl p-3">
-                            <span class="text-[9px] text-white font-black block mb-1 uppercase tracking-widest">Date</span>
-                            <input type="date" id="flight-date" class="bg-transparent text-sm w-full outline-none text-yellow-400 font-black" value="2026-04-22">
+                        <!-- New: Passenger Count -->
+                        <div class="bg-black/40 p-3 rounded-2xl border border-white/5 flex justify-between items-center text-xs">
+                            <span class="text-[9px] text-white/40 uppercase font-black">Adults</span>
+                            <div class="flex items-center gap-2">
+                                <button onclick="updatePassengerCount('adults', -1)" class="w-6 h-6 rounded-full bg-white/10 text-white">-</button>
+                                <span id="adults-count" class="font-bold text-orange-400 text-sm">1</span>
+                                <button onclick="updatePassengerCount('adults', 1)" class="w-6 h-6 rounded-full bg-white/10 text-white">+</button>
+                            </div>
                         </div>
+                        <!-- New: Children Count -->
                         <div class="bg-black/40 p-3 rounded-2xl border border-white/5 flex justify-between items-center text-xs">
                             <span class="text-[9px] text-white/40 uppercase font-black">Travelers</span>
                             <span id="adult-count" class="font-bold text-orange-400 text-sm">1명</span>
@@ -154,14 +205,33 @@
                 </div>
             </div>
 
+            <!-- Predictive Booking Timing Section -->
+            <div class="glass rounded-3xl p-5 border-l-4 border-emerald-500 animate-slide-up">
+                <div class="flex justify-between items-center">
+                    <div>
+                        <h3 class="text-xs font-black text-emerald-400 uppercase italic">Predictive Booking Timing</h3>
+                        <p class="text-[10px] text-white/60">AI 분석 결과, 지금 예약하는 것이 가장 저렴합니다.</p>
+                    </div>
+                    <div class="text-right">
+                        <span class="text-xl font-black text-white">Best Price</span>
+                    </div>
+                </div>
+                <div class="mt-4 flex gap-1 h-2 bg-white/5 rounded-full overflow-hidden">
+                    <div class="w-1/3 bg-emerald-500"></div>
+                    <div class="w-1/3 bg-emerald-500/30"></div>
+                    <div class="w-1/3 bg-white/5"></div>
+                </div>
+                <p class="text-[8px] text-white/30 mt-2 text-center uppercase tracking-widest italic">Price Trend: Downward Stability</p>
+            </div>
+
+            <!-- Step 4: Flight Intelligence Engine - Implement Dynamic Flight Results Placeholder -->
             <div id="loading-screen" class="hidden flex flex-col items-center py-20">
-                <div class="relative w-24 h-24 mb-6">
+                <div class="relative w-24 h-24 mb-6 animate-[spin_4s_linear_infinite]">
                     <div class="absolute inset-0 bg-orange-500/20 rounded-full blur-xl animate-pulse"></div>
-                    <img src="../assets/img/mango.jpg" class="w-full h-full rounded-full animate-bounce shadow-[0_0_30px_rgba(255,165,0,0.6)] relative z-10 border-2 border-orange-500">
+                    <img src="../assets/img/mango.jpg" class="w-full h-full rounded-full shadow-[0_0_30px_rgba(255,165,0,0.6)] relative z-10 border-2 border-orange-500">
                     <div class="absolute inset-[-8px] border-4 border-yellow-500 border-t-transparent rounded-full animate-spin"></div>
                 </div>
-                <div class="flex flex-col items-center gap-2 text-center">
-                    <p class="text-orange-400 font-black tracking-widest animate-pulse uppercase italic text-sm">Mango AI Analysis</p>
+                <div class="flex flex-col items-center gap-2 text-center"> <p class="text-orange-400 font-black tracking-widest animate-pulse uppercase italic text-sm">Mango AI Analysis</p>
                     <p class="text-white/40 text-[10px] font-bold uppercase tracking-[0.3em]">망고 AI가 전세계 항공 데이터를 분석 중입니다...</p>
                 </div>
             </div>
@@ -176,195 +246,49 @@
         </div>
     </section>
 
-    <!-- 3. NEW FLIGHT DEALS SECTION -->
-    <section id="flight-deals-section" class="mt-8 px-4">
-        <div class="flex items-center justify-between mb-6 px-2">
-            <h2 class="text-xl font-black uppercase tracking-tighter italic">New Flight Deals</h2>
-            <span class="text-[10px] font-black text-white/30 uppercase tracking-widest">Global Sync</span>
-        </div>
-
-        <div id="flight-deals-grid" class="space-y-4">
-            <!-- Flight Card 1 -->
-            <div class="flight-card glass rounded-3xl p-5 flex flex-col gap-4 animate-slide-up">
-                <div class="flex justify-between items-start">
-                    <div class="flex items-center gap-3">
-                        <div class="w-10 h-10 bg-white/10 rounded-xl p-1.5 border border-white/10">
-                            <img src="https://www.gstatic.com/flights/airline_logos/70px/KE.png" class="w-full h-full object-contain filter grayscale invert brightness-200">
-                        </div>
-                        <div>
-                            <h3 class="text-xs font-black text-white italic">Korean Air</h3>
-                            <p class="text-[9px] text-white/40 uppercase tracking-tighter">Direct • 2h 15m</p>
-                        </div>
-                    </div>
-                    <div class="text-right">
-                        <span class="bg-red-500 text-white text-[9px] font-black px-2 py-0.5 rounded-full">28% OFF</span>
-                    </div>
-                </div>
-
-                <div class="flex justify-between items-center px-1">
-                    <div class="text-center">
-                        <p class="text-[14px] font-black text-white">08:30</p>
-                        <p class="text-[9px] text-white/30 font-bold">PUS</p>
-                    </div>
-                    <div class="flex-1 flex flex-col items-center px-4">
-                        <div class="w-full h-[1px] bg-white/10 relative">
-                            <div class="absolute inset-0 bg-amber-500/40"></div>
-                            <i data-lucide="plane" class="w-3 h-3 text-amber-500 absolute left-1/2 -translate-x-1/2 -translate-y-1/2 rotate-90"></i>
-                        </div>
-                    </div>
-                    <div class="text-center">
-                        <p class="text-[14px] font-black text-white">10:45</p>
-                        <p class="text-[9px] text-white/30 font-bold">NRT</p>
-                    </div>
-                </div>
-
-                <div class="border-t border-white/5 pt-4 flex justify-between items-center">
-                    <div>
-                        <p class="text-[10px] text-white/30 line-through">35.0 π</p>
-                        <p class="text-lg font-black text-white italic tracking-tighter">25.0 <span class="text-amber-500">π</span></p>
-                        <p class="text-[8px] text-emerald-400 font-bold mt-1">+2.5 MNG Reward</p>
-                    </div>
-                    <button onclick="openFlightReceipt('Korean Air', '25.0 π')" class="mango-gradient text-black px-6 py-2.5 rounded-xl font-black text-[10px] uppercase italic shadow-lg active:scale-95 transition-all">Select</button>
-                </div>
-            </div>
-
-            <!-- Flight Card 2 -->
-            <div class="flight-card glass rounded-3xl p-5 flex flex-col gap-4 animate-slide-up" style="animation-delay: 0.1s">
-                <div class="flex justify-between items-start">
-                    <div class="flex items-center gap-3">
-                        <div class="w-10 h-10 bg-white/10 rounded-xl p-1.5 border border-white/10">
-                            <img src="https://www.gstatic.com/flights/airline_logos/70px/OZ.png" class="w-full h-full object-contain filter grayscale invert brightness-200">
-                        </div>
-                        <div>
-                            <h3 class="text-xs font-black text-white italic">Asiana Airlines</h3>
-                            <p class="text-[9px] text-white/40 uppercase tracking-tighter">Direct • 1h 35m</p>
-                        </div>
-                    </div>
-                    <div class="text-right">
-                        <span class="bg-red-500 text-white text-[9px] font-black px-2 py-0.5 rounded-full">15% OFF</span>
-                    </div>
-                </div>
-
-                <div class="flex justify-between items-center px-1">
-                    <div class="text-center">
-                        <p class="text-[14px] font-black text-white">13:10</p>
-                        <p class="text-[9px] text-white/30 font-bold">PUS</p>
-                    </div>
-                    <div class="flex-1 flex flex-col items-center px-4">
-                        <div class="w-full h-[1px] bg-white/10 relative">
-                            <div class="absolute inset-0 bg-amber-500/40"></div>
-                            <i data-lucide="plane" class="w-3 h-3 text-amber-500 absolute left-1/2 -translate-x-1/2 -translate-y-1/2 rotate-90"></i>
-                        </div>
-                    </div>
-                    <div class="text-center">
-                        <p class="text-[14px] font-black text-white">14:45</p>
-                        <p class="text-[9px] text-white/30 font-bold">KIX</p>
-                    </div>
-                </div>
-
-                <div class="border-t border-white/5 pt-4 flex justify-between items-center">
-                    <div>
-                        <p class="text-[10px] text-white/30 line-through">12.0 π</p>
-                        <p class="text-lg font-black text-white italic tracking-tighter">10.2 <span class="text-amber-500">π</span></p>
-                        <p class="text-[8px] text-emerald-400 font-bold mt-1">+1.0 MNG Reward</p>
-                    </div>
-                    <button onclick="openFlightReceipt('Asiana Airlines', '10.2 π')" class="mango-gradient text-black px-6 py-2.5 rounded-xl font-black text-[10px] uppercase italic shadow-lg active:scale-95 transition-all">Select</button>
-                </div>
-            </div>
-
-            <!-- Flight Card 3 -->
-            <div class="flight-card glass rounded-3xl p-5 flex flex-col gap-4 animate-slide-up" style="animation-delay: 0.2s">
-                <div class="flex justify-between items-start">
-                    <div class="flex items-center gap-3">
-                        <div class="w-10 h-10 bg-white/10 rounded-xl p-1.5 border border-white/10">
-                            <img src="https://www.gstatic.com/flights/airline_logos/70px/SQ.png" class="w-full h-full object-contain filter grayscale invert brightness-200">
-                        </div>
-                        <div>
-                            <h3 class="text-xs font-black text-white italic">Singapore Airlines</h3>
-                            <p class="text-[9px] text-white/40 uppercase tracking-tighter">Direct • 6h 25m</p>
-                        </div>
-                    </div>
-                    <div class="text-right">
-                        <span class="bg-red-500 text-white text-[9px] font-black px-2 py-0.5 rounded-full">32% OFF</span>
-                    </div>
-                </div>
-
-                <div class="flex justify-between items-center px-1">
-                    <div class="text-center">
-                        <p class="text-[14px] font-black text-white">23:55</p>
-                        <p class="text-[9px] text-white/30 font-bold">ICN</p>
-                    </div>
-                    <div class="flex-1 flex flex-col items-center px-4">
-                        <div class="w-full h-[1px] bg-white/10 relative">
-                            <div class="absolute inset-0 bg-amber-500/40"></div>
-                            <i data-lucide="plane" class="w-3 h-3 text-amber-500 absolute left-1/2 -translate-x-1/2 -translate-y-1/2 rotate-90"></i>
-                        </div>
-                    </div>
-                    <div class="text-center">
-                        <p class="text-[14px] font-black text-white">05:20</p>
-                        <p class="text-[9px] text-white/30 font-bold">SIN</p>
-                    </div>
-                </div>
-
-                <div class="border-t border-white/5 pt-4 flex justify-between items-center">
-                    <div>
-                        <p class="text-[10px] text-white/30 line-through">85.0 π</p>
-                        <p class="text-lg font-black text-white italic tracking-tighter">57.8 <span class="text-amber-500">π</span></p>
-                        <p class="text-[8px] text-emerald-400 font-bold mt-1">+5.5 MNG Reward</p>
-                    </div>
-                    <button onclick="openFlightReceipt('Singapore Airlines', '57.8 π')" class="mango-gradient text-black px-6 py-2.5 rounded-xl font-black text-[10px] uppercase italic shadow-lg active:scale-95 transition-all">Select</button>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Flight Receipt & Regulations Modal -->
-    <div id="flight-modal" class="fixed inset-0 z-[200] hidden bg-black/90 backdrop-blur-xl flex items-center justify-center p-4">
+    <!-- Step 5: Travel Mall Commerce Layer - Integrate Pi Payment Simulation -->
+    <div id="flight-modal" class="fixed inset-0 z-[200] hidden bg-black/95 backdrop-blur-xl flex items-center justify-center p-4">
         <div class="glass w-full max-w-[420px] p-6 rounded-[2.5rem] border-orange-500/30 overflow-y-auto max-h-[90vh] no-scrollbar">
-            <div class="flex justify-between items-center mb-6">
-                <h2 class="text-xl font-black italic text-amber-500 uppercase tracking-tighter">Flight <span class="text-white">Receipt</span></h2>
+            <div class="flex justify-between items-center mb-4">
+                <h2 class="text-lg font-black italic text-amber-500 uppercase tracking-tighter">Booking <span class="text-white">Review</span></h2>
                 <button onclick="closeFlightModal()"><i data-lucide="x" class="text-white/40"></i></button>
             </div>
 
-            <div class="bg-white/5 border border-white/10 rounded-3xl p-5 mb-6 space-y-4">
-                <div class="flex justify-between text-xs">
+            <div class="bg-white/5 border border-white/10 rounded-3xl p-5 mb-4 space-y-3">
+                <div class="flex justify-between text-[10px]">
                     <span class="text-white/40 font-bold uppercase">Airline</span>
                     <span id="receipt-airline" class="font-black text-white italic">---</span>
                 </div>
-                <div class="flex justify-between text-xs">
+                <div class="flex justify-between text-[10px]">
+                    <span class="text-white/40 font-bold uppercase">Original Price</span>
+                    <span id="receipt-original-fiat" class="font-black text-white italic">---</span>
+                </div>
+                <div class="flex justify-between text-[10px]">
                     <span class="text-white/40 font-bold uppercase">Base Fare</span>
                     <span id="receipt-base" class="font-black text-white italic">---</span>
                 </div>
-                <div class="flex justify-between text-xs">
+                <div class="flex justify-between text-[10px] text-yellow-500">
                     <span class="text-white/40 font-bold uppercase underline decoration-amber-500">Fuel Surcharge (유류할증료)</span>
                     <span class="font-black text-amber-500 italic">Included</span>
                 </div>
-                <div class="border-t border-white/10 pt-4 flex justify-between items-end">
-                    <span class="text-sm font-black uppercase">Total Paid</span>
+                <div class="border-t border-white/5 pt-4 flex justify-between items-end">
+                    <span class="text-xs font-black uppercase">Total Paid</span>
                     <span id="receipt-total" class="text-2xl font-black text-white italic tracking-tighter">---</span>
                 </div>
             </div>
 
-            <div class="space-y-4">
+            <div class="space-y-3">
                 <h3 class="text-[10px] font-black text-gray-500 uppercase tracking-[0.3em] ml-2">Regulations & Law</h3>
-                <div class="space-y-2">
+                <div class="space-y-1.5">
                     <div class="p-4 bg-white/5 rounded-2xl border border-white/5">
                         <p class="text-[10px] font-black text-amber-500 mb-1 uppercase">Cancellation Policy</p>
-                        <p class="text-[11px] text-white/60 leading-relaxed">항공권 취소 시 출발 91일 전까지는 전액 환급되며, 이후 기간별 위약금이 발생합니다. (항공사업법 제 24조 준수)</p>
-                    </div>
-                    <div class="p-4 bg-white/5 rounded-2xl border border-white/5">
-                        <p class="text-[10px] font-black text-blue-400 mb-1 uppercase">Overbooking (오버부킹)</p>
-                        <p class="text-[11px] text-white/60 leading-relaxed">항공권 초과 판매 시 대체편 제공 및 소비자 분쟁 해결 기준에 따른 현금 배상이 보장됩니다.</p>
-                    </div>
-                    <div class="p-4 bg-white/5 rounded-2xl border border-white/5">
-                        <p class="text-[10px] font-black text-purple-400 mb-1 uppercase">Waitlist (대기자)</p>
-                        <p class="text-[11px] text-white/60 leading-relaxed">잔여 좌석 발생 시 멤버십 등급 및 접수 순서에 따라 우선 순위가 부여됩니다.</p>
+                        <p class="text-[10px] text-white/60 leading-relaxed">항공권 취소 시 출발 91일 전까지는 전액 환급되며, 이후 기간별 위약금이 발생합니다.</p>
                     </div>
                 </div>
             </div>
 
             <!-- Voucher Delivery Email Section -->
-            <div class="mt-8 space-y-3">
+            <div class="mt-6 space-y-2">
                 <h3 class="text-[10px] font-black text-gray-500 uppercase tracking-[0.3em] ml-2">Voucher Delivery Email</h3>
                 <div class="flex gap-2 items-center">
                     <input type="text" id="f-email-user" placeholder="Email ID" class="flex-[1.5] bg-white/5 border border-white/10 rounded-xl p-3 text-[11px] text-white outline-none focus:border-amber-500 transition-all">
@@ -373,142 +297,211 @@
                         <option value="gmail.com">gmail.com</option>
                         <option value="naver.com">naver.com</option>
                         <option value="kakao.com">kakao.com</option>
-                        <option value="direct">Direct Input</option>
                     </select>
                 </div>
-                <input type="text" id="f-email-domain-direct" placeholder="Enter Domain Directly" class="hidden w-full bg-white/5 border border-white/10 rounded-xl p-3 text-[11px] text-white outline-none focus:border-amber-500 transition-all">
             </div>
 
-            <button onclick="confirmFlight()" class="w-full mt-8 py-5 mango-gradient text-black font-black rounded-2xl text-sm uppercase tracking-widest shadow-lg active:scale-95 transition-all">Confirm Booking</button>
+            <button onclick="confirmFlight()" class="btn-metallic-gold w-full mt-6 py-5 rounded-2xl text-sm uppercase tracking-widest">Confirm Booking</button>
         </div>
     </div>
 
-    <!-- 7. BOTTOM NAVIGATION -->
-    <nav class="fixed bottom-0 left-0 right-0 max-w-[480px] mx-auto bg-[#0f172a]/95 backdrop-blur-xl border-t border-white/5 px-8 py-5 flex justify-between items-center z-[100]">
-        <a href="../index.html" class="flex flex-col items-center gap-1 opacity-30 active:scale-90 transition-all">
-            <i data-lucide="home" class="w-6 h-6"></i>
-            <span class="text-[9px] font-black uppercase tracking-widest">Home</span>
-        </a>
-        <a href="../Chat/index.html" class="flex flex-col items-center gap-1 opacity-30 active:scale-90 transition-all">
-            <i data-lucide="message-circle" class="w-6 h-6"></i>
-            <span class="text-[9px] font-black uppercase tracking-widest">Chat</span>
-        </a>
-        <a href="Travel_mall.html" class="flex flex-col items-center gap-1 text-amber-500 active:scale-90 transition-all">
-            <div class="relative">
-                <i data-lucide="plane" class="w-6 h-6"></i>
-                <span class="absolute -top-1 -right-1 w-2 h-2 bg-amber-500 rounded-full animate-pulse"></span>
-            </div>
-            <span class="text-[9px] font-black uppercase tracking-widest">Travel</span>
-        </a>
-        <a href="../profile/profile_dashboard.html" class="flex flex-col items-center gap-1 opacity-30 active:scale-90 transition-all">
-            <i data-lucide="layout-dashboard" class="w-6 h-6"></i>
-            <span class="text-[9px] font-black uppercase tracking-widest">Profile</span>
-        </a>
-    </nav>
+    <script type="module">
+        import { uiController } from '../services/uiController.js';
+        import { piPricingEngine } from '../services/piPricingEngine.js';
+        
+        let flightData = [];
+        let selectedSeat = null;
+        let currentFlightInfo = null;
 
-    <script>
-        lucide.createIcons();
-
-        function startMangoInternalSearch() {
-            document.getElementById('search-form').classList.add('hidden');
-            document.getElementById('flight-deals-section').classList.add('hidden');
-            document.getElementById('loading-screen').classList.remove('hidden');
+        /**
+         * Step 7: Amadeus Autocomplete Implementation
+         */
+        async function handleAutocomplete(inputId, listId) {
+            const input = document.getElementById(inputId);
+            const list = document.getElementById(listId);
             
-            // 2초 후 AI가 결과를 가져온 것처럼 연출
+            input.addEventListener('input', async (e) => {
+                const val = e.target.value;
+                if (val.length < 2) { list.classList.add('hidden'); return; }
+
+                // Mocked API call for Autocomplete
+                const mockAirports = [
+                    { code: 'ICN', name: 'Seoul, Incheon' },
+                    { code: 'PUS', name: 'Busan, Gimhae' },
+                    { code: 'NRT', name: 'Tokyo, Narita' }
+                ].filter(a => a.code.includes(val.toUpperCase()) || a.name.includes(val));
+
+                if (mockAirports.length > 0) {
+                    list.innerHTML = mockAirports.map(a => `
+                        <div class="autocomplete-item" onclick="selectAirport('${inputId}', '${listId}', '${a.code}')">
+                            <span class="font-black text-amber-500">${a.code}</span> - ${a.name}
+                        </div>
+                    `).join('');
+                    list.classList.remove('hidden');
+                }
+            });
+        }
+
+        window.selectAirport = (inputId, listId, code) => {
+            document.getElementById(inputId).value = code;
+            document.getElementById(listId).classList.add('hidden');
+        }
+
+        /**
+         * Step 9: Flight Offers Search with Loading Logic
+         */
+        window.startMangoInternalSearch = async () => {
+            const dep = document.getElementById('dep-city').value;
+            const arr = document.getElementById('arr-city').value;
+            
+            document.getElementById('search-form').classList.add('hidden');
+            document.getElementById('loading-screen').classList.remove('hidden');
+
+            // Simulate API Call Delay
             setTimeout(() => {
                 document.getElementById('loading-screen').classList.add('hidden');
                 document.getElementById('search-results').classList.remove('hidden');
-                document.getElementById('flight-deals-section').classList.remove('hidden');
-                lucide.createIcons();
+                
+                // Step 10 & 11: Render Result Cards
+                renderFlightResults([
+                    { id: 0, airline: 'KE', name: 'Korean Air', duration: '2h 15m', stops: 'Direct', price: 350000 },
+                    { id: 1, airline: 'NH', name: 'ANA', duration: '2h 30m', stops: 'Direct', price: 420000 }
+                ]);
             }, 2500);
+        };
+
+        function renderFlightResults(flights) {
+            const resultsDiv = document.getElementById('search-results');
+            resultsDiv.innerHTML = flights.map((f, i) => {
+                // Step 11: Pi Pricing Engine Conversion
+                const piPrice = piPricingEngine.convertToPi(f.price, 'KRW').totalPi;
+                
+                return `
+                <div class="flight-card glass rounded-3xl p-5 mb-4 animate-slide-up" onclick="toggleSeatMap(${i}, '${f.name}')">
+                    <div class="flex justify-between items-center">
+                        <div class="flex items-center gap-4">
+                            <img src="https://www.gstatic.com/flights/airline_logos/70px/${f.airline}.png" class="w-10 h-10 object-contain brightness-200">
+                            <div>
+                                <h4 class="text-xs font-black text-white italic">${f.name}</h4>
+                                <p class="text-[14px] font-black text-white mt-1">${piPrice} <span class="text-amber-500">π</span></p>
+                            </div>
+                        </div>
+                        <div class="text-right">
+                            <p class="text-[9px] text-white/40 uppercase font-black tracking-widest">${f.duration}</p>
+                            <p class="text-[8px] text-emerald-400 font-bold mt-1">${f.stops}</p>
+                        </div>
+                    </div>
+                    
+                    <!-- Step 12: Seat Map Accordion -->
+                    <div id="seatmap-${i}" class="accordion-content pt-4 mt-4 border-t border-white/5">
+                        <!-- Seat Map Content Injected Dynamically -->
+                    </div>
+                </div>`;
+            }).join('');
+            lucide.createIcons();
         }
 
-        function openFlightReceipt(airline, price) {
+        window.toggleSeatMap = async (id, flightName) => {
+            const container = document.getElementById(`seatmap-${id}`);
+            const isActive = container.classList.toggle('active');
+            
+            if (isActive && container.innerHTML.trim() === '') {
+                container.innerHTML = `<div class="text-center py-4"><span class="animate-pulse text-[10px] text-amber-500">Connecting to Amadeus SeatMap API...</span></div>`;
+                
+                // Simulated SeatMap API Data based on Amadeus Schema
+                const mockSeatData = [
+                    { row: 10, seats: ['A', 'B', 'C', 'D'], occupied: ['10B'] },
+                    { row: 11, seats: ['A', 'B', 'C', 'D'], occupied: ['11C'] },
+                    { row: 12, seats: ['A', 'B', 'C', 'D'], occupied: [] }
+                ];
+
+                setTimeout(() => {
+                    let html = `<div class="flex flex-col gap-2 items-center mb-6">`;
+                    mockSeatData.forEach(r => {
+                        html += `<div class="flex gap-2 items-center"><span class="text-[8px] text-white/20 w-4">${r.row}</span>`;
+                        r.seats.forEach(s => {
+                            const seatNum = `${r.row}${s}`;
+                            const isOcc = r.occupied.includes(seatNum);
+                            html += `<button id="seat-${id}-${seatNum}" onclick="${isOcc ? '' : `selectFlightSeat('${seatNum}', ${id})`}" 
+                                class="w-8 h-8 rounded-lg text-[9px] font-bold flex items-center justify-center transition-all
+                                ${isOcc ? 'bg-white/5 text-white/10 cursor-not-allowed' : 'bg-white/10 text-white hover:bg-amber-500/50'}">${s}</button>`;
+                        });
+                        html += `</div>`;
+                    });
+                    html += `</div>
+                    <div class="flex justify-between items-center px-2">
+                        <p id="seat-selection-status-${id}" class="text-[10px] font-black text-amber-500 uppercase italic">Select your seat</p>
+                        <button onclick="openFlightReceipt('${flightName}', 350000, 'KRW')" class="btn-metallic-gold px-6 py-2 rounded-xl text-[10px] uppercase italic shadow-lg active:scale-95 transition-all">Book This Flight</button>
+                    </div>`;
+                    container.innerHTML = html;
+                }, 1000);
+            }
+        }
+
+        window.selectFlightSeat = (seatNum, id) => {
+            document.querySelectorAll(`[id^="seat-${id}-"]`).forEach(btn => {
+                if (!btn.classList.contains('cursor-not-allowed')) {
+                    btn.className = 'w-8 h-8 rounded-lg text-[9px] font-bold flex items-center justify-center transition-all bg-white/10 text-white hover:bg-amber-500/50';
+                }
+            });
+            document.getElementById(`seat-${id}-${seatNum}`).className = 'w-8 h-8 rounded-lg text-[9px] font-bold flex items-center justify-center transition-all bg-amber-500 text-black shadow-[0_0_15px_rgba(251,191,36,0.5)]';
+            selectedSeat = seatNum;
+            document.getElementById(`seat-selection-status-${id}`).innerText = `Seat ${seatNum} Selected`;
+        }
+
+        window.openFlightReceipt = (airline, price, currency) => {
+            const converted = piPricingEngine.convertToPi(price, currency);
             document.getElementById('receipt-airline').innerText = airline;
-            document.getElementById('receipt-base').innerText = price;
-            document.getElementById('receipt-total').innerText = price;
-            const modal = document.getElementById('flight-modal');
-            modal.classList.remove('hidden');
-            lucide.createIcons();
+            document.getElementById('receipt-original-fiat').innerText = price.toLocaleString() + ' ' + currency;
+            document.getElementById('receipt-base').innerText = converted.piConverted + ' π';
+            document.getElementById('receipt-total').innerText = converted.totalPi + ' π';
+            document.getElementById('flight-modal').classList.remove('hidden');
         }
 
-        function closeFlightModal() {
-            document.getElementById('flight-modal').classList.add('hidden');
+        window.closeFlightModal = () => document.getElementById('flight-modal').classList.add('hidden');
+
+        window.confirmFlight = () => {
+            if (!selectedSeat) { alert("Please select a seat on the map before booking."); return; }
+            
+            const airline = document.getElementById('receipt-airline').innerText;
+            const mngReward = 12.5; // Calculated reward points
+
+            // 1. Update Persistent MNG Balance in LocalStorage
+            let balance = parseFloat(localStorage.getItem('mango_mng_balance') || '0');
+            localStorage.setItem('mango_mng_balance', (balance + mngReward).toFixed(2));
+
+            // 2. Log entry in Point History
+            let history = JSON.parse(localStorage.getItem('mango_point_history') || '[]');
+            history.unshift({
+                type: 'FLIGHT',
+                title: `${airline} Booking`,
+                detail: `Seat ${selectedSeat} secured`,
+                amount: `+${mngReward}`,
+                date: new Date().toISOString()
+            });
+            localStorage.setItem('mango_point_history', JSON.stringify(history));
+
+            alert(`항공권 예약이 완료되었습니다!\n좌석: ${selectedSeat}\n리워드: ${mngReward} MNG 포인트가 적립되었습니다.`);
+            
+            // Step 14: Smooth transition to Hotel_Book.html with destination
+            const dest = document.getElementById('arr-city').value;
+            window.location.href = `Hotel_Book.html?city=${dest}`;
         }
 
-        function handleDomainChange(prefix, value) {
-            const directInput = document.getElementById(`${prefix}-email-domain-direct`);
-            if (value === 'direct') {
-                directInput.classList.remove('hidden');
-                directInput.focus();
-            } else {
-                directInput.classList.add('hidden');
-            }
-        }
+        // Init Logic
+        document.addEventListener('DOMContentLoaded', () => {
+            uiController.init();
+            handleAutocomplete('dep-city', 'dep-autocomplete');
+            handleAutocomplete('arr-city', 'arr-autocomplete');
+            
+            // Step 11: Live Pi Ticker
+            setInterval(() => {
+                const rate = piPricingEngine.getCurrentPiValue('KRW');
+                document.getElementById('pi-value-ticker').innerText = `1 π = ${rate.toLocaleString()} KRW`;
+            }, 5000);
+        });
 
-        function confirmFlight() {
-            const user = document.getElementById('f-email-user').value.trim();
-            const select = document.getElementById('f-email-domain-select').value;
-            const direct = document.getElementById('f-email-domain-direct').value.trim();
-            let domain = select === 'direct' ? direct : select;
-
-            if (!user || !domain) {
-                alert('바우처를 수령할 이메일 주소를 입력해주세요.');
-                return;
-            }
-
-            alert(`✈️ 항공권 예약이 확정되었습니다.\n바우처가 ${user}@${domain}로 전송됩니다.`);
-            closeFlightModal();
-        }
-
-        function openHotelReceipt(name, price) {
-            document.getElementById('h-receipt-name').innerText = name;
-            document.getElementById('h-receipt-total').innerText = price;
-            document.getElementById('hotel-modal').classList.remove('hidden');
-            lucide.createIcons();
-        }
-
-        function closeHotelModal() {
-            document.getElementById('hotel-modal').classList.add('hidden');
-        }
-
-        function handleDomainChange(prefix, value) {
-            const directInput = document.getElementById(`${prefix}-email-domain-direct`);
-            if (value === 'direct') {
-                directInput.classList.remove('hidden');
-                directInput.focus();
-            } else {
-                directInput.classList.add('hidden');
-            }
-        }
-
-        function confirmHotel() {
-            const user = document.getElementById('h-email-user').value.trim();
-            const select = document.getElementById('h-email-domain-select').value;
-            const direct = document.getElementById('h-email-domain-direct').value.trim();
-            let domain = select === 'direct' ? direct : select;
-
-            if (!user || !domain) {
-                alert('바우처를 수령할 이메일 주소를 입력해주세요.');
-                return;
-            }
-            alert(`🏨 숙소 예약이 완료되었습니다.\n바우처가 ${user}@${domain}로 전송됩니다.`);
-            closeHotelModal();
-        }
-
-        function toggleMenu(show) {
-            const sidebar = document.getElementById('sidebar-menu');
-            const overlay = document.getElementById('sidebar-overlay');
-            if (show) {
-                sidebar.classList.remove('-translate-x-full');
-                overlay.classList.remove('hidden');
-                setTimeout(() => overlay.classList.replace('opacity-0', 'opacity-100'), 10);
-            } else {
-                sidebar.classList.add('-translate-x-full');
-                overlay.classList.replace('opacity-100', 'opacity-0');
-                setTimeout(() => overlay.classList.add('hidden'), 300);
-            }
-        }
+        window.toggleMenu = uiController.toggleMenu;
     </script>
 </body>
 </html>

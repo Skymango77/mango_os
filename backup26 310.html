@@ -10,8 +10,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <link rel="manifest" href="/manifest.json">
     <title>MANGO Universe Final - Intuitive UX</title>
-    <link rel="apple-touch-icon" href="https://mango-os-6xu2.vercel.app/mango.jpg?v=final_check">
-<link rel="icon" type="image/jpeg" href="https://mango-os-6xu2.vercel.app/mango.jpg?v=final_check">
+    <script src="shared/js/mango-core.js"></script>
+    <link rel="apple-touch-icon" href="mango.ico">
+    <link rel="icon" type="image/x-icon" href="mango.ico">
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black">
     
@@ -29,6 +30,7 @@
         --unified-max-width: 430px;
         --bg-dark: #000000;
     }
+
         /* 1. 기본 레이아웃 및 PC 중앙 정렬 */
     body {
         background-color: var(--bg-dark);
@@ -276,14 +278,16 @@ animation: gold-shine 2s linear infinite, mango-pulse 2s infinite ease-in-out !i
     border: 1px solid rgba(255, 170, 0, 0.1);
     
     /* 비활성 상태: 약간 어둡고 흐리게 */
-    opacity: 0.5;
-    filter: grayscale(40%) blur(1px);
+    opacity: 0; /* 좌우 잘림 방지를 위해 비활성 카드는 숨김 */
+    visibility: hidden;
+    filter: grayscale(100%) blur(4px);
     transition: all 0.5s cubic-bezier(0.2, 0.8, 0.2, 1);
 }
 
         /* --- 번쩍임 강조 (Active State) --- */
         .portal-door.active {
-            opacity: 1;
+            opacity: 1 !important;
+            visibility: visible !important;
             filter: blur(0);
             border: 3px solid var(--mango-neon);
             box-shadow: 0 0 30px rgba(255, 170, 0, 0.4);
@@ -1856,14 +1860,8 @@ const portalData = [
             const activeIdx = (currentIndex % total + total) % total;
             if (i === activeIdx) {
                 door.classList.add('active');
-                door.style.opacity = "1";
-                door.style.filter = "blur(0)";
-                door.style.zIndex = "100";
             } else {
                 door.classList.remove('active');
-                door.style.opacity = "0.2";
-                door.style.filter = "blur(3px)";
-                door.style.zIndex = "1";
             }
         });
     }
@@ -2951,29 +2949,26 @@ function spawnHiddenTreasure() {
 if (typeof bootMangoExperience === 'function') bootMangoExperience();
 
 
-    window.addEventListener('load', () => {
-        if (typeof updateLegacyNews === 'function') updateLegacyNews();
+    function handleSystemBoot() {
+        updateLegacyNews();
         const logo = document.getElementById('mango-charging-logo');
-        const splash = document.getElementById('mango-splash'); 
-
-        // 🚨 여기부터 추가된 부분
-        if (logo) logo.classList.add('animate-mango-otogi'); 
-        // 여기까지
-
-        // 1단계: 3.1초 뒤 로직 실행
+        const splash = document.getElementById('mango-splash');
+        
+        if (logo) logo.classList.add('animate-mango-otogi');
+        
         setTimeout(() => {
-            // 로고 애니메이션 중지
-            if (logo) logo.classList.remove('animate-mango-otogi');
-
-            // 스플래시 화면 페이드아웃 및 제거
             if (splash) {
                 splash.style.opacity = '0';
                 setTimeout(() => {
                     splash.style.display = 'none';
+                    if (logo) logo.classList.remove('animate-mango-otogi');
+                    playMangoSignature(); // 부팅 완료 후 사운드 재생
                 }, 800);
             }
-        }, 3100); 
-    });
+        }, 2500); // 부팅 시간을 2.5초로 최적화
+    }
+
+    window.addEventListener('load', handleSystemBoot);
 
 // 🎵 Mango Signature Sound Logic (2026 Busan OS Update)
 const mangoAudio = new Audio('assets/sounds/mangomangodaldalhe.mp3'); //

@@ -81,17 +81,17 @@
         <section class="px-6 space-y-4">
             <h3 class="text-[10px] font-black text-yellow-500 uppercase tracking-[0.3em] ml-2">Portal Nexus Status</h3>
             <div class="grid grid-cols-4 gap-3">
-                <a href='../Food/Food_Portal.html' class="portal-stat-card rounded-2xl p-3 flex flex-col items-center justify-center border border-white/10 bg-black/40 transition-all group-active:scale-95">
+                <a href='../Food/food_dashboard.html' class="portal-stat-card rounded-2xl p-3 flex flex-col items-center justify-center border border-white/10 bg-black/40 transition-all group-active:scale-95">
                     <i data-lucide="utensils" class="w-5 h-5 text-orange-500 mb-1 drop-shadow-[0_0_8px_rgba(249,115,22,0.6)]"></i>
                     <span class="text-[8px] text-orange-400 font-bold uppercase">Food</span>
                     <span class="text-[9px] text-white font-black">맛집</span>
                 </a>
-                <a href="../Transfer/index.html" class="portal-stat-card rounded-2xl p-3 flex flex-col items-center justify-center border border-white/10 bg-black/40 transition-all group-active:scale-95">
+                <a href="../Transfer/transfer_dashboard.html" class="portal-stat-card rounded-2xl p-3 flex flex-col items-center justify-center border border-white/10 bg-black/40 transition-all group-active:scale-95">
                     <i data-lucide="car" class="w-5 h-5 text-blue-400 mb-1 drop-shadow-[0_0_8px_rgba(96,165,250,0.6)]"></i>
                     <span class="text-[8px] text-blue-300 font-bold uppercase">Taxi</span>
                     <span class="text-[9px] text-white font-black">교통</span>
                 </a>
-                <a href="../Travel/index.html" class="portal-stat-card rounded-2xl p-3 flex flex-col items-center justify-center border border-white/10 bg-black/40 transition-all group-active:scale-95">
+                <a href="../Travel/travel_dashboard.html" class="portal-stat-card rounded-2xl p-3 flex flex-col items-center justify-center border border-white/10 bg-black/40 transition-all group-active:scale-95">
                     <i data-lucide="plane" class="w-5 h-5 text-purple-400 mb-1 drop-shadow-[0_0_8px_rgba(192,132,252,0.6)]"></i>
                     <span class="text-[8px] text-purple-300 font-bold uppercase">Travel</span>
                     <span class="text-[9px] text-white font-black">여행</span>
@@ -111,7 +111,7 @@
                     <span class="text-[8px] text-green-300 font-bold uppercase">Market</span>
                     <span class="text-[9px] text-white font-black">마켓</span>
                 </a>
-                <a href="../chat/index.html" class="portal-stat-card rounded-2xl p-3 flex flex-col items-center justify-center border border-white/10 bg-black/40 transition-all group-active:scale-95">
+                <a href="../Chat/chat_dashboard.html" class="portal-stat-card rounded-2xl p-3 flex flex-col items-center justify-center border border-white/10 bg-black/40 transition-all group-active:scale-95">
                     <i data-lucide="message-circle" class="w-5 h-5 text-cyan-400 mb-1 drop-shadow-[0_0_8px_rgba(34,211,238,0.6)]"></i>
                     <span class="text-[8px] text-cyan-300 font-bold uppercase">Chat</span>
                     <span class="text-[9px] text-white font-black italic">채팅</span>
@@ -148,8 +148,20 @@
             let mId = localStorage.getItem('mango_user_id');
             if(!mId) { mId = 'MNG-' + Math.random().toString(36).substr(2, 5).toUpperCase(); localStorage.setItem('mango_user_id', mId); }
             idEl.innerText = 'ID: ' + mId;
+
+            // Sync Global Balances from LocalStorage
+            updateLiveBalances();
+            
             renderNetwork();
         });
+
+        function updateLiveBalances() {
+            const piBal = localStorage.getItem('mango_pi_balance') || '314.15';
+            const mngBal = localStorage.getItem('mango_mng_balance') || '0.00';
+            document.querySelectorAll('.global-pi-val').forEach(el => el.innerText = piBal);
+            document.querySelectorAll('.global-mng-val').forEach(el => el.innerText = mngBal);
+        }
+
         function showToast(m) { const t = document.getElementById('copy-toast'); t.innerText = m; t.classList.replace('opacity-0', 'opacity-100'); t.classList.replace('translate-y-10', 'translate-y-0'); setTimeout(() => { t.classList.replace('opacity-100', 'opacity-0'); t.classList.replace('translate-y-0', 'translate-y-10'); }, 3000); }
         function copyToClipboard(text) { navigator.clipboard.writeText(text).then(() => showToast('✨ Code Copied to Clipboard!')); }
         function shareReferral() {

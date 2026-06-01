@@ -18,6 +18,35 @@
         }
         ::-webkit-scrollbar { display: none; }
         .modal-overlay { background-color: rgba(0, 0, 0, 0.7); backdrop-filter: blur(10px); }
+
+        /* 스와이프 스타일 */
+        .swipe-container { position: relative; overflow: hidden; touch-action: pan-y; border-radius: 1rem; }
+        .swipe-item { position: relative; z-index: 10; transition: transform 0.3s ease; }
+        .swipe-action { position: absolute; top: 0; right: 0; height: 100%; display: flex; align-items: center; justify-content: center; width: 80px; background-color: #ef4444; color: white; border-radius: 0 1rem 1rem 0; z-index: 5; }
+
+        /* 잔액 부족 네온 깜빡임 */
+        @keyframes neon-red-blink {
+            0%, 100% { box-shadow: 0 0 5px #ff0000, 0 0 10px #ff0000; background-color: #ef4444; }
+            50% { box-shadow: 0 0 15px #ff0000, 0 0 30px #ff0000; background-color: #991b1b; }
+        }
+        .insufficient-balance { animation: neon-red-blink 0.8s infinite; color: white !important; }
+
+        /* 금가루 입자 스타일 */
+        .gold-particle-fly {
+            position: fixed; pointer-events: none; border-radius: 50%; z-index: 1000;
+            background: radial-gradient(circle, #fff 0%, #ffcc00 60%, #ffaa00 100%);
+            box-shadow: 0 0 10px #ffd700;
+        }
+
+        /* 좌우 흔들림(Shake) 효과 */
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
+            20%, 40%, 60%, 80% { transform: translateX(5px); }
+        }
+        .shake-anim { 
+            animation: shake 0.5s cubic-bezier(.36,.07,.19,.97) both; 
+        }
     </style>
 </head>
 <body class="h-[100dvh] flex flex-col overflow-hidden relative">
@@ -45,7 +74,7 @@
 
     <main class="flex-1 overflow-y-auto px-5 pb-24 z-10 space-y-4 pt-4">
         
-        <section class="gold-glow-card rounded-3xl p-6 relative overflow-hidden">
+        <section id="balance-card" class="gold-glow-card rounded-3xl p-6 relative overflow-hidden">
             <div class="flex justify-between items-center mb-2">
                 <p class="text-xs text-zinc-400 font-orb uppercase tracking-widest">Global Balance</p>
                 <button class="text-xs text-zinc-400 hover:text-white flex items-center">내역 <i data-lucide="chevron-right" class="w-4 h-4"></i></button>
@@ -83,7 +112,7 @@
         <h3 class="text-[10px] font-orb text-zinc-500 tracking-[0.2em] uppercase">Multi-Service Escrow Status</h3>
         <span class="text-[8px] bg-white/10 px-2 py-0.5 rounded-full text-zinc-400">8 Active Smart Contracts</span>
     </div>
-
+    <div id="hotel-escrow-list" class="space-y-3"></div>
     <div onclick="location.href='../Food/index.html'" class="glass-panel rounded-2xl p-4 border-l-4 border-pink-500 hover:bg-white/5 transition-all cursor-pointer group">
         <div class="flex justify-between items-start">
             <div class="flex items-center gap-3">
@@ -294,7 +323,7 @@
             document.querySelector('.payment-amount-display').innerHTML = 
                 `${formattedAmount} <span class="text-sm">${itemCurrency}</span>`;
         }
-        const piBalance = 1250.00;
+        let currentPiBalance = parseFloat(localStorage.getItem('mango_pi_balance')) || 1250.00;
         const countryData = {
             'KR': { flag: '🇰🇷', currency: 'KRW', rate: 42850, route: '인천국제공항 ✈️ 신라호텔', escrow: '78,500 ₩', payments: [{ name: '카카오페이', icon: 'smartphone' }, { name: '토스', icon: 'zap' }, { name: '신용카드', icon: 'credit-card' }] },
             'TH': { flag: '🇹🇭', currency: 'THB', rate: 1150, route: '수완나품 공항 ✈️ 메리어트', escrow: '1,280 ฿', payments: [{ name: 'GrabPay', icon: 'smartphone' }, { name: 'PromptPay', icon: 'qr-code' }, { name: 'GLN 결제', icon: 'globe' }] },
@@ -303,9 +332,13 @@
 
         function updateUI(code) {
             const data = countryData[code];
+            const balanceNum = document.querySelector('h2.text-4xl');
+            if (balanceNum) {
+                balanceNum.innerHTML = `${currentPiBalance.toLocaleString(undefined, {minimumFractionDigits: 2})} <span class="text-yellow-500 text-2xl not-italic ml-1">π</span>`;
+            }
             document.getElementById('current-flag').textContent = data.flag;
             document.getElementById('current-currency').textContent = data.currency;
-            document.getElementById('fiat-balance').textContent = `${(piBalance * data.rate).toLocaleString()} ${data.currency === 'KRW' ? '₩' : data.currency === 'THB' ? '฿' : '₫'}`;
+            document.getElementById('fiat-balance').textContent = `${(currentPiBalance * data.rate).toLocaleString()} ${data.currency === 'KRW' ? '₩' : data.currency === 'THB' ? '฿' : '₫'}`;
             document.getElementById('route-text').innerHTML = data.route;
             document.getElementById('escrow-price').textContent = data.escrow;
             document.getElementById('local-pay-title').textContent = `${data.flag} ${code === 'KR'?'한국':code==='TH'?'태국':'베트남'} 로컬 결제망 연동`;
@@ -356,7 +389,185 @@
             }, 2500);
         }
 
-        window.onload = () => { updateUI('KR'); lucide.createIcons(); };
+        // 금가루 흡수 시각 효과 함수
+        function triggerGoldDustEffect() {
+            const target = document.querySelector('h2.text-4xl');
+            if (!target) return;
+            const rect = target.getBoundingClientRect();
+            const targetX = rect.left + rect.width / 2;
+            const targetY = rect.top + rect.height / 2;
+
+            for (let i = 0; i < 40; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'gold-particle-fly';
+                const size = Math.random() * 4 + 2;
+                particle.style.width = `${size}px`;
+                particle.style.height = `${size}px`;
+                
+                const startX = Math.random() * window.innerWidth;
+                const startY = -20;
+                particle.style.left = `${startX}px`;
+                particle.style.top = `${startY}px`;
+                document.body.appendChild(particle);
+
+                const duration = Math.random() * 800 + 700;
+                particle.animate([
+                    { transform: `translate(0, 0) scale(1)`, opacity: 1 },
+                    { transform: `translate(${targetX - startX}px, ${targetY - startY}px) scale(0.2)`, opacity: 0 }
+                ], { duration: duration, easing: 'cubic-bezier(0.4, 0, 0.2, 1)', fill: 'forwards' });
+                setTimeout(() => particle.remove(), duration);
+            }
+        }
+
+        // 잔액 차감 카운트다운 애니메이션 함수
+        function animateBalance(start, end) {
+            const obj = document.querySelector('h2.text-4xl');
+            if (!obj) return;
+            const duration = 1000; // 1초 동안 애니메이션 진행
+            let startTimestamp = null;
+            const step = (timestamp) => {
+                if (!startTimestamp) startTimestamp = timestamp;
+                const progress = Math.min((timestamp - startTimestamp) / duration, 1);
+                const currentValue = start + progress * (end - start);
+                obj.innerHTML = `${currentValue.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})} <span class="text-yellow-500 text-2xl not-italic ml-1">π</span>`;
+                if (progress < 1) {
+                    window.requestAnimationFrame(step);
+                }
+            };
+            window.requestAnimationFrame(step);
+        }
+
+        // 결제 승인 처리 함수
+        function approveEscrow(index) {
+            const escrows = JSON.parse(localStorage.getItem('mango_hotel_escrows') || '[]');
+            const item = escrows[index];
+            const priceValue = parseFloat(item.price.replace(/[^\d.]/g, ''));
+            
+            if (currentPiBalance < priceValue) {
+                const balanceCard = document.getElementById('balance-card');
+                if (balanceCard) {
+                    balanceCard.classList.add('shake-anim');
+                    if (navigator.vibrate) navigator.vibrate(50); // 잔액 부족 시 강한 햅틱 피드백
+                    
+                    setTimeout(() => {
+                        balanceCard.classList.remove('shake-anim');
+                    }, 500);
+                }
+                alert("잔액이 부족합니다. Pi를 충전하거나 다른 결제 수단을 선택해주세요.");
+                return;
+            }
+
+            if (confirm(`'${item.title}' 결제를 승인하시겠습니까?\n${priceValue} π가 잔액에서 차감됩니다.`)) {
+                triggerGoldDustEffect(); // 금가루 효과 실행
+                const oldBalance = currentPiBalance;
+                currentPiBalance -= priceValue;
+                localStorage.setItem('mango_pi_balance', currentPiBalance);
+                escrows.splice(index, 1);
+                localStorage.setItem('mango_hotel_escrows', JSON.stringify(escrows));
+                updateUI('KR');
+                animateBalance(oldBalance, currentPiBalance); // 애니메이션 실행
+                renderHotelEscrows();
+                alert('결제가 완료되었습니다!');
+            }
+        }
+
+        // 에스크로 취소(삭제) 처리 함수
+        function cancelEscrow(index) {
+            const escrows = JSON.parse(localStorage.getItem('mango_hotel_escrows') || '[]');
+            if (confirm(`'${escrows[index].title}' 예약을 취소하시겠습니까?`)) {
+                escrows.splice(index, 1);
+                localStorage.setItem('mango_hotel_escrows', JSON.stringify(escrows));
+                renderHotelEscrows();
+            }
+        }
+
+        // 스와이프 터치 이벤트 핸들러
+        let touchStartX = 0;
+        let hasVibrated = false; // 진동 중복 방지 플래그
+        function handleTouchStart(e) { 
+            touchStartX = e.touches[0].clientX; 
+            hasVibrated = false; 
+        }
+        function handleTouchMove(e) {
+            const touchX = e.touches[0].clientX;
+            const diff = touchX - touchStartX;
+            const item = e.currentTarget;
+            if (diff < 0) {
+                const move = Math.max(diff, -80);
+                item.style.transform = `translateX(${move}px)`;
+                
+                // 40px 이상 밀었을 때 햅틱 진동 피드백 (조작감 강화)
+                if (move <= -40 && !hasVibrated) {
+                    if (navigator.vibrate) navigator.vibrate(15);
+                    hasVibrated = true;
+                }
+            }
+        }
+        function handleTouchEnd(e) {
+            const touchEndX = e.changedTouches[0].clientX;
+            const diff = touchEndX - touchStartX;
+            const item = e.currentTarget;
+            if (diff < -40) {
+                item.style.transform = `translateX(-80px)`;
+            } else {
+                item.style.transform = `translateX(0px)`;
+            }
+        }
+
+        // 최근 호텔 예약 내역 렌더링 함수
+        function renderHotelEscrows() {
+            const container = document.getElementById('hotel-escrow-list');
+            const escrows = JSON.parse(localStorage.getItem('mango_hotel_escrows') || '[]');
+            
+            if (escrows.length === 0) {
+                container.innerHTML = '';
+                return;
+            }
+
+            container.innerHTML = escrows.map((item, index) => {
+                const priceValue = parseFloat(item.price.replace(/[^\d.]/g, ''));
+                const isInsufficient = currentPiBalance < priceValue;
+                const btnStyle = isInsufficient ? 'insufficient-balance' : 'bg-amber-500 hover:bg-amber-400';
+
+                return `
+                <div class="swipe-container mb-3 animate-slide-up">
+                    <div class="swipe-action">
+                        <button onclick="cancelEscrow(${index})" class="flex flex-col items-center gap-1 text-white">
+                            <i data-lucide="trash-2" class="w-5 h-5"></i>
+                            <span class="text-[10px] font-bold">취소</span>
+                        </button>
+                    </div>
+                    <div class="swipe-item glass-panel p-4 border-l-4 border-amber-500 bg-[#0a0a0a]" 
+                         ontouchstart="handleTouchStart(event)" ontouchmove="handleTouchMove(event)" ontouchend="handleTouchEnd(event)">
+                        <div class="flex justify-between items-start">
+                            <div class="flex items-center gap-3">
+                                <div class="w-9 h-9 rounded-lg bg-amber-500/10 flex items-center justify-center">
+                                    <i data-lucide="hotel" class="w-5 h-5 text-amber-500"></i>
+                                </div>
+                                <div>
+                                    <h4 class="text-sm font-bold text-zinc-200">${item.title}</h4>
+                                    <p class="text-[10px] text-zinc-500">Hotel Stay Escrow (${item.date})</p>
+                                </div>
+                            </div>
+                            <div class="text-right">
+                                <span class="text-xs font-bold text-amber-400">${item.price}</span>
+                                <button onclick="approveEscrow(${index})" 
+                                        class="block mt-2 px-3 py-1 ${btnStyle} text-black text-[10px] font-black rounded-lg transition-all">
+                                    ${isInsufficient ? '잔액부족' : '승인'}
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `}).join('');
+            lucide.createIcons();
+        }
+
+        window.onload = () => { 
+            updateUI('KR'); 
+            renderHotelEscrows(); // 동적 리스트 렌더링 실행
+            lucide.createIcons(); 
+        };
     </script>
 </body>
 </html>

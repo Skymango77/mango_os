@@ -1,0 +1,647 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <!-- [Step 1] Viewport strict: Pi Browser 및 iOS 대응 -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>MANGO CHAT - WEB3 SOCIAL NEXUS</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;900&family=Noto+Sans+KR:wght@300;400;700;900&display=swap" rel="stylesheet">
+    <style>
+        /* [Step 2] Global Styles & CSS Variables */
+        :root {
+            --mango-gold: #FFD700;
+            --mango-gold-grad: linear-gradient(135deg, #FFD700 0%, #8B6B23 100%);
+            --dark-chrome: #0A0A0A;
+            --neon-orange: #FF5F00;
+            --glass-bg: rgba(15, 15, 15, 0.75);
+        }
+
+        html { -webkit-text-size-adjust: 100%; }
+        body { 
+            background-color: #000; 
+            color: white; 
+            font-family: 'Noto Sans KR', sans-serif;
+            overflow-x: hidden;
+        }
+        .font-orb { font-family: 'Orbitron', sans-serif; }
+
+        /* Glassmorphism Header */
+        .glass-header {
+            background: var(--glass-bg);
+            backdrop-filter: blur(25px);
+            border-bottom: 1px solid rgba(255, 215, 0, 0.2);
+        }
+
+        /* Metallic Gold Typography */
+        .text-metallic-gold {
+            background: var(--mango-gold-grad);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            filter: drop-shadow(0 0 5px rgba(255, 215, 0, 0.3));
+        }
+
+        /* [Step 4] Pulse Neon Effect for Active Icon */
+        @keyframes nav-pulse {
+            0% { filter: drop-shadow(0 0 2px var(--neon-orange)); opacity: 0.8; }
+            50% { filter: drop-shadow(0 0 10px var(--neon-orange)); opacity: 1; }
+            100% { filter: drop-shadow(0 0 2px var(--neon-orange)); opacity: 0.8; }
+        }
+        .nav-active { animation: nav-pulse 2s infinite ease-in-out; color: var(--neon-orange); }
+
+        /* [Step 7] Skeleton Animation */
+        @keyframes shimmer {
+            0% { background-position: -200% 0; }
+            100% { background-position: 200% 0; }
+        }
+        .skeleton {
+            background: linear-gradient(90deg, #1A1A1A 25%, #2A2A2A 50%, #1A1A1A 75%);
+            background-size: 200% 100%;
+            animation: shimmer 1.5s infinite;
+        }
+
+        /* [Step 8] Online Status Pulse */
+        .status-online {
+            position: absolute; bottom: 0; right: 0;
+            width: 12px; height: 12px;
+            background: #22C55E;
+            border: 2px solid #000;
+            border-radius: 50%;
+        }
+        .status-online::after {
+            content: '';
+            position: absolute; inset: -2px;
+            border-radius: 50%;
+            background: #22C55E;
+            animation: ping 1.5s infinite;
+            opacity: 0.6;
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 0px; }
+        
+        /* Container Strict Max-Width */
+        .app-shell {
+            width: 100%;
+            max-width: 430px;
+            min-height: 100vh;
+            margin: 0 auto;
+            position: relative;
+        }
+
+        /* --- MANGO Gold Power & Dust Style (Steps 1 & 11) --- */
+        .mango-gold-power {
+            background: linear-gradient(to bottom, #FFD700 0%, #F59E0B 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 0 15px rgba(245, 158, 11, 0.6);
+            filter: drop-shadow(0px 2px 4px rgba(0,0,0,0.8));
+        }
+        
+        .gold-dust-particle {
+            position: absolute;
+            background-color: #FDE047;
+            border-radius: 50%;
+            pointer-events: none;
+            box-shadow: 0 0 6px 2px rgba(253, 224, 71, 0.8);
+            animation: floatUp 1.5s ease-out forwards;
+        }
+
+        @keyframes floatUp {
+            0% { transform: translateY(0) scale(1); opacity: 1; }
+            100% { transform: translateY(-20px) scale(0); opacity: 0; }
+        }
+
+        /* [Step 11] Chat Overlay Slide */
+        .chat-overlay {
+            position: fixed;
+            inset: 0;
+            bottom: 0;
+            z-index: 100;
+            background-color: #000;
+            transform: translateX(100%);
+            transition: transform 0.45s cubic-bezier(0.32, 0.72, 0, 1);
+        }
+        .chat-overlay.active { transform: translateX(0); }
+
+        /* [Step 13-14] Message Bubble Architecture */
+        .bubble { max-width: 80%; padding: 10px 14px; position: relative; }
+        
+        /* Me: Orange Metallic Gradient */
+        .bubble-me {
+            background: linear-gradient(135deg, #FF5F00 0%, #FF8C00 100%);
+            box-shadow: 0 4px 15px rgba(255, 95, 0, 0.2);
+            color: white;
+            border-radius: 1.25rem 1.25rem 0.25rem 1.25rem;
+        }
+        .bubble-me.consecutive { border-radius: 1.25rem 0.25rem 0.25rem 1.25rem; }
+
+        /* Opponent: Dark Glassmorphism */
+        .bubble-you {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: #E2E8F0;
+            border-radius: 1.25rem 1.25rem 1.25rem 0.25rem;
+        }
+        .bubble-you.consecutive { border-radius: 0.25rem 1.25rem 1.25rem 1.25rem; }
+
+        .typing-indicator {
+            font-style: italic;
+            color: var(--mango-gold);
+            animation: pulse 1.5s infinite;
+        }
+
+        /* [Step 16] Sticky Date Divider Style */
+        .date-divider {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 24px 0;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+        .date-badge {
+            background: rgba(20, 20, 20, 0.85);
+            backdrop-filter: blur(10px);
+            padding: 4px 14px;
+            border-radius: 20px;
+            font-size: 10px;
+            font-weight: 800;
+            color: rgba(255, 255, 255, 0.4);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            letter-spacing: 0.05em;
+        }
+
+        /* [Step 18] Send Button States */
+        .btn-send-active {
+            background: var(--neon-orange) !important;
+            color: black !important;
+            box-shadow: 0 0 15px rgba(255, 95, 0, 0.4);
+        }
+
+        /* [Step 20] Keyboard Viewport Hack CSS */
+        .overlay-container {
+            height: 100vh; /* Fallback */
+            height: calc(var(--vh, 1vh) * 100);
+        }
+    </style>
+</head>
+<body>
+
+    <div class="app-shell flex flex-col bg-black">
+        
+        <!-- [Step 2] Header Replacement: Gold Power Branding -->
+        <header class="sticky top-0 z-40 bg-black/60 backdrop-blur-xl border-b border-white/5 px-6 py-4 flex justify-between items-center">
+            <div class="flex items-center gap-3">
+                <div class="logo-container cursor-pointer" onclick="location.reload()">
+                    <img id="mango-charging-logo" 
+                         src="assets/img/mango.jpg?v=20260505" 
+                         class="w-12 h-12 shrink-0 rounded-2xl border border-white/10 object-cover shadow-[0_0_15px_rgba(245,158,11,0.4)] transition-all duration-500 hover:scale-105" 
+                         onerror="this.src='https://mango-os-6xu2.vercel.app/mango.jpg'; this.onerror=null;"
+                         alt="Mango Logo">
+                </div>
+                
+                <div class="flex flex-col mt-0.5">
+                    <div class="relative inline-block cursor-pointer" onclick="location.reload()">
+                        <h1 id="mango-text" 
+                            class="mango-gold-power text-[30px] font-[900] tracking-tighter leading-none pr-2" 
+                            style="font-style: italic; margin: 0; position: relative; z-index: 10;">
+                            MANGO CHAT
+                        </h1>
+                        <div id="gold-dust-container" class="absolute top-0 left-0 w-full h-full pointer-events-none" style="z-index: 20; overflow: visible;"></div>
+                    </div>
+                    
+                    <span class="text-[8px] font-bold tracking-[1px] uppercase ml-1 mt-0.5" 
+                          style="color: #FDE047; text-shadow: 0 0 8px rgba(253,224,71,0.8);">
+                        .PI / ECO-SYSTEM
+                    </span>
+                </div>
+            </div>
+
+            <div class="flex items-center gap-4">
+                <i data-lucide="search" class="w-5 h-5 text-white/40 cursor-pointer hover:text-white transition-colors"></i>
+                <div class="w-9 h-9 rounded-full border-2 border-orange-500 shadow-[0_0_10px_rgba(249,115,22,0.5)] p-0.5 transition-all active:scale-95 cursor-pointer" onclick="switchTab('profile')">
+                    <img id="my-avatar" src="https://api.dicebear.com/8.x/avataaars/svg?seed=ChatAdminFemale&gender=female" class="w-full h-full rounded-full bg-zinc-800" alt="Avatar">
+                </div>
+            </div>
+        </header>
+
+        <main class="flex-1 px-5 pt-6 space-y-6 overflow-y-auto no-scrollbar">
+            
+            <!-- [Step 6] Smart Search -->
+            <div class="relative group">
+                <i data-lucide="search" class="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-white/30 group-focus-within:text-orange-500 transition-colors"></i>
+                <input type="text" placeholder="친구 또는 메시지 검색..." 
+                    class="w-full bg-white/5 border border-white/10 rounded-2xl py-4 pl-12 pr-4 text-sm text-white outline-none focus:border-orange-500/50 focus:bg-white/10 transition-all">
+            </div>
+
+            <!-- [Step 5] Tab Switcher -->
+            <nav class="flex border-b border-white/5">
+                <button onclick="switchTab('friends')" id="tab-friends" class="flex-1 pb-4 text-xs font-black text-orange-500 border-b-2 border-orange-500 transition-all">FRIENDS</button>
+                <button onclick="switchTab('chats')" id="tab-chats" class="flex-1 pb-4 text-xs font-black text-white/30 hover:text-white/60 transition-all">CHATS</button>
+                <button onclick="switchTab('guilds')" id="tab-guilds" class="flex-1 pb-4 text-xs font-black text-white/30 hover:text-white/60 transition-all">GUILDS</button>
+            </nav>
+
+            <!-- [Step 7] List Skeleton (Shown for 1s) -->
+            <div id="skeleton-container" class="space-y-4">
+                <template id="skeleton-row">
+                    <div class="flex items-center gap-4 p-2">
+                        <div class="w-14 h-14 rounded-2xl skeleton"></div>
+                        <div class="flex-1 space-y-2">
+                            <div class="w-24 h-3 rounded skeleton"></div>
+                            <div class="w-full h-2 rounded skeleton opacity-50"></div>
+                        </div>
+                    </div>
+                </template>
+            </div>
+
+            <!-- Friend List Content (Hidden initially) -->
+            <div id="friends-list" class="hidden space-y-5 pb-10">
+                <!-- [Step 8] Avatar Online Status Indicator implemented here -->
+            </div>
+
+        </main>
+
+        <!-- [Step 9] Floating Action Button -->
+        <button class="fixed bottom-28 right-8 w-16 h-16 bg-gradient-to-br from-orange-500 to-orange-700 rounded-2xl flex items-center justify-center shadow-[0_10px_20px_rgba(255,95,0,0.3)] active:scale-90 active:translate-y-1 transition-all z-40 border-t border-white/30">
+            <i data-lucide="plus" class="w-8 h-8 text-black"></i>
+        </button>
+
+        <!-- [Step 4] Bottom Navigation -->
+        <nav class="fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-[430px] glass-header py-4 px-10 flex justify-between items-center z-50 rounded-t-[2.5rem]">
+            <button class="flex flex-col items-center gap-1 text-white/30">
+                <i data-lucide="home" class="w-6 h-6"></i>
+                <span class="text-[9px] font-bold">HOME</span>
+            </button>
+            <button class="flex flex-col items-center gap-1 nav-active">
+                <i data-lucide="message-square" class="w-6 h-6"></i>
+                <span class="text-[9px] font-bold">CHAT</span>
+            </button>
+            <button class="flex flex-col items-center gap-1 text-white/30">
+                <i data-lucide="shopping-bag" class="w-6 h-6"></i>
+                <span class="text-[9px] font-bold">MARKET</span>
+            </button>
+            <button class="flex flex-col items-center gap-1 text-white/30">
+                <i data-lucide="settings" class="w-6 h-6"></i>
+                <span class="text-[9px] font-bold">SETTINGS</span>
+            </button>
+        </nav>
+
+        <!-- [Step 10] Safe Area Padding -->
+        <div class="pb-28"></div>
+
+    </div>
+
+    <!-- [Step 11 & 12] Chat Room Overlay & Header Actions -->
+    <div id="chat-room-overlay" class="chat-overlay overlay-container flex flex-col">
+        <header class="px-6 py-5 border-b border-white/5 flex items-center justify-between bg-black/80 backdrop-blur-xl">
+            <div class="flex items-center gap-4">
+                <button onclick="closeChatRoom()" class="p-2 hover:bg-white/5 rounded-full transition-colors">
+                    <i data-lucide="chevron-left" class="w-6 h-6 text-white"></i>
+                </button>
+                <div class="flex flex-col">
+                    <h3 id="target-name" class="font-black text-sm text-white uppercase tracking-tight">Sarah</h3>
+                    <div class="flex items-center gap-2">
+                        <span class="text-[10px] typing-indicator">Sarah is typing...</span>
+                        <!-- [Step 52] 감정 분석 대시보드 위젯 UI -->
+                        <div id="sentiment-widget" class="flex items-center gap-1 bg-white/5 px-1.5 py-0.5 rounded-full border border-white/10 opacity-0 transition-opacity">
+                            <span id="sentiment-emoji">😐</span><span id="sentiment-label" class="text-[7px] font-black text-white/40 uppercase">Neutral</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="flex items-center gap-3">
+                <button class="bg-yellow-500/10 border border-yellow-500/30 px-3 py-1.5 rounded-xl text-yellow-500 flex items-center gap-2 active:scale-95 transition-all">
+                    <i data-lucide="send-to-back" class="w-4 h-4"></i>
+                    <span class="text-[10px] font-black uppercase">Gift π</span>
+                </button>
+                <i data-lucide="more-horizontal" class="w-5 h-5 text-white/30 cursor-pointer"></i>
+            </div>
+        </header>
+        
+        <!-- [Step 13-15] Message List -->
+        <div class="flex-1 overflow-y-auto p-6 space-y-4 bg-[url('https://www.transparenttextures.com/patterns/asfalt-dark.png')]" id="chat-messages-scroll">
+            <!-- Messages injected by JS -->
+        </div>
+
+        <!-- [Step 17] Input Field Area -->
+        <footer class="p-4 bg-black border-t border-white/5 flex items-center gap-3">
+            <button class="w-10 h-10 rounded-xl bg-white/5 flex items-center justify-center text-white/40 active:scale-95 transition-all">
+                <i data-lucide="plus" class="w-5 h-5"></i>
+            </button>
+            <input type="text" id="chat-input-field" oninput="handleInputState(this)" onkeypress="if(event.keyCode==13) performSendMessage()" placeholder="메시지를 입력하세요..." 
+                class="flex-1 bg-zinc-900 border border-white/5 rounded-2xl px-4 py-3 text-sm text-white outline-none focus:border-orange-500/30 transition-all">
+            <button id="send-msg-btn" onclick="performSendMessage()" disabled class="w-11 h-11 bg-white/5 rounded-xl flex items-center justify-center text-white/20 transition-all">
+                <i data-lucide="arrow-up" class="w-6 h-6"></i>
+            </button>
+        </footer>
+    </div>
+
+    <script>
+        lucide.createIcons();
+
+        // [Step 46, 50-55] MangoChatEngine: 지능형 채팅 보안, 감정 분석 및 경제 등급 시스템 통합
+        const MangoChatEngine = {
+            sentimentScore: 0,
+            piBalance: 12.5, // [Step 53] 현재 유저의 실시간 Pi 잔액 (테스트용 초기값)
+
+            // [Step 53] Pi 잔액에 따른 유저 등급(Tier) 및 전용 배지 정의
+            getTierInfo() {
+                if (this.piBalance >= 100) return { name: 'Whale', badge: '💎', level: 4 };
+                if (this.piBalance >= 50) return { name: 'Validator', badge: '🛡️', level: 3 };
+                if (this.piBalance >= 10) return { name: 'Ambassador', badge: '🎖️', level: 2 };
+                return { name: 'Pioneer', badge: '🌱', level: 1 };
+            },
+
+            // [Step 54] 채팅방 입장 권한 체크 가드 로직
+            checkAccess(requiredLevel, roomName) {
+                const userTier = this.getTierInfo();
+                if (userTier.level < requiredLevel) {
+                    const tierNames = ["", "Pioneer", "Ambassador", "Validator", "Whale"];
+                    alert(`🚫 입장 제한: '${roomName}'\n\n이 방은 ${tierNames[requiredLevel]} 등급 이상만 입장 가능합니다.\n현재 회원님의 등급은 '${userTier.name}' 입니다.`);
+                    return false;
+                }
+                return true;
+            },
+
+            // [Step 50] AI 기반 실시간 비속어 필터
+            filterProfanity(text) {
+                const forbidden = ['바보', '멍청이', 'badword'];
+                let result = text;
+                forbidden.forEach(word => {
+                    const regex = new RegExp(word, 'gi');
+                    result = result.replace(regex, '***');
+                });
+                return result;
+            },
+
+            // [Step 51-52] 감정 분석 및 위젯 업데이트
+            analyzeSentiment(text) {
+                const pos = ['좋아', '멋져', '최고', '감사', '반가', '행복', 'nice', 'cool'];
+                const neg = ['싫어', '나빠', '화나', '짜증', '별로', 'bad', 'hate'];
+                let score = 0;
+                pos.forEach(w => { if(text.includes(w)) score++; });
+                neg.forEach(w => { if(text.includes(w)) score--; });
+                this.sentimentScore += score;
+                this.updateSentimentWidget();
+            },
+
+            updateSentimentWidget() {
+                const widget = document.getElementById('sentiment-widget');
+                const emoji = document.getElementById('sentiment-emoji');
+                const label = document.getElementById('sentiment-label');
+                if(!widget) return;
+                widget.classList.remove('opacity-0');
+                if (this.sentimentScore > 2) {
+                    emoji.innerText = '😊'; label.innerText = 'Positive'; label.className = 'text-[7px] font-black text-green-400 uppercase';
+                } else if (this.sentimentScore < -2) {
+                    emoji.innerText = '😠'; label.innerText = 'Negative'; label.className = 'text-[7px] font-black text-red-400 uppercase';
+                } else {
+                    emoji.innerText = '😐'; label.innerText = 'Neutral'; label.className = 'text-[7px] font-black text-white/40 uppercase';
+                }
+            },
+
+            // [Step 48] XSS 보안 필터 (HTML 이스케이프)
+            escapeHTML(text) {
+                const map = { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#039;' };
+                return text.replace(/[&<>"']/g, m => map[m]);
+            },
+
+            // [Step 46, 49] 메시지 발송 엔진
+            send() {
+                const input = document.getElementById('chat-input-field');
+                let text = input.value.trim();
+                if (!text) return;
+
+                text = this.filterProfanity(text);
+                this.analyzeSentiment(text);
+
+                const now = new Date();
+                const timeStr = now.getHours().toString().padStart(2, '0') + ':' + now.getMinutes().toString().padStart(2, '0');
+                const userTier = this.getTierInfo();
+
+                if (!window.chatHistory) window.chatHistory = [];
+                window.chatHistory.push({
+                    sender: 'me',
+                    text: text,
+                    time: timeStr,
+                    read: false,
+                    tierBadge: userTier.badge // [Step 55] 본인 메시지에도 현재 등급 배지 기록
+                });
+
+                renderMockMessages();
+                input.value = '';
+                handleInputState(input);
+                if (typeof triggerHaptic === 'function') triggerHaptic();
+                if (typeof syncChatCache === 'function') syncChatCache();
+            }
+        };
+
+        // [Step 43] Pi Auth Bootstrapping
+        async function bootstrapAuth() {
+            if (window.Pi) {
+                try {
+                    await Pi.init({ version: "2.0", sandbox: true });
+                    const auth = await Pi.authenticate(['username', 'payments'], (p) => console.log(p));
+                    window.currentPiUser = auth.user.username;
+                } catch (e) { console.warn("Pi SDK Defer"); }
+            }
+        }
+
+        // [Step 44-45] Utilities
+        function syncChatCache() { localStorage.setItem('mango_chat_cache', JSON.stringify(window.chatHistory || [])); }
+        function loadChatCache() { 
+            const cache = localStorage.getItem('mango_chat_cache');
+            if (cache) window.chatHistory = JSON.parse(cache);
+        }
+        function triggerHaptic() {
+            if (navigator.vibrate) navigator.vibrate([100, 50, 100]);
+        }
+
+        // [Step 7] Skeleton Loading Logic
+        function initSkeleton() {
+            const container = document.getElementById('skeleton-container');
+            const template = document.getElementById('skeleton-row');
+            for(let i=0; i<6; i++) {
+                container.appendChild(template.content.cloneNode(true));
+            }
+            
+            setTimeout(() => {
+                container.classList.add('hidden');
+                renderFriends();
+            }, 1000);
+        }
+
+        // [Step 8] Render Friends with Status
+        function renderFriends() {
+            const list = document.getElementById('friends-list');
+            const friends = [
+                { name: 'SkyMango', status: 'online', bio: 'Master Designer of Mango OS', seed: 'SkyMango', tier: 1 },
+                { name: 'Pi Pioneer', status: 'online', bio: 'Web3 Explorer', seed: 'Pi1', tier: 1 },
+                { name: '익명 Validator 방', status: 'online', bio: '50 Pi 이상 전용 익명룸', seed: 'Anon1', tier: 3 }, // [Step 54] 입장 제한 레벨 3
+                { name: '다이아몬드 고래방', status: 'online', bio: '100 Pi 이상 전용 상위룸', seed: 'Anon2', tier: 4 }, // [Step 54] 입장 제한 레벨 4
+                { name: 'Crypto King', status: 'offline', bio: 'HODL until the end', seed: 'King', tier: 2 },
+                { name: 'Busan Dancer', status: 'online', bio: 'Synergy Node Member', seed: 'Dancer', tier: 1 }
+            ];
+
+            list.innerHTML = friends.map((f, i) => `
+                <div onclick="openChatRoom('${f.name}', ${f.tier || 1})" class="flex items-center gap-4 p-3 bg-white/[0.02] border border-white/5 rounded-2xl hover:bg-white/5 transition-colors cursor-pointer group">
+                    <div class="relative w-14 h-14 flex-shrink-0">
+                        <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=${f.seed}" class="w-full h-full rounded-2xl bg-zinc-800 border border-white/10" alt="Avatar">
+                        <div class="${f.status === 'online' ? 'status-online' : 'w-3 h-3 bg-zinc-600 border-2 border-black rounded-full absolute bottom-0 right-0'}"></div>
+                    </div>
+                    <div class="flex-1 min-w-0">
+                        <div class="flex justify-between items-center">
+                            <h4 class="text-sm font-black text-white group-hover:text-orange-500 transition-colors">${f.name}</h4>
+                            <span class="text-[9px] text-white/20 font-bold uppercase tracking-widest">${f.status}</span>
+                        </div>
+                        <p class="text-xs text-white/40 truncate mt-0.5">${f.bio}</p>
+                    </div>
+                </div>
+            `).join('');
+            list.classList.remove('hidden');
+            lucide.createIcons();
+        }
+
+        // [Step 5] Tab Switching Logic
+        function switchTab(tabId) {
+            const tabs = ['friends', 'chats', 'guilds'];
+            tabs.forEach(id => {
+                const btn = document.getElementById(`tab-${id}`);
+                if(id === tabId) {
+                    btn.classList.add('text-orange-500', 'border-orange-500', 'border-b-2');
+                    btn.classList.remove('text-white/30');
+                } else {
+                    btn.classList.remove('text-orange-500', 'border-orange-500', 'border-b-2');
+                    btn.classList.add('text-white/30');
+                }
+            });
+        }
+
+        // [Step 11-15] Chat Engine Logic
+            const overlay = document.getElementById('chat-room-overlay');
+            // [Step 54] 입장 시 등급 제한 가드 체크
+            if (!MangoChatEngine.checkAccess(requiredTier, name)) return;
+
+            document.getElementById('target-name').innerText = name;
+            overlay.classList.add('active');
+            renderMockMessages();
+        }
+
+        function closeChatRoom() {
+            document.getElementById('chat-room-overlay').classList.remove('active');
+        }
+
+        function renderMockMessages() {
+            const container = document.getElementById('chat-messages-scroll');
+            // 전역 변수로 메시지 관리 (실제 발송 테스트용)
+            if (!window.chatHistory) {
+                window.chatHistory = [
+                { type: 'date', text: '2026년 5월 16일' }, // [Step 16]
+                { sender: 'you', text: "안녕하세요! 망고 챗에 오신 걸 환영해요. 🥭", time: "14:20", read: true },
+            }
+
+            container.innerHTML = window.chatHistory.map((msg, i, arr) => {
+                if (msg.type === 'date') {
+                    return `
+                        <div class="date-divider">
+                            <span class="date-badge">${msg.text}</span>
+                        </div>
+                    `;
+                }
+                const isMe = msg.sender === 'me';
+                const isConsecutive = i > 0 && arr[i-1].sender === msg.sender;
+                
+                const safeText = MangoChatEngine.escapeHTML(msg.text); // [Step 48] 보안 필터
+
+                return `
+                    <div class="flex ${isMe ? 'justify-end' : 'justify-start'} ${isConsecutive ? '-mt-2' : 'mt-2'}">
+                        <div class="bubble ${isMe ? 'bubble-me' : 'bubble-you'} ${isConsecutive ? 'consecutive' : ''} text-sm">
+                            <div class="flex items-center gap-1 mb-1 opacity-80">
+                                ${msg.senderName ? `<span class="text-[10px] font-black">${msg.senderName}</span>` : ''}
+                                <!-- [Step 55] 유저 등급 전용 배지 노출 -->
+                                <span class="text-[10px]">${msg.tierBadge || ''}</span>
+                            </div>
+                                ${isMe ? `<span class="text-[9px] font-black ${msg.read ? 'text-white/40' : 'text-yellow-400'}">${msg.read ? '✓' : '1'}</span>` : ''}
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+            
+            // [Step 19] Initial Auto-scroll
+            setTimeout(scrollToBottom, 100);
+            lucide.createIcons();
+        }
+
+        // [Step 18] Send Button Activation Logic
+        function handleInputState(el) {
+            const sendBtn = document.getElementById('send-msg-btn');
+            if (el.value.trim().length > 0) {
+                sendBtn.disabled = false;
+                sendBtn.classList.add('btn-send-active');
+            } else {
+                sendBtn.disabled = true;
+                sendBtn.classList.remove('btn-send-active');
+            }
+        }
+
+        // [Step 19] Auto-scroll Logic
+        function scrollToBottom() {
+            const container = document.getElementById('chat-messages-scroll');
+            if (container) {
+                container.scrollTo({ top: container.scrollHeight, behavior: 'smooth' });
+            }
+        }
+
+        function performSendMessage() {
+            // [Step 46] 고도화된 엔진 호출로 대체
+            MangoChatEngine.send();
+        }
+
+        // [Step 20] Keyboard Viewport Hack
+        function updateViewportHeight() {
+            let vh = window.innerHeight * 0.01;
+            document.documentElement.style.setProperty('--vh', `${vh}px`);
+        }
+
+        window.addEventListener('resize', updateViewportHeight);
+        window.addEventListener('orientationchange', updateViewportHeight);
+
+        // [Step 3 & 3단계] Gold Dust Effect 엔진
+        function startGoldDustEffect() {
+            const container = document.getElementById('gold-dust-container');
+            if (!container) return;
+
+            setInterval(() => {
+                const dust = document.createElement('div');
+                dust.className = 'gold-dust-particle';
+                
+                const size = Math.random() * 2.5 + 1; 
+                dust.style.width = `${size}px`;
+                dust.style.height = `${size}px`;
+                dust.style.left = `${Math.random() * 100}%`;
+                dust.style.top = `${Math.random() * 100}%`;
+                
+                container.appendChild(dust);
+                
+                setTimeout(() => {
+                    dust.remove();
+                }, 1500);
+            }, 200); 
+        }
+
+        // [Step 1] Viewport Init & Window Load
+        window.addEventListener('load', () => {
+            initSkeleton();
+            startGoldDustEffect(); 
+            updateViewportHeight(); // [Step 20] Init
+            bootstrapAuth(); // [Step 43] Bootstrapping
+            loadChatCache(); // [Step 44] Initial Load
+        });
+    </script>
+</body>
+</html>

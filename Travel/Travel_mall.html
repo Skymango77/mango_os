@@ -7,32 +7,15 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../shared/styles/mango-core.css">
+    <script type="module" src="../services/piPricingEngine.js"></script>
+    <script type="module" src="../services/bookingEngine.js"></script>
     <style>
-        :root { --mango-gold: #f59e0b; --bg-dark: #0f172a; }
-        body { background-color: var(--bg-dark); font-family: 'Inter', sans-serif; color: white; -webkit-tap-highlight-color: transparent; }
-        .glass { background: rgba(255, 255, 255, 0.03); backdrop-filter: blur(20px); border: 1px solid rgba(255, 255, 255, 0.08); }
-        .mango-gradient { background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%); }
         .glass-dark { background: rgba(15, 23, 42, 0.8); backdrop-filter: blur(30px) saturate(150%); border: 1px solid rgba(255, 255, 255, 0.1); }
-        .no-scrollbar::-webkit-scrollbar { display: none; }
-        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
         .product-card { transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1); }
         .product-card:active { transform: scale(0.96); }
         #sidebar-menu, #cart-drawer, #seller-modal { transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1); }
         .active-nav { color: var(--mango-gold); }
-        @keyframes slideUp { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
-        .animate-slide-up { animation: slideUp 0.5s ease forwards; }
-
-        /* 망고 로고 전용 스타일 */
-        .mango-gold-power {
-            font-family: 'Orbitron', sans-serif;
-        }
-        .glow-line {
-            z-index: 5;
-        }
-        @keyframes pulse {
-            0%, 100% { opacity: 1; transform: translate(-50%, 0) scaleX(1); }
-            50% { opacity: 0.6; transform: translate(-50%, 0) scaleX(0.95); }
-        }
 
         /* AI 3D Carousel Advertisement Styles */
         .carousel-view-ai {
@@ -81,10 +64,19 @@
                 <i data-lucide="menu" class="w-6 h-6"></i>
             </button>
             <div class="flex flex-col items-center">
-                <h1 class="font-extrabold text-xl tracking-tighter uppercase">Mango <span class="text-amber-500 italic">Travel</span></h1>
+                <div class="relative inline-block">
+                    <h1 class="mango-gold-power text-[30px] font-[900] tracking-tighter leading-none pr-2" style="font-style: italic; margin: 0; position: relative; z-index: 10;">
+                        MANGO TRAVEL
+                    </h1>
+                    <div id="gold-dust-container" class="absolute top-0 left-0 w-full h-full pointer-events-none" style="z-index: 20; overflow: visible;"></div>
+                </div>
             </div>
             <div class="flex items-center gap-1">
                 <button onclick="toggleSellerDashboard(true)" class="p-2 active:opacity-50 hover:text-amber-500 transition-colors"><i data-lucide="user" class="w-6 h-6"></i></button>
+                <!-- Live Pi Value Ticker -->
+                <div class="pi-ticker">
+                    <i data-lucide="dollar-sign" class="w-4 h-4"></i> <span id="pi-value-ticker">1 π = 0.00 KRW</span>
+                </div>
                 <button onclick="toggleCart(true)" class="p-2 relative active:opacity-50 hover:text-amber-500 transition-colors">
                     <i data-lucide="shopping-cart" class="w-6 h-6"></i>
                     <span id="cart-badge" class="absolute top-1 right-1 w-4 h-4 bg-amber-500 text-[10px] font-bold rounded-full flex items-center justify-center text-black">0</span>
@@ -255,9 +247,9 @@
             <div class="bg-white/[0.02] p-5 flex justify-between items-center">
                 <div class="flex items-center gap-4">
                     <div class="w-12 h-12 bg-white rounded-xl p-1.5 flex items-center justify-center shadow-inner"><i data-lucide="qr-code" class="text-black w-full h-full"></i></div>
-                    <div><p class="text-[8px] text-white/30 uppercase font-bold">Fare</p><p class="text-xl font-black text-white italic tracking-tighter">8.5 <span class="text-amber-500">π</span></p></div>
+                    <div><p class="text-[8px] text-white/30 uppercase font-bold">Fare</p><p class="text-xl font-black text-white italic tracking-tighter" data-fiat-original="10000" data-pi-converted="8.5">8.5 <span class="text-amber-500">π</span></p></div>
                 </div>
-                <button onclick="openTrainReceipt('Shinkansen Tokyo-Osaka', '8.5 π')" class="mango-gradient text-black px-6 py-3.5 rounded-2xl font-black text-[10px] uppercase italic shadow-lg shadow-amber-500/20 active:scale-95 transition-all">Buy Pass Now</button>
+                <button onclick="openTrainReceipt('Shinkansen Tokyo-Osaka', 10000, 'KRW')" class="mango-gradient text-black px-6 py-3.5 rounded-2xl font-black text-[10px] uppercase italic shadow-lg shadow-amber-500/20 active:scale-95 transition-all">Buy Pass Now</button>
             </div>
         </div>
     </section>
@@ -436,7 +428,7 @@
     </nav>
 
     <script>
-        lucide.createIcons();
+        import { uiController } from '../services/uiController.js';
 
         // --- GLOBAL SETTLEMENT STATE ---
         let sellerAccount = {
@@ -449,58 +441,58 @@
             {
                 id: 1,
                 title: "Swiss Alps 5-Day Luxury Tour",
-                price: "350.0 π",
-                priceValue: 350.0,
-                originalPrice: "480.0 π",
+                fiatPrice: 480000, // Original fiat price
+                discountedFiatPrice: 350000, // Discounted fiat price
                 discount: "27%",
                 img: "https://images.unsplash.com/photo-1531310197839-ccf54634509e?auto=format&fit=crop&w=500&q=80",
                 delivery: "VIP Guide",
                 rating: 4.9,
                 rewards: "12.0 MNG",
                 sellerType: 'partner',
-                status: 'on_sale'
+                status: 'on_sale',
+                currency: 'KRW'
             },
             {
                 id: 2,
                 title: "Paris Louvre Museum Fast Track Ticket",
-                price: "1.5 π",
-                priceValue: 1.5,
-                originalPrice: "2.0 π",
+                fiatPrice: 2000,
+                discountedFiatPrice: 1500,
                 discount: "25%",
                 img: "https://images.unsplash.com/photo-1502602898657-3e91760cbb34?auto=format&fit=crop&w=500&q=80",
                 delivery: "Instant E-Ticket",
                 rating: 4.8,
                 rewards: "0.1 MNG",
                 sellerType: 'individual',
-                status: 'on_sale'
+                status: 'on_sale',
+                currency: 'KRW'
             },
             {
                 id: 3,
                 title: "Maldives Overwater Villa 3-Night Package",
-                price: "850.0 π",
-                priceValue: 850.0,
-                originalPrice: "1200.0 π",
+                fiatPrice: 1200000,
+                discountedFiatPrice: 850000,
                 discount: "29%",
                 img: "https://images.unsplash.com/photo-1514282401047-d79a71a590e8?auto=format&fit=crop&w=500&q=80",
                 delivery: "Premium Booking",
                 rating: 5.0,
                 rewards: "50.0 MNG",
                 sellerType: 'partner',
-                status: 'purchased_pending_confirmation'
+                status: 'purchased_pending_confirmation',
+                currency: 'KRW'
             },
             {
                 id: 4,
                 title: "Tokyo to Osaka Shinkansen Ticket",
-                price: "8.5 π",
-                priceValue: 8.5,
-                originalPrice: "10.0 π",
+                fiatPrice: 10000,
+                discountedFiatPrice: 8500,
                 discount: "15%",
                 img: "https://images.unsplash.com/photo-1540959733332-e94e270b4d42?auto=format&fit=crop&w=500&q=80",
                 delivery: "Digital QR",
                 rating: 4.7,
                 rewards: "0.5 MNG",
                 sellerType: 'partner',
-                status: 'on_sale'
+                status: 'on_sale',
+                currency: 'KRW'
             }
         ];
 
@@ -517,10 +509,10 @@
             const product = productData.find(p => p.id === productId);
             if (!product) return;
 
+            const convertedPrices = window.piPricingEngine.convertToPi(product.discountedFiatPrice, product.currency);
             const isConfirmed = confirm(`Confirm that the booking for "${product.title}" is accurate and all vouchers have been received?`);
             if (!isConfirmed) return;
             
-            product.status = 'completed';
             const { netAmount, platformProfit, feeRate } = calculateCommission(product.priceValue, product.sellerType);
 
             sellerAccount.pending -= product.priceValue;
@@ -540,7 +532,9 @@
         function renderProducts() {
             const grid = document.getElementById('product-grid');
             grid.innerHTML = productData.map((p, index) => `
-                <div class="product-card glass rounded-[2rem] overflow-hidden flex flex-col animate-slide-up" style="animation-delay: ${index * 0.1}s">
+                <div class="product-card glass rounded-[2rem] overflow-hidden flex flex-col animate-slide-up" 
+                     style="animation-delay: ${index * 0.1}s"
+                     data-fiat-original="${p.fiatPrice}" data-fiat-discounted="${p.discountedFiatPrice}" data-currency="${p.currency}">
                     <div class="relative aspect-square">
                         <img src="${p.img}" class="w-full h-full object-cover">
                         <span class="absolute top-4 left-4 bg-red-500 text-white text-[10px] font-black px-2 py-1 rounded-lg shadow-lg">${p.discount}</span>
@@ -555,10 +549,10 @@
                     ` : ''}
                     <div class="p-4 flex-1 flex flex-col">
                         <h3 class="text-[11px] font-semibold leading-tight line-clamp-2 mb-3 text-white/90">${p.title}</h3>
-                        <div class="mt-auto">
+                        <div class="mt-auto" data-price-container>
                             <div class="flex items-center gap-1.5 mb-1">
-                                <span class="text-[9px] text-white/30 line-through">${p.originalPrice}</span>
-                                <span class="text-[9px] text-amber-500 font-bold">${p.discount} OFF</span>
+                                <span class="text-[9px] text-white/30 line-through" data-fiat-original-display>${p.fiatPrice.toLocaleString()} ${p.currency}</span>
+                                <span class="text-[9px] text-amber-500 font-bold">${p.discount} OFF</span> <!-- This is static, can be dynamic -->
                             </div>
                             <div class="flex items-center justify-between mb-3">
                                 <p class="text-sm font-black text-white italic">${p.price}</p>
@@ -579,21 +573,7 @@
         }
 
         // --- UI LOGIC ---
-        function toggleMenu(show) {
-            const sidebar = document.getElementById('sidebar-menu');
-            const overlay = document.getElementById('sidebar-overlay');
-            if (show) {
-                sidebar.classList.remove('-translate-x-full');
-                overlay.classList.remove('hidden');
-                setTimeout(() => overlay.classList.replace('opacity-0', 'opacity-100'), 10);
-            } else {
-                sidebar.classList.add('-translate-x-full');
-                overlay.classList.replace('opacity-100', 'opacity-0');
-                setTimeout(() => overlay.classList.add('hidden'), 300);
-            }
-        }
-
-        function closeAllDrawers() {
+        window.closeAllDrawers = () => { // Expose globally if needed
             toggleMenu(false);
             toggleCart(false);
             toggleSellerDashboard(false);
@@ -626,7 +606,7 @@
         }
 
         // --- AI 3D CAROUSEL LOGIC ---
-        const aiPackageData = [];
+        let aiPackageData = []; // Changed to let for re-assignment
         const destinations = [
             { city: "Paris", theme: "Romantic", img: "photo-1502602898657-3e91760cbb34", color: "rose-500" },
             { city: "Tokyo", theme: "Neon Tech", img: "photo-1540959733332-e94e270b4d42", color: "blue-400" },
@@ -662,9 +642,10 @@
         
         destinations.forEach((d, i) => {
             aiPackageData.push({
-                id: i,
+                id: `AI-${i}`,
                 title: `${d.city} ${d.theme} Full Pass`,
-                price: (Math.random() * 150 + 20).toFixed(1) + " π",
+                fiatPrice: parseFloat((Math.random() * 150000 + 20000).toFixed(0)), // Mock fiat price
+                currency: 'KRW',
                 img: `https://images.unsplash.com/${d.img}?w=300&auto=format&fit=crop&q=80`,
                 badge: `${d.theme} Pick`,
                 color: d.color
@@ -687,7 +668,7 @@
                     <p class="text-[9px] text-${p.color} font-black uppercase mb-1">${p.badge}</p>
                     <h3 class="text-[11px] font-bold leading-tight text-white">${p.title}</h3>
                     <p class="text-xs font-black text-white mt-2">${p.price}</p>
-                </div>
+                </div> <!-- Price will be updated by updateAIPrices -->
             `).join('');
             
             updateAIRotation();
@@ -720,6 +701,17 @@
                     } else {
                         card.style.opacity = "0.3";
                     }
+                }
+            });
+            updateAIPrices(); // Update prices after rotation
+        }
+
+        function updateAIPrices() {
+            aiPackageData.forEach(p => {
+                const card = document.getElementById(`ai-card-${p.id.split('-')[1]}`); // Get card by its original index
+                if (card) {
+                    const convertedPrices = window.piPricingEngine.convertToPi(p.fiatPrice, p.currency);
+                    card.querySelector('p:last-child').innerHTML = `${convertedPrices.totalPi.toFixed(2)} <span class="text-amber-500">π</span>`;
                 }
             });
         }
@@ -774,9 +766,72 @@
         };
 
         document.addEventListener('DOMContentLoaded', () => {
+            uiController.init(); // Initialize Lucide icons
             renderProducts();
             updateSellerDashboardUI();
             initAICarousel();
+            
+            // Update all prices initially
+            updateAllPrices();
+
+            // Refresh prices every 60 seconds
+            setInterval(async () => {
+                await window.piPricingEngine.refreshPiRate();
+                updatePiTicker();
+                updateAllPrices();
+            }, 60000);
+
+            function updateAllPrices() {
+                updateProductListPrices();
+                updateAIPrices();
+                updateTrainTicketPrice(); // For Shinkansen
+                updatePiTicker();
+            }
+
+            function updatePiTicker() {
+                document.getElementById('pi-value-ticker').innerText = `1 π = ${window.piPricingEngine.getCurrentPiValue('KRW').toLocaleString()} KRW`;
+            }
+
+            window.toggleMenu = uiController.toggleMenu; // Expose toggleMenu globally
+
+            // Gold dust effect (if still needed, ensure it doesn't conflict with other scripts)
+            function startGoldDustEffect() {
+                const container = document.getElementById('gold-dust-container');
+                if (!container) return;
+                setInterval(() => {
+                    const dust = document.createElement('div');
+                    dust.className = 'gold-dust-particle';
+                    const size = Math.random() * 2.5 + 1;
+                    dust.style.width = `${size}px`;
+                    dust.style.height = `${size}px`;
+                    dust.style.left = `${Math.random() * 100}%`;
+                    dust.style.top = `${Math.random() * 100}%`;
+                    container.appendChild(dust);
+                    setTimeout(() => dust.remove(), 1500);
+                }, 200);
+            }
+            window.addEventListener('load', startGoldDustEffect);
+
+            // Function to update prices in the product list
+            function updateProductListPrices() {
+                document.querySelectorAll('.product-card').forEach(card => {
+                    const originalFiat = parseFloat(card.dataset.fiatOriginal);
+                    const discountedFiat = parseFloat(card.dataset.fiatDiscounted);
+                    const currency = card.dataset.currency;
+                    const convertedPrices = window.piPricingEngine.convertToPi(discountedFiat, currency);
+                    card.querySelector('[data-fiat-original-display] span:first-child').innerText = `${originalFiat.toLocaleString()} ${currency}`;
+                    card.querySelector('.text-sm.font-black.text-white.italic').innerHTML = `${convertedPrices.totalPi.toFixed(2)} <span class="text-amber-500">π</span>`;
+                });
+            }
+
+            // Function to update Shinkansen price
+            function updateTrainTicketPrice() {
+                const shinkansenCard = document.querySelector('section.animate-slide-up .mango-gradient').closest('.glass');
+                const originalFiat = parseFloat(shinkansenCard.querySelector('[data-fiat-original]').dataset.fiatOriginal);
+                const currency = shinkansenCard.querySelector('[data-currency]').dataset.currency;
+                const convertedPrices = window.piPricingEngine.convertToPi(originalFiat, currency);
+                shinkansenCard.querySelector('[data-pi-converted]').innerHTML = `${convertedPrices.totalPi.toFixed(2)} <span class="text-amber-500">π</span>`;
+            }
         });
     </script>
 </body>

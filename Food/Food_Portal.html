@@ -35,6 +35,25 @@
             box-shadow: 0 0 40px rgba(0, 0, 0, 0.5);
         }
 
+        /* --- MANGO Gold Power & Dust Style --- */
+        .mango-gold-power {
+            background: linear-gradient(to bottom, #FFD700 0%, #F59E0B 100%);
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 0 15px rgba(245, 158, 11, 0.6);
+            filter: drop_shadow(0px 2px 4px rgba(0,0,0,0.8));
+        }
+        
+        .gold-dust-particle {
+            position: absolute;
+            background-color: #FDE047;
+            border-radius: 50%;
+            pointer-events: none;
+            box-shadow: 0 0 6px 2px rgba(253, 224, 71, 0.8);
+            animation: floatUp 1.5s ease-out forwards;
+        }
+
         /* [포인트] 네온 오렌지 효과 */
         .neon-border {
             border-color: var(--neon-orange);
@@ -100,8 +119,13 @@
                 <i data-lucide="arrow-left" class="w-6 h-6 text-white"></i>
             </button>
             <div class="text-center">
-                <h1 class="font-orb text-lg font-black italic tracking-tighter text-white">FOOD <span class="text-orange-500">PORTAL</span></h1>
-                <p class="text-[8px] text-white/40 font-bold tracking-[2px] uppercase">Mango Eco-System</p>
+                <div class="relative inline-block">
+                    <h1 class="mango-gold-power font-orb text-[30px] font-[900] tracking-tighter leading-none pr-2" style="font-style: italic; margin: 0; position: relative; z-index: 10;">
+                        FOOD PORTAL
+                    </h1>
+                    <div id="gold-dust-container" class="absolute top-0 left-0 w-full h-full pointer-events-none" style="z-index: 20; overflow: visible;"></div>
+                </div>
+                <span class="text-[8px] font-bold tracking-[1px] uppercase ml-1 mt-0.5" style="color: #FDE047;">.PI / ECO-SYSTEM</span>
             </div>
             <div class="w-10 h-10 rounded-full flex items-center justify-center bg-zinc-900 border border-orange-500/30 overflow-hidden">
                 <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Foodie" class="w-full h-full object-cover">
@@ -616,6 +640,23 @@
         renderAICuration();
         initStickerDB();
         lucide.createIcons();
+
+        function startGoldDustEffect() {
+            const container = document.getElementById('gold-dust-container');
+            if (!container) return;
+            setInterval(() => {
+                const dust = document.createElement('div');
+                dust.className = 'gold-dust-particle';
+                const size = Math.random() * 2.5 + 1;
+                dust.style.width = `${size}px`;
+                dust.style.height = `${size}px`;
+                dust.style.left = `${Math.random() * 100}%`;
+                dust.style.top = `${Math.random() * 100}%`;
+                container.appendChild(dust);
+                setTimeout(() => dust.remove(), 1500);
+            }, 200);
+        }
+        window.addEventListener('load', startGoldDustEffect);
     </script>
 </body>
 </html>

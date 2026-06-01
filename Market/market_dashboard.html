@@ -1,0 +1,932 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Mango Market | Premium Universe</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root { --mango-gold: #f59e0b; --bg-dark: #0f172a; }
+        body { background-color: var(--bg-dark); font-family: 'Inter', sans-serif; color: white; -webkit-tap-highlight-color: transparent; }
+        .glass { background: rgba(255, 255, 255, 0.03); backdrop-filter: blur(20px); border: 1px solid rgba(255, 255, 255, 0.08); }
+        .mango-gradient { background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%); }
+        .glass-dark { background: rgba(15, 23, 42, 0.8); backdrop-filter: blur(30px) saturate(150%); border: 1px solid rgba(255, 255, 255, 0.1); }
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        .product-card { transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1); }
+        .product-card:active { transform: scale(0.96); }
+        #sidebar-menu, #cart-drawer, #seller-modal { transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1); }
+        .active-nav { color: var(--mango-gold); }
+        @keyframes slideUp { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+        .animate-slide-up { animation: slideUp 0.5s ease forwards; }
+
+        /* i18n Layout Protection */
+        [data-i18n] { transition: opacity 0.2s ease; }
+        .text-flexible { overflow-wrap: break-word; word-break: keep-all; flex-wrap: wrap; }
+    </style>
+</head>
+<body class="max-w-[480px] mx-auto min-h-screen relative pb-24 overflow-x-hidden">
+
+    <!-- 1. TOP HEADER (Coupang Style) -->
+    <header class="sticky top-0 z-50 bg-[#0f172a]/90 backdrop-blur-xl border-b border-white/5">
+        <div class="flex items-center justify-between px-4 py-3">
+            <button onclick="toggleMenu(true)" class="p-2 -ml-2 active:opacity-50">
+                <i data-lucide="menu" class="w-6 h-6"></i>
+            </button>
+            <div class="flex flex-col items-center flex-1">
+                <h1 class="font-extrabold text-xl tracking-tighter uppercase" data-i18n="market_title">Mango <span class="text-amber-500 italic">Market</span></h1>
+                <!-- 실시간 잔액 표시 헤더 (추가) -->
+                <div class="flex items-center gap-3 mt-1 px-3 py-0.5 glass rounded-full border-amber-500/20">
+                    <div class="flex items-center gap-1">
+                        <span class="global-pi-val text-[10px] font-black text-white leading-none">0.00</span><span class="text-[9px] text-amber-500 font-bold italic">π</span>
+                    </div>
+                    <div class="w-px h-2 bg-white/10"></div>
+                    <div class="flex items-center gap-1">
+                        <span class="global-mng-val text-[10px] font-black text-indigo-400 leading-none">0.00</span><span class="text-[8px] text-indigo-400/50 font-bold italic uppercase">Mng</span>
+                    </div>
+                </div>
+            </div>
+            <div class="flex items-center gap-1">
+                <!-- 🌐 jw.org Style Language Picker -->
+                <div class="flex items-center bg-white/5 rounded-full px-2 py-1 border border-white/10 mr-1 group hover:border-amber-500/50 transition-all">
+                    <i data-lucide="globe" class="w-3.5 h-3.5 text-amber-500 mr-1"></i>
+                    <select id="mango-lang-select" onchange="MangoI18n.setLanguage(this.value)" class="bg-transparent text-[9px] font-bold outline-none text-white cursor-pointer appearance-none pr-1">
+                        <option value="ko">한국어</option>
+                        <option value="en">English</option>
+                        <option value="ja">日本語</option>
+                        <option value="zh">中文</option>
+                        <option value="vi">Tiếng Việt</option>
+                    </select>
+                </div>
+                <button onclick="toggleSellerDashboard(true)" class="p-2 active:opacity-50 hover:text-amber-500 transition-colors"><i data-lucide="user" class="w-6 h-6"></i></button>
+                <button onclick="toggleCart(true)" class="p-2 relative active:opacity-50 hover:text-amber-500 transition-colors">
+                    <i data-lucide="shopping-cart" class="w-6 h-6"></i>
+                    <span id="cart-badge" class="absolute top-1 right-1 w-4 h-4 bg-amber-500 text-[10px] font-bold rounded-full flex items-center justify-center text-black">0</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- 2. SMART SEARCH BAR -->
+        <div class="px-4 pb-4">
+            <div class="flex items-center bg-white/10 rounded-2xl overflow-hidden border border-white/10 focus-within:border-amber-500/50 transition-all">
+                <select class="bg-transparent text-[11px] font-bold px-3 py-3 outline-none border-r border-white/10 appearance-none text-amber-500">
+                    <option>전체</option>
+                    <option>뷰티/케어</option>
+                    <option>취미/동호회</option>
+                    <option>여행/숙박/항공</option>
+                </select>
+                <input type="text" placeholder="망고에서 무엇을 찾으시나요?" class="flex-1 bg-transparent px-3 py-3 text-sm outline-none placeholder:text-white/30">
+                <button onclick="startVoiceSearch()" class="p-2 text-white/50 hover:text-amber-500"><i data-lucide="mic" class="w-5 h-5"></i></button>
+                <button onclick="startGlobalSearch()" class="mango-gradient px-4 py-3 text-black"><i data-lucide="search" class="w-5 h-5 font-bold"></i></button>
+            </div>
+            <div class="flex gap-4 mt-3 overflow-x-auto no-scrollbar whitespace-nowrap text-[11px] font-medium text-white/40">
+                <span>🔥 인기검색어:</span>
+                <span class="text-amber-500/80 font-bold">#아이패드_프로</span>
+                <span>#망고오렌지</span>
+                <span>#나이키_에어</span>
+                <span>#파이_기프트</span>
+            </div>
+        </div>
+    </header>
+
+    <!-- 4. PRODUCT LIST (Grid) (원 위치 복구: 인기 검색어 바로 아래) -->
+    <section class="mt-4 px-4">
+        <div class="flex items-center justify-between mb-6 px-2">
+            <h2 class="text-xl font-black uppercase tracking-tighter italic" data-i18n="new_arrivals">New Arrivals</h2>
+            <div class="flex gap-2">
+                <button id="grid-view-btn" onclick="toggleView('grid')" class="p-1.5 glass rounded-lg"><i data-lucide="layout-grid" class="w-4 h-4 text-amber-500"></i></button>
+                <button id="list-view-btn" onclick="toggleView('list')" class="p-1.5 opacity-30"><i data-lucide="list" class="w-4 h-4"></i></button>
+            </div>
+        </div>
+        <div id="product-grid" class="grid grid-cols-2 gap-4">
+            <!-- Injected by JS -->
+        </div>
+    </section>
+
+    <!-- 6. MANGO CUSTOM SECTION: AI Recommended Gifts -->
+    <section class="mt-6 overflow-hidden">
+        <div class="flex items-center justify-between px-6 mb-4">
+            <h2 class="text-lg font-extrabold flex items-center gap-2 italic">
+                <span class="w-1.5 h-5 mango-gradient rounded-full"></span>
+                🔥 AI <span class="text-amber-500" data-i18n="recommended">Recommended</span> <span data-i18n="gifts">Gifts</span>
+            </h2>
+            <button onclick="expandAIRecommendations()" class="text-[10px] font-black text-white/30 uppercase tracking-widest hover:text-amber-500 transition-colors">See All</button>
+        </div>
+        <div class="relative w-full overflow-hidden px-6 pb-6">
+            <div id="ai-recommendations-rail" class="flex gap-4 transition-transform duration-700 ease-in-out">
+                <!-- JS에 의해 20개의 아이템이 주입됩니다. -->
+            </div>
+        </div>
+    </section>
+
+    <!-- 5. FLOATING BUTTON -->
+    <button onclick="scrollToTop()" id="btn-top" class="fixed bottom-28 right-6 w-12 h-12 glass rounded-full flex items-center justify-center shadow-2xl opacity-0 translate-y-10 transition-all z-40">
+        <i data-lucide="arrow-up" class="w-6 h-6 text-amber-500"></i>
+    </button>
+
+    <!-- 9. CART DRAWER (장바구니 활성화) -->
+    <div id="cart-drawer" class="fixed top-0 right-0 w-[85%] max-w-[340px] h-full bg-[#0f172a] z-[120] translate-x-full transition-transform duration-300 border-l border-white/5 shadow-2xl flex flex-col">
+        <div class="p-6 flex items-center justify-between border-b border-white/5 bg-white/5">
+            <h2 class="text-xl font-black italic text-amber-500 uppercase tracking-widest">My <span class="text-white">Cart</span></h2>
+            <button onclick="toggleCart(false)" class="p-2 text-white/30"><i data-lucide="x"></i></button>
+        </div>
+        <div id="cart-content" class="flex-1 overflow-y-auto p-6 flex flex-col items-center justify-center">
+            <!-- 장바구니 아이템이 동적으로 렌더링됩니다. -->
+            <div class="opacity-30 text-center">
+                <i data-lucide="shopping-cart" class="w-16 h-16 mb-4 mx-auto"></i>
+                <p class="text-sm font-bold uppercase tracking-widest italic">Cart is empty</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- 3. SLIDE MENU (Drawer) -->
+    <div id="sidebar-overlay" onclick="toggleMenu(false)" class="fixed inset-0 bg-black/60 z-[60] hidden backdrop-blur-sm opacity-0 transition-opacity"></div>
+    <aside id="sidebar-menu" class="fixed top-0 left-0 w-[80%] max-w-[340px] h-full bg-[#0f172a] z-[70] -translate-x-full shadow-2xl border-r border-white/5">
+        <div class="p-6">
+            <div class="flex items-center justify-between mb-8">
+                <h2 class="text-xl font-black italic text-amber-500 tracking-widest">CATEGORY</h2>
+                <button onclick="toggleMenu(false)" class="p-2 text-white/30"><i data-lucide="x"></i></button>
+            </div>
+            <nav class="space-y-2">
+                <a href="../Food/index.html" class="flex items-center gap-4 py-4 px-4 rounded-2xl hover:bg-white/5 transition-colors group">
+                    <div class="w-10 h-10 rounded-xl bg-orange-500/10 flex items-center justify-center text-orange-400 group-hover:scale-110 transition-transform"><i data-lucide="utensils" class="w-5 h-5"></i></div>
+                    <span class="font-bold text-sm">Food (맛집/배달)</span>
+                </a>
+                <a href="../Beauty/index.html" class="flex items-center gap-4 py-4 px-4 rounded-2xl hover:bg-white/5 transition-colors group">
+                    <div class="w-10 h-10 rounded-xl bg-pink-500/10 flex items-center justify-center text-pink-400 group-hover:scale-110 transition-transform"><i data-lucide="sparkles" class="w-5 h-5"></i></div>
+                    <span class="font-bold text-sm text-pink-400">Beauty (K-뷰티/케어)</span>
+                </a>
+                <a href="../Electronics/index.html" class="flex items-center gap-4 py-4 px-4 rounded-2xl hover:bg-white/5 transition-colors group">
+                    <div class="w-10 h-10 rounded-xl bg-blue-500/10 flex items-center justify-center text-blue-400 group-hover:scale-110 transition-transform"><i data-lucide="monitor" class="w-5 h-5"></i></div>
+                    <span class="font-bold text-sm">Electronics (가전/디지털)</span>
+                </a>
+                <a href="../Travel/index.html" class="flex items-center gap-4 py-4 px-4 rounded-2xl hover:bg-white/5 transition-colors group">
+                    <div class="w-10 h-10 rounded-xl bg-emerald-500/10 flex items-center justify-center text-emerald-400 group-hover:scale-110 transition-transform"><i data-lucide="plane" class="w-5 h-5"></i></div>
+                    <span class="font-bold text-sm text-emerald-400">Travel (여행/숙박/항공)</span>
+                </a>
+                <a href="#" class="flex items-center gap-4 py-4 px-4 rounded-2xl bg-amber-500/10 border border-amber-500/20 group">
+                    <div class="w-10 h-10 rounded-xl bg-amber-500 text-black flex items-center justify-center"><i data-lucide="shopping-bag" class="w-5 h-5"></i></div>
+                    <span class="font-bold text-sm text-amber-500">Market (오픈마켓)</span>
+                </a>
+                <a href="../Hobby/index.html" class="flex items-center gap-4 py-4 px-4 rounded-2xl hover:bg-white/5 transition-colors group">
+                    <div class="w-10 h-10 rounded-xl bg-red-500/10 flex items-center justify-center text-red-400 group-hover:scale-110 transition-transform"><i data-lucide="heart" class="w-5 h-5"></i></div>
+                    <span class="font-bold text-sm">Hobby (취미/동호회)</span>
+                </a>
+            </nav>
+        </div>
+    </aside>
+
+    <!-- 8. SELLER DASHBOARD MODAL (Bottom Sheet Style) -->
+    <div id="modal-overlay" onclick="closeAllDrawers()" class="fixed inset-0 z-[110] hidden bg-black/70 backdrop-blur-sm opacity-0 transition-opacity duration-300"></div>
+    <div id="seller-modal" class="fixed inset-x-0 bottom-0 z-[120] w-full max-w-[480px] mx-auto bg-[#0f172a] rounded-t-[2.5rem] border-t border-white/10 shadow-2xl translate-y-full overflow-hidden flex flex-col max-h-[92vh] hidden">
+        <div class="w-12 h-1.5 bg-white/10 rounded-full mx-auto my-4"></div>
+        
+        <div class="px-8 pb-10 overflow-y-auto no-scrollbar">
+            <div class="flex justify-between items-center mb-6">
+                <h2 class="text-2xl font-black italic text-amber-500 uppercase tracking-tighter">Seller <span class="text-white">Dashboard</span></h2>
+                <button onclick="toggleSellerDashboard(false)" class="p-2 text-white/30 hover:text-white transition-colors"><i data-lucide="x"></i></button>
+            </div>
+
+            <!-- Verification Status Badge -->
+            <div class="mb-8 p-4 glass-dark rounded-2xl flex items-center justify-between border-amber-500/20">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 bg-amber-500/20 rounded-xl flex items-center justify-center text-amber-500"><i data-lucide="shield-check"></i></div>
+                    <div>
+                        <p class="text-[9px] font-black text-amber-500 uppercase tracking-[0.2em]">Verification Status</p>
+                        <p class="text-xs font-bold text-white">Verified Individual</p>
+                    </div>
+                </div>
+                <span class="text-[9px] font-black text-amber-500 bg-amber-500/10 px-2.5 py-1 rounded-lg border border-amber-500/30">Fee: 5%</span>
+            </div>
+
+            <!-- Settlement Section -->
+            <h3 class="text-[10px] font-black text-gray-500 uppercase tracking-[0.3em] mb-4 ml-2">Settlement & Escrow</h3>
+            <div class="grid grid-cols-2 gap-3 mb-8">
+                <div class="p-5 glass rounded-[2rem] border-white/5">
+                    <p class="text-[9px] font-black text-gray-500 uppercase tracking-widest mb-1">Pending Funds</p>
+                    <p class="text-lg font-black text-white italic tracking-tighter">45.20 π</p>
+                </div>
+                <div class="p-5 glass rounded-[2rem] border-amber-500/30">
+                    <p class="text-[9px] font-black text-amber-500 uppercase tracking-widest mb-1">Available</p>
+                    <p class="text-lg font-black text-white italic tracking-tighter">100.00 π</p>
+                </div>
+            </div>
+
+            <!-- Product Registration Form -->
+            <h3 class="text-[10px] font-black text-gray-500 uppercase tracking-[0.3em] mb-4 ml-2">List New Product</h3>
+            <div class="space-y-4">
+                <div class="p-4 bg-white/5 rounded-2xl border border-white/5 flex justify-between items-center">
+                    <span class="text-xs font-bold text-gray-400 uppercase tracking-widest">Monthly Sales</span>
+                    <span class="text-lg font-black text-white italic">145.20 π</span>
+                </div>
+                <input type="text" placeholder="Product Title" class="w-full bg-white/5 border border-white/10 rounded-xl p-4 text-sm text-white focus:border-amber-500 outline-none transition-all">
+                <div class="relative">
+                    <input type="number" placeholder="Price (π)" class="w-full bg-white/5 border border-white/10 rounded-xl p-4 text-sm text-white focus:border-amber-500 outline-none transition-all">
+                    <span class="absolute right-4 top-1/2 -translate-y-1/2 text-amber-500 font-black italic">π</span>
+                </div>
+                <button class="w-full py-4 mango-gradient text-black font-black rounded-2xl text-xs uppercase tracking-widest active:scale-95 transition-all">Register New Product</button>
+                <div class="w-full h-32 border-2 border-dashed border-white/10 rounded-2xl flex flex-col items-center justify-center bg-white/[0.02] cursor-pointer group">
+                    <i data-lucide="image" class="w-8 h-8 text-white/20 group-hover:text-amber-500 transition-colors mb-1"></i>
+                    <span class="text-[9px] font-bold text-gray-500 uppercase">Upload Media</span>
+                </div>
+                <textarea placeholder="Description..." rows="3" class="w-full bg-white/5 border border-white/10 rounded-xl p-4 text-sm text-white focus:border-amber-500 outline-none transition-all resize-none"></textarea>
+                <button class="w-full py-5 mango-gradient text-black font-black rounded-2xl text-xs uppercase tracking-[0.2em] shadow-lg active:scale-[0.98] transition-all">List Product Now</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 7. BOTTOM NAVIGATION -->
+    <nav class="fixed bottom-0 left-0 right-0 max-w-[480px] mx-auto bg-[#0f172a]/95 backdrop-blur-xl border-t border-white/5 px-8 py-5 flex justify-between items-center z-[100]">
+        <a href="../index.html" class="flex flex-col items-center gap-1 opacity-30 active:scale-90 transition-all">
+            <i data-lucide="home" class="w-6 h-6"></i>
+            <span class="text-[9px] font-black uppercase tracking-widest">Home</span>
+        </a>
+        <a href="../Chat/index.html" class="flex flex-col items-center gap-1 opacity-30 active:scale-90 transition-all">
+            <i data-lucide="message-circle" class="w-6 h-6"></i>
+            <span class="text-[9px] font-black uppercase tracking-widest">Chat</span>
+        </a>
+        <a href="#" class="flex flex-col items-center gap-1 text-amber-500 active:scale-90 transition-all">
+            <div class="relative">
+                <i data-lucide="shopping-bag" class="w-6 h-6"></i>
+                <span class="absolute -top-1 -right-1 w-2 h-2 bg-amber-500 rounded-full animate-pulse"></span>
+            </div>
+            <span class="text-[9px] font-black uppercase tracking-widest">Market</span>
+        </a>
+        <a href="../profile/profile_dashboard.html" class="flex flex-col items-center gap-1 opacity-30 active:scale-90 transition-all">
+            <i data-lucide="layout-dashboard" class="w-6 h-6"></i>
+            <span class="text-[9px] font-black uppercase tracking-widest">Profile</span>
+        </a>
+    </nav>
+
+    <script>
+        lucide.createIcons();
+
+        // --- DUMMY DATA ARRAY ---
+        const productData = [
+            {
+                id: 1,
+                title: "[K-BEAUTY] 설화수 프리미엄 자음 2종 세트 (시그니처)",
+                price: "125.0 π",
+                originalPrice: "160.0 π",
+                discount: "22%",
+                img: "https://images.unsplash.com/photo-1612817288484-6f916006741a?w=500",
+                delivery: "Global Shipping",
+                rating: 4.8,
+                rewards: "12.5 MNG"
+            },
+            {
+                id: 15,
+                title: "[K-BEAUTY] 아모레퍼시픽 타임 레스폰스 스킨 리저브 크림",
+                price: "245.0 π",
+                originalPrice: "300.0 π",
+                discount: "18%",
+                img: "https://images.unsplash.com/photo-1571781926291-c477ebfd024b?w=500",
+                delivery: "Premium Safe",
+                rating: 5.0,
+                rewards: "24.5 MNG"
+            },
+            {
+                id: 16,
+                title: "[동호회] 성수동 커피 브루잉 마스터 클래스",
+                price: "4.5 π",
+                originalPrice: "7.0 π",
+                discount: "35%",
+                img: "https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?w=500",
+                delivery: "Instant Ticket",
+                rating: 4.9,
+                rewards: "0.5 MNG"
+            },
+            {
+                id: 17,
+                title: "[동호회] 한강 선셋 요트 크루 정기 모임 (시즌권)",
+                price: "85.0 π",
+                originalPrice: "120.0 π",
+                discount: "29%",
+                img: "https://images.unsplash.com/photo-1534447677768-be436bb09401?w=500",
+                delivery: "Club Pass",
+                rating: 4.8,
+                rewards: "8.5 MNG"
+            },
+            {
+                id: 2,
+                title: "[K-BEAUTY] 라네즈 워터뱅크 블루 히알루로닉 크림",
+                price: "12.2 π",
+                originalPrice: "18.0 π",
+                discount: "32%",
+                img: "https://images.unsplash.com/photo-1556228578-0d85b1a4d571?w=500",
+                delivery: "Mango Express",
+                rating: 4.9,
+                rewards: "1.2 MNG"
+            },
+            {
+                id: 3,
+                title: "[K-BEAUTY] 이니스프리 그린티 씨드 세럼 더블 세트",
+                price: "8.5 π",
+                originalPrice: "12.0 π",
+                discount: "29%",
+                img: "https://images.unsplash.com/photo-1601049541289-9b1b7bbbfe19?w=500",
+                delivery: "Mango Express",
+                rating: 4.7,
+                rewards: "0.8 MNG"
+            },
+            {
+                id: 4,
+                title: "[TRAVEL] 제주 5성급 오션뷰 호텔 2박 숙박권",
+                price: "85.0 π",
+                originalPrice: "110.0 π",
+                discount: "23%",
+                img: "https://images.unsplash.com/photo-1566073771259-6a8506099945?w=500",
+                delivery: "Instant Ticket",
+                rating: 4.9,
+                rewards: "8.5 MNG"
+            },
+            {
+                id: 5,
+                title: "[TRAVEL] 대한항공 일본 전노선 왕복 항공 바우처",
+                price: "45.0 π",
+                originalPrice: "60.0 π",
+                discount: "25%",
+                img: "https://images.unsplash.com/photo-1436491865332-7a61a109c0f2?w=500",
+                delivery: "Mango Booking",
+                rating: 5.0,
+                rewards: "4.5 MNG"
+            },
+            {
+                id: 6,
+                title: "[동호회] 양양 서핑 원데이 클래스 & 장비 렌탈",
+                price: "12.5 π",
+                originalPrice: "25.0 π",
+                discount: "50%",
+                img: "https://images.unsplash.com/photo-1502680390469-be75c86b636f?w=500",
+                delivery: "Instant Ticket",
+                rating: 5.0,
+                rewards: "1.2 MNG"
+            },
+            {
+                id: 7,
+                title: "[동호회] 프리미엄 골프 라운딩 멤버십 (6개월)",
+                price: "150.0 π",
+                originalPrice: "200.0 π",
+                discount: "25%",
+                img: "https://images.unsplash.com/photo-1535131749006-b7f58c99034b?w=500",
+                delivery: "Instant Membership",
+                rating: 4.9,
+                rewards: "15.0 MNG"
+            },
+            {
+                id: 8,
+                title: "[동호회] 오토캠핑장 전국 이용 프리패스 (1년)",
+                price: "55.0 π",
+                originalPrice: "80.0 π",
+                discount: "31%",
+                img: "https://images.unsplash.com/photo-1504280390367-361c6d9f38f4?w=500",
+                delivery: "Instant Digital",
+                rating: 5.0,
+                rewards: "5.5 MNG"
+            },
+            {
+                id: 12,
+                title: "[동호회] 성수동 프라이빗 요가 & 명상 10회권",
+                price: "3.5 π",
+                originalPrice: "5.0 π",
+                discount: "30%",
+                img: "https://images.unsplash.com/photo-1556910103-1c02745aae4d?w=500",
+                delivery: "Instant Ticket",
+                rating: 4.8,
+                rewards: "0.3 MNG"
+            },
+            {
+                id: 13,
+                title: "[동호회] 라이카와 함께하는 골목출사 정기모임",
+                price: "2.1 π",
+                originalPrice: "3.0 π",
+                discount: "30%",
+                img: "https://images.unsplash.com/photo-1554048612-b6a482bc67e5?w=500",
+                delivery: "Instant Digital",
+                rating: 4.9,
+                rewards: "0.2 MNG"
+            },
+            {
+                id: 14,
+                title: "[동호회] 제주 프리다이빙 입문 자격증 패키지",
+                price: "45.0 π",
+                originalPrice: "60.0 π",
+                discount: "25%",
+                img: "https://images.unsplash.com/photo-1544551763-46a013bb70d5?w=500",
+                delivery: "Mango Booking",
+                rating: 5.0,
+                rewards: "4.5 MNG"
+            }
+        ];
+
+        // --- COMPONENT RENDERER ---
+        function renderProducts() {
+            const grid = document.getElementById('product-grid');
+            grid.innerHTML = productData.map((p, index) => `
+                <div class="product-card glass rounded-[2rem] overflow-hidden flex flex-col animate-slide-up" style="animation-delay: ${index * 0.1}s">
+                    <div class="relative aspect-square">
+                        <img src="${p.img}" class="w-full h-full object-cover">
+                        <span class="absolute top-4 left-4 bg-red-500 text-white text-[10px] font-black px-2 py-1 rounded-lg shadow-lg">${p.discount}</span>
+                        <button onclick="toggleLike(this)" class="absolute bottom-4 right-4 w-8 h-8 glass rounded-full flex items-center justify-center text-white/50 hover:text-pink-500 transition-colors">
+                            <i data-lucide="heart" class="w-4 h-4"></i>
+                        </button>
+                    </div>
+                    <div class="p-4 flex-1 flex flex-col">
+                        <h3 class="text-[11px] font-semibold leading-tight line-clamp-2 mb-3 text-white/90">${p.title}</h3>
+                        <div class="mt-auto">
+                            <div class="flex items-center gap-1.5 mb-1">
+                                <span class="text-[9px] text-white/30 line-through">${p.originalPrice}</span>
+                                <span class="text-[9px] text-amber-500 font-bold">${p.discount} OFF</span>
+                            </div>
+                            <div class="flex items-center justify-between mb-3">
+                                <p class="text-sm font-black text-white italic">${p.price}</p>
+                                <span class="text-[8px] font-bold text-amber-500/80 bg-amber-500/10 px-1.5 py-0.5 rounded uppercase tracking-tighter border border-amber-500/20">${p.delivery}</span>
+                            </div>
+                            <div class="flex items-center justify-between pt-3 border-t border-white/5">
+                                <div class="flex items-center gap-1">
+                                    <i data-lucide="star" class="w-2.5 h-2.5 fill-amber-500 text-amber-500"></i>
+                                    <span class="text-[9px] font-bold text-white/40">${p.rating}</span>
+                                </div>
+                                <p class="text-[9px] font-bold text-emerald-400">+${p.rewards}</p>
+                            </div>
+                            <div class="flex gap-2 mt-4">
+                                <button onclick="addToCart(${p.id})" class="flex-1 py-3 bg-white/5 border border-white/10 text-white/70 rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-white/10 transition-all active:scale-95">
+                                    ${MangoI18n.t('add_cart')}
+                                </button>
+                                <button onclick="openCheckout(${p.id})" class="flex-1 py-3 bg-amber-500/10 border border-amber-500/30 text-amber-500 rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-amber-500 hover:text-black transition-all active:scale-95">
+                                    ${MangoI18n.t('buy_now')}
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+            lucide.createIcons();
+        }
+
+        // --- UI LOGIC ---
+        function toggleMenu(show) {
+            const sidebar = document.getElementById('sidebar-menu');
+            const overlay = document.getElementById('sidebar-overlay');
+            if (show) {
+                sidebar.classList.remove('-translate-x-full');
+                overlay.classList.remove('hidden');
+                setTimeout(() => overlay.classList.replace('opacity-0', 'opacity-100'), 10);
+            } else {
+                sidebar.classList.add('-translate-x-full');
+                overlay.classList.replace('opacity-100', 'opacity-0');
+                setTimeout(() => overlay.classList.add('hidden'), 300);
+            }
+        }
+
+        // --- AI RECOMMENDATION SYSTEM (Conveyor Belt Logic) ---
+        const aiGiftsData = [
+            // K-뷰티 강조 상품
+            { title: "[K-BEAUTY] 설화수 자생 탄력 에센스", price: "52.0 π", type: "Premium", img: "https://images.unsplash.com/photo-1612817288484-6f916006741a?w=300" },
+            { title: "[K-BEAUTY] 헤라 블랙 쿠션 리필 세트", price: "18.5 π", type: "Trending", img: "https://images.unsplash.com/photo-1522335789203-aabd1fc54bc9?w=300" },
+            { title: "[K-BEAUTY] 닥터자르트 시카페어 크림", price: "14.2 π", type: "Care", img: "https://images.unsplash.com/photo-1555507036-ab1f4038808a?w=300" },
+            { title: "[K-BEAUTY] 가히 멀티밤 스틱", price: "9.5 π", type: "Hot Item", img: "https://images.unsplash.com/photo-1596462502278-27bfac4033c8?w=300" },
+            { title: "[K-BEAUTY] 코스알엑스 굿모닝 클렌저", price: "4.2 π", type: "Daily Care", img: "https://images.unsplash.com/photo-1556228720-195a672e8a03?w=300" },
+            { title: "[K-BEAUTY] 비건 립밤 듀오 세트", price: "3.2 π", type: "Beauty Pick", img: "https://images.unsplash.com/photo-1586790170083-2f9ceadc732d?w=300" },
+            // 취미 동호회 재구성 (Hobby/Club Reconstruction)
+            { title: "[동호회] 한강 선셋 요트 투어 크루", price: "12.0 π", type: "Activity", img: "https://images.unsplash.com/photo-1534447677768-be436bb09401?w=300" },
+            { title: "[동호회] 프리미엄 테니스 클럽 1개월권", price: "25.0 π", type: "Sports", img: "https://images.unsplash.com/photo-1595435066eaa-8f789972d001?w=300" },
+            { title: "[동호회] 와인 테이스팅 정기 모임", price: "5.5 π", type: "Social", img: "https://images.unsplash.com/photo-1510812431401-41d2bd2722f3?w=300" },
+            { title: "[동호회] 도자기 공방 원데이 클래스", price: "8.0 π", type: "Art", img: "https://images.unsplash.com/photo-1565193566173-7a0ee3dbe261?w=300" },
+            { title: "[동호회] 독서 토론 클럽 '망고 북스'", price: "1.2 π", type: "Culture", img: "https://images.unsplash.com/photo-1524995997946-a1c2e315a42f?w=300" },
+            { title: "[동호회] 가죽 공예 명함지갑 제작", price: "6.5 π", type: "Craft", img: "https://images.unsplash.com/photo-1590674852885-ce5965f50839?w=300" },
+            // 의류 & 기타
+            { title: "린넨 프리미엄 반팔 셔츠", price: "15.5 π", type: "Summer Wear", img: "https://images.unsplash.com/photo-1596755094514-f87e34085b2c?w=300" },
+            { title: "실크 플로럴 원피스", price: "32.0 π", type: "Women Fashion", img: "https://images.unsplash.com/photo-1585487000160-6ebcfceb0d03?w=300" },
+            // 신발
+            { title: "에어 쿠션 런닝슈즈", price: "45.0 π", type: "Shoes", img: "https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=300" },
+            { title: "가죽 스트랩 샌들", price: "18.5 π", type: "Summer Shoes", img: "https://images.unsplash.com/photo-1562273138-f46be4ebdf33?w=300" },
+            // 액세서리
+            { title: "미니멀리스트 실버 워치", price: "65.0 π", type: "Watch", img: "https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=300" },
+            { title: "이탈리안 가죽 벨트", price: "12.0 π", type: "Accessory", img: "https://images.unsplash.com/photo-1614165933026-0750fcd503e8?w=300" },
+            { title: "편광 렌즈 보잉 선 sunglasses", price: "24.5 π", type: "Summer Acc", img: "https://images.unsplash.com/photo-1572635196237-14b3f281503f?w=300" },
+            // 모자
+            { title: "핸드메이드 파나마 햇", price: "14.2 π", type: "Hat", img: "https://images.unsplash.com/photo-1514327605112-b887c0e61c0a?w=300" },
+            { title: "빈티지 워싱 볼캡", price: "7.8 π", type: "Hat", img: "https://images.unsplash.com/photo-1588850561407-ed78c282e89b?w=300" },
+            // 캠핑 용품
+            { title: "울트라 라이트 2인용 텐트", price: "88.0 π", type: "Camping", img: "https://images.unsplash.com/photo-1504280390367-361c6d9f38f4?w=300" },
+            { title: "접이식 캠핑 체어 세트", price: "35.5 π", type: "Camping", img: "https://images.unsplash.com/photo-1523987355523-c7b5b0dd90a7?w=300" },
+            { title: "티타늄 캠핑 식기 12종", price: "28.0 π", type: "Camping", img: "https://images.unsplash.com/photo-1533900298318-6b8da08a523e?w=300" },
+            // 공구
+            { title: "브러시리스 무선 전동 드릴", price: "55.0 π", type: "Tools", img: "https://images.unsplash.com/photo-1504148455328-c376907d082c?w=300" },
+            { title: "스마트 마스터 멀티툴", price: "19.5 π", type: "Tools", img: "https://images.unsplash.com/photo-1586864387417-f5076a9b252e?w=300" },
+            // 가전 제품 & 에어컨
+            { title: "듀얼 인버터 창문형 에어컨", price: "345.0 π", type: "Appliance", img: "https://images.unsplash.com/photo-1585338107529-13afc5f02586?w=300" },
+            { title: "고성능 무선 진공 청소기 V10", price: "158.0 π", type: "Appliance", img: "https://images.unsplash.com/photo-1558317374-067fb5f30001?w=300" },
+            // 커피머신 & 원두
+            { title: "바리스타 홈 에스프레소 머신", price: "198.0 π", type: "Coffee Tech", img: "https://images.unsplash.com/photo-1559056199-641a0ac8b55e?w=300" },
+            { title: "전동 버 커피 그라인더", price: "42.5 π", type: "Coffee Tech", img: "https://images.unsplash.com/photo-1585435465945-bef5a93f8849?w=300" },
+            { title: "에티오피아 예가체프 G1 (500g)", price: "4.8 π", type: "Beans", img: "https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?w=300" },
+            { title: "콜롬비아 수프레모 후일라 (500g)", price: "4.2 π", type: "Beans", img: "https://images.unsplash.com/photo-1580915411954-282cb1b0d780?w=300" },
+            { title: "브라질 세하도 NY2 (500g)", price: "3.9 π", type: "Beans", img: "https://images.unsplash.com/photo-1514432324607-a09d9b4aefdd?w=300" },
+            { title: "케냐 AA 마이크로랏 (500g)", price: "5.5 π", type: "Beans", img: "https://images.unsplash.com/photo-1559056199-641a0ac8b55e?w=300" },
+            { title: "과테말라 안티구아 SHB (500g)", price: "4.3 π", type: "Beans", img: "https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?w=300" },
+            { title: "코스타리카 타라주 (500g)", price: "4.5 π", type: "Beans", img: "https://images.unsplash.com/photo-1514432324607-a09d9b4aefdd?w=300" },
+            // 기타 액세서리
+            { title: "캐시미어 블렌드 머플러", price: "22.0 π", type: "Accessory", img: "https://images.unsplash.com/photo-1520903920243-00d872a2d1c9?w=300" },
+            { title: "캔버스 에코 토트백", price: "5.2 π", type: "Accessory", img: "https://images.unsplash.com/photo-1597484662317-9bd77399163a?w=300" },
+            { title: "프리미엄 노이즈 캔슬링 헤드폰", price: "155.0 π", type: "Tech Pick", img: "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=300" },
+            { title: "휴대용 캠핑 에어 펌프", price: "12.8 π", type: "Camping", img: "https://images.unsplash.com/photo-1506484334402-40f2ed9aa004?w=300" },
+            { title: "미니멀 가습기 V2", price: "19.0 π", type: "Home", img: "https://images.unsplash.com/photo-1563861826100-9cb868fdbe1c?w=300" }
+        ];
+
+        function renderAIRecommendations() {
+            const rail = document.getElementById('ai-recommendations-rail');
+            if (!rail) return;
+            
+            let html = "";
+            // 준비된 데이터를 순차적으로 렌더링
+            aiGiftsData.forEach((item, i) => {
+                html += `
+                    <div class="min-w-[160px] glass rounded-[2.5rem] p-4 flex flex-col items-center text-center product-card flex-shrink-0 transition-all duration-300 hover:border-amber-500/50">
+                        <div class="w-24 h-24 bg-slate-800 rounded-full mb-3 shadow-xl border-4 border-white/5 overflow-hidden">
+                            <img src="${item.img}" class="w-full h-full object-cover">
+                        </div>
+                        <p class="text-[9px] text-amber-500 font-black uppercase mb-1">${item.type}</p>
+                        <h3 class="text-[11px] font-bold leading-tight line-clamp-1">${item.title}</h3>
+                        <p class="text-xs font-black text-white mt-2">${item.price}</p>
+                        <button onclick="addToCartFromAI('${item.title}', '${item.price}')" class="mt-2 text-[8px] font-black uppercase text-amber-500 border border-amber-500/30 px-2 py-1 rounded-full hover:bg-amber-500 hover:text-black transition-all">Add Cart</button>
+                    </div>
+                `;
+            });
+            rail.innerHTML = html;
+        }
+
+        function startAIRotation() {
+            const rail = document.getElementById('ai-recommendations-rail');
+            if (!rail) return;
+
+            let isPaused = false;
+            rail.addEventListener('mouseenter', () => isPaused = true);
+            rail.addEventListener('mouseleave', () => isPaused = false);
+
+            setInterval(() => {
+                if (isPaused) return; // 마우스 오버 시 일시 정지
+
+                const firstItem = rail.querySelector('.product-card');
+                if (!firstItem) return;
+                const itemWidth = firstItem.offsetWidth + 16; // width + gap(16px)
+
+                rail.style.transition = "transform 0.8s cubic-bezier(0.4, 0, 0.2, 1)";
+                rail.style.transform = `translateX(-${itemWidth}px)`;
+
+                setTimeout(() => {
+                    rail.style.transition = "none";
+                    rail.appendChild(firstItem);
+                    rail.style.transform = "translateX(0)";
+                }, 800);
+            }, 5000); // 5초에 한 칸씩 이동
+        }
+
+        // AI 추천 섹션 전용 장바구니 추가 함수
+        function addToCartFromAI(title, price) {
+            const newItem = {
+                id: Date.now(), // 고유 ID 생성
+                title: title,
+                price: price,
+                img: "https://images.unsplash.com/photo-1544025162-d76694265947?w=100", // 기본 썸네일
+                quantity: 1
+            };
+            cart.push(newItem);
+            updateCartUI();
+            toggleCart(true);
+            console.log(`[AI Market] Added to cart: ${title}`);
+        }
+
+        // --- CART SYSTEM (장바구니 활성화 로직) ---
+        let cart = [];
+
+        function addToCart(productId) {
+            const product = productData.find(p => p.id === productId);
+            if (!product) return;
+
+            const existing = cart.find(item => item.id === productId);
+            if (existing) {
+                existing.quantity++;
+            } else {
+                cart.push({ ...product, quantity: 1 });
+            }
+            updateCartUI();
+            toggleCart(true); // 담기 클릭 시 장바구니 자동 노출
+        }
+
+        function updateCartUI() {
+            const badge = document.getElementById('cart-badge');
+            const content = document.getElementById('cart-content');
+            
+            const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
+            badge.innerText = totalItems;
+
+            if (cart.length === 0) {
+                content.innerHTML = `
+                    <div class="flex flex-col items-center justify-center h-full opacity-30">
+                        <i data-lucide="shopping-cart" class="w-16 h-16 mb-4"></i>
+                        <p class="text-sm font-bold uppercase tracking-widest italic">Cart is empty</p>
+                    </div>
+                `;
+            } else {
+                const totalPi = cart.reduce((sum, item) => {
+                    const priceNum = parseFloat(item.price.replace(/[^0-9.]/g, ''));
+                    return sum + (priceNum * item.quantity);
+                }, 0);
+
+                content.innerHTML = `
+                    <div class="w-full space-y-4">
+                        ${cart.map(item => `
+                            <div class="flex items-center justify-between bg-white/5 p-3 rounded-xl border border-white/10">
+                                <div class="flex items-center gap-3">
+                                    <img src="${item.img}" class="w-12 h-12 rounded-lg object-cover">
+                                    <div class="flex-1">
+                                        <p class="text-[10px] font-bold line-clamp-1">${item.title}</p>
+                                        <p class="text-[10px] text-amber-500">${item.price} x ${item.quantity}</p>
+                                    </div>
+                                </div>
+                                <button onclick="removeFromCart(${item.id})" class="p-2 text-white/30 hover:text-red-500"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
+                            </div>
+                        `).join('')}
+                        <div class="pt-4 border-t border-white/10 flex justify-between items-center">
+                            <span class="text-sm font-bold">Total</span>
+                            <span class="text-lg font-black text-amber-500">${totalPi.toFixed(2)} π</span>
+                        </div>
+                        <button onclick="alert('Checkout integration coming soon!')" class="w-full py-4 mango-gradient text-black font-black rounded-2xl text-xs uppercase tracking-widest active:scale-95">
+                            Checkout with Pi
+                        </button>
+                    </div>
+                `;
+            }
+            lucide.createIcons();
+        }
+
+        function removeFromCart(productId) {
+            cart = cart.filter(item => item.id !== productId);
+            updateCartUI();
+        }
+
+        // --- HYBRID PAYMENT ENGINE ---
+        const SUPABASE_URL = 'https://kxmnxzcqrcqvxgrjkcyk.supabase.co';
+        const SUPABASE_ANON_KEY = 'your-actual-eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imt4bW54emNxcmNxdnhncmprY3lrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzY0OTc3NDQsImV4cCI6MjA5MjA3Mzc0NH0.HcLwKeDarBvsfzPhKpLKdbBKkMH62Vdr-N92XILOm-sanon-key'; // 실제 키로 교체 필요
+        const supabaseInstance = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+        /**
+         * 1. 실시간 잔액 동기화 엔진 (Real-time Sync)
+         */
+        function initBalanceSync(userId) {
+            if (!userId) return;
+            
+            console.log(`[Nexus] Listening for balance changes on user: ${userId}`);
+            supabaseInstance.channel(`profile-changes-${userId}`)
+                .on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'profiles', filter: `id=eq.${userId}` }, (payload) => {
+                    console.log('✨ Balance Synced from Database:', payload.new);
+                    updateHeaderUI(payload.new.pi_balance, payload.new.mng_balance);
+                })
+                .subscribe();
+        }
+
+        let activeProduct = null;
+        let finalTargetPrice = 0;
+
+        function openCheckout(productId) {
+            const p = productData.find(item => item.id === productId);
+            if (!p) return;
+            activeProduct = p;
+
+            const balances = MangoWallet.getBalances();
+            const isVIP = balances.mng >= 1000;
+            
+            document.getElementById('checkout-item-name').innerText = p.title;
+            document.getElementById('checkout-price-pi').innerText = p.price;
+            
+            finalTargetPrice = parseFloat(p.price.replace(/[^0-9.]/g, ''));
+            
+            if (isVIP) {
+                finalTargetPrice *= 0.95; // 5% Discount
+                document.getElementById('vip-badge').classList.remove('hidden');
+                document.getElementById('vip-price-node').classList.remove('hidden');
+                document.getElementById('checkout-price-vip').innerText = finalTargetPrice.toFixed(2) + " π";
+            } else {
+                document.getElementById('vip-badge').classList.add('hidden');
+                document.getElementById('vip-price-node').classList.add('hidden');
+            }
+
+            updateHybridSplit();
+            
+            document.getElementById('checkout-overlay').classList.remove('hidden');
+            setTimeout(() => document.getElementById('checkout-overlay').classList.replace('opacity-0', 'opacity-100'), 10);
+            document.getElementById('checkout-drawer').classList.remove('translate-y-full');
+            lucide.createIcons();
+        }
+
+        function closeCheckout() {
+            document.getElementById('checkout-overlay').classList.replace('opacity-100', 'opacity-0');
+            document.getElementById('checkout-drawer').classList.add('translate-y-full');
+            setTimeout(() => document.getElementById('checkout-overlay').classList.add('hidden'), 300);
+        }
+
+        function updateHybridSplit() {
+            const slider = document.getElementById('payment-slider');
+            const piLabel = document.getElementById('split-pi-val');
+            const mngLabel = document.getElementById('split-mng-val');
+            const remPiNode = document.getElementById('rem-pi');
+            const remMngNode = document.getElementById('rem-mng');
+            
+            const balances = MangoWallet.getBalances();
+            const ratio = slider.value / 100;
+            
+            const piShare = finalTargetPrice * ratio;
+            const mngShare = finalTargetPrice * (1 - ratio);
+            
+            piLabel.innerText = piShare.toFixed(2) + " π";
+            mngLabel.innerText = mngShare.toFixed(2) + " MNG";
+            
+            const piRemaining = balances.pi - piShare;
+            const mngRemaining = balances.mng - mngShare;
+            
+            remPiNode.innerText = piRemaining.toFixed(2) + " π";
+            remMngNode.innerText = mngRemaining.toFixed(2) + " MNG";
+            
+            // Visual Warning
+            remPiNode.style.color = piRemaining < 0 ? '#f87171' : 'white';
+            remMngNode.style.color = mngRemaining < 0 ? '#f87171' : '#818cf8';
+        }
+
+        /**
+         * 2. Edge Function 결제 호출 로직
+         */
+        async function confirmHybridPayment() {
+            const slider = document.getElementById('payment-slider');
+            const ratio = slider.value / 100;
+            const piShare = finalTargetPrice * ratio;
+            const mngShare = finalTargetPrice * (1 - ratio);
+            
+            const btn = event.currentTarget;
+            const originalText = btn.innerText;
+            
+            try {
+                btn.disabled = true;
+                btn.innerText = "PROCESSING TRANSACTION...";
+
+                // Supabase Edge Function 호출
+                const { data, error } = await supabaseInstance.functions.invoke('process-hybrid-payment', {
+                    body: {
+                        piAmount: piShare,
+                        mngAmount: mngShare,
+                        productId: activeProduct.id,
+                        portalType: 'MARKET'
+                    },
+                });
+
+                if (error) throw error;
+
+                if (data.success) {
+                    closeCheckout();
+                    alert(`✅ 결제 성공!\n주문 번호: ${data.order_id.slice(0, 8)}`);
+                } else {
+                    alert(`❌ 결제 실패: ${data.error}`);
+                }
+
+            } catch (err) {
+                console.error('Payment Error:', err);
+                alert("❌ 서버 통신 오류가 발생했습니다.");
+            } finally {
+                btn.disabled = false;
+                btn.innerText = originalText;
+            }
+        }
+
+        function updateHeaderUI(pi, mng) {
+            document.querySelectorAll('.global-pi-val').forEach(el => {
+                el.innerText = parseFloat(pi).toLocaleString(undefined, { 
+                    minimumFractionDigits: 2, 
+                    maximumFractionDigits: 2 
+                });
+                el.classList.add('animate-pulse'); // 업데이트 시 시각적 효과
+                setTimeout(() => el.classList.remove('animate-pulse'), 1000);
+            });
+            document.querySelectorAll('.global-mng-val').forEach(el => {
+                el.innerText = parseFloat(mng).toLocaleString(undefined, { 
+                    minimumFractionDigits: 2, 
+                    maximumFractionDigits: 2 
+                });
+            });
+        }
+
+        function closeAllDrawers() {
+            toggleMenu(false);
+            toggleCart(false);
+            toggleSellerDashboard(false);
+        }
+
+        // --- ACTIVATED UI LOGIC ---
+        function toggleSellerDashboard(show) {
+            const modal = document.getElementById('seller-modal');
+            const overlay = document.getElementById('modal-overlay');
+            
+            if (show) {
+                modal.classList.remove('hidden');
+                overlay.classList.remove('hidden');
+                // 리플로우 강제 발생 후 애니메이션 적용
+                setTimeout(() => {
+                    modal.classList.remove('translate-y-full');
+                    overlay.classList.add('opacity-100');
+                }, 10);
+            } else {
+                modal.classList.add('translate-y-full');
+                overlay.classList.remove('opacity-100');
+                setTimeout(() => {
+                    modal.classList.add('hidden');
+                    overlay.classList.add('hidden');
+                }, 400); // 트랜지션 시간과 일치
+            }
+        }
+
+        function toggleCart(show) {
+            const drawer = document.getElementById('cart-drawer');
+            drawer.classList.toggle('translate-x-full', !show);
+            if(show) updateCartUI();
+        }
+
+        function startVoiceSearch() {
+            alert("🎙️ Voice search activated. Please speak your keyword.");
+        }
+
+        function startGlobalSearch() {
+            alert("🔍 Global search initiated for your keyword.");
+        }
+
+        function expandAIRecommendations() {
+            alert("🚀 Expanding AI Recommended Gifts section for your personalized taste.");
+        }
+
+        function toggleView(mode) {
+            const grid = document.getElementById('product-grid');
+            const gridBtn = document.getElementById('grid-view-btn');
+            const listBtn = document.getElementById('list-view-btn');
+            
+            if (mode === 'list') {
+                grid.classList.replace('grid-cols-2', 'grid-cols-1');
+                listBtn.classList.replace('opacity-30', 'glass');
+                listBtn.querySelector('i').classList.add('text-amber-500');
+                gridBtn.classList.replace('glass', 'opacity-30');
+                gridBtn.querySelector('i').classList.remove('text-amber-500');
+            } else {
+                grid.classList.replace('grid-cols-1', 'grid-cols-2');
+                gridBtn.classList.replace('opacity-30', 'glass');
+                gridBtn.querySelector('i').classList.add('text-amber-500');
+                listBtn.classList.replace('glass', 'opacity-30');
+                listBtn.querySelector('i').classList.remove('text-amber-500');
+            }
+        }
+
+        function toggleLike(btn) {
+            const icon = btn.querySelector('i');
+            icon.classList.toggle('fill-pink-500');
+            icon.classList.toggle('text-pink-500');
+        }
+
+        function scrollToTop() {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        window.onscroll = function() {
+            const btn = document.getElementById('btn-top');
+            if (window.scrollY > 400) {
+                btn.classList.replace('opacity-0', 'opacity-100');
+                btn.classList.replace('translate-y-10', 'translate-y-0');
+            } else {
+                btn.classList.replace('opacity-100', 'opacity-0');
+                btn.classList.replace('translate-y-0', 'translate-y-10');
+            }
+        };
+
+    </script>
+    <script src="../assets/js/mango-i18n.js"></script>
+    <script src="../assets/js/globalWallet.js"></script>
+    <script>
+        // INITIALIZE
+        document.addEventListener('DOMContentLoaded', async () => {
+            // Load i18n before rendering dynamic products
+            await MangoI18n.init('../assets/data/translations.json');
+            renderProducts();
+            // AI 추천 섹션 초기화 및 회전 시작
+            renderAIRecommendations();
+            startAIRotation();
+
+            // 아이콘 재생성 (동적 요소 대응)
+            lucide.createIcons();
+            
+            // 현재 유저 세션 확인 후 실시간 동기화 시작 (예시 ID)
+            const userId = localStorage.getItem('mango_user_uuid') || 'your-test-uuid';
+            if (userId) {
+                initBalanceSync(userId);
+            }
+        });
+    </script>
+</body>
+</html>

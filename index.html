@@ -22,30 +22,13 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         /* 폰트 로드 최상단 배치 */
-        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Kanit:ital,wght@1,900&family=Noto+Sans+KR:wght@300;400;700;900&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Kanit:ital,wght@1,900&display=swap');
         
         :root {
         --mango-neon: #ffaa00;
         --unified-max-width: 430px;
         --bg-dark: #000000;
     }
-
-        .font-orb { font-family: 'Orbitron', sans-serif; letter-spacing: 0.05em; }
-        .font-noto { font-family: 'Noto Sans KR', sans-serif; }
-
-        /* [20단계] Code Master Polish: 3D Metallic Button Engine */
-        .btn-metallic {
-            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-            border-top: 1px solid rgba(255,255,255,0.3);
-            border-bottom: 3px solid rgba(0,0,0,0.8);
-            box-shadow: 0 10px 20px rgba(0,0,0,0.5);
-        }
-        .btn-metallic:active { 
-            transform: translateY(3px) scale(0.98); 
-            border-bottom-width: 1px;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
-        }
-
         /* 1. 기본 레이아웃 및 PC 중앙 정렬 */
     body {
         background-color: var(--bg-dark);
@@ -636,9 +619,9 @@ body {
                 </div>
             </div>
 
-            <button onclick="submitAd()" class="w-full py-4 bg-gradient-to-r from-orange-500 to-yellow-500 text-black font-black rounded-2xl flex items-center justify-center gap-2 btn-metallic font-orb">
+            <button onclick="submitAd()" class="w-full py-4 bg-gradient-to-r from-orange-500 to-yellow-500 text-black font-black rounded-2xl shadow-lg shadow-orange-500/20 hover:scale-[1.02] active:scale-95 transition-all flex items-center justify-center gap-2">
                 <i data-lucide="rocket" class="w-5 h-5"></i>
-                START CAMPAIGN
+                광고 캠페인 시작하기
             </button>
 
             <!-- Premium Upgrade Section -->
@@ -1068,7 +1051,7 @@ style="width: 140px; height: 140px; min-width: 140px; min-height: 140px; aspect-
         <div class="w-6 h-[1px] bg-gold-500/20"></div>
 
         <!-- 하단 통합: 2392행에서 이동해온 프로필 버튼 -->
-        <a href="../profile/profile_dashboard.html" class="flex items-center justify-center py-2 text-orange-500 hover:scale-125 transition-transform active:brightness-150">
+        <a href="profile/profile_dashboard.html" class="flex items-center justify-center py-2 text-orange-500 hover:scale-125 transition-transform active:brightness-150">
             <i data-lucide="user" class="w-6 h-6"></i>
         </a>
     </div>
@@ -1083,103 +1066,161 @@ style="width: 140px; height: 140px; min-width: 140px; min-height: 140px; aspect-
 </div>
 
 
-<div class="mango-container mb-6 overflow-hidden rounded-[2.5rem] relative border border-white/5 shadow-2xl">
+<div class="mango-container mb-3 overflow-hidden rounded-[2.5rem] relative">
     <div class="absolute inset-0 z-0">
-        <img src="https://images.unsplash.com/photo-1513151233558-d860c5398176?w=800" class="w-full h-full object-cover opacity-10">
-        <div class="absolute inset-0 bg-gradient-to-b from-black/90 via-black/60 to-black/90"></div>
+        <img src="https://images.unsplash.com/photo-1513151233558-d860c5398176?w=800" class="w-full h-full object-cover opacity-20">
+        <div class="absolute inset-0 bg-gradient-to-b from-black/80 via-black/40 to-black/80"></div>
     </div>
 
-    <div class="relative z-10 p-4">
-        <div class="flex justify-between items-end mb-4 px-1 border-b border-white/10 pb-2">
-            <div>
-                <h3 class="text-[14px] font-black text-yellow-500 tracking-widest uppercase flex items-center gap-2">
-                    <i id="random-premium-icon" data-lucide="crown" class="w-5 h-5 text-yellow-400 animate-pulse"></i>
-                    Premium Selection
-                </h3>
-                <p class="text-[9px] text-white/40 mt-1">망고 파트너스 제공: 파이(π) 결제 전용 혜택</p>
-            </div>
-            
-            <a href="Biz_Flirting_Dashboard.html" class="group flex flex-col items-end cursor-pointer">
-                <span id="live-flirting-badge" class="animate-bounce bg-gradient-to-r from-orange-500 to-red-600 text-white text-[8px] font-black px-2 py-0.5 rounded-full mb-1 shadow-[0_0_10px_rgba(255,0,0,0.5)]">
-                    LIVE FLIRTING: 7건
-                </span>
-                <span class="text-[10px] text-yellow-400 font-bold uppercase tracking-tighter border border-yellow-400/30 px-2 py-1 rounded bg-yellow-400/10 group-hover:bg-yellow-400/30 transition-all">
-                    혜택 등록하기 👉
-                </span>
-            </a>
+   <div class="relative z-10 p-4">
+    <div class="flex justify-between items-end mb-4 px-1 border-b border-white/10 pb-2">
+        <div>
+            <h3 class="text-[14px] font-black text-yellow-500 tracking-widest uppercase flex items-center gap-2 drop-shadow-[0_0_10px_rgba(234,179,8,0.4)]">
+                <i id="random-premium-icon" data-lucide="crown" class="w-5 h-5 text-yellow-400"></i>
+                Premium Selection
+            </h3>
+            <p class="text-[9px] text-white/40 mt-1">망고 파트너스 제공: 파이(π) 결제 전용 혜택</p>
         </div>
+        
+        <a href="Biz_Flirting_Dashboard.html" class="group flex flex-col items-end cursor-pointer">
+            <span class="animate-bounce bg-gradient-to-r from-orange-500 to-red-600 text-white text-[8px] font-black px-2 py-0.5 rounded-full mb-1 shadow-[0_0_10px_rgba(255,0,0,0.5)]">
+                LIVE FLIRTING: 4건
+            </span>
+            <span class="text-[10px] text-yellow-400 font-bold uppercase tracking-tighter border border-yellow-400/30 px-2 py-1 rounded bg-yellow-400/10 group-hover:bg-yellow-400/30 transition-all">
+                업체 입점 / 혜택 등록 👉
+            </span>
+        </a>
+    </div>
 
-        <div class="relative h-[115px] overflow-hidden rounded-2xl bg-white/[0.03] backdrop-blur-xl border border-white/10 shadow-inner">
-            <div id="premiumRollingBoard" class="absolute w-full flex flex-col transition-all duration-700 ease-in-out">
+        <div class="relative h-[100px] overflow-hidden rounded-2xl bg-white/[0.03] backdrop-blur-md border border-white/10 shadow-2xl">
+            <div id="premiumRollingBoard" class="absolute w-full transition-all duration-700 ease-in-out">
                 
-                <div class="h-[115px] flex items-center gap-4 px-5 cursor-pointer hover:bg-white/5 transition-all" onclick="PremiumAdEngine.handleAdClick('ad_dental_01', 'REALTY')">
-                    <div class="w-16 h-16 flex-shrink-0 bg-blue-500/20 rounded-2xl flex items-center justify-center border border-blue-400/30 relative overflow-hidden shadow-lg">
-                        <span class="absolute text-3xl opacity-30">🩺</span>
-                        <img src="assets/img/dental.png" onerror="this.src='https://images.unsplash.com/photo-1629909613654-28e377c37b09?w=200'; this.style.opacity='0.8';" class="absolute inset-0 w-full h-full object-cover z-10">
-                    </div>
-                    <div class="flex-1 min-w-0">
-                        <div class="flex items-center justify-between mb-1">
-                            <span class="text-[8px] text-blue-400 font-bold border border-blue-400/40 px-2 py-0.5 rounded-full uppercase">Exclusive π</span>
-                            <span class="text-[8px] text-white/30 flex items-center gap-1"><i data-lucide="map-pin" class="w-2.5 h-2.5"></i> 300m</span>
-                        </div>
-                        <h4 class="text-[14px] font-bold text-white truncate">"망고치과: 임플란트 π 결제 10% 할인"</h4>
-                        <div class="mt-2 w-full h-1 bg-white/5 rounded-full overflow-hidden">
-                            <div class="h-full bg-blue-500 w-[85%]"></div>
-                        </div>
-                        <p class="text-[8px] text-blue-400/60 mt-1 font-black italic uppercase">8 Slots Left / Closing Soon</p>
-                    </div>
-                </div>
+              <div class="h-[100px] flex items-center gap-4 px-5 cursor-pointer hover:bg-white/5" onclick="openAdVideo('hospital')">
+    <div class="w-14 h-14 flex-shrink-0 bg-blue-500/20 rounded-2xl flex items-center justify-center border border-blue-400/30 relative overflow-hidden">
+        
+        <span class="absolute text-3xl opacity-50">🩺</span>
 
-                <div class="h-[115px] flex items-center gap-4 px-5 cursor-pointer hover:bg-white/5 transition-all" onclick="PremiumAdEngine.handleAdClick('ad_bread_02', 'FOOD')">
-                    <div class="w-16 h-16 flex-shrink-0 bg-orange-500/20 rounded-2xl flex items-center justify-center border border-orange-400/30 relative overflow-hidden shadow-lg">
-                        <span class="absolute text-3xl opacity-30">🥐</span>
-                        <img src="assets/img/bread.png" onerror="this.src='https://images.unsplash.com/photo-1608198093002-ad4e005484ec?w=200'; this.style.opacity='0.8';" class="absolute inset-0 w-full h-full object-cover z-10">
-                    </div>
-                    <div class="flex-1 min-w-0">
-                        <div class="flex items-center justify-between mb-1">
-                            <span class="text-[8px] text-orange-400 font-bold border border-orange-400/40 px-2 py-0.5 rounded-full uppercase">Daily Fresh</span>
-                            <span class="text-[8px] text-white/30 flex items-center gap-1"><i data-lucide="map-pin" class="w-2.5 h-2.5"></i> 850m</span>
-                        </div>
-                        <h4 class="text-[14px] font-bold text-white truncate">"망고브레드: 명장 소금빵 14시 출고"</h4>
-                        <div class="mt-2 w-full h-1 bg-white/5 rounded-full overflow-hidden">
-                            <div class="h-full bg-orange-500 w-[20%] animate-pulse"></div>
-                        </div>
-                        <p class="text-[8px] text-orange-400/60 mt-1 font-black italic uppercase">Only 3 Left! / Hurry Up</p>
-                    </div>
-                </div>
-
-                <div class="h-[115px] flex items-center gap-4 px-5 cursor-pointer hover:bg-white/5 transition-all" onclick="PremiumAdEngine.handleAdClick('ad_mobile_04', 'MARKET')">
-                    <div class="w-16 h-16 flex-shrink-0 bg-red-500/20 rounded-2xl flex items-center justify-center border border-red-400/30 relative overflow-hidden shadow-lg">
-                        <span class="absolute text-3xl opacity-30">📱</span>
-                        <img src="assets/img/phone.png" onerror="this.src='https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?w=200'; this.style.opacity='0.8';" class="absolute inset-0 w-full h-full object-cover z-10">
-                    </div>
-                    <div class="flex-1 min-w-0">
-                        <div class="flex items-center justify-between mb-1">
-                            <span class="text-[8px] text-red-500 font-bold border border-red-500/40 px-2 py-0.5 rounded-full uppercase">SK · KT · LG</span>
-                        </div>
-                        <h4 class="text-[14px] font-bold text-white truncate">"망고 모바일: 기기값 0원 π 특가"</h4>
-                        <p class="text-[10px] text-white/40 mt-1 truncate">번호이동 최대지원 · 사은품 증정</p>
-                    </div>
-                </div>
-
-                <div class="h-[115px] flex items-center gap-4 px-5 cursor-pointer hover:bg-white/5 transition-all" onclick="PremiumAdEngine.handleAdClick('ad_beer_05', 'MARKET')">
-                    <div class="w-16 h-16 flex-shrink-0 bg-amber-500/20 rounded-2xl flex items-center justify-center border border-amber-400/30 relative overflow-hidden shadow-lg">
-                        <span class="absolute text-3xl opacity-30">🍺</span>
-                        <img src="assets/img/kirin.png" onerror="this.src='https://images.unsplash.com/photo-1612528443702-f6741f70a049?w=200'; this.style.opacity='0.8';" class="absolute inset-0 w-full h-full object-cover z-10">
-                    </div>
-                    <div class="flex-1 min-w-0">
-                        <div class="flex items-center justify-between mb-1">
-                            <span class="text-[8px] text-amber-400 font-bold border border-amber-400/40 px-2 py-0.5 rounded-full uppercase">Special Offer</span>
-                        </div>
-                        <h4 class="text-[14px] font-bold text-white truncate">"기린 이치방 4캔 9,800원 특가"</h4>
-                        <p class="text-[10px] text-white/40 mt-1 truncate">망고마트 본점 · π 결제 적립</p>
-                    </div>
-                </div>
-
-            </div>
+        <img src="assets/img/dental.png" 
+             onerror="this.src='https://images.unsplash.com/photo-1629909613654-28e377c37b09?w=200'; this.onerror=function(){this.style.opacity='0'};" 
+             alt="망고치과" 
+             class="absolute inset-0 w-full h-full object-cover z-10"
+             onload="this.style.opacity='1'">
+             
+    </div>
+    <div class="flex-1">
+        <div class="flex items-center gap-2 mb-1">
+            <span class="text-[9px] text-blue-400 font-bold border border-blue-00/50 px-2 py-0.5 rounded-full uppercase">Exclusive π Benefit</span>
         </div>
+        <h4 class="text-[14px] font-bold text-white leading-tight">"망고치과: 오스템 임플란트 π 결제 시 10% 할인가"</h4>
+        <p class="text-[10px] text-white/40 mt-1">과잉진료 없는 정직한 플러팅 · 당일 예약제 운영</p>
     </div>
 </div>
+
+<div class="h-[100px] flex items-center gap-4 px-5 cursor-pointer hover:bg-white/5 transition-all" onclick="openAdVideo('bakery')">
+    <div class="w-14 h-14 flex-shrink-0 rounded-2xl bg-gradient-to-br from-orange-400 to-orange-700 flex items-center justify-center border border-orange-400/50 shadow-lg relative overflow-hidden">
+        <span class="absolute text-3xl">🥐</span>
+        <img src="assets/img/bread.png" 
+             onerror="this.src='assets/img/bread.jpg'; this.onerror=function(){this.src='https://images.unsplash.com/photo-1608198093002-ad4e005484ec?w=200'; this.onerror=function(){this.style.opacity='0'};};" 
+             alt="망고브레드" 
+             class="absolute inset-0 w-full h-full object-cover z-10">
+    </div>
+    <div class="flex-1">
+        <div class="flex items-center gap-2 mb-1">
+            <span class="text-[9px] text-orange-400 font-bold border border-orange-400/50 px-2 py-0.5 rounded-full uppercase">Daily Fresh 14:00</span>
+        </div>
+        <h4 class="text-[14px] font-bold text-white leading-tight">"망고브레드: 명장 소금빵 14시 갓 구워져 나옵니다"</h4>
+        <p class="text-[10px] text-white/40 mt-1">매일 한정 50개 · 결제 금액의 10% π 적립</p>
+    </div>
+</div>
+
+<div class="h-[100px] flex items-center gap-4 px-5 cursor-pointer hover:bg-white/5" onclick="openAdVideo('kindergarten')">
+    <div class="w-14 h-14 flex-shrink-0 bg-emerald-500/20 rounded-xl flex items-center justify-center border border-emerald-400/30">
+        <span class="text-3xl">🌸</span>
+    </div>
+    <div class="flex-1">
+        <div class="flex items-center gap-2 mb-1">
+            <span class="text-[9px] text-emerald-400 font-bold border border-emerald-400/50 px-2 py-0.5 rounded-full uppercase">Spring Season / March</span>
+        </div>
+        <h4 class="text-[14px] font-bold text-white leading-tight">"망고유치원: 2026학년도 신입생 모집 중"</h4>
+        <p class="text-[10px] text-white/40 mt-1">아이들의 꿈이 자라는 공간 · π 결제 원비 할인</p>
+    </div>
+</div>
+
+<div class="h-[100px] flex items-center gap-4 px-5 cursor-pointer hover:bg-white/5 transition-all" onclick="openAdVideo('mobile')">
+    <div class="w-14 h-14 flex-shrink-0 rounded-2xl bg-gradient-to-br from-zinc-700 to-black flex items-center justify-center border border-white/20 shadow-lg relative overflow-hidden">
+        <span class="absolute text-3xl">📱</span>
+        <img src="assets/img/phone.png" 
+             onerror="this.src='assets/img/phone.jpg'; this.onerror=function(){this.src='https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?w=200'; this.onerror=function(){this.style.opacity='0'};};" 
+             alt="망고모바일" 
+             class="absolute inset-0 w-full h-full object-cover z-10">
+             
+        <div class="absolute inset-0 bg-gradient-to-tr from-white/10 to-transparent z-20 pointer-events-none"></div>
+    </div>
+    <div class="flex-1">
+        <div class="flex items-center gap-2 mb-1">
+            <span class="text-[9px] text-red-500 font-bold border border-red-500/50 px-2 py-0.5 rounded-full uppercase tracking-tighter">SK · KT · LG U+</span>
+        </div>
+        <h4 class="text-[14px] font-bold text-white leading-tight">"망고 모바일: 파이(π)로 가입 시 최신 기기값 0원"</h4>
+        <p class="text-[10px] text-white/40 mt-1">통신 3사 번호이동 최대 지원 · 사은품 증정</p>
+    </div>
+</div>
+
+<div class="h-[100px] flex items-center gap-4 px-5 cursor-pointer hover:bg-white/5 transition-all">
+    <div class="w-14 h-14 flex-shrink-0 rounded-2xl bg-gradient-to-br from-amber-400 to-amber-700 flex items-center justify-center border border-amber-400/50 shadow-lg relative overflow-hidden">
+        <span class="absolute text-3xl">🍺</span>
+        <img src="assets/img/kirin.png" 
+             onerror="this.src='assets/img/kirin.jpg'; this.onerror=function(){this.src='https://images.unsplash.com/photo-1612528443702-f6741f70a049?w=200'; this.onerror=function(){this.style.opacity='0'};};" 
+             alt="기린 맥주" 
+             class="absolute inset-0 w-full h-full object-cover z-10">
+    </div>
+    <div class="flex-1">
+        <div class="flex items-center gap-2 mb-1">
+            <span class="text-[9px] text-amber-400 font-bold border border-amber-400/50 px-2 py-0.5 rounded-full uppercase">Mango Mart Only</span>
+        </div>
+        <h4 class="text-[14px] font-bold text-white leading-tight">"기린 이치방 500ml 4캔 9,800원 특가"</h4>
+        <p class="text-[10px] text-white/40 mt-1">망고마트 본점 · 파이결제 시 5% 추가 적립</p>
+    </div>
+</div>
+
+<div class="h-[100px] flex items-center gap-4 px-5 cursor-pointer hover:bg-white/5">
+    <div class="w-14 h-14 flex-shrink-0 bg-red-500/20 rounded-2xl flex items-center justify-center border border-red-400/30">
+        <span class="text-3xl">🥩</span>
+    </div>
+    <div class="flex-1">
+        <div class="flex items-center gap-2 mb-1">
+            <span class="text-[9px] text-red-400 font-bold border border-red-400/50 px-2 py-0.5 rounded-full uppercase">Butcher's Cut</span>
+        </div>
+        <h4 class="text-[14px] font-bold text-white leading-tight">"횡성 한우 1++ 등심 구이용 20% 할인"</h4>
+        <p class="text-[10px] text-white/40 mt-1">망고마트 정육코너 · 당일 도축 물량 한정</p>
+    </div>
+</div>
+
+<div class="h-[100px] flex items-center gap-4 px-5 cursor-pointer hover:bg-white/5 transition-all">
+    <div class="w-14 h-14 flex-shrink-0 rounded-2xl bg-gradient-to-br from-red-600 to-red-900 flex items-center justify-center border border-red-400/50 shadow-lg shadow-red-900/40 relative overflow-hidden">
+        
+        <span class="absolute text-3xl">🥬</span>
+
+        <img src="assets/img/kimchi.png" 
+             onerror="this.src='assets/img/kimchi.jpg'; this.onerror=function(){this.src='https://cdn.pixabay.com/photo/2014/01/09/10/39/kimchi-241047_1280.jpg'; this.onerror=function(){this.style.opacity='0'};};" 
+             alt="종가집 김치" 
+             class="absolute inset-0 w-full h-full object-cover z-10">
+             
+        <div class="absolute inset-0 opacity-10 bg-[url('https://www.transparenttextures.com/patterns/asfalt-dark.png')] z-20 pointer-events-none"></div>
+    </div>
+    
+    <div class="flex-1">
+        <div class="flex items-center gap-2 mb-1">
+            <span class="text-[9px] text-red-400 font-bold border border-red-400/50 px-2 py-0.5 rounded-full uppercase tracking-tighter">Fresh K-Food</span>
+        </div>
+        <h4 class="text-[14px] font-bold text-white leading-tight">"종가집 전라도 포기김치 3.3kg 특가"</h4>
+        <p class="text-[10px] text-white/40 mt-1 italic">망고마트 산지직송 · 32.5 π 결제 가능</p>
+    </div>
+</div>
+            </div> <!-- End of premiumRollingBoard -->
+        </div> <!-- End of relative h-[100px] -->
+    </div>
+</div>
+
 
 
 <script>
@@ -1243,7 +1284,7 @@ function openAuth(tab = 'login') {
     switchTab(tab);
 }
 
-function closeAuth() { 
+function closeAuth() {
     document.getElementById('integrated-auth-modal').classList.add('hidden');
     document.body.style.overflow = 'auto'; // 배경 스크롤 해제
 }
@@ -1853,14 +1894,14 @@ const promoContents = [
    // 1. 데이터 설정
    // --- [수정된 데이터 설정] ---
 const portalData = [
-    { id: 'FOOD', icon: 'utensils', url: 'Food/Food_Portal.html' },               // 1번째 (정면)
-    { id: 'TRANSFER', icon: 'repeat', url: 'Transfer/index.html', desc: '안전한 이동 시스템.' },          // 2번째
-    { id: 'TRAVEL', icon: 'plane', url: 'Travel/index.html', desc: '글로벌 여행 및 숙박 예약.' },       // 3번째
-    { id: 'HOBBY', icon: 'heart', url: 'Hobby/index.html', desc: '취미와 가치를 공유하는 커뮤니티.' }, // 4번째 (정확히 배치)
-    { id: 'REALTY', icon: 'building', url: 'Realty/index.html', desc: '부동산 매물 확인 및 거래.' },        // 5번째 (리액트 연결 -> 모달)
-    { id: 'MARKET', icon: 'shopping-cart', url: 'Market/index.html', desc: '글로벌 파이 쇼핑몰.' },    // 6번째
-    { id: 'CHAT', icon: 'message-circle', url: 'Chat/index.html', desc: '실시간 채팅 및 소통.' },     // 7번째 (SOCIAL 대체)
-    { id: 'EDUCATION', icon: 'graduation-cap', url: 'Education/index.html', desc: '미래를 여는 교육 포털.' } // 8번째 (ADMIN 대체)
+    { id: 'FOOD', icon: 'utensils', url: 'Food/food_dashboard.html' },      // 1번째 (정면)
+    { id: 'TRANSFER', icon: 'repeat', url: 'Transfer/transfer_dashboard.html', desc: '안전한 이동 시스템.' }, // 2번째
+    { id: 'TRAVEL', icon: 'plane', url: 'Travel/travel_dashboard.html) .html', desc: '글로벌 여행 및 숙박 예약.' },       // 3번째
+    { id: 'HOBBY', icon: 'heart', url: 'Hobby/hobby_dashboard.html', desc: '취미와 가치를 공유하는 커뮤니티.' }, // 4번째 (정확히 배치)
+    { id: 'REALTY', icon: 'building', url: 'Realty/realty_dashboard.html', desc: '부동산 매물 확인 및 거래.' },        // 5번째 (리액트 연결 -> 모달)
+    { id: 'MARKET', icon: 'shopping-cart', url: 'Market/market_dashboard.html', desc: '글로벌 파이 쇼핑몰.' },    // 6번째
+    { id: 'CHAT', icon: 'message-circle', url: 'Chat/chat_dashboard.html', desc: '실시간 채팅 및 소통.' },     // 7번째 (SOCIAL 대체)
+    { id: 'EDUCATION', icon: 'graduation-cap', url: 'Education/education_dashboard.html', desc: '미래를 여는 교육 포털.' } // 8번째 (ADMIN 대체)
 ];
 
     const pivot = document.getElementById('pivot');
@@ -3532,121 +3573,5 @@ function initRandomPremiumIcon() {
 // 페이지 로드 시 엔진 가동
 window.addEventListener('load', initRandomPremiumIcon);
     </script>
-    <script>// [MANGO Premium Selection Ad Engine]
-const PremiumAdEngine = {
-    // 1. 하드코딩 데이터 -> JSON 데이터베이스화 (망고치과, 망고브레드 등)
-    defaultAds: [
-        {
-            id: 'ad_dental_01',
-            category: 'HEALTH', // 추후 Realty 등 적절한 포탈로 연결
-            title: '"망고치과: 오스템 임플란트 π 결제 시 10% 할인가"',
-            desc: '과잉진료 없는 정직한 플러팅 · 당일 예약제 운영',
-            imgUrl: 'assets/img/dental.png',
-            badgeText: 'Exclusive π Benefit',
-            color: 'blue',
-            emoji: '🩺'
-        },
-        {
-            id: 'ad_bread_02',
-            category: 'FOOD', // Food 포탈로 연결
-            title: '"망고브레드: 명장 소금빵 14시 갓 구워져 나옵니다"',
-            desc: '매일 한정 50개 · 결제 금액의 10% π 적립',
-            imgUrl: 'assets/img/bread.png',
-            badgeText: 'Daily Fresh 14:00',
-            color: 'orange',
-            emoji: '🥐'
-        }
-    ],
-
-    init() {
-        this.board = document.getElementById('premiumRollingBoard');
-        this.badge = document.getElementById('live-flirting-badge');
-        this.currentIndex = 0;
-        this.syncData();
-        this.render();
-        this.startRolling();
-    },
-
-    syncData() {
-        // 파트너 대시보드(Biz_Flirting_Dashboard)에서 저장한 로컬스토리지 라이브 데이터 가져오기
-        const liveFlirtings = JSON.parse(localStorage.getItem('mango_flirtings')) || [];
-        
-        // 라이브 데이터를 우선 배치하고 기본 데이터를 뒤에 붙임
-        this.activeAds = [...liveFlirtings, ...this.defaultAds];
-        
-        // 뱃지 업데이트
-        if (this.badge) {
-            this.badge.innerText = `LIVE FLIRTING: ${this.activeAds.length}건`;
-        }
-    },
-
-    render() {
-        if (!this.board || this.activeAds.length === 0) return;
-        
-        // 동적 HTML 생성
-        let html = '';
-        this.activeAds.forEach(ad => {
-            // 카테고리에 따른 색상/아이콘 처리 로직 (생략됨: 프롬프트가 AI에게 지시함)
-            const colorClass = ad.color || 'yellow'; // 기본값
-            
-            html += `
-            <div class="h-[100px] flex items-center gap-4 px-5 cursor-pointer hover:bg-white/5 transition-all" onclick="PremiumAdEngine.handleAdClick('${ad.id}', '${ad.category || 'FOOD'}')">
-                <div class="w-14 h-14 flex-shrink-0 bg-${colorClass}-500/20 rounded-2xl flex items-center justify-center border border-${colorClass}-400/30 relative overflow-hidden">
-                    <span class="absolute text-3xl opacity-50">${ad.emoji || '✨'}</span>
-                    ${ad.imgUrl ? `<img src="${ad.imgUrl}" class="absolute inset-0 w-full h-full object-cover z-10" onerror="this.style.opacity='0'">` : ''}
-                </div>
-                <div class="flex-1">
-                    <div class="flex items-center gap-2 mb-1">
-                        <span class="text-[9px] text-${colorClass}-400 font-bold border border-${colorClass}-400/50 px-2 py-0.5 rounded-full uppercase">${ad.badgeText || 'Mango Benefit'}</span>
-                    </div>
-                    <h4 class="text-[14px] font-bold text-white leading-tight truncate-2-lines">${ad.title}</h4>
-                    <p class="text-[10px] text-white/40 mt-1 truncate">${ad.desc}</p>
-                </div>
-            </div>`;
-        });
-        
-        this.board.innerHTML = html;
-    },
-
-    startRolling() {
-        if (this.activeAds.length <= 1) return; // 1개면 롤링 안함
-        
-        this.rollingInterval = setInterval(() => {
-            this.currentIndex++;
-            if (this.currentIndex >= this.activeAds.length) {
-                this.currentIndex = 0;
-                // 매끄러운 처음으로 복귀를 위한 처리 (AI가 Phase 4에서 고도화할 영역)
-            }
-            this.board.style.transform = `translateY(-${this.currentIndex * 100}px)`;
-        }, 3000); // 3초마다 롤링
-
-        // 터치/마우스 오버 시 일시정지 (Phase 4)
-        this.board.addEventListener('mouseenter', () => clearInterval(this.rollingInterval));
-        this.board.addEventListener('mouseleave', () => this.startRolling());
-    },
-
-    handleAdClick(adId, category) {
-        // [Phase 3] 8대 포탈 딥링크 라우팅
-        console.log(`광고 클릭됨: ID(${adId}), 라우팅 포탈(${category})`);
-        
-        // B2B 대시보드 통계용 클릭 수 증가 (Phase 3 - 14단계)
-        let stats = JSON.parse(localStorage.getItem('mango_ad_stats')) || {};
-        stats[adId] = (stats[adId] || 0) + 1;
-        localStorage.setItem('mango_ad_stats', JSON.stringify(stats));
-
-        // 카테고리별 포탈 이동 (예시)
-        const portals = {
-            'FOOD': 'Food_Portal.html',
-            'MARKET': 'Market_Portal.html',
-            // 나머지 포탈 매핑...
-        };
-        
-        const targetUrl = portals[category] || 'index.html';
-        window.location.href = `${targetUrl}?flirting_id=${adId}`;
-    }
-};
-
-// 페이지 로드 시 엔진 가동
-window.addEventListener('DOMContentLoaded', () => PremiumAdEngine.init());</script>
 </body>
 </html>

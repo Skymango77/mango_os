@@ -86,41 +86,55 @@
 
         function renderHistory() {
             const list = document.getElementById('history-list');
-            const history = MangoWallet.getHistory();
+            // Load combined history from localStorage (updated via portal bookings)
+            const history = JSON.parse(localStorage.getItem('mango_point_history') || '[]');
             
-            const portalIcons = {
-                'Travel': 'plane',
-                'Food': 'utensils',
-                'Market': 'shopping-bag',
-                'Realty': 'home',
-                'Education': 'graduation-cap',
-                'Transfer': 'car'
+            const typeIcons = {
+                'FLIGHT': 'plane',
+                'HOTEL': 'hotel',
+                'STAKING': 'lock',
+                'REWARD': 'gift',
+                'FOOD': 'utensils',
+                'MARKET': 'shopping-bag',
+                'REALTY': 'home',
+                'EDUCATION': 'graduation-cap',
+                'TRANSFER': 'car'
             };
 
+            if (history.length === 0) {
+                list.innerHTML = `
+                    <div class="text-center py-20 opacity-20">
+                        <i data-lucide="database" class="w-12 h-12 mx-auto mb-4"></i>
+                        <p class="text-sm font-bold uppercase tracking-widest italic">No transaction records found</p>
+                    </div>`;
+                lucide.createIcons();
+                updateSyncBalances();
+                return;
+            }
+
             list.innerHTML = history.map(tx => {
-                const isPositive = tx.amount > 0;
-                const icon = portalIcons[tx.portal] || 'hash';
-                const symbol = tx.type === 'pi' ? 'π' : 'MNG';
-                const colorClass = tx.type === 'pi' ? 'text-white' : 'text-indigo-400';
+                const isPositive = tx.amount.includes('+');
+                const icon = typeIcons[tx.type] || 'hash';
+                const date = new Date(tx.date).toLocaleDateString();
 
                 return `
-                    <div class="tx-item premium-glass p-4 flex items-center justify-between portal-${tx.portal}">
+                    <div class="tx-item premium-glass p-4 flex items-center justify-between portal-${tx.type}">
                         <div class="flex items-center gap-4">
                             <div class="w-10 h-10 rounded-xl bg-white/5 flex items-center justify-center text-gray-400">
                                 <i data-lucide="${icon}" class="w-5 h-5"></i>
                             </div>
                             <div>
-                                <h4 class="text-[13px] font-bold text-white/90 leading-tight">${tx.desc}</h4>
+                                <h4 class="text-[13px] font-bold text-white/90 leading-tight">${tx.title}</h4>
                                 <div class="flex items-center gap-2 mt-1">
-                                    <span class="text-[9px] font-black text-gray-500 uppercase tracking-tighter">${tx.portal}</span>
+                                    <span class="text-[9px] font-black text-gray-500 uppercase tracking-tighter">${tx.detail}</span>
                                     <span class="w-1 h-1 bg-white/10 rounded-full"></span>
-                                    <span class="text-[9px] font-medium text-gray-600">${tx.date}</span>
+                                    <span class="text-[9px] font-medium text-gray-600">${date}</span>
                                 </div>
                             </div>
                         </div>
                         <div class="text-right">
-                            <p class="text-sm font-black italic ${isPositive ? 'text-emerald-400' : colorClass}">
-                                ${isPositive ? '+' : ''}${tx.amount.toFixed(1)} ${symbol}
+                            <p class="text-sm font-black italic ${isPositive ? 'text-emerald-400' : 'text-indigo-400'}">
+                                ${tx.amount} MNG
                             </p>
                             <p class="text-[8px] text-gray-600 font-bold uppercase mt-1">Confirmed</p>
                         </div>
@@ -129,6 +143,14 @@
             }).join('');
             
             lucide.createIcons();
+            updateSyncBalances();
+        }
+
+        function updateSyncBalances() {
+            const piBal = localStorage.getItem('mango_pi_balance') || '314.15';
+            const mngBal = localStorage.getItem('mango_mng_balance') || '0.00';
+            document.querySelectorAll('.global-pi-val').forEach(el => el.innerText = piBal);
+            document.querySelectorAll('.global-mng-val').forEach(el => el.innerText = mngBal);
         }
 
         document.addEventListener('DOMContentLoaded', renderHistory);

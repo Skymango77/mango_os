@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>MANGO TRAVEL | Agency Dashboard</title>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="https://sdk.minepi.com/pi-sdk.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&family=Playfair+Display:ital,wght@1,900&display=swap" rel="stylesheet">
+
+    <style>
+        body { background-color: #000; color: white; font-family: 'Inter', sans-serif; overflow-x: hidden; }
+        .mango-gradient { background: linear-gradient(180deg, #0a0a0a 0%, #1a1a1a 100%); }
+        .glass-card { background: rgba(255, 255, 255, 0.04); backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px); border: 1px solid rgba(255, 255, 255, 0.08); }
+        
+        .mango-gold-power {
+            background: linear-gradient(to bottom, #FFD700 0%, #F59E0B 100%);
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 0 15px rgba(245, 158, 11, 0.6);
+            filter: drop-shadow(0px 2px 4px rgba(0,0,0,0.8));
+        }
+        
+        .gold-dust-particle {
+            position: absolute;
+            background-color: #FDE047;
+            border-radius: 50%;
+            pointer-events: none;
+            box-shadow: 0 0 6px 2px rgba(253, 224, 71, 0.8);
+            animation: floatUp 1.5s ease-out forwards;
+        }
+
+        @keyframes floatUp {
+            0% { transform: translateY(0) scale(1); opacity: 1; }
+            100% { transform: translateY(-20px) scale(0); opacity: 0; }
+        }
+    </style>
+</head>
+<body class="bg-black">
+    <div class="min-h-screen mango-gradient flex flex-col">
+        <header class="sticky top-0 z-40 bg-black/60 backdrop-blur-xl border-b border-white/5 px-6 py-4 flex justify-between items-center">
+            <div class="flex items-center gap-3">
+                <div class="logo-container cursor-pointer" onclick="location.reload()">
+                    <img src="https://mango-os-6xu2.vercel.app/mango.jpg" class="w-12 h-12 rounded-2xl border border-white/10 shadow-[0_0_15px_rgba(245,158,11,0.4)]" alt="Logo">
+                </div>
+                <div class="flex flex-col mt-0.5">
+                    <div class="relative inline-block">
+                        <h1 class="mango-gold-power text-[30px] font-[900] tracking-tighter leading-none pr-2" style="font-style: italic; margin: 0; position: relative; z-index: 10;">
+                            TRAVEL AGENT
+                        </h1>
+                        <div id="gold-dust-container" class="absolute top-0 left-0 w-full h-full pointer-events-none" style="z-index: 20; overflow: visible;"></div>
+                    </div>
+                    <span class="text-[8px] font-bold tracking-[1px] uppercase ml-1 mt-0.5" style="color: #FDE047;">.PI / ECO-SYSTEM</span>
+                </div>
+            </div>
+            <div class="flex items-center gap-4">
+                <div class="text-right">
+                    <p class="text-[10px] text-white/40 uppercase">Pending Settl.</p>
+                    <p class="text-sm text-yellow-400 font-black">2,450.00 π</p>
+                </div>
+                <div class="w-9 h-9 rounded-full border-2 border-orange-500 p-0.5">
+                    <img src="https://api.dicebear.com/8.x/avataaars/svg?seed=Manager" class="w-full h-full rounded-full bg-zinc-800">
+                </div>
+            </div>
+        </header>
+
+        <main class="flex-1 p-6 space-y-8 max-w-6xl mx-auto w-full">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                <div class="glass-card p-6 rounded-[2rem] border-orange-500/20">
+                    <p class="text-[10px] text-white/40 font-bold uppercase tracking-widest mb-1">Live Journeys</p>
+                    <p class="text-3xl font-black text-white italic">24</p>
+                </div>
+                <div class="glass-card p-6 rounded-[2rem] border-white/5">
+                    <p class="text-[10px] text-white/40 font-bold uppercase tracking-widest mb-1">New Requests</p>
+                    <p class="text-3xl font-black text-white italic">7</p>
+                </div>
+                <div class="glass-card p-6 rounded-[2rem] border-white/5">
+                    <p class="text-[10px] text-white/40 font-bold uppercase tracking-widest mb-1">Land Operator</p>
+                    <p class="text-xl font-bold text-green-500">Connected</p>
+                </div>
+                <div class="glass-card p-6 rounded-[2rem] border-white/5">
+                    <p class="text-[10px] text-white/40 font-bold uppercase tracking-widest mb-1">CS Score</p>
+                    <p class="text-3xl font-black text-yellow-400 italic">4.9</p>
+                </div>
+            </div>
+
+            <div class="glass-card rounded-[2.5rem] overflow-hidden border-white/5">
+                <div class="p-6 border-b border-white/5 flex justify-between items-center">
+                    <h3 class="text-sm font-bold uppercase tracking-widest flex items-center gap-2">
+                        <i data-lucide="users" class="w-4 h-4 text-orange-500"></i> Customer Journey Management
+                    </h3>
+                </div>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left">
+                        <thead>
+                            <tr class="text-[10px] uppercase text-white/30 border-b border-white/5">
+                                <th class="px-6 py-4">Customer</th>
+                                <th class="px-6 py-4">Flight/Hotel Status</th>
+                                <th class="px-6 py-4">Local Guide</th>
+                                <th class="px-6 py-4">Meeting Point</th>
+                                <th class="px-6 py-4">Requests</th>
+                            </tr>
+                        </thead>
+                        <tbody class="text-xs">
+                            <tr class="border-b border-white/5 hover:bg-white/[0.02] transition-colors">
+                                <td class="px-6 py-5">
+                                    <p class="font-bold text-white">Sarah (VIP)</p>
+                                    <p class="text-[10px] text-white/40">Busan Node Tour</p>
+                                </td>
+                                <td class="px-6 py-5">
+                                    <div class="flex gap-2">
+                                        <span class="text-green-500 font-bold">✈️ OK</span>
+                                        <span class="text-orange-500 font-bold">🏨 OK</span>
+                                    </div>
+                                </td>
+                                <td class="px-6 py-5">
+                                    <p class="font-bold">Park (Korean/EN)</p>
+                                    <p class="text-[10px] text-white/40">+82-10-xxxx</p>
+                                </td>
+                                <td class="px-6 py-5">
+                                    <p class="font-bold">Narita T2 Gate 3</p>
+                                    <p class="text-[10px] text-white/40">Pickup: 14:00</p>
+                                </td>
+                                <td class="px-6 py-5">
+                                    <span class="text-red-400 font-bold">Nut Allergy</span>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        lucide.createIcons();
+        function startGoldDustEffect() {
+            const container = document.getElementById('gold-dust-container');
+            if (!container) return;
+            setInterval(() => {
+                const dust = document.createElement('div');
+                dust.className = 'gold-dust-particle';
+                const size = Math.random() * 2.5 + 1;
+                dust.style.width = `${size}px`;
+                dust.style.height = `${size}px`;
+                dust.style.left = `${Math.random() * 100}%`;
+                dust.style.top = `${Math.random() * 100}%`;
+                container.appendChild(dust);
+                setTimeout(() => dust.remove(), 1500);
+            }, 200);
+        }
+        window.addEventListener('load', startGoldDustEffect);
+    </script>
+</body>
+</html>

@@ -1,0 +1,108 @@
+/* 
+   MANGO CORE DESIGN SYSTEM v1.0
+   Domain 02: Design Tokens & Shared Components
+*/
+
+:root {
+    /* Design Tokens */
+    --mango-gold: #f59e0b;
+    --mango-orange: #FF6B00;
+    --mango-teal: #00F2FF;
+    --mango-pink: #FF007A;
+    --mango-purple: #A855F7;
+    --mango-yellow: #FACC15;
+    --mango-bg-dark: #050505;
+    --mango-glass: linear-gradient(135deg, rgba(255, 255, 255, 0.05) 0%, rgba(255, 255, 255, 0.01) 100%);
+    --mango-shadow: 0 0 40px rgba(255, 107, 0, 0.1);
+    --mango-radius: 32px;
+    --portal-width: 480px;
+}
+
+/* Global Reset Helpers */
+.no-scrollbar::-webkit-scrollbar { display: none; }
+.no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+/* Typography */
+.font-orbitron { font-family: 'Orbitron', sans-serif; }
+.text-metallic-gold { 
+    background: linear-gradient(135deg, #FFD700 0%, #FFA500 50%, #FF8C00 100%); 
+    -webkit-background-clip: text; 
+    background-clip: text; 
+    -webkit-text-fill-color: transparent; 
+}
+
+/* AI Concierge Core Animations */
+@keyframes gold-dust-fall {
+    0% { transform: translateY(-20px) translateX(0); opacity: 0; }
+    20% { opacity: 1; }
+    100% { transform: translateY(30px) translateX(15px); opacity: 0; }
+}
+
+@keyframes mango-pulse {
+    0%, 100% { text-shadow: 0 0 10px rgba(255, 215, 0, 0.4); filter: drop-shadow(0 0 5px rgba(255, 115, 0, 0.3)); }
+    50% { text-shadow: 0 0 25px rgba(255, 215, 0, 0.8); filter: drop-shadow(0 0 10px rgba(255, 115, 0, 0.6)); }
+}
+
+.mango-pulsar-wrapper { position: relative; overflow: visible; display: inline-block; }
+.mango-pulsing-text { animation: mango-pulse 1.8s ease-in-out infinite; position: relative; z-index: 10; }
+.mango-pulsar-wrapper::before, .mango-pulsar-wrapper::after {
+    content: ""; position: absolute; width: 3px; height: 3px; background-color: #ffd700; border-radius: 50%; opacity: 0; z-index: 5;
+}
+.mango-pulsar-wrapper::before { top: 0; left: 10%; animation: gold-dust-fall 2.5s linear infinite; box-shadow: 0 0 5px #ffd700, -10px 15px 8px #ffd700, 10px 25px 3px #ffa500; }
+.mango-pulsar-wrapper::after { top: -10px; right: 20%; animation: gold-dust-fall 3s linear infinite 0.5s; box-shadow: 0 0 5px #ffd700, 5px 12px 6px #ffd700, -15px 22px 4px #ffa500; }
+
+/* Standardized UI Components */
+.premium-glass {
+    background: var(--mango-glass);
+    backdrop-filter: blur(25px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: var(--mango-radius);
+    position: relative;
+    overflow: hidden;
+}
+
+.glass {
+    background: rgba(255, 255, 255, 0.03);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.mango-gradient { background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%); }
+
+/* Common Page Transitions */
+@keyframes slideUp { 
+    from { transform: translateY(20px); opacity: 0; } 
+    to { transform: translateY(0); opacity: 1; } 
+}
+.animate-slide-up { animation: slideUp 0.5s ease forwards; }
+
+/* Pi Value Ticker */
+.pi-ticker {
+    background: rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 16px;
+    padding: 8px 12px;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 12px;
+    font-weight: bold;
+    color: var(--mango-yellow);
+    box-shadow: 0 0 15px rgba(255, 215, 0, 0.2);
+}
+.pi-ticker i {
+    color: var(--mango-gold);
+    animation: mango-pulse 1.5s infinite;
+}
+
+/* Real-Time Availability Pulse */
+@keyframes availability-pulse {
+    0% { transform: scale(1); opacity: 1; }
+    50% { transform: scale(1.2); opacity: 0.7; box-shadow: 0 0 10px var(--mango-teal); }
+    100% { transform: scale(1); opacity: 1; }
+}
+.live-pulse {
+    width: 8px; height: 8px; border-radius: 50%; background: var(--mango-teal);
+    display: inline-block; animation: availability-pulse 2s infinite;
+}
