@@ -196,7 +196,8 @@
         </div>
 
         <div class="space-y-6">
-            <!-- Injected by API Search -->
+            <!-- Hotel Cards Injected Dynamically by executeHotelSearch -->
+            <!-- Hotel Cards with Rooms Injected Dynamically -->
         </div>
     </section>
 
@@ -254,16 +255,16 @@
             <div class="mt-8 space-y-3 bg-white/5 p-4 rounded-3xl border border-white/5 email-form-focus">
                 <h3 class="text-[10px] font-black text-amber-500 uppercase tracking-[0.3em] ml-1">Voucher Delivery Email</h3>
                 <div class="flex gap-2 items-center">
-                    <input type="text" id="h-email-user" placeholder="Email ID" class="flex-[1.5] bg-white/5 border border-white/10 rounded-xl p-3 text-[11px] text-white outline-none transition-all">
+                    <input type="text" id="c-email-user" placeholder="Email ID" class="flex-[1.5] bg-white/5 border border-white/10 rounded-xl p-3 text-[11px] text-white outline-none transition-all">
                     <span class="text-white/40">@</span>
-                    <select id="h-email-domain-select" onchange="handleDomainChange('h', this.value)" class="flex-1 bg-white/5 border border-white/10 rounded-xl p-3 text-[11px] text-white outline-none transition-all">
+                    <select id="c-email-domain-select" onchange="handleDomainChange('c', this.value)" class="flex-1 bg-white/5 border border-white/10 rounded-xl p-3 text-[11px] text-white outline-none transition-all">
                         <option value="gmail.com">gmail.com</option>
                         <option value="naver.com">naver.com</option>
                         <option value="kakao.com">kakao.com</option>
                         <option value="direct">Direct Input</option>
                     </select>
                 </div>
-                <input type="text" id="h-email-domain-direct" placeholder="example.com" class="hidden w-full bg-white/5 border border-white/10 rounded-xl p-3 text-[11px] text-white outline-none transition-all mt-2">
+                <input type="text" id="c-email-domain-direct" placeholder="example.com" class="hidden w-full bg-white/5 border border-white/10 rounded-xl p-3 text-[11px] text-white outline-none transition-all mt-2">
             </div>
 
             <button onclick="confirmHotel()" class="w-full mt-8 py-5 mango-gradient text-black font-black rounded-2xl text-sm uppercase tracking-widest active:scale-95 transition-all">Confirm Stay</button>
@@ -368,6 +369,7 @@
 
         let lockTimerInterval;
         let currentHotel = null;
+        let selectedOffer = null; // Step 18: 선택된 오퍼 저장
         let amadeusToken = null;
         let map = null;
 
@@ -380,7 +382,7 @@
                 const response = await fetch('https://test.api.amadeus.com/v1/security/oauth2/token', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-                    body: new URLSearchParams({
+                    body: new URLSearchParams({ 
                         'grant_type': 'client_credentials',
                         'client_id': API_CLIENT_ID,
                         'client_secret': API_CLIENT_SECRET
@@ -395,15 +397,17 @@
             }
         }
 
+        // API keys are declared once above; avoid redeclaring to prevent block-scoped duplicate error.
+
         /**
          * Amadeus Hotel API Integration
          * Fetches real-time hotel list from Amadeus GDS nodes
          */
         window.executeHotelSearch = async () => {
-            const city = document.getElementById('hotel-city').value || 'PUS';
+            const cityCode = document.getElementById('hotel-city').value || 'PUS';
             const checkin = document.getElementById('date-start').value;
             const checkout = document.getElementById('date-end').value;
-            
+
             if(!checkin || !checkout) { alert('체크인/체크아웃 날짜를 선택해주세요.'); return; }
 
             const resultsGrid = document.querySelector('.space-y-6');
@@ -529,10 +533,255 @@
             const checkin = document.getElementById('date-start').value;
             const checkout = document.getElementById('date-end').value;
             const adults = document.getElementById('count-adult').innerText;
-
+            
             if(!checkin || !checkout) { alert('체크인/체크아웃 날짜를 선택해주세요.'); return; }
             window.open(`https://www.agoda.com/ko-kr/search?city=${city}&checkin=${checkin}&checkout=${checkout}&adults=${adults}`, '_blank');
         }
- </script>
+
+        // ① Pi 실시간 차트 생성
+        function initPiChart() {
+            const ctx = document.getElementById('piHotelChart').getContext('2d');
+            new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: ['10m', '8m', '6m', '4m', '2m', 'Now'],
+                    datasets: [{
+                        label: 'Pi Rate (KRW)',
+                        data: [61200, 60800, 62100, 60500, 59800, 60000],
+                        borderColor: '#fbbf24',
+                        borderWidth: 2,
+                        tension: 0.4,
+                        pointRadius: 0,
+                        fill: true,
+                        backgroundColor: 'rgba(251, 191, 36, 0.05)'
+                    }]
+                },
+                options: {
+                    plugins: { legend: { display: false } },
+                    scales: {
+                        x: { display: false },
+                        y: { display: false }
+                    }
+                }
+            });
+        }
+
+        window.openHotelReceipt = (name, originalFiatAmount, currency, rating = '4') => {
+            const convertedPrices = piPricingEngine.convertToPi(originalFiatAmount, currency);
+            currentHotel = { name, rating };
+            document.getElementById('h-receipt-name').innerText = name;
+            document.getElementById('h-receipt-original-fiat').innerText = `${originalFiatAmount.toLocaleString()} ${currency}`;
+            document.getElementById('h-receipt-tax').innerText = `Included (10% Mango Fee)`;
+            document.getElementById('h-receipt-total').innerText = `${convertedPrices.totalPi.toFixed(2)} π`;
+            startPriceLockTimer(); // 타이머 가동
+            document.getElementById('hotel-modal').classList.remove('hidden');
+            lucide.createIcons();
+        }
+
+        function closeHotelModal() {
+            clearInterval(lockTimerInterval); // 타이머 중지
+            document.getElementById('hotel-modal').classList.add('hidden');
+        }
+
+        function createConfetti() {
+            const container = document.getElementById('confetti-container');
+            const colors = ['#f59e0b', '#fbbf24', '#ffffff', '#fb7185', '#22d3ee'];
+            for (let i = 0; i < 60; i++) {
+                const isMango = Math.random() < 0.33; // 1/3 확률로 망고 아이콘 생성
+                const confetti = document.createElement(isMango ? 'img' : 'div');
+                
+                if (isMango) {
+                    confetti.src = '../assets/img/mango.jpg';
+                    confetti.className = 'confetti rounded-full object-cover border border-amber-500/30';
+                    confetti.style.width = Math.random() * 15 + 10 + 'px';
+                } else {
+                    confetti.className = 'confetti';
+                    confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+                    confetti.style.width = Math.random() * 8 + 5 + 'px';
+                }
+                
+                confetti.style.height = confetti.style.width;
+                confetti.style.left = Math.random() * 100 + 'vw';
+                confetti.style.animationDelay = Math.random() * 2 + 's';
+                container.appendChild(confetti);
+                setTimeout(() => confetti.remove(), 4000);
+            }
+        }
+
+        function closeSuccessModal() {
+            document.getElementById('success-modal').classList.add('hidden');
+            document.getElementById('confetti-container').innerHTML = '';
+        }
+
+        window.toggleRooms = (index) => {
+            const roomDiv = document.getElementById(`rooms-${index}`);
+            const isHidden = roomDiv.classList.contains('hidden');
+            document.querySelectorAll('[id^="rooms-"]').forEach(d => d.classList.add('hidden'));
+            if (isHidden) roomDiv.classList.remove('hidden');
+            lucide.createIcons();
+        };
+
+        window.selectRoom = (offerId, hotelName, price, rating) => {
+            selectedOffer = { id: offerId, price };
+            openHotelReceipt(hotelName, price, 'KRW', rating);
+        };
+
+        /**
+         * Amadeus Hotel Booking API Backend 연동 로직
+         * 실제 예약 확정 및 GDS 예약 번호를 생성합니다.
+         */
+        async function callAmadeusBookingAPI(offerId, guestInfo) {
+            const token = await getAmadeusToken();
+            if (!token) return { success: false, error: "Auth Failed" };
+
+            // 실제 Amadeus Booking 엔드포인트: /v1/booking/hotel-bookings
+            const response = await fetch('https://test.api.amadeus.com/v1/booking/hotel-bookings', {
+                method: 'POST',
+                headers: { 
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    data: {
+                        offerId: offerId,
+                        guests: [{
+                            name: { firstName: guestInfo.firstName, lastName: guestInfo.lastName },
+                            contact: { phone: "+821012345678", email: guestInfo.email }
+                        }],
+                        payments: [{ method: "creditCard", cards: [{ vendorCode: "VI", cardNumber: "0000000000000000", expiryDate: "2026-12" }] }]
+                    }
+                })
+            });
+            return await response.json();
+        }
+
+        window.confirmStay = async () => {
+            const user = document.getElementById('c-email-user').value.trim();
+            const select = document.getElementById('c-email-domain-select').value;
+            const direct = document.getElementById('c-email-domain-direct').value.trim();
+            let domain = select === 'direct' ? direct : select;
+
+            if (!user || !domain) { alert('바우처를 수령할 이메일 주소를 입력해주세요.'); return; }
+            
+            const hotelName = document.getElementById('h-receipt-name').innerText;
+            const totalPiValue = document.getElementById('h-receipt-total').innerText.replace(' π', '');
+
+            const rewardsByStar = { '5': 5.0, '4': 2.5, '3': 1.0 };
+            const mngReward = rewardsByStar[currentHotel?.rating] || 1.0;
+
+            let balance = parseFloat(localStorage.getItem('mango_mng_balance') || '0');
+            localStorage.setItem('mango_mng_balance', (balance + mngReward).toFixed(2));
+
+            let history = JSON.parse(localStorage.getItem('mango_point_history') || '[]');
+            history.unshift({
+                type: 'HOTEL',
+                title: `${hotelName} Stay`,
+                detail: `${currentHotel?.rating || '4'}-Star Premium Sync`,
+                amount: `+${mngReward}`,
+                date: new Date().toISOString()
+            });
+            localStorage.setItem('mango_point_history', JSON.stringify(history));
+
+            const booking = await bookingEngine.createBooking('HOTEL', {
+                name: hotelName,
+                price: totalPiValue,
+                email: `${user}@${domain}`
+            });
+            lastCreatedBooking = booking;
+
+            const successSound = new Audio('../assets/sounds/mangomangodaldalhe.mp3');
+            successSound.play().catch(e => console.warn("Audio play blocked by browser policy:", e));
+
+            const modalMsg = `AI 가격 엔진에 의해 고정된 시세로 예약이 완료되었습니다.<br>확정 바우처가 <span class="text-white">${user}@${domain}</span>로 전송됩니다.<br><br>
+                             <div class="text-[10px] text-zinc-500 bg-white/5 p-3 rounded-xl">Reservation No: ${booking.reservationNumber}</div>`;
+            document.getElementById('success-modal-msg').innerHTML = modalMsg;
+            document.getElementById('success-modal').classList.remove('hidden');
+            
+            createConfetti(); 
+            lucide.createIcons();
+            closeHotelModal();
+        };
+
+        window.closeSuccessModal = () => {
+            document.getElementById('success-modal').classList.add('hidden');
+            document.getElementById('confetti-container').innerHTML = '';
+        };
+
+        document.getElementById('download-receipt-btn').addEventListener('click', () => {
+            if (!lastCreatedBooking) return;
+            const b = lastCreatedBooking;
+            const content = `
+                MANGO HOTEL VOUCHER
+                ===================
+                Booking ID: ${b.bookingId}
+                Reservation: ${b.reservationNumber}
+                Property: ${b.item.name}
+                Supplier: ${b.provider.supplier}
+                Confirmation: ${b.provider.confirmationStatus}
+                Price: ${b.piAmount} π
+            `;
+            const blob = new Blob([content], { type: 'text/plain' });
+            const a = document.createElement('a');
+            a.href = URL.createObjectURL(blob);
+            a.download = `Voucher-${b.bookingId}.txt`;
+            a.click();
+        });
+
+        // 이메일 도메인 선택 변경 핸들러
+        window.handleDomainChange = (prefix, value) => {
+            const directInput = document.getElementById(`${prefix}-email-domain-direct`);
+            if (value === 'direct') {
+                directInput.classList.remove('hidden');
+                directInput.focus();
+            } else {
+                directInput.classList.add('hidden');
+            }
+        };
+
+        // Initialize UI elements and Pi pricing
+        document.addEventListener('DOMContentLoaded', async () => {
+            uiController.init(); // Initialize Lucide icons and point balance
+
+            const urlParams = new URLSearchParams(window.location.search);
+            const cityParam = urlParams.get('city');
+            if (cityParam) {
+                document.getElementById('hotel-city').value = cityParam;
+            }
+
+            initPiChart();
+            await piPricingEngine.refreshPiRate(); // Fetch initial Pi rate
+            updatePiTicker();
+            
+            executeHotelSearch(); // Initial search on entry
+
+            // Refresh prices every 60 seconds
+            setInterval(async () => {
+                await piPricingEngine.refreshPiRate();
+                updatePiTicker();
+                executeHotelSearch();
+            }, 60000);
+        });
+
+        window.updatePiTicker = () => {
+            document.getElementById('pi-value-ticker').innerText = `1 π = ${piPricingEngine.getCurrentPiValue('KRW').toLocaleString()} KRW`;
+        };
+
+        window.handleDomainChange = (prefix, value) => {
+            const directInput = document.getElementById(`${prefix}-email-domain-direct`);
+            if (value === 'direct') {
+                directInput.classList.remove('hidden');
+                directInput.focus();
+            } else {
+                directInput.classList.add('hidden');
+            }
+        };
+
+        window.closeHotelModal = () => {
+            clearInterval(lockTimerInterval);
+            document.getElementById('hotel-modal').classList.add('hidden');
+        };
+
+        window.toggleMenu = uiController.toggleMenu;
+    </script>
 </body>
 </html>
