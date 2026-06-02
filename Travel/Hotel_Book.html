@@ -7,6 +7,7 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap" rel="stylesheet">
@@ -64,6 +65,22 @@
             background: rgba(255, 255, 255, 0.05) !important;
             backdrop-filter: blur(10px);
             border-color: #f59e0b !important;
+        }
+
+        /* Step 36: Passport Metallic Edge Effect */
+        .passport-ticket {
+            background: linear-gradient(145deg, #1a1a1a, #050505);
+            border: 2px solid transparent;
+            border-image: linear-gradient(135deg, #ffd700, #b8860b, #ffd700) 1;
+            box-shadow: 0 0 30px rgba(184, 134, 11, 0.2);
+            position: relative;
+            overflow: hidden;
+        }
+        .passport-ticket::after {
+            content: ''; position: absolute; top: -50%; left: -50%; width: 200%; height: 200%;
+            background: linear-gradient(45deg, transparent, rgba(255, 215, 0, 0.05), transparent);
+            transform: rotate(45deg);
+            pointer-events: none;
         }
 
         #hotel-map { filter: invert(100%) hue-rotate(180deg) brightness(95%) contrast(90%); }
@@ -370,6 +387,7 @@
         let currentHotel = null;
         let selectedOffer = null; // Step 18: 선택된 오퍼 저장
         let amadeusToken = null;
+        let arActive = false;
         let map = null;
 
         const API_CLIENT_ID = 'YOUR_AMADEUS_CLIENT_ID';
@@ -402,6 +420,37 @@
          * Amadeus Hotel API Integration
          * Fetches real-time hotel list from Amadeus GDS nodes
          */
+
+        /**
+         * AR Concierge: Recommendation Engine
+         * Triggered after successful booking to show nearby POIs
+         */
+        async function startARConcierge(lat = 35.1587, lng = 129.1603) {
+            const poiList = document.getElementById('ar-poi-list');
+            poiList.innerHTML = '<p class="text-teal-400/50 text-[10px] animate-pulse">DETECTING_LOCAL_SIGHTS...</p>';
+            
+            // Mocking Amadeus Points of Interest API response
+            setTimeout(() => {
+                const mockPOIs = [
+                    { name: "Haeundae Blueline Park", dist: "850m", category: "SCENIC" },
+                    { name: "Busan Sea Life Aquarium", dist: "320m", category: "SIGHTS" },
+                    { name: "The Bay 101 Yacht Club", dist: "1.2km", category: "LUXURY" }
+                ];
+
+                poiList.innerHTML = mockPOIs.map((poi, i) => `
+                    <div class="premium-glass p-3 border-teal-500/30 flex justify-between items-center animate-slide-up" style="animation-delay: ${i * 0.15}s">
+                        <div>
+                            <span class="text-[7px] text-teal-500 font-black tracking-widest">${poi.category}</span>
+                            <h4 class="text-xs font-black text-white italic">${poi.name}</h4>
+                        </div>
+                        <div class="text-right">
+                            <p class="text-[10px] font-black text-teal-400 font-orb">${poi.dist}</p>
+                        </div>
+                    </div>`).join('');
+                lucide.createIcons();
+            }, 1800);
+        }
+
         window.executeHotelSearch = async () => {
             const cityCode = document.getElementById('hotel-city').value || 'PUS';
             const checkin = document.getElementById('date-start').value;
@@ -696,6 +745,11 @@
             document.getElementById('success-modal-msg').innerHTML = modalMsg;
             document.getElementById('success-modal').classList.remove('hidden');
             
+            // Auto-trigger AR Concierge Mode
+            arActive = true;
+            document.getElementById('ar-hud').style.opacity = '1';
+            startARConcierge();
+
             createConfetti(); 
             lucide.createIcons();
             closeHotelModal();

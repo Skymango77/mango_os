@@ -7,6 +7,7 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700;900&family=Inter:wght@300;400;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="../shared/styles/mango-core.css">
     <style>
@@ -68,6 +69,15 @@
         
         .accordion-content { max-height: 0; overflow: hidden; transition: max-height 0.4s ease-out; }
         .accordion-content.active { max-height: 300px; }
+
+        /* Step 36: Ticket Metallic Styling */
+        .ticket-voucher {
+            background: linear-gradient(145deg, #111, #000);
+            border: 2px solid transparent;
+            border-image: linear-gradient(135deg, #ffd700, #b8860b, #ffd700) 1;
+            box-shadow: 0 0 20px rgba(184, 134, 11, 0.3);
+            position: relative;
+        }
     </style>
     <script type="module" src="../services/piPricingEngine.js"></script>
     <script type="module" src="../services/uiController.js"></script>
@@ -247,11 +257,29 @@
     </section>
 
     <!-- Step 5: Travel Mall Commerce Layer - Integrate Pi Payment Simulation -->
-    <div id="flight-modal" class="fixed inset-0 z-[200] hidden bg-black/95 backdrop-blur-xl flex items-center justify-center p-4">
-        <div class="glass w-full max-w-[420px] p-6 rounded-[2.5rem] border-orange-500/30 overflow-y-auto max-h-[90vh] no-scrollbar">
+    <div id="flight-modal" class="fixed inset-0 z-[200] hidden bg-black/95 backdrop-blur-xl flex items-center justify-center p-4 overflow-y-auto">
+        <div id="voucher-card" class="ticket-voucher w-full max-w-[420px] p-8 rounded-[2.5rem] overflow-y-auto max-h-[90vh] no-scrollbar">
+            <!-- Export Buttons (Step 37) -->
+            <div class="absolute top-6 right-6 flex gap-2">
+                <button onclick="saveFlightVoucher()" class="p-2 bg-white/5 rounded-lg border border-white/10 text-amber-500"><i data-lucide="image" class="w-4 h-4"></i></button>
+                <button onclick="downloadFlightTxt()" class="p-2 bg-white/5 rounded-lg border border-white/10 text-white/40"><i data-lucide="download" class="w-4 h-4"></i></button>
+            </div>
+
             <div class="flex justify-between items-center mb-4">
                 <h2 class="text-lg font-black italic text-amber-500 uppercase tracking-tighter">Booking <span class="text-white">Review</span></h2>
                 <button onclick="closeFlightModal()"><i data-lucide="x" class="text-white/40"></i></button>
+            </div>
+
+            <!-- Step 2: Dynamic User Header -->
+            <div class="flex justify-between items-start mb-6 border-b border-white/10 pb-4">
+                <div class="space-y-1">
+                    <p class="text-[8px] text-gray-500 uppercase font-black tracking-widest">Passport Holder</p>
+                    <h4 id="ticket-user-name" class="font-orb text-xs font-black text-white uppercase italic">---</h4>
+                </div>
+                <div class="text-right space-y-1">
+                    <p class="text-[8px] text-gray-500 uppercase font-black tracking-widest">Wallet Trace</p>
+                    <p id="ticket-wallet-trace" class="font-orb text-[9px] font-black text-amber-500/80">---</p>
+                </div>
             </div>
 
             <div class="bg-white/5 border border-white/10 rounded-3xl p-5 mb-4 space-y-3">
@@ -275,6 +303,12 @@
                     <span class="text-xs font-black uppercase">Total Paid</span>
                     <span id="receipt-total" class="text-2xl font-black text-white italic tracking-tighter">---</span>
                 </div>
+            </div>
+
+            <!-- PNR Output (Step 34) -->
+            <div id="pnr-container" class="hidden bg-white/5 rounded-2xl p-6 mb-6 border border-amber-500/20 text-center">
+                <p class="text-[9px] text-gray-500 uppercase font-black mb-1">Electronic Ticket ID (PNR)</p>
+                <h3 id="pnr-val" class="font-orb text-3xl font-black text-amber-500">---</h3>
             </div>
 
             <div class="space-y-3">
@@ -301,13 +335,24 @@
                 </div>
             </div>
 
-            <button onclick="confirmFlight()" class="btn-metallic-gold w-full mt-6 py-5 rounded-2xl text-sm uppercase tracking-widest">Confirm Booking</button>
+            <button id="confirm-pay-btn" onclick="processMangoPayment()" class="btn-metallic-gold w-full mt-6 py-5 rounded-2xl text-sm uppercase tracking-widest">Confirm Booking</button>
         </div>
+    </div>
+
+    <!-- Payment Loading Overlay (Step 31) -->
+    <div id="payment-overlay" class="fixed inset-0 z-[500] hidden bg-black/90 backdrop-blur-2xl flex flex-col items-center justify-center p-8 text-center">
+        <div class="relative w-32 h-32 mb-8">
+            <div class="absolute inset-0 border-4 border-amber-500/20 rounded-full"></div>
+            <div class="absolute inset-0 border-4 border-amber-500 border-t-transparent rounded-full animate-spin"></div>
+            <img src="../assets/img/mango.jpg" class="absolute inset-4 w-24 h-24 rounded-full object-cover">
+        </div>
+        <p class="text-xs text-amber-500/80 font-bold uppercase tracking-widest animate-pulse italic">보안 에스크로(Escrow) 시스템에 스마트 컨트랙트를 기록 중입니다...</p>
     </div>
 
     <script type="module">
         import { uiController } from '../services/uiController.js';
         import { piPricingEngine } from '../services/piPricingEngine.js';
+        import { bookingEngine } from '../services/bookingEngine.js';
         
         let flightData = [];
         let selectedSeat = null;
@@ -481,11 +526,8 @@
             });
             localStorage.setItem('mango_point_history', JSON.stringify(history));
 
-            alert(`항공권 예약이 완료되었습니다!\n좌석: ${selectedSeat}\n리워드: ${mngReward} MNG 포인트가 적립되었습니다.`);
-            
-            // Step 14: Smooth transition to Hotel_Book.html with destination
-            const dest = document.getElementById('arr-city').value;
-            window.location.href = `Hotel_Book.html?city=${dest}`;
+            alert(`Flight Confirmed!\nSeat: ${selectedSeat}\nReward: ${mngReward} MNG points added to your profile!`);
+            closeFlightModal();
         }
 
         // Init Logic

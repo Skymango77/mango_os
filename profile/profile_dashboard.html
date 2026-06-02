@@ -155,13 +155,22 @@
             renderNetwork();
         });
 
+        function checkRecentAccrual() {
+            const history = JSON.parse(localStorage.getItem('mango_point_history') || '[]');
+            if(history.length > 0 && history[0].type === 'FLIGHT') {
+                showToast(`🚀 Latest Reward: ${history[0].amount} MNG from Flight!`);
+            }
+        }
+
         function updateLiveBalances() {
             const piBal = localStorage.getItem('mango_pi_balance') || '314.15';
             const mngBal = localStorage.getItem('mango_mng_balance') || '0.00';
             document.querySelectorAll('.global-pi-val').forEach(el => el.innerText = piBal);
             document.querySelectorAll('.global-mng-val').forEach(el => el.innerText = mngBal);
+            checkRecentAccrual();
         }
 
+    
         function showToast(m) { const t = document.getElementById('copy-toast'); t.innerText = m; t.classList.replace('opacity-0', 'opacity-100'); t.classList.replace('translate-y-10', 'translate-y-0'); setTimeout(() => { t.classList.replace('opacity-100', 'opacity-0'); t.classList.replace('translate-y-0', 'translate-y-10'); }, 3000); }
         function copyToClipboard(text) { navigator.clipboard.writeText(text).then(() => showToast('✨ Code Copied to Clipboard!')); }
         function shareReferral() {
