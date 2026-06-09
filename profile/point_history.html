@@ -17,6 +17,58 @@
         .tx-item { transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); border-left: 4px solid transparent; }
         .tx-item:active { transform: scale(0.98); background: rgba(255,255,255,0.05); }
         
+        /* Requirement 1: VIP Gold Theme (Lv.4+) */
+        body.theme-vip-gold {
+            background: radial-gradient(circle at 50% 0%, #2a1f0d 0%, #030305 70%) !important;
+        }
+        .theme-vip-gold .premium-glass {
+            border-color: rgba(245, 158, 11, 0.3);
+            background: rgba(245, 158, 11, 0.05);
+        }
+        
+        /* Requirement 2: Golden Neon Flicker for Icons */
+        @keyframes gold-flicker {
+            0%, 18%, 22%, 25%, 53%, 57%, 100% {
+                filter: drop-shadow(0 0 8px rgba(245, 158, 11, 0.8)) brightness(1.2);
+            }
+            20%, 24%, 55% {
+                filter: drop-shadow(0 0 2px rgba(245, 158, 11, 0.2)) brightness(0.5);
+            }
+        }
+        .theme-vip-gold .tx-item i {
+            animation: gold-flicker 4s infinite;
+            color: var(--mango-gold) !important;
+        }
+
+        /* Requirement 1: MNG Coin Particle Effect & Easter Egg */
+        .mng-particle {
+            position: fixed; pointer-events: auto; cursor: pointer; font-weight: 900; font-size: 10px;
+            color: var(--mango-gold); z-index: 1000; animation: mng-particle-float 1.5s ease-out forwards;
+            user-select: none;
+        }
+        @keyframes mng-particle-float {
+            0% { transform: translate(-50%, -50%) scale(0.5); opacity: 1; }
+            100% { transform: translate(calc(-50% + var(--dx)), calc(-50% + var(--dy))) scale(1.5) rotate(360deg); opacity: 0; }
+        }
+
+        /* Step 1: 3D Reward Accrual Animation */
+        @keyframes reward-3d-pop {
+            0% { transform: perspective(1000px) rotateX(45deg) translateZ(-100px) scale(0.8); opacity: 0; filter: brightness(2); }
+            50% { transform: perspective(1000px) rotateX(-10deg) translateZ(50px) scale(1.05); opacity: 1; filter: brightness(1.5); }
+            100% { transform: perspective(1000px) rotateX(0) translateZ(0) scale(1); opacity: 1; filter: brightness(1); }
+        }
+        .animate-reward-3d {
+            animation: reward-3d-pop 1.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+            border: 2px solid var(--mango-gold) !important;
+            box-shadow: 0 0 40px rgba(245, 158, 11, 0.2);
+        }
+
+        @keyframes glow-pulse {
+            0%, 100% { box-shadow: 0 0 20px rgba(245, 158, 11, 0.1); }
+            50% { box-shadow: 0 0 40px rgba(245, 158, 11, 0.4); }
+        }
+        .reward-glow { animation: glow-pulse 2s infinite ease-in-out; }
+
         /* Portal Specific Accents */
         .portal-Travel { border-left-color: #6366f1; }
         .portal-Food { border-left-color: #f87171; }
@@ -54,7 +106,12 @@
                 <div class="h-px bg-white/10"></div>
 
                 <div>
-                    <p class="text-[10px] text-gray-500 font-black uppercase tracking-[0.3em] mb-2">MNG Rewards Pool</p>
+                    <p class="text-[10px] text-gray-500 font-black uppercase tracking-[0.3em] mb-2 flex items-center gap-2">
+                        MNG Rewards Pool
+                        <span id="hidden-collector-badge" class="hidden px-2 py-0.5 rounded-full bg-amber-500/20 border border-amber-500/40 text-[7px] text-amber-500 font-black italic animate-pulse">
+                            HIDDEN COLLECTOR 🏆
+                        </span>
+                    </p>
                     <div class="flex items-baseline gap-2">
                         <h2 class="text-3xl font-black font-orb text-white/90 global-mng-val">0.00</h2>
                         <span class="text-sm font-bold text-indigo-400 font-orb italic">MNG</span>
@@ -112,13 +169,21 @@
                 return;
             }
 
-            list.innerHTML = history.map(tx => {
+            const urlParams = new URLSearchParams(window.location.search);
+            const isNewReward = urlParams.get('new_reward') === 'true';
+
+            list.innerHTML = history.map((tx, index) => {
                 const isPositive = tx.amount.includes('+');
                 const icon = typeIcons[tx.type] || 'hash';
                 const date = new Date(tx.date).toLocaleDateString();
 
+                // Step 1: Add animation classes if it's the newest item from redirect
+                const isCelebrationTarget = index === 0 && isNewReward;
+                const animationClass = isCelebrationTarget ? 'animate-reward-3d reward-glow cursor-pointer' : '';
+
                 return `
-                    <div class="tx-item premium-glass p-4 flex items-center justify-between portal-${tx.type}">
+                    <div class="tx-item premium-glass p-4 flex items-center justify-between portal-${tx.type} ${animationClass}"
+                         ${isCelebrationTarget ? 'onclick="triggerRewardCelebration(event)"' : ''}>
                         <div class="flex items-center gap-4">
                             <div class="w-10 h-10 rounded-xl bg-white/5 flex items-center justify-center text-gray-400">
                                 <i data-lucide="${icon}" class="w-5 h-5"></i>
@@ -146,11 +211,104 @@
             updateSyncBalances();
         }
 
+        /**
+         * Requirement 2: Celebration Particle & Message Logic
+         */
+        window.triggerRewardCelebration = (e) => {
+            const rect = e.currentTarget.getBoundingClientRect();
+            const centerX = rect.left + rect.width / 2;
+            const centerY = rect.top + rect.height / 2;
+
+            // 1. Spawn MNG Particles
+            for(let i=0; i<15; i++) {
+                const p = document.createElement('div');
+                p.className = 'mng-particle font-orb';
+                p.innerText = 'MNG';
+                p.style.left = centerX + 'px';
+                p.style.top = centerY + 'px';
+                p.style.setProperty('--dx', (Math.random() * 400 - 200) + 'px');
+                p.style.setProperty('--dy', (Math.random() * -300 - 50) + 'px');
+                
+                // Easter Egg: Click particle for 0.1 MNG Bonus
+                p.onclick = (event) => {
+                    event.stopPropagation();
+                    const currentMng = parseFloat(localStorage.getItem('mango_mng_balance') || '0');
+                    const bonus = 0.1;
+                    localStorage.setItem('mango_mng_balance', (currentMng + bonus).toFixed(2));
+                    
+                    // Requirement 1: Easter Egg Counter & Badge Logic
+                    let eggCount = parseInt(localStorage.getItem('mango_easter_egg_count') || '0');
+                    eggCount++;
+                    localStorage.setItem('mango_easter_egg_count', eggCount);
+                    
+                    if(eggCount === 10) {
+                        alert("🏆 ACHIEVEMENT UNLOCKED: Hidden Collector!");
+                        if(navigator.vibrate) navigator.vibrate([100, 50, 100]);
+                    }
+
+                    updateSyncBalances();
+                    
+                    p.style.transform = 'scale(2)';
+                    p.style.opacity = '0';
+                    setTimeout(() => p.remove(), 200);
+                };
+
+                document.body.appendChild(p);
+                setTimeout(() => p.remove(), 1500);
+            }
+
+            // 2. Show Congratulation Message
+            const toast = document.createElement('div');
+            toast.className = 'fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-[2000] bg-amber-500 text-black font-black p-8 rounded-[2rem] shadow-2xl text-center animate-bounce';
+            toast.innerHTML = '<p class="text-2xl italic tracking-tighter">JACKPOT! 🥭</p><p class="text-[10px] uppercase mt-2">New Reward Sync Completed</p>';
+            document.body.appendChild(toast);
+            setTimeout(() => toast.remove(), 2500);
+
+            if(navigator.vibrate) navigator.vibrate(100);
+        };
+
         function updateSyncBalances() {
             const piBal = localStorage.getItem('mango_pi_balance') || '314.15';
             const mngBal = localStorage.getItem('mango_mng_balance') || '0.00';
             document.querySelectorAll('.global-pi-val').forEach(el => el.innerText = piBal);
             document.querySelectorAll('.global-mng-val').forEach(el => el.innerText = mngBal);
+            
+            // Requirement 1: Apply VIP Gold Theme if Balance >= 1000
+            if(parseFloat(mngBal) >= 1000) {
+                document.body.classList.add('theme-vip-gold');
+                initNeonSound(); // Requirement 2: Start electric noise for VIPs
+            }
+
+            // Requirement 1: Show Badge if count >= 10
+            const eggCount = parseInt(localStorage.getItem('mango_easter_egg_count') || '0');
+            if(eggCount >= 10) {
+                document.getElementById('hidden-collector-badge')?.classList.remove('hidden');
+            }
+        }
+
+        /**
+         * Requirement 2: Real-time Synthesized Electric Buzz
+         */
+        let audioCtx;
+        function initNeonSound() {
+            if (audioCtx) return;
+            document.addEventListener('click', () => {
+                if (audioCtx) return;
+                audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                setInterval(() => {
+                    if (!document.body.classList.contains('theme-vip-gold')) return;
+                    const oscillator = audioCtx.createOscillator();
+                    const gain = audioCtx.createGain();
+                    oscillator.type = 'sawtooth';
+                    oscillator.frequency.setValueAtTime(Math.random() * 20 + 20, audioCtx.currentTime);
+                    gain.gain.setValueAtTime(0.002, audioCtx.currentTime); // Subtle volume
+                    gain.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + 0.1);
+                    oscillator.connect(gain);
+                    gain.connect(audioCtx.destination);
+                    oscillator.start();
+                    oscillator.stop(audioCtx.currentTime + 0.1);
+                }, 1500); // Synchronized with flicker feel
+            }, { once: true });
         }
 
         document.addEventListener('DOMContentLoaded', renderHistory);

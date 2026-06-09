@@ -301,7 +301,10 @@
                 </div>
                 <div class="border-t border-white/5 pt-4 flex justify-between items-end">
                     <span class="text-xs font-black uppercase">Total Paid</span>
-                    <span id="receipt-total" class="text-2xl font-black text-white italic tracking-tighter">---</span>
+                    <div class="text-right">
+                        <span id="vip-discount-tag" class="hidden text-[8px] text-amber-500 font-black italic block mb-0.5">VIP 5% DISCOUNT APPLIED</span>
+                        <span id="receipt-total" class="text-2xl font-black text-white italic tracking-tighter">---</span>
+                    </div>
                 </div>
             </div>
 
@@ -495,7 +498,20 @@
         }
 
         window.openFlightReceipt = (airline, price, currency) => {
-            const converted = piPricingEngine.convertToPi(price, currency);
+            // Step 11.1: VIP Pricing Logic (5% Discount if MNG >= 1000)
+            const mngBalance = parseFloat(localStorage.getItem('mango_mng_balance') || '0');
+            const isVip = mngBalance >= 1000;
+            const vipTag = document.getElementById('vip-discount-tag');
+            
+            let finalPrice = price;
+            if (isVip) {
+                finalPrice = price * 0.95;
+                if (vipTag) vipTag.classList.remove('hidden');
+            } else {
+                if (vipTag) vipTag.classList.add('hidden');
+            }
+
+            const converted = piPricingEngine.convertToPi(finalPrice, currency);
             document.getElementById('receipt-airline').innerText = airline;
             document.getElementById('receipt-original-fiat').innerText = price.toLocaleString() + ' ' + currency;
             document.getElementById('receipt-base').innerText = converted.piConverted + ' π';

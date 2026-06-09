@@ -11,6 +11,11 @@
     <script type="module" src="../services/uiController.js"></script>
     <link rel="stylesheet" href="../shared/styles/mango-core.css">
     <style>
+        /* 
+           Step 7: Visual Development Site Map 
+           PATHWAY: [Staging: vercel-os-6xu2.vercel.app] --> [CNAME/DNS] --> [Production: mango.ceo] 
+           STATUS: Staging Active / Domain Mapping Pending Phase 10
+        */
         .os-master-frame {
             position: relative;
             width: 100%;
@@ -680,6 +685,12 @@
         // Initialize UI elements and Pi pricing
         document.addEventListener('DOMContentLoaded', async () => {
             uiController.init(); // Initialize Lucide icons and point balance
+            
+            // Step 100: Mango OS 최종 부팅 시퀀스 실행
+            if (window.location.pathname === '/' || window.location.pathname === '/index.html') {
+                console.log("[BOOT]: Initializing Mango OS Core...");
+            }
+
             await updatePiValues();
             setInterval(updatePiValues, 60000); // Refresh every 60 seconds
         });
