@@ -2517,7 +2517,7 @@ const ApplyMasterConsole = () => {
                     {formData.piDomainMapped && (
                       <div className="flex items-center gap-2">
                         <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
-                        <p className="text-[9px] text-green-500 italic font-bold">mango.pi -> mango.ceo Proxy Mapped</p>
+                        <p className="text-[9px] text-green-500 italic font-bold">mango.pi → mango.ceo Proxy Mapped</p>
                       </div>
                     )}
                     {/* Step 84: 단일 엔트리 포인트 정책 */}
@@ -2613,16 +2613,15 @@ const ApplyMasterConsole = () => {
                     </motion.div>
               )}
             </div>
-            ) : (
+          ) : (
             <div className="flex flex-col items-center justify-center min-h-[300px] border border-white/5 rounded-3xl bg-black/20 text-center">
               <p className="text-gray-500 text-[10px] font-black uppercase tracking-[0.3em] animate-pulse">Syncing {activeTab} Channel...</p>
             </div>
-              )}
-          </motion.div>
-        </AnimatePresence>
-      </div>
-    </div>
+          )}
+        </motion.div>
+      </AnimatePresence>
 
+      {/* Modal/Overlay Components */}
       <ReceiptModal 
         isOpen={showReceipt} 
         onClose={() => { setShowReceipt(false); setShowReward(true); }} 
