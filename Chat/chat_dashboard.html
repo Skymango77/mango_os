@@ -6,6 +6,7 @@
     <title>MANGO CHAT - Web3 Social Nexus</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Noto+Sans+KR:wght@300;400;700;900&display=swap" rel="stylesheet">
     <style>
         /* Step 1: Viewport strict & Overflow Control */
@@ -24,9 +25,11 @@
 
         /* Step 2: Global Styles - CSS Variables & Glassmorphism */
         :root {
-            --mango-gold: #f59e0b;
+            --mango-gold: #A67C52;
+            --mango-neon: #f59e0b;
             --dark-chrome: #1a1a1a;
             --chat-width: 430px; /* Mobile 규격 */
+            --br-gold: linear-gradient(135deg, #a67c52 0%, #f59e0b 50%, #3d2b1f 100%);
         }
 
         .chat-container {
@@ -40,6 +43,43 @@
             display: flex;
             flex-direction: column;
             position: relative;
+            box-shadow: 0 0 60px rgba(166, 124, 82, 0.2);
+        }
+
+        /* 3D Metallic & Embossing Button Engine */
+        .btn-3d-metallic {
+            background: linear-gradient(180deg, #3d2b1f 0%, #1a140f 100%);
+            border: 1px solid rgba(166, 124, 82, 0.3);
+            border-top: 1px solid rgba(245, 158, 11, 0.4);
+            box-shadow: 0 4px 0 #000, 0 8px 15px rgba(0,0,0,0.5);
+            transition: all 0.1s ease;
+            color: #f59e0b;
+            font-family: 'Orbitron', sans-serif;
+            text-transform: uppercase;
+            font-weight: 900;
+        }
+        .btn-3d-metallic:active {
+            transform: translateY(2px);
+            box-shadow: 0 2px 0 #000, 0 4px 10px rgba(0,0,0,0.5);
+        }
+
+        /* Creator Studio Glass Window */
+        .studio-window {
+            width: 92%;
+            max-width: var(--chat-width);
+            background: rgba(10, 10, 10, 0.85);
+            backdrop-filter: blur(30px);
+            border: 1px solid rgba(166, 124, 82, 0.4);
+            border-radius: 2.5rem;
+            padding: 24px;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) scale(0.95);
+            z-index: 100;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
         }
 
         .header-glass {
@@ -54,6 +94,98 @@
         }
 
         .font-orbitron { font-family: 'Orbitron', sans-serif; }
+        .font-syncopate { font-family: 'Syncopate', sans-serif; }
+
+        /* Gold Dust Animation */
+        @keyframes gold-dust {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+        .gold-dust-bg {
+            background: linear-gradient(-45deg, #1a140f, #3d2b1f, #a67c52, #1a140f);
+            background-size: 400% 400%;
+            animation: gold-dust 15s ease infinite;
+        }
+
+        /* Aurora Gold Ribbon Animation */
+        @keyframes aurora-flow {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+        .aurora-bg {
+            background: linear-gradient(270deg, rgba(166, 124, 82, 0.1), rgba(245, 158, 11, 0.25), rgba(166, 124, 82, 0.1));
+            background-size: 200% 200%;
+            animation: aurora-flow 6s ease infinite;
+        }
+
+        /* Creator Ranking Ticker Animation */
+        .ticker-container {
+            width: 100%;
+            overflow: hidden;
+            white-space: nowrap;
+        }
+        .ticker-content {
+            display: inline-block;
+            animation: ticker-scroll 20s linear infinite;
+        }
+        @keyframes ticker-scroll {
+            0% { transform: translateX(100%); }
+            100% { transform: translateX(-100%); }
+        }
+
+        /* Champion Alert Flash Effect */
+        @keyframes champion-flash {
+            0%, 100% { border-color: rgba(245, 158, 11, 0.2); box-shadow: none; }
+            50% { border-color: #fbbf24; box-shadow: 0 0 20px rgba(251, 191, 36, 0.6), inset 0 0 10px rgba(251, 191, 36, 0.3); }
+        }
+
+        /* Champion Popup Animations */
+        @keyframes champ-box-in {
+            0% { transform: translate(-50%, -40%) scale(0.8); opacity: 0; }
+            100% { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+        }
+        .champion-alert {
+            animation: champion-flash 0.5s ease-in-out 6; /* 3 seconds total */
+        }
+        @keyframes text-glow-pulse {
+            0%, 100% { text-shadow: 0 0 10px #fbbf24, 0 0 20px #f59e0b; }
+            50% { text-shadow: 0 0 20px #fbbf24, 0 0 40px #f59e0b, 0 0 60px #fbbf24; }
+        }
+        .champion-reveal {
+            animation: champ-box-in 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+        }
+        .text-champion-glow {
+            animation: text-glow-pulse 1.5s ease-in-out infinite;
+        }
+
+        /* Emoticon Selection Bar Styles */
+        .emoticon-selection-bar {
+            background: rgba(20, 20, 20, 0.95);
+            backdrop-filter: blur(15px);
+            border-top: 1px solid rgba(166, 124, 82, 0.3);
+            padding: 12px 15px;
+            display: flex;
+            gap: 15px;
+            overflow-x: auto;
+            scrollbar-width: none;
+        }
+        .emoticon-selection-bar::-webkit-scrollbar { display: none; }
+        .emoticon-item {
+            width: 50px;
+            height: 50px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+            cursor: pointer;
+            transition: all 0.2s;
+            border: 2px solid transparent;
+        }
+        .emoticon-item.selected { border-color: var(--mango-neon); background: rgba(245, 158, 11, 0.1); }
 
         /* Step 7: Skeleton Loading UI */
         @keyframes pulse-skeleton {
@@ -113,6 +245,20 @@
             </button>
         </nav>
 
+        <!-- Top Creators Ranking Ribbon -->
+        <section id="creator-ranking-ribbon" class="hidden mango-container mt-4 px-4">
+            <div class="glass p-3 flex items-center justify-between border-orange-500/20 bg-orange-500/5 rounded-2xl">
+            <div class="glass aurora-bg p-3 flex items-center justify-between border-orange-500/40 rounded-2xl">
+                <div class="flex items-center gap-2 flex-shrink-0">
+                    <i data-lucide="trophy" class="w-3.5 h-3.5 text-orange-500"></i>
+                    <span class="text-[9px] font-black text-white uppercase tracking-widest">Top Creators</span>
+                </div>
+                <div id="ranking-list" class="flex gap-4 overflow-x-auto no-scrollbar ml-4">
+                    <!-- Data Injected by JS -->
+                </div>
+            </div>
+        </section>
+
         <main class="flex-1 overflow-y-auto p-4 pb-28"> <!-- Step 10: Safe Area Padding -->
             <!-- Step 7 & 8: List Skeleton & Avatar Online Status -->
             <div id="friends-list" class="space-y-4">
@@ -135,10 +281,98 @@
             </div>
         </main>
 
+        <!-- Chat Room View (Overlay) -->
+        <div id="chat-room-view" class="hidden fixed inset-0 z-[60] bg-black flex flex-col max-w-[430px] mx-auto">
+            <header class="header-glass p-4 flex justify-between items-center">
+                <button onclick="closeChatRoom()" class="text-white/70"><i data-lucide="chevron-left"></i></button>
+                <h2 id="active-chat-title" class="font-bold text-white uppercase tracking-wider font-orbitron">Sarah</h2>
+                <div class="w-8"></div>
+            </header>
+            
+            <div id="chat-messages-container" class="flex-1 overflow-y-auto p-6 space-y-4 no-scrollbar">
+                <!-- Messages Injected Here -->
+            </div>
+
+            <!-- Purchased Emoticon Bar & Input -->
+            <div class="chat-input-area mt-auto">
+                <div id="purchased-emoticons-list" class="emoticon-selection-bar">
+                    <!-- Emoticons list up here -->
+                </div>
+                <div class="p-4 bg-zinc-900 flex items-center gap-3 border-t border-white/5 pb-[calc(1rem+env(safe-area-inset-bottom))]">
+                    <input type="text" id="chat-message-input" placeholder="메시지를 입력하세요..." 
+                        class="flex-1 bg-black border border-white/10 rounded-2xl px-5 py-3 text-sm text-white outline-none focus:border-orange-500/50 transition-all">
+                    <button onclick="sendEmoticonMessage()" class="w-12 h-12 bg-orange-500 rounded-2xl flex items-center justify-center text-black shadow-lg active:scale-90 transition-all">
+                        <i data-lucide="send" class="w-6 h-6"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Mango Creator Studio Window -->
+        <div id="creator-studio" class="studio-window">
+            <div class="flex justify-between items-center mb-6">
+                <h2 class="font-orbitron text-lg font-black italic text-transparent bg-clip-text bg-gradient-to-r from-yellow-400 to-orange-600">
+                    CREATOR_STUDIO
+                </h2>
+                <button onclick="toggleStudio(false)" class="text-white/30 hover:text-white"><i data-lucide="x"></i></button>
+            </div>
+            
+            <div class="space-y-5">
+                <div class="relative group cursor-pointer h-40 bg-white/5 border border-white/10 rounded-2xl flex flex-col items-center justify-center overflow-hidden transition-all hover:border-orange-500/50">
+                    <input type="file" id="studio-upload" class="absolute inset-0 opacity-0 z-10 cursor-pointer">
+                    <div class="text-center group-hover:scale-110 transition-transform">
+                        <i data-lucide="image-plus" class="w-10 h-10 text-orange-500/40 mx-auto mb-2"></i>
+                        <p class="text-[10px] text-white/40 font-bold uppercase tracking-widest">Upload Design Asset</p>
+                    </div>
+                </div>
+
+                <div class="space-y-2">
+                    <label class="text-[9px] font-black text-orange-500 uppercase tracking-[0.2em] ml-1">AI Prompt Hook</label>
+                    <textarea id="ai-prompt" placeholder='예: "귀엽게 웃는 망고 캐릭터, 3D 렌더링 스타일"' 
+                        class="w-full bg-black/40 border border-white/10 rounded-2xl p-4 text-sm text-white focus:border-orange-500 outline-none transition-all h-24 resize-none"></textarea>
+                </div>
+
+                <div class="bg-orange-500/5 border border-orange-500/20 p-4 rounded-2xl">
+                    <div class="flex justify-between items-center mb-1">
+                        <span class="text-[10px] font-bold text-white/50 uppercase">Expected Listing Fee</span>
+                        <span class="text-sm font-black text-orange-400 font-orbitron">5.0 π</span>
+                    </div>
+                    <p class="text-[8px] text-white/30">크리에이터 70% : 망고 OS 30% 자동 정산 시스템</p>
+                </div>
+
+                <button onclick="initiateCreatorPayment()" class="w-full py-4 btn-3d-metallic rounded-2xl text-sm italic">
+                    Publish AI Emoticon
+                </button>
+            </div>
+        </div>
+
+        <!-- New Champion Global Overlay -->
+        <div id="champion-popup-overlay" class="hidden fixed inset-0 z-[1000] bg-black/90 backdrop-blur-xl flex items-center justify-center">
+            <div class="champion-reveal relative flex flex-col items-center">
+                <div class="absolute -inset-10 bg-orange-500/20 blur-[80px] rounded-full animate-pulse"></div>
+                <div class="w-40 h-40 rounded-full border-4 border-yellow-500 p-1 shadow-[0_0_50px_rgba(245,158,11,0.5)] mb-8 bg-black">
+                    <img id="champ-img" src="" class="w-full h-full rounded-full object-cover">
+                </div>
+                <h2 class="font-orbitron text-4xl font-black italic text-[#fbbf24] tracking-tighter text-champion-glow mb-2">NEW CHAMPION</h2>
+                <p id="champ-id" class="font-orbitron text-xl font-bold text-white mb-8 tracking-widest uppercase"></p>
+                
+                <div class="flex gap-4">
+                    <button onclick="closeChampPopup()" class="px-10 py-3 bg-white/10 border border-white/20 rounded-full text-[10px] font-black uppercase tracking-widest text-white/60 hover:bg-white/20 transition-all">Dismiss</button>
+                    <button onclick="closeChampPopup()" class="px-10 py-3 bg-orange-500 rounded-full text-[10px] font-black uppercase tracking-widest text-black shadow-lg shadow-orange-500/30">Congrats!</button>
+                </div>
+            </div>
+        </div>
+
         <!-- Step 9: Floating Action Button -->
-        <button class="fixed bottom-[calc(80px+env(safe-area-inset-bottom))] right-4 w-14 h-14 bg-gradient-to-br from-orange-500 to-yellow-500 rounded-full flex items-center justify-center shadow-lg shadow-orange-500/40 active:scale-90 transition-all z-40">
-            <i data-lucide="plus" class="w-8 h-8 text-black"></i>
-        </button>
+        <div class="fixed bottom-[calc(80px+env(safe-area-inset-bottom))] right-4 flex flex-col gap-3 z-40">
+            <button onclick="toggleStudio(true)" class="w-12 h-12 bg-zinc-900 border border-orange-500/30 rounded-2xl flex items-center justify-center shadow-xl hover:scale-110 active:scale-95 transition-all group">
+                <i data-lucide="palette" class="w-6 h-6 text-orange-500"></i>
+                <span class="absolute right-14 px-3 py-1 bg-orange-500 text-black text-[9px] font-black rounded-lg opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">CREATOR STUDIO</span>
+            </button>
+            <button class="w-14 h-14 bg-gradient-to-br from-orange-500 to-yellow-500 rounded-full flex items-center justify-center shadow-lg shadow-orange-500/40 active:scale-90 transition-all">
+                <i data-lucide="plus" class="w-8 h-8 text-black"></i>
+            </button>
+        </div>
 
         <!-- Step 4: Bottom Navigation -->
         <nav class="fixed bottom-0 left-0 right-0 bg-dark-chrome border-t border-white/10 flex justify-around items-center h-16 pb-[env(safe-area-inset-bottom)] z-50">
@@ -161,8 +395,15 @@
         </nav>
     </div>
 
+    <!-- Confetti & Dust Effect Canvas -->
+    <canvas id="effect-canvas" class="fixed inset-0 pointer-events-none z-[20000]"></canvas>
+
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
     <script>
         lucide.createIcons();
+        const Pi = window.Pi;
+        const friendsList = document.getElementById('friends-list');
+        const rankingList = document.getElementById('ranking-list');
 
         // Step 5: Tab Switcher Logic
         function switchTab(tabName) {
@@ -177,9 +418,22 @@
                 activeTabButton.classList.add('text-orange-500', 'border-orange-500');
                 activeTabButton.classList.remove('text-white/40', 'border-transparent');
             }
+            
+            // View Toggle
+            if (tabName === 'market') {
+                if(friendsList) friendsList.classList.add('hidden');
+                renderMarketplace();
+                return;
+            }
+
+            if(friendsList) friendsList.classList.remove('hidden');
+
+            if(tabName === 'friends') {
+                loadCreatorRanking();
+                subscribeToRankings();
+            }
 
             // Simulate loading friends/chats/guilds
-            const friendsList = document.getElementById('friends-list');
             friendsList.innerHTML = `
                 <div class="flex items-center gap-4 animate-pulse-skeleton">
                     <div class="w-12 h-12 rounded-full bg-gray-700"></div>
@@ -267,9 +521,180 @@
             }, 1000); // 1 second delay for skeleton
         }
 
+        // --- Chat Room Functions ---
+        function openChatRoom(name) {
+            document.getElementById('chat-room-view').classList.remove('hidden');
+            document.getElementById('active-chat-title').innerText = name;
+            renderPurchasedEmoticons();
+        }
+
+        function closeChatRoom() {
+            document.getElementById('chat-room-view').classList.add('hidden');
+        }
+
+        function renderPurchasedEmoticons() {
+            const bar = document.getElementById('purchased-emoticons-list');
+            bar.innerHTML = myEmoticons.map(emo => `
+                <div class="emoticon-item" onclick="selectEmoticon('${emo.id}', this)">
+                    ${emo.img}
+                </div>
+            `).join('');
+        }
+
+        function selectEmoticon(id, element) {
+            document.querySelectorAll('.emoticon-item').forEach(el => el.classList.remove('selected'));
+            if (selectedEmoticon === id) {
+                selectedEmoticon = null;
+            } else {
+                selectedEmoticon = id;
+                element.classList.add('selected');
+            }
+        }
+
+        function sendEmoticonMessage() {
+            const input = document.getElementById('chat-message-input');
+            const container = document.getElementById('chat-messages-container');
+            const text = input.value.trim();
+            const emoticon = myEmoticons.find(e => e.id === selectedEmoticon);
+
+            if (!text && !emoticon) return;
+
+            const msgHtml = `
+                <div class="flex justify-end items-end gap-2">
+                    <div class="bg-orange-500 text-black px-4 py-3 rounded-2xl rounded-br-sm text-sm font-bold shadow-lg">
+                        ${emoticon ? `<div class="text-3xl mb-1">${emoticon.img}</div>` : ''}
+                        ${text}
+                    </div>
+                </div>
+            `;
+
+            container.insertAdjacentHTML('beforeend', msgHtml);
+            container.scrollTop = container.scrollHeight;
+
+            // Reset
+            input.value = '';
+            selectedEmoticon = null;
+            document.querySelectorAll('.emoticon-item').forEach(el => el.classList.remove('selected'));
+        }
+
+        // --- Creator Studio & Pi SDK Integration ---
+
+        function toggleStudio(show) {
+            const studio = document.getElementById('creator-studio');
+            if (show) {
+                studio.classList.remove('hidden');
+                setTimeout(() => {
+                    studio.style.opacity = '1';
+                    studio.style.transform = 'translate(-50%, -50%) scale(1)';
+                    studio.style.visibility = 'visible';
+                }, 10);
+            } else {
+                studio.style.opacity = '0';
+                studio.style.transform = 'translate(-50%, -50%) scale(0.95)';
+                setTimeout(() => {
+                    studio.style.visibility = 'hidden';
+                    studio.classList.add('hidden');
+                }, 400);
+            }
+        }
+
+        async function initiateCreatorPayment() {
+            const prompt = document.getElementById('ai-prompt').value;
+            if(!prompt) return alert("AI 이모티콘 프롬프트를 입력해주세요.");
+            
+            await paymentSwitcher('PI', 5.0, {
+                type: 'creator_listing',
+                prompt: prompt
+            });
+        }
+
+        async function paymentSwitcher(method, amount, metadata) {
+            switch(method) {
+                case 'PI':
+                    return handlePiPayment(amount, metadata);
+                case 'MNG':
+                    alert("Mango Token 결제 엔진으로 라우팅합니다...");
+                    // return executeMangoTokenPayment(amount);
+                    break;
+                default:
+                    alert("지원하지 않는 결제 수단입니다.");
+            }
+        }
+
+        async function handlePiPayment(amount, metadata) {
+            try {
+                const payment = await Pi.createPayment({
+                    amount: amount,
+                    memo: "Creator Studio: AI Emoticon Listing",
+                    metadata: metadata
+                }, {
+                    onReadyForServerApproval: async (paymentId) => {
+                        // Supabase Edge Function 호출하여 결제 승인 데이터 전송
+                        await fetch('https://kxmnxzcqrcqvxgrjkcyk.supabase.co/functions/v1/pi-payment-sync', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ action: 'approve', paymentId, split: { creator: 0.7, mango: 0.3 } })
+                        });
+                    },
+                    onReadyForServerCompletion: async (paymentId, txid) => {
+                        triggerSuccessEffects();
+                        toggleStudio(false);
+                        alert("🚀 이모티콘이 성공적으로 등록되었습니다!");
+                    },
+                    onCancel: (id) => console.log("Payment Cancelled"),
+                    onError: (err) => alert("결제 오류: " + err.message)
+                });
+            } catch (err) {
+                console.error("Pi SDK Error:", err);
+            }
+        }
+
+        function triggerSuccessEffects(emoji) {
+            const duration = 5 * 1000; // 지속 시간 증가 (5초)
+            const end = Date.now() + duration;
+            
+            // 이모지를 포함한 커스텀 파티클 생성
+            const emojiShape = confetti.shapeFromText({ text: emoji, scalar: 3 });
+
+            (function frame() {
+                confetti({
+                    particleCount: 5,
+                    angle: 60,
+                    spread: 55,
+                    origin: { x: 0 },
+                    colors: ['#A67C52', '#f59e0b', '#ffffff'],
+                    shapes: [emojiShape, 'circle']
+                });
+                confetti({
+                    particleCount: 5,
+                    angle: 120,
+                    spread: 55,
+                    origin: { x: 1 },
+                    colors: ['#A67C52', '#f59e0b', '#ffffff'],
+                    shapes: [emojiShape, 'circle']
+                });
+
+                if (Date.now() < end) {
+                    requestAnimationFrame(frame);
+                }
+            }());
+        }
+
+        function triggerSuccessEffectsV2() {
+            confetti({
+                particleCount: 150,
+                spread: 70,
+                origin: { y: 0.6 },
+                colors: ['#A67C52', '#f59e0b', '#ffffff']
+            });
+        }
+
         // Initial load
         window.addEventListener('DOMContentLoaded', () => {
             switchTab('friends');
+            if (window.Pi) {
+                Pi.init({ version: "2.0", sandbox: true });
+            }
         });
     </script>
 </body>

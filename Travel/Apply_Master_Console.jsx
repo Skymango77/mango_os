@@ -1755,7 +1755,6 @@ const ApplyMasterConsole = () => {
     }, 100);
 
     return () => clearInterval(liquidityTimer);
-    }, 2000);
   }, []);
 
   // Step 42: A/B Testing Logic
@@ -2619,7 +2618,9 @@ const ApplyMasterConsole = () => {
             </div>
           )}
         </motion.div>
-      </AnimatePresence>
+          </AnimatePresence>
+        </div>
+      </div>
 
       {/* Modal/Overlay Components */}
       <ReceiptModal 

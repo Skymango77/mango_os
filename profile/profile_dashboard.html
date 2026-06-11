@@ -78,6 +78,77 @@
             </a>
         </section>
 
+        <section class="px-6 mb-6 space-y-3 mt-4">
+            <div class="flex justify-between items-center px-1">
+                <h3 class="text-[10px] font-black text-[#D4AF37] uppercase tracking-[0.2em]">Mango Tier Privileges</h3>
+                <span class="text-[9px] font-bold text-gray-400">See All Benefits</span>
+            </div>
+
+            <div class="premium-glass-card rounded-[2rem] p-5 border border-amber-500/20 bg-gradient-to-br from-gray-900 to-black shadow-2xl relative overflow-hidden">
+                <div class="absolute -left-10 top-0 w-1/2 h-full bg-gradient-to-r from-transparent via-white/5 to-transparent skew-x-[-30deg]"></div>
+
+                <div class="bg-black/50 border border-white/5 rounded-xl p-3 mb-4 flex items-center justify-between">
+                    <div class="flex items-center gap-2">
+                        <i data-lucide="lock" class="w-4 h-4 text-gray-400"></i>
+                        <div>
+                            <p class="text-[9px] text-gray-400 font-bold uppercase tracking-wider">Current Access Level</p>
+                            <p class="text-xs font-black text-white">LV.1 CITIZEN <span class="text-gray-500 font-normal text-[10px] ml-1">(Basic Access)</span></p>
+                        </div>
+                    </div>
+                    <button class="bg-[#D4AF37]/20 border border-[#D4AF37]/50 text-[#D4AF37] px-3 py-1.5 rounded-lg text-[9px] font-black uppercase tracking-widest active:scale-95 transition-all">
+                        Upgrade
+                    </button>
+                </div>
+
+                <div class="space-y-3">
+                    <div class="flex items-center justify-between opacity-100">
+                        <div class="flex items-center gap-3">
+                            <div class="w-6 h-6 rounded-full bg-green-500/20 flex items-center justify-center border border-green-500/30">
+                                <i data-lucide="check" class="w-3 h-3 text-green-400"></i>
+                            </div>
+                            <span class="text-[11px] font-bold text-white">8대 포털 이용 및 기본 예약</span>
+                        </div>
+                        <span class="text-[9px] text-gray-500 font-mono">LV.1+</span>
+                    </div>
+
+                    <div class="flex items-center justify-between opacity-60">
+                        <div class="flex items-center gap-3">
+                            <div class="w-6 h-6 rounded-full bg-black flex items-center justify-center border border-gray-600">
+                                <i data-lucide="lock" class="w-3 h-3 text-gray-400"></i>
+                            </div>
+                            <span class="text-[11px] font-bold text-gray-300">거래 수수료 2% 감면 혜택</span>
+                        </div>
+                        <span class="text-[9px] text-amber-500 font-black font-mono">REQ. LV.10</span>
+                    </div>
+
+                    <div class="flex items-center justify-between opacity-60">
+                        <div class="flex items-center gap-3">
+                            <div class="w-6 h-6 rounded-full bg-black flex items-center justify-center border border-gray-600">
+                                <i data-lucide="lock" class="w-3 h-3 text-gray-400"></i>
+                            </div>
+                            <span class="text-[11px] font-bold text-gray-300">리뷰 작성 시 파이(Pi) 결제 대금 배당</span>
+                        </div>
+                        <span class="text-[9px] text-amber-500 font-black font-mono">REQ. LV.30</span>
+                    </div>
+
+                    <div class="flex items-center justify-between opacity-60">
+                        <div class="flex items-center gap-3">
+                            <div class="w-6 h-6 rounded-full bg-black flex items-center justify-center border border-gray-600">
+                                <i data-lucide="lock" class="w-3 h-3 text-gray-400"></i>
+                            </div>
+                            <span class="text-[11px] font-bold text-gray-300">지역 노드 수수료 영구 분배권 (DAO)</span>
+                        </div>
+                        <span class="text-[9px] text-amber-500 font-black font-mono">REQ. LV.90</span>
+                    </div>
+                </div>
+
+                <div class="mt-4 pt-3 border-t border-white/5 text-center">
+                    <p class="text-[9px] text-gray-400 font-medium leading-relaxed">
+                        친구를 <span class="text-amber-500 font-bold">10명 초대</span>하면 즉시 <span class="text-white font-bold">LV.10 Explorer</span>로 승급되어 수수료 감면 혜택이 영구 적용됩니다.
+                    </p>
+                </div>
+            </div>
+        </section>
         <section class="px-6 space-y-4">
             <h3 class="text-[10px] font-black text-yellow-500 uppercase tracking-[0.3em] ml-2">Portal Nexus Status</h3>
             <div class="grid grid-cols-4 gap-3">
@@ -217,6 +288,66 @@
         }
         function pingUser(id) { const expiry = Date.now() + (24*60*60*1000); localStorage.setItem(`ping_${id}`, expiry); showToast('🚀 Wake-up ping sent via Pi Browser!'); renderNetwork(); }
         function openSettings() { showToast('Settings center connecting...'); }
+    
+    // [고도화 51-80단계] 소셜 연동 처리 및 실시간 레벨 시스템 업데이트 함수
+        function linkSocial(platform) {
+            showToast(`✨ ${platform} 간편 인증 연결 중... 완료 시 즉시 보상이 지급됩니다.`);
+            // 향후 여기에 OAuth2 및 파이 네트워크 SDK 가입 모듈 연동 예정
+            localStorage.setItem(`mango_auth_${platform.toLowerCase()}`, 'true');
+        }
+
+        function calculateMangoLevelEngine() {
+            // 테스트용 데이터 구성 (향후 실제 DB/LocalStorage 동기화)
+            let currentInvites = parseInt(localStorage.getItem('mango_total_invites') || '4'); 
+            let foodReviews = parseInt(localStorage.getItem('mango_food_reviews_count') || '0');
+            
+            const lvlBadge = document.getElementById('user-level-badge');
+            const tierTitle = document.getElementById('user-tier-title');
+            const mainProgressBar = document.getElementById('level-progress-bar');
+            const nextLvlInd = document.getElementById('next-level-indicator');
+            const refRatio = document.getElementById('quest-referral-ratio');
+            const refBar = document.getElementById('quest-referral-bar');
+            const foodPanel = document.getElementById('quest-food-panel');
+            const foodRatio = document.getElementById('quest-food-ratio');
+            const foodBar = document.getElementById('quest-food-bar');
+
+            // 레벨 승급 분기 엔진
+            if (currentInvites >= 100 && foodReviews >= 100) {
+                // LV.3 등극 조건 충족
+                if(lvlBadge) lvlBadge.innerText = 'LV.3';
+                if(tierTitle) { tierTitle.innerText = 'Influencer'; tierTitle.className = "text-[9px] text-emerald-400 font-black border border-emerald-500/40 bg-emerald-500/10 px-2 py-0.5 rounded-full uppercase tracking-wider"; }
+                if(mainProgressBar) mainProgressBar.style.width = '100%';
+                if(nextLvlInd) nextLvlInd.innerText = 'Goal: LV.4 Elite Node';
+            } else if (currentInvites >= 10) {
+                // LV.2 등극 조건 충족 (10명 가입 완료)
+                if(lvlBadge) lvlBadge.innerText = 'LV.2';
+                if(tierTitle) { tierTitle.innerText = 'Explorer'; tierTitle.className = "text-[9px] text-sky-400 font-black border border-sky-500/40 bg-sky-500/10 px-2 py-0.5 rounded-full uppercase tracking-wider"; }
+                
+                // LV.3로 가기 위한 경험치 계산 및 퀘스트 오픈
+                if(foodPanel) foodPanel.classList.remove('opacity-40');
+                if(nextLvlInd) nextLvlInd.innerText = 'Goal: LV.3 Influencer';
+                
+                let progressPercent = Math.min((foodReviews / 100) * 100, 100);
+                if(mainProgressBar) mainProgressBar.style.width = `${progressPercent}%`;
+            } else {
+                // LV.1 기본 상태 (현재 테스트 기본값: 초대 4명 상태)
+                if(lvlBadge) lvlBadge.innerText = 'LV.1';
+                if(tierTitle) { tierTitle.innerText = 'Citizen'; }
+                let progressPercent = (currentInvites / 10) * 100;
+                if(mainProgressBar) mainProgressBar.style.width = `${progressPercent}%`;
+            }
+
+            // 개별 퀘스트 UI 갱신 반영
+            if(refRatio) refRatio.innerText = `${currentInvites} / 10`;
+            if(refBar) refBar.style.width = `${Math.min((currentInvites / 10) * 100, 100)}%`;
+            if(foodRatio) foodRatio.innerText = `${foodReviews} / 100`;
+            if(foodBar) foodBar.style.width = `${Math.min((foodReviews / 100) * 100, 100)}%`;
+        }
+
+        // DOM 로드 시 엔진 실행 보정 추가
+        document.addEventListener('DOMContentLoaded', () => {
+            calculateMangoLevelEngine();
+        });
     </script>
 </body>
 </html>
